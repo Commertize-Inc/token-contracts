@@ -237,7 +237,7 @@
 }
 
 .logoImage {
-  height: 2rem;
+  height: 3.75rem;
   width: auto;
 }
 
@@ -962,26 +962,26 @@
 .stepsGrid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 2rem;
+  gap: 1rem;
 }
 
 @media (min-width: 768px) {
   .stepsGrid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
+    gap: 1rem;
   }
 }
 
 @media (min-width: 1024px) {
   .stepsGrid {
     grid-template-columns: repeat(5, 1fr);
-    gap: 2.5rem;
+    gap: 1rem;
   }
 }
 
 @media (min-width: 1280px) {
   .stepsGrid {
-    gap: 3rem;
+    gap: 1.25rem;
   }
 }
 

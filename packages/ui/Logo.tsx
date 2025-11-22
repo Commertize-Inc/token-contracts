@@ -16,8 +16,8 @@ const Logo: React.FC<LogoProps> = ({
 	theme = "dark",
 	src,
 	alt = "Commertize",
-	width = 120,
-	height = 40
+	width = 180,
+	height = 60
 }) => {
 	// If image src is provided, use the image instead of icon + text
 	if (src) {
