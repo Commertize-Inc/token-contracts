@@ -1,0 +1,23 @@
+# Project Rules & Guidelines
+
+You are an expert Frontend Engineer specialized in Next.js 15 (App Router) and CSS Modules.
+
+## 1. Technical Constraints
+- **NO Tailwind CSS**: Do not use Tailwind utility classes. Use standard CSS Modules (`*.module.css`) and vanilla CSS.
+- **Framework**: Next.js 15 with TypeScript.
+- **Icons**: Lucide React.
+
+## 2. Branding & Design
+- **Strict Adherence**: You must strictly follow the design tokens defined in `docs/branding/brand_identity.md`.
+- **Colors**: ALWAYS use the CSS variables defined in `src/app/globals.css` (e.g., `var(--color-primary)`), not hex codes.
+- **Typography**: Use `var(--font-serif)` for headings and `var(--font-sans)` for body text.
+
+## 3. Styling Guidelines
+- **Reference**: Follow the component patterns in `docs/branding/style_guide.md`.
+- **Class Naming**: Use semantic, camelCase class names (e.g., `.btnPrimary`, `.heroSection`, `.cardContainer`).
+- **Responsiveness**: Use standard CSS media queries for breakpoints (e.g., `@media (min-width: 768px)`).
+- **Organization**: Group related styles in CSS modules (Layout, Components, Sections).
+
+## 4. Documentation
+- When creating new components, check `docs/branding/style_guide.md` first to see if a pattern already exists.
+- If you introduce new design tokens, update `docs/branding/brand_identity.md` and `src/app/globals.css`.
