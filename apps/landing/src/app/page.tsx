@@ -691,7 +691,7 @@ export default function Home() {
 				<div className={styles.container}>
 					<div className={styles.techHeading}>
 						<div className={styles.techSubtitle}>Built on Blockchain</div>
-						<h2 className={styles.techSectionTitle}>Dual-Chain Infrastructure</h2>
+						<h2 className={styles.techSectionTitle}>Multi-Chain Infrastructure</h2>
 					</div>
 					<div className={styles.techGrid}>
 						<div className={styles.techCard}>
