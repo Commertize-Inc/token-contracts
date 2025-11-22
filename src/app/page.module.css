@@ -1278,3 +1278,13 @@
   font-weight: 700;
   color: #0f172a;
 }
+
+.userInfoDesktop {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .userInfoDesktop {
+    display: block;
+  }
+}

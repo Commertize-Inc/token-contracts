@@ -4,8 +4,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
 	Building,
 	Wallet,
-	Users,
-	ArrowRight,
 	LayoutDashboard,
 	PieChart,
 	FileText,
@@ -13,7 +11,6 @@ import {
 	LogOut,
 	TrendingUp,
 	ShieldCheck,
-	Landmark,
 	ChevronRight,
 	Menu,
 	X,
@@ -24,7 +21,10 @@ import {
 	Activity
 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import styles from './page.module.css';
+import Button from '@/components/ui/Button';
+import Logo from '@/components/ui/Logo';
 
 // --- Mock Data ---
 const MOCK_PROPERTIES = [
@@ -42,36 +42,13 @@ const MOCK_STATS = [
 
 // --- Specialized UI Components ---
 
-const Button = ({ children, variant = 'primary', className = '', onClick, icon: Icon, style }: any) => {
-	let variantClass = styles.btnPrimary;
-	if (variant === 'secondary') variantClass = styles.btnSecondary;
-	if (variant === 'outlined') variantClass = styles.btnOutlined;
-	if (variant === 'text') variantClass = styles.btnText;
+interface SectionHeadingProps {
+	subtitle: string;
+	title: string;
+	align?: 'center' | 'left';
+}
 
-	return (
-		<button onClick={onClick} className={`${styles.buttonBase} ${variantClass} ${className}`} style={style}>
-			{children}
-			{Icon && <Icon size={16} />}
-		</button>
-	);
-};
-
-const Chip = ({ children, active }: any) => (
-	<span className={`${styles.chip} ${active ? styles.chipActive : styles.chipInactive}`}>
-		{children}
-	</span>
-);
-
-const Logo = ({ className = "", theme = "dark" }: any) => (
-	<div className={`${styles.logo} ${className}`}>
-		<div className={styles.logoIcon}>
-			<Building size={20} strokeWidth={2.5} />
-		</div>
-		<span className={`${styles.logoText} ${theme === 'light' ? styles.logoTextWhite : ''}`}>COMMERTIZE</span>
-	</div>
-);
-
-const SectionHeading = ({ subtitle, title, align = 'center' }: any) => (
+const SectionHeading = ({ subtitle, title, align = 'center' }: SectionHeadingProps) => (
 	<div className={`${styles.sectionHeading} ${align === 'center' ? styles.sectionHeadingCenter : styles.sectionHeadingLeft}`}>
 		<div className={styles.subtitle}>{subtitle}</div>
 		<h2 className={styles.title}>{title}</h2>
@@ -80,7 +57,7 @@ const SectionHeading = ({ subtitle, title, align = 'center' }: any) => (
 
 // --- Sections ---
 
-const Navbar = ({ onLogin }: any) => {
+const Navbar = () => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [scrolled, setScrolled] = useState(false);
 	const [intelligenceOpen, setIntelligenceOpen] = useState(false);
@@ -104,7 +81,7 @@ const Navbar = ({ onLogin }: any) => {
 				<div className={styles.flexBetween}>
 					{/* Logo with Image */}
 					<Link href="/" className={styles.logoLink}>
-						<img src="/assets/logo.png" alt="Commertize" className={styles.logoImage} />
+						<Image src="/assets/logo.png" alt="Commertize" width={120} height={40} className={styles.logoImage} />
 					</Link>
 
 					<div className={styles.navLinks}>
@@ -201,7 +178,7 @@ const Navbar = ({ onLogin }: any) => {
 	);
 };
 
-const Hero = ({ onAction }: any) => (
+const Hero = () => (
 	<div className={styles.hero}>
 		{/* Architectural Graphic Elements */}
 		<div className={styles.heroBgRight} />
@@ -334,7 +311,14 @@ const BentoFeatures = () => (
 
 // --- Portal (Dashboard) Logic ---
 
-const SidebarItem = ({ icon: Icon, label, active, onClick }: any) => (
+interface SidebarItemProps {
+	icon: React.ComponentType<{ size?: number }>;
+	label: string;
+	active: boolean;
+	onClick: () => void;
+}
+
+const SidebarItem = ({ icon: Icon, label, active, onClick }: SidebarItemProps) => (
 	<button
 		onClick={onClick}
 		className={`${styles.sidebarItem} ${active ? styles.sidebarItemActive : styles.sidebarItemInactive}`}
@@ -344,7 +328,11 @@ const SidebarItem = ({ icon: Icon, label, active, onClick }: any) => (
 	</button>
 );
 
-const Portal = ({ role, onLogout }: any) => {
+interface PortalProps {
+	onLogout: () => void;
+}
+
+const Portal = ({ onLogout }: PortalProps) => {
 	const [activeTab, setActiveTab] = useState('overview');
 
 	return (
@@ -393,7 +381,7 @@ const Portal = ({ role, onLogout }: any) => {
 						</button>
 						<div style={{ height: '2rem', width: '1px', backgroundColor: '#e2e8f0' }}></div>
 						<div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-							<div style={{ textAlign: 'right', display: 'none', '@media (min-width: 640px)': { display: 'block' } } as any}>
+							<div style={{ textAlign: 'right' }} className={styles.userInfoDesktop}>
 								<div style={{ fontSize: '0.875rem', fontWeight: '700', color: '#0f172a' }}>James Anderson</div>
 								<div style={{ fontSize: '0.75rem', color: '#64748b' }}>Accredited Investor</div>
 							</div>
@@ -519,26 +507,19 @@ export default function Home() {
 	const [view, setView] = useState('landing');
 	const [activeTab, setActiveTab] = useState('investors'); // For How It Works tabs
 
-	// Simulating a route change
-	const handleLogin = (role: any) => {
-		setView(`${role}-portal`);
-		window.scrollTo(0, 0);
-	};
-
 	const handleLogout = () => {
 		setView('landing');
 		window.scrollTo(0, 0);
 	};
 
 	if (view.includes('portal')) {
-		const role = view.split('-')[0];
-		return <Portal role={role} onLogout={handleLogout} />;
+		return <Portal onLogout={handleLogout} />;
 	}
 
 	return (
 		<div style={{ minHeight: '100vh', fontFamily: 'var(--font-sans)', backgroundColor: '#FAFAF9', color: '#0f172a' }}>
-			<Navbar onLogin={handleLogin} />
-			<Hero onAction={handleLogin} />
+			<Navbar />
+			<Hero />
 			<BentoFeatures />
 
 			{/* Mission Section */}
