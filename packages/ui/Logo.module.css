@@ -28,3 +28,8 @@
 .logoTextWhite {
   color: white;
 }
+
+.logoImage {
+  display: block;
+  height: auto;
+}
