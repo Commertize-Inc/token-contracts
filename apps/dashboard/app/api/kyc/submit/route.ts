@@ -1,12 +1,7 @@
 import { User } from "@/lib/db/entities/User";
 import { getEM } from "@/lib/db/orm";
-import { PrivyClient } from "@privy-io/server-auth";
 import { NextRequest, NextResponse } from "next/server";
-
-const privy = new PrivyClient(
-	process.env.NEXT_PUBLIC_PRIVY_APP_ID || "",
-	process.env.PRIVY_APP_SECRET || ""
-);
+import { privyClient } from "@/lib/privy/client";
 
 export async function POST(request: NextRequest) {
 	try {
@@ -19,7 +14,7 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		const claims = await privy.verifyAuthToken(privyToken);
+		const claims = await privyClient.verifyAuthToken(privyToken);
 		const privyId = claims.userId;
 
 		const em = await getEM();
