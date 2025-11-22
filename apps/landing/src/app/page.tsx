@@ -21,10 +21,8 @@ import {
 	Activity
 } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
 import styles from './page.module.css';
-import Button from '@/components/ui/Button';
-import Logo from '@/components/ui/Logo';
+import { Button, Logo } from '@commertize/ui';
 
 // --- Mock Data ---
 const MOCK_PROPERTIES = [
@@ -83,9 +81,9 @@ const Navbar = () => {
 		<nav className={`${styles.navbar} ${scrolled ? styles.navbarScrolled : styles.navbarTransparent}`}>
 			<div className={styles.container}>
 				<div className={styles.flexBetween}>
-					{/* Logo with Image */}
+					{/* Logo */}
 					<Link href="/" className={styles.logoLink}>
-						<Image src="/assets/logo.png" alt="Commertize" width={120} height={40} className={styles.logoImage} />
+						<Logo src="/assets/logo.png" />
 					</Link>
 
 					<div className={styles.navLinks}>

@@ -2,7 +2,7 @@
 
 import { ChevronDown, LogOut, User } from "lucide-react";
 import { useState, useRef, useEffect, ReactNode } from "react";
-import { Logo } from "./Logo";
+import Logo from "./Logo";
 import styles from "./Navbar.module.css";
 
 export interface NavbarUser {
@@ -18,6 +18,7 @@ export interface NavbarProps {
 	user?: NavbarUser | null;
 	onLogout?: () => Promise<void> | void;
 	logoHref?: string;
+	logoSrc?: string;
 	showStatusIndicator?: boolean;
 	LinkComponent?: React.ComponentType<{ href: string; className?: string; children: ReactNode }>;
 }
@@ -26,6 +27,7 @@ const Navbar: React.FC<NavbarProps> = ({
 	user,
 	onLogout,
 	logoHref = "/",
+	logoSrc = "/assets/logo.png",
 	showStatusIndicator = true,
 	LinkComponent,
 }) => {
@@ -74,7 +76,7 @@ const Navbar: React.FC<NavbarProps> = ({
 			<div className={styles.container}>
 				<div className={styles.content}>
 					<LogoLink href={logoHref} className={styles.logoLink}>
-						<Logo />
+						<Logo src={logoSrc} />
 					</LogoLink>
 
 					{user && (
@@ -102,9 +104,8 @@ const Navbar: React.FC<NavbarProps> = ({
 										</span>
 									</div>
 									<ChevronDown
-										className={`${styles.chevronIcon} ${
-											isDropdownOpen ? styles.chevronIconOpen : ""
-										}`}
+										className={`${styles.chevronIcon} ${isDropdownOpen ? styles.chevronIconOpen : ""
+											}`}
 									/>
 								</button>
 
