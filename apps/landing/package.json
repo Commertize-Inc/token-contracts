@@ -9,6 +9,7 @@
 		"lint": "eslint"
 	},
 	"dependencies": {
+		"@commertize/ui": "workspace:*",
 		"@next/env": "^16.0.3",
 		"lucide-react": "^0.554.0",
 		"next": "16.0.3",
