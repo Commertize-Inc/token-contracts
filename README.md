@@ -2,23 +2,200 @@
 
 A premium real estate investment platform bridging traditional finance and DeFi.
 
-## Documentation
+## Overview
 
-- [Brand Identity](docs/branding/brand_identity.md) - Color palette, typography, and design philosophy.
-- [Style Guide](docs/branding/style_guide.md) - Component styles and UI guidelines.
+Commertize is a monorepo built with Next.js 16, featuring a public landing page and a secure investor dashboard with KYC verification.
 
-## Getting Started
+### Tech Stack
 
-First, run the development server:
+- **Frontend**: Next.js 16 (App Router), React 19, TypeScript
+- **Authentication**: Privy (Email + Wallet)
+- **Database**: PostgreSQL (NeonDB) with MikroORM
+- **Styling**: Tailwind CSS, CSS Modules
+- **Monorepo**: pnpm workspaces
+- **Shared UI**: `@commertize/ui` package
+
+## Quick Start
+
+### Prerequisites
+
+- Node.js 20+
+- pnpm 10+
+- PostgreSQL database (NeonDB recommended)
+- Privy account ([Get one here](https://dashboard.privy.io/))
+
+### Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+# Install dependencies
+pnpm install
+
+# Set up environment variables (see Configuration section)
+cp apps/dashboard/.env.example apps/dashboard/.env
+
+# Run database migrations
+cd apps/dashboard && pnpm mikro-orm migration:up && cd ../..
+
+# Start development servers
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit:
+- Landing page: [http://localhost:3000](http://localhost:3000)
+- Dashboard: [http://localhost:3001](http://localhost:3001)
+
+## Configuration
+
+### Dashboard Environment Variables
+
+Create `apps/dashboard/.env`:
+
+```env
+# Privy Authentication
+NEXT_PUBLIC_PRIVY_APP_ID=your_privy_app_id
+NEXT_PUBLIC_PRIVY_CLIENT_ID=your_privy_client_id
+PRIVY_APP_SECRET=your_privy_app_secret
+
+# Database
+DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require
+```
+
+See [ENV_SETUP.md](ENV_SETUP.md) for detailed configuration instructions.
+
+## Project Structure
+
+```
+commertize.com/
+├── apps/
+│   ├── landing/          # Public landing page (Next.js)
+│   └── dashboard/        # Investor dashboard with auth (Next.js)
+├── packages/
+│   └── ui/              # Shared UI components (Button, Chip, Logo)
+├── docs/                # Additional documentation
+│   └── branding/        # Brand guidelines and assets
+└── pnpm-workspace.yaml
+```
+
+## Features
+
+### Landing Page (`apps/landing`)
+- Premium real estate showcase
+- Property listings with investment details
+- SEO-optimized static pages
+- Responsive design with brand-consistent UI
+
+### Dashboard (`apps/dashboard`)
+- **Authentication**: Privy-powered email/wallet login
+- **Auth Guard**: Automatic redirect to `/auth` when not authenticated
+- **KYC Verification**: Required before accessing investment features
+- **User Management**: PostgreSQL database with MikroORM
+- **Session Management**: Secure logout with session invalidation
+- **Shared Components**: Uses `@commertize/ui` for consistent branding
+
+### Shared UI Package (`packages/ui`)
+- **Button**: Multiple variants (primary, secondary, outlined, text)
+- **Chip**: Active/inactive states
+- **Logo**: Light/dark theme support
+- Reusable across all apps with consistent styling
+
+## Development
+
+### Running Apps
+
+```bash
+# Run all apps
+pnpm dev
+
+# Run specific app
+pnpm dev:landing    # Landing page only
+pnpm dev:dashboard  # Dashboard only
+```
+
+### Working with Shared UI
+
+Import components from `@commertize/ui`:
+
+```tsx
+import { Logo, Button, Chip } from "@commertize/ui";
+
+<Logo theme="dark" />
+<Button variant="primary">Invest Now</Button>
+<Chip active>New</Chip>
+```
+
+### Database Migrations
+
+```bash
+cd apps/dashboard
+
+# Create migration
+pnpm mikro-orm migration:create
+
+# Run migrations
+pnpm mikro-orm migration:up
+
+# Rollback migration
+pnpm mikro-orm migration:down
+```
+
+### Package Management
+
+```bash
+# Add dependency to specific app
+pnpm --filter @commertize/dashboard add package-name
+
+# Add dev dependency to root
+pnpm add -D -w package-name
+
+# Update all dependencies
+pnpm update -r
+```
+
+## Architecture
+
+### Authentication Flow
+
+1. User visits landing page → clicks "Sign In"
+2. Redirects to dashboard `/auth` page
+3. Privy authentication modal (email/wallet)
+4. `AuthGuard` checks authentication status
+5. System verifies KYC status from database
+6. Non-KYC'd users redirected to `/kyc` flow
+7. Authenticated + KYC'd users access dashboard
+
+### Database Schema
+
+#### User Entity
+```typescript
+{
+  id: string (UUID)
+  privyId: string
+  email?: string
+  walletAddress?: string
+  isKycd: boolean
+  kycCompletedAt?: Date
+  createdAt: Date
+  updatedAt: Date
+}
+```
+
+### API Routes
+
+- `GET /api/kyc/status` - Check KYC status
+- `POST /api/kyc/submit` - Submit KYC (demo implementation)
+
+## Documentation
+
+- [Quick Start Guide](QUICK_START.md) - Get up and running in 5 minutes
+- [Environment Setup](ENV_SETUP.md) - Detailed configuration guide
+- [Monorepo Architecture](MONOREPO_SETUP.md) - Deep dive into project structure
+- [Brand Identity](docs/branding/brand_identity.md) - Colors, typography, design philosophy
+- [Style Guide](docs/branding/style_guide.md) - UI component guidelines
+
+## Contributing
+
+This is a private project. For questions or issues, contact the development team.
+
+## License
+
+Proprietary - All rights reserved
