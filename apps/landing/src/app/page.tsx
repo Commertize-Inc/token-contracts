@@ -312,7 +312,7 @@ const BentoFeatures = () => (
 							<h3 className={styles.bentoTitle}>Blockchain Transparency</h3>
 							<p className={styles.bentoText}>Every transaction is recorded on-chain, ensuring immutable ownership records and complete transparency. AI-powered insights provide real-time valuation and risk assessment.</p>
 						</div>
-						<div style={{ marginTop: '2rem' }}>
+						<div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'center' }}>
 							<button className={styles.complianceBtn}>View Compliance Docs</button>
 						</div>
 					</div>
@@ -627,8 +627,8 @@ export default function Home() {
 							<>
 								<div className={styles.stepCard}>
 									<div className={styles.stepNumber}>1</div>
-									<h4 className={styles.stepTitle}>Verify Your Status</h4>
-									<p className={styles.stepDesc}>Complete KYC/AML and accreditation verification through our secure platform.</p>
+									<h4 className={styles.stepTitle}>Complete KYC Verification</h4>
+									<p className={styles.stepDesc}>Investors must complete KYC/AML and accreditation verification before investing in properties.</p>
 								</div>
 								<div className={styles.stepCard}>
 									<div className={styles.stepNumber}>2</div>
@@ -655,28 +655,28 @@ export default function Home() {
 							<>
 								<div className={styles.stepCard}>
 									<div className={styles.stepNumber}>1</div>
+									<h4 className={styles.stepTitle}>Complete KYC Verification</h4>
+									<p className={styles.stepDesc}>Sponsors must complete KYC/AML and accreditation verification before submitting properties to the platform.</p>
+								</div>
+								<div className={styles.stepCard}>
+									<div className={styles.stepNumber}>2</div>
 									<h4 className={styles.stepTitle}>Submit Property</h4>
 									<p className={styles.stepDesc}>Upload property details and documentation through our streamlined submission portal.</p>
 								</div>
 								<div className={styles.stepCard}>
-									<div className={styles.stepNumber}>2</div>
+									<div className={styles.stepNumber}>3</div>
 									<h4 className={styles.stepTitle}>Due Diligence Review</h4>
 									<p className={styles.stepDesc}>Commertize conducts comprehensive due diligence and compliance verification.</p>
 								</div>
 								<div className={styles.stepCard}>
-									<div className={styles.stepNumber}>3</div>
+									<div className={styles.stepNumber}>4</div>
 									<h4 className={styles.stepTitle}>List to Market</h4>
 									<p className={styles.stepDesc}>Property goes live to our network of 14,000+ accredited investors.</p>
 								</div>
 								<div className={styles.stepCard}>
-									<div className={styles.stepNumber}>4</div>
+									<div className={styles.stepNumber}>5</div>
 									<h4 className={styles.stepTitle}>Raise Capital</h4>
 									<p className={styles.stepDesc}>Fund faster than traditional methods with fractional ownership and blockchain efficiency.</p>
-								</div>
-								<div className={styles.stepCard}>
-									<div className={styles.stepNumber}>5</div>
-									<h4 className={styles.stepTitle}>Automated Management</h4>
-									<p className={styles.stepDesc}>Streamlined distribution and reporting through our automated platform.</p>
 								</div>
 							</>
 						)}
