@@ -1,0 +1,22 @@
+{
+	"name": "@commertize/utils",
+	"version": "0.1.0",
+	"private": true,
+	"main": "./index.ts",
+	"types": "./index.ts",
+	"exports": {
+		".": "./index.ts",
+		"./*": "./*"
+	},
+	"scripts": {
+		"lint": "eslint ."
+	},
+	"dependencies": {
+		"dotenv": "^17.2.3",
+		"dotenv-expand": "^12.0.3"
+	},
+	"devDependencies": {
+		"@types/node": "^20",
+		"typescript": "^5"
+	}
+}
