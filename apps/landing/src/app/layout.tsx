@@ -27,6 +27,10 @@ const spaceMono = Space_Mono({
 export const metadata: Metadata = {
   title: "Commertize | Tokenized Real Estate Investment",
   description: "Democratizing access to premium real estate investments through blockchain technology.",
+  icons: {
+    icon: "/assets/logo.png",
+    apple: "/assets/logo.png",
+  },
 };
 
 export default function RootLayout({
