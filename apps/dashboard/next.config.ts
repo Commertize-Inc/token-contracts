@@ -8,9 +8,7 @@ const monorepoRoot = path.join(__dirname, '..', '..');
 // In development: load from root .env.development
 // In production: Next.js automatically loads .env.production from app directory
 const envDir = isDevelopment ? monorepoRoot : __dirname;
-
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-loadEnvConfig(envDir, true, { error: console.error, info: console.log });
+loadEnvConfig(envDir, false, { error: console.error, info: console.log }, true);
 
 const nextConfig: NextConfig = {
 	transpilePackages: ["@commertize/ui"],
