@@ -40,20 +40,25 @@ commertize.com/
 
 ## How It Works
 
-Both apps use the same Next.js configuration pattern with `@next/env`:
+Both apps use `dotenv` and `dotenv-expand` for environment variable loading with interpolation support:
 
 ```typescript
-const isDevelopment = process.env.NODE_ENV !== 'production';
+import dotenv from "dotenv";
+import dotenvExpand from "dotenv-expand";
+import path from "path";
+
 const monorepoRoot = path.join(__dirname, '..', '..');
 
-// In development: load from root .env.development
-// In production: Next.js loads from local .env.production
-const envDir = isDevelopment ? monorepoRoot : __dirname;
-
-require('@next/env').loadEnvConfig(envDir);
+// Load .env from monorepo root with variable interpolation support
+const envPath = path.join(monorepoRoot, '.env');
+const myEnv = dotenv.config({ path: envPath });
+dotenvExpand.expand(myEnv);
 ```
 
-This leverages Next.js's built-in `@next/env` package (no additional dependencies needed).
+This provides:
+- **Variable interpolation**: Use `${VAR_NAME}` syntax in `.env` files
+- **Consistent behavior**: Same env loading across Next.js, MikroORM, and other tools
+- **Better DX**: Compose complex values from simpler variables
 
 ## Setup Instructions
 

@@ -1,17 +1,13 @@
 import type { NextConfig } from "next";
-import path from "path";
-import { loadEnvConfig } from "@next/env";
+import { loadEnv, getMonorepoRoot } from "@commertize/utils";
 
-const isDevelopment = process.env.NODE_ENV !== 'production';
-const monorepoRoot = path.join(__dirname, '..', '..');
+// Load .env from monorepo root with variable interpolation support
+loadEnv(__dirname);
 
-// In development: load from root .env.development
-// In production: Next.js automatically loads .env.production from app directory
-const envDir = isDevelopment ? monorepoRoot : __dirname;
-loadEnvConfig(envDir, false, { error: console.error, info: console.log }, true);
+const monorepoRoot = getMonorepoRoot(__dirname);
 
 const nextConfig: NextConfig = {
-	transpilePackages: ["@commertize/ui"],
+	transpilePackages: ["@commertize/ui", "@commertize/utils"],
 	turbopack: {
 		root: monorepoRoot,
 	},

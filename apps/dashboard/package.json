@@ -10,12 +10,12 @@
 	},
 	"dependencies": {
 		"@commertize/ui": "workspace:*",
+		"@commertize/utils": "workspace:*",
 		"@mikro-orm/core": "^6.6.0",
 		"@mikro-orm/knex": "^6.6.0",
 		"@mikro-orm/migrations": "^6.4.3",
 		"@mikro-orm/postgresql": "^6.6.0",
 		"@mikro-orm/reflection": "^6.6.0",
-		"@next/env": "^16.0.3",
 		"@privy-io/react-auth": "^1.94.3",
 		"@privy-io/server-auth": "^1.17.0",
 		"better-sqlite3": "^12.4.6",

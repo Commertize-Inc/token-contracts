@@ -1,15 +1,11 @@
 import { Options } from "@mikro-orm/core";
 import { PostgreSqlDriver } from "@mikro-orm/postgresql";
-import { loadEnvConfig } from "@next/env";
-import path from "path";
+import { loadEnv } from "@commertize/utils";
 import "reflect-metadata";
 import { User } from "./entities/User";
 
-// Load environment variables using the same approach as next.config.ts
-const isDevelopment = process.env.NODE_ENV !== 'production';
-const monorepoRoot = path.join(__dirname, '..', '..', '..', '..');
-const envDir = isDevelopment ? monorepoRoot : path.join(__dirname, '..', '..');
-loadEnvConfig(envDir, false, { error: console.error, info: console.log }, true);
+// Load environment variables with interpolation support
+loadEnv(__dirname);
 
 const config: Options<PostgreSqlDriver> = {
 	entities: [User],
