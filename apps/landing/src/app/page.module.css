@@ -627,40 +627,43 @@
   left: 1.5rem;
   background-color: white;
   border-radius: 0.75rem;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-  padding: 1.5rem;
-  max-width: 320px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+  padding: 1.25rem 1.5rem;
+  max-width: 340px;
   z-index: 100;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #f1f5f9;
 }
 
 .cookieClose {
   position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
+  top: 0.875rem;
+  right: 0.875rem;
   background: transparent;
   border: none;
   cursor: pointer;
   color: #94a3b8;
   padding: 0.25rem;
+  transition: color 0.2s ease;
 }
 
 .cookieClose:hover {
-  color: #475569;
+  color: #64748b;
 }
 
 .cookieTitle {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #0f172a;
-  margin: 0 0 0.75rem 0;
+  font-size: 0.9375rem;
+  font-weight: 300;
+  color: #1e293b;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: 0.01em;
 }
 
 .cookieText {
   font-size: 0.8125rem;
+  font-weight: 300;
   color: #64748b;
-  line-height: 1.5;
-  margin: 0 0 1rem 0;
+  line-height: 1.6;
+  margin: 0 0 1.25rem 0;
 }
 
 .cookieButtons {
@@ -672,11 +675,11 @@
   flex: 1;
   padding: 0.625rem 1rem;
   font-size: 0.8125rem;
-  font-weight: 600;
-  color: #475569;
+  font-weight: 300;
+  color: #64748b;
   background-color: transparent;
   border: 1px solid #e2e8f0;
-  border-radius: 0.375rem;
+  border-radius: 0.75rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -684,24 +687,25 @@
 .cookieBtnReject:hover {
   background-color: #f8fafc;
   border-color: #cbd5e1;
+  color: #475569;
 }
 
 .cookieBtnAccept {
   flex: 1;
   padding: 0.625rem 1rem;
   font-size: 0.8125rem;
-  font-weight: 600;
+  font-weight: 300;
   color: white;
   background-color: var(--color-primary);
   border: 1px solid var(--color-primary);
-  border-radius: 0.375rem;
+  border-radius: 0.75rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .cookieBtnAccept:hover {
-  background-color: #A88218;
-  border-color: #A88218;
+  background-color: #B8922A;
+  border-color: #B8922A;
 }
 
 /* --- Bento Features --- */
