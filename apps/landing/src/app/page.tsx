@@ -235,40 +235,43 @@ const Navbar = () => {
         );
 };
 
+const FLIP_PREFIXES = ["Token", "Digit", "Fractional", "Democrat", "Modern", "Global", "Revolution"];
+
 const FlippingText = () => {
-        const prefixes = ["Token", "Digit", "Fractional", "Democrat", "Modern", "Global", "Revolution"];
         const [currentIndex, setCurrentIndex] = useState(0);
-        const [hasMounted, setHasMounted] = useState(false);
+        const [isAnimating, setIsAnimating] = useState(false);
 
         useEffect(() => {
-                setHasMounted(true);
+                const timer = setTimeout(() => setIsAnimating(true), 100);
+                return () => clearTimeout(timer);
         }, []);
 
         useEffect(() => {
-                if (!hasMounted) return;
+                if (!isAnimating) return;
                 
                 const interval = setInterval(() => {
-                        setCurrentIndex((prev) => (prev + 1) % prefixes.length);
+                        setCurrentIndex((prev) => (prev + 1) % FLIP_PREFIXES.length);
                 }, 2500);
                 return () => clearInterval(interval);
-        }, [hasMounted, prefixes.length]);
+        }, [isAnimating]);
 
         return (
-                <div className="relative h-12 sm:h-14 md:h-16 lg:h-20 flex items-center justify-center">
-                        <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gray-700 font-logo font-light flex items-center">
-                                <AnimatePresence mode="wait">
+                <div className="relative h-14 sm:h-16 md:h-20 lg:h-24 flex items-center justify-center" suppressHydrationWarning>
+                        <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-logo font-light flex items-center justify-center" suppressHydrationWarning>
+                                <AnimatePresence mode="wait" initial={false}>
                                         <motion.span
                                                 key={currentIndex}
-                                                className="inline-block"
-                                                initial={{ opacity: 0, y: 20 }}
+                                                className="inline-flex min-w-[9ch] justify-end text-[#D4A024]"
+                                                initial={isAnimating ? { opacity: 0, y: 20 } : false}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -20 }}
-                                                transition={{ duration: 0.4 }}
+                                                transition={{ duration: 0.4, ease: "easeInOut" }}
+                                                suppressHydrationWarning
                                         >
-                                                {hasMounted ? prefixes[currentIndex] : prefixes[0]}
+                                                {FLIP_PREFIXES[currentIndex]}
                                         </motion.span>
                                 </AnimatePresence>
-                                <span>ized.</span>
+                                <span className="text-gray-700">ized.</span>
                         </div>
                 </div>
         );
