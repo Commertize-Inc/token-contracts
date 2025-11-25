@@ -343,30 +343,40 @@ const Hero = () => (
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ duration: 0.8, delay: 0.2 }}
-                                        className="max-w-2xl mx-auto text-gray-700 text-sm sm:text-base md:text-lg font-light"
+                                        className="max-w-2xl mx-auto text-gray-600 text-base sm:text-lg md:text-xl font-light"
                                 >
-                                        Your Gateway to Digital Real Estate
+                                        Your Gateway to Commercial Real Estate's Digital Future.
                                 </motion.p>
 
                                 <motion.div
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.8, delay: 0.3 }}
+                                        className="flex items-center gap-2 text-gray-600 text-sm sm:text-base font-light"
+                                >
+                                        <span>Welcome to</span>
+                                        <span className="font-logo tracking-widest text-gray-800">COMMERTIZE</span>
+                                </motion.div>
+
+                                <motion.div
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
                                         transition={{ duration: 0.8, delay: 0.4 }}
-                                        className="flex gap-3 sm:gap-4 justify-center mt-2"
+                                        className="flex gap-3 sm:gap-4 justify-center mt-4"
                                 >
                                         <motion.button
                                                 whileHover={{ scale: 1.02 }}
                                                 whileTap={{ scale: 0.98 }}
-                                                className="px-5 sm:px-8 py-2.5 sm:py-3 bg-white text-[#D4A024] rounded-lg text-sm sm:text-base font-light border-2 border-[#D4A024] shadow-lg hover:bg-[#D4A024] hover:text-white transition-colors"
+                                                className="px-6 sm:px-8 py-2.5 sm:py-3 bg-white text-[#D4A024] rounded-[0.75rem] text-sm sm:text-base font-light border-2 border-[#D4A024] hover:bg-[#D4A024]/5 transition-colors"
                                         >
-                                                Explore
+                                                Explore Marketplace
                                         </motion.button>
                                         <motion.button
                                                 whileHover={{ scale: 1.02 }}
                                                 whileTap={{ scale: 0.98 }}
-                                                className="px-5 sm:px-8 py-2.5 sm:py-3 bg-[#D4A024] text-white rounded-lg text-sm sm:text-base font-light hover:bg-[#B8881C] transition-colors"
+                                                className="px-6 sm:px-8 py-2.5 sm:py-3 bg-[#D4A024] text-white rounded-[0.75rem] text-sm sm:text-base font-light hover:bg-[#B8881C] transition-colors"
                                         >
-                                                Get Started
+                                                Join Waitlist
                                         </motion.button>
                                 </motion.div>
                         </div>
