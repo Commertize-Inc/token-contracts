@@ -235,43 +235,32 @@ const Navbar = () => {
         );
 };
 
-const FLIP_WORDS = ["Tokenized.", "Digitized.", "Fractionalized.", "Democratized.", "Modernized.", "Globalized.", "Revolutionized."];
-
 const FlippingText = () => {
+        const prefixes = ["Token", "Digit", "Fractional", "Democrat", "Collateral", "Modern", "Global", "Revolution"];
         const [currentIndex, setCurrentIndex] = useState(0);
-        const [mounted, setMounted] = useState(false);
+        const [animationKey, setAnimationKey] = useState(0);
 
         useEffect(() => {
-                setMounted(true);
-        }, []);
-
-        useEffect(() => {
-                if (!mounted) return;
-                
                 const interval = setInterval(() => {
-                        setCurrentIndex((prev) => (prev + 1) % FLIP_WORDS.length);
-                }, 3000);
+                        setAnimationKey(prev => prev + 1);
+                        setTimeout(() => {
+                                setCurrentIndex((prev) => (prev + 1) % prefixes.length);
+                        }, 100);
+                }, 2500);
                 return () => clearInterval(interval);
-        }, [mounted]);
+        }, [prefixes.length]);
 
         return (
-                <div className="relative h-16 sm:h-20 md:h-24 lg:h-28 flex items-center justify-center overflow-hidden" suppressHydrationWarning>
-                        <AnimatePresence mode="wait">
-                                <motion.span
-                                        key={currentIndex}
-                                        className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-logo font-light text-gray-600 absolute"
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        exit={{ opacity: 0 }}
-                                        transition={{ 
-                                                duration: 0.6,
-                                                ease: [0.4, 0, 0.2, 1]
-                                        }}
-                                        suppressHydrationWarning
+                <div className="relative h-12 sm:h-16 md:h-20 lg:h-24 flex items-center justify-center mt-4">
+                        <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gray-700 font-logo font-light flex items-baseline justify-center">
+                                <span 
+                                        key={animationKey}
+                                        className="text-flip inline-block"
                                 >
-                                        {FLIP_WORDS[currentIndex]}
-                                </motion.span>
-                        </AnimatePresence>
+                                        {prefixes[currentIndex]}
+                                </span>
+                                <span>ized.</span>
+                        </div>
                 </div>
         );
 };
