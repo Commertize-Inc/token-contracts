@@ -227,24 +227,20 @@ const FlippingText = () => {
         }, [hasMounted, words.length]);
 
         return (
-                <h2 className={styles.flippingTextContainer}>
-                        {hasMounted ? (
-                                <AnimatePresence mode="wait">
-                                        <motion.span
-                                                key={currentIndex}
-                                                className={styles.flippingTextWord}
-                                                initial={{ opacity: 0, y: 20 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                exit={{ opacity: 0, y: -20 }}
-                                                transition={{ duration: 0.4 }}
-                                        >
-                                                {words[currentIndex]}
-                                        </motion.span>
-                                </AnimatePresence>
-                        ) : (
-                                <span className={styles.flippingTextWord}>{words[0]}</span>
-                        )}
-                </h2>
+                <div className="relative h-12 sm:h-14 md:h-16 lg:h-20 flex items-center justify-center">
+                        <AnimatePresence mode="wait">
+                                <motion.span
+                                        key={currentIndex}
+                                        className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gray-700 font-logo font-light"
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -20 }}
+                                        transition={{ duration: 0.4 }}
+                                >
+                                        {hasMounted ? words[currentIndex] : words[0]}
+                                </motion.span>
+                        </AnimatePresence>
+                </div>
         );
 };
 
@@ -275,31 +271,71 @@ const CookieConsent = () => {
 };
 
 const Hero = () => (
-        <section className={styles.hero}>
-                <div className={styles.heroPattern}>
-                        <img src="/assets/hero-pattern.jpg" alt="" className={styles.heroPatternImage} />
-                        <div className={styles.heroPatternOverlay} />
+        <section className="relative h-screen flex items-center justify-center overflow-hidden">
+                <div className="absolute inset-0">
+                        <motion.div 
+                                className="absolute inset-0 bg-cover bg-center"
+                                style={{ 
+                                        backgroundImage: `url('/assets/hero-pattern.jpg')`,
+                                        backgroundSize: 'cover',
+                                        backgroundPosition: 'center'
+                                }}
+                                animate={{ scale: [1.0, 1.25] }}
+                                transition={{
+                                        duration: 12,
+                                        repeat: Infinity,
+                                        ease: "easeInOut",
+                                        repeatType: "reverse"
+                                }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/70 via-white/50 to-gray-50/40"></div>
                 </div>
 
-                <div className={styles.heroCenter}>
-                        <h1 className={styles.heroTitle}>Commercial Real Estate</h1>
-                        <FlippingText />
-                        
-                        <p className={styles.heroTagline}>
-                                Your Gateway to Commercial Real Estate's Digital Future.
-                        </p>
-                        
-                        <p className={styles.heroWelcome}>
-                                Welcome to <span className={styles.heroWelcomeBrand}>COMMERTIZE</span>
-                        </p>
+                <div className="container relative z-10 px-4">
+                        <div className="max-w-5xl mx-auto text-center flex flex-col items-center gap-4 sm:gap-6">
+                                <motion.div
+                                        initial={{ opacity: 0, y: 30 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.8, ease: "easeOut" }}
+                                >
+                                        <h1 className="text-gray-900 font-logo">
+                                                <span className="block font-extralight text-lg sm:text-xl md:text-2xl lg:text-3xl mb-1">
+                                                        Commercial Real Estate
+                                                </span>
+                                                <FlippingText />
+                                        </h1>
+                                </motion.div>
 
-                        <div className={styles.heroButtons}>
-                                <Link href="#marketplace">
-                                        <button className={styles.heroBtnOutlined}>Explore Marketplace</button>
-                                </Link>
-                                <Link href="#waitlist">
-                                        <button className={styles.heroBtnPrimary}>Join Waitlist</button>
-                                </Link>
+                                <motion.p
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.8, delay: 0.2 }}
+                                        className="max-w-2xl mx-auto text-gray-700 text-sm sm:text-base md:text-lg font-light"
+                                >
+                                        Your Gateway to Digital Real Estate
+                                </motion.p>
+
+                                <motion.div
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.8, delay: 0.4 }}
+                                        className="flex gap-3 sm:gap-4 justify-center mt-2"
+                                >
+                                        <motion.button
+                                                whileHover={{ scale: 1.02 }}
+                                                whileTap={{ scale: 0.98 }}
+                                                className="px-5 sm:px-8 py-2.5 sm:py-3 bg-white text-[#D4A024] rounded-lg text-sm sm:text-base font-light border-2 border-[#D4A024] shadow-lg hover:bg-[#D4A024] hover:text-white transition-colors"
+                                        >
+                                                Explore
+                                        </motion.button>
+                                        <motion.button
+                                                whileHover={{ scale: 1.02 }}
+                                                whileTap={{ scale: 0.98 }}
+                                                className="px-5 sm:px-8 py-2.5 sm:py-3 bg-[#D4A024] text-white rounded-lg text-sm sm:text-base font-light hover:bg-[#B8881C] transition-colors"
+                                        >
+                                                Get Started
+                                        </motion.button>
+                                </motion.div>
                         </div>
                 </div>
 
