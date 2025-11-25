@@ -351,10 +351,10 @@ const Hero = () => (
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ duration: 0.8, delay: 0.3 }}
-                                        className="flex items-center gap-3 text-gray-600 text-sm sm:text-base font-light"
+                                        className="flex items-center gap-2 text-gray-500 text-sm sm:text-base font-light"
                                 >
                                         <span>Welcome to</span>
-                                        <Logo src="/assets/logo.png" width={140} height={45} />
+                                        <span className="font-logo tracking-[0.2em] text-gray-700 text-sm sm:text-base">COMMERTIZE</span>
                                 </motion.div>
 
                                 <motion.div
