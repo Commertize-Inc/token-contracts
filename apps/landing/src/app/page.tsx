@@ -209,7 +209,7 @@ const Navbar = () => {
 };
 
 const FlippingText = () => {
-        const prefixes = ["Token", "Digit", "Fractional", "Democrat", "Modern", "Global"];
+        const words = ["Tokenized.", "Digitized.", "Fractionalized.", "Democratized.", "Modernized.", "Globalized."];
         const [currentIndex, setCurrentIndex] = useState(0);
         const [hasMounted, setHasMounted] = useState(false);
 
@@ -221,117 +221,89 @@ const FlippingText = () => {
                 if (!hasMounted) return;
                 
                 const interval = setInterval(() => {
-                        setCurrentIndex((prev) => (prev + 1) % prefixes.length);
+                        setCurrentIndex((prev) => (prev + 1) % words.length);
                 }, 2500);
                 return () => clearInterval(interval);
-        }, [hasMounted, prefixes.length]);
+        }, [hasMounted, words.length]);
 
         return (
-                <div className={styles.flippingTextContainer}>
+                <h2 className={styles.flippingTextContainer}>
                         {hasMounted ? (
                                 <AnimatePresence mode="wait">
                                         <motion.span
                                                 key={currentIndex}
-                                                className={styles.flippingTextPrefix}
+                                                className={styles.flippingTextWord}
                                                 initial={{ opacity: 0, y: 20 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -20 }}
                                                 transition={{ duration: 0.4 }}
                                         >
-                                                {prefixes[currentIndex]}
+                                                {words[currentIndex]}
                                         </motion.span>
                                 </AnimatePresence>
                         ) : (
-                                <span className={styles.flippingTextPrefix}>{prefixes[0]}</span>
+                                <span className={styles.flippingTextWord}>{words[0]}</span>
                         )}
-                        <span className={styles.flippingTextSuffix}>ized.</span>
+                </h2>
+        );
+};
+
+const CookieConsent = () => {
+        const [isVisible, setIsVisible] = useState(true);
+
+        if (!isVisible) return null;
+
+        return (
+                <div className={styles.cookieConsent}>
+                        <button className={styles.cookieClose} onClick={() => setIsVisible(false)}>
+                                <X size={16} />
+                        </button>
+                        <h4 className={styles.cookieTitle}>Cookie Settings</h4>
+                        <p className={styles.cookieText}>
+                                We use cookies to enhance your browsing experience, serve personalized content, and analyze our traffic. Please choose your preference.
+                        </p>
+                        <div className={styles.cookieButtons}>
+                                <button className={styles.cookieBtnReject} onClick={() => setIsVisible(false)}>
+                                        Reject All
+                                </button>
+                                <button className={styles.cookieBtnAccept} onClick={() => setIsVisible(false)}>
+                                        Accept All
+                                </button>
+                        </div>
                 </div>
         );
 };
 
 const Hero = () => (
         <section className={styles.hero}>
-                <motion.div 
-                        className={styles.heroBgImage}
-                        style={{ backgroundImage: `url(/assets/hero-new.jpg)` }}
-                        animate={{ scale: [1.0, 1.25] }}
-                        transition={{ duration: 12, repeat: Infinity, repeatType: "reverse", ease: "linear" }}
-                />
-                <div className={styles.heroBgOverlay} />
+                <div className={styles.heroPattern}>
+                        <img src="/assets/hero-pattern.jpg" alt="" className={styles.heroPatternImage} />
+                        <div className={styles.heroPatternOverlay} />
+                </div>
 
-                <div className={`${styles.container} ${styles.heroContent}`}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                                <h1 className={styles.heroTitle}>
-                                        Commercial Real Estate.
-                                </h1>
-                                <FlippingText />
+                <div className={styles.heroCenter}>
+                        <h1 className={styles.heroTitle}>Commercial Real Estate</h1>
+                        <FlippingText />
+                        
+                        <p className={styles.heroTagline}>
+                                Your Gateway to Commercial Real Estate's Digital Future.
+                        </p>
+                        
+                        <p className={styles.heroWelcome}>
+                                Welcome to <span className={styles.heroWelcomeBrand}>COMMERTIZE</span>
+                        </p>
 
-                                <p className={styles.heroDesc}>
-                                        Your Gateway to Digital Real Estate. The first fully liquid, transparent, and global commercial real estate marketplace.
-                                </p>
-
-                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', paddingTop: '1rem' }}>
-                                        <Link href="#subscribe">
-                                                <Button style={{ height: '3.5rem', padding: '0 2.5rem', fontSize: '1rem' }}>
-                                                        View Properties
-                                                </Button>
-                                        </Link>
-                                        <Link href="#contact">
-                                                <Button variant="outlined" style={{ height: '3.5rem', padding: '0 2.5rem', fontSize: '1rem' }}>
-                                                        Contact Us
-                                                </Button>
-                                        </Link>
-                                </div>
-
-                                <div className={styles.heroStats}>
-                                        {MOCK_STATS.map((stat) => (
-                                                <div key={stat.label}>
-                                                        <div className={styles.statValue}>{stat.value}</div>
-                                                        <div className={styles.statLabel}>{stat.label}</div>
-                                                </div>
-                                        ))}
-                                </div>
-                        </div>
-
-                        {/* Hero Visual */}
-                        <div className={styles.heroVisual}>
-                                <div className={styles.visualGlow} />
-
-                                {/* Card 1: The Asset */}
-                                <div className={styles.cardAsset}>
-                                        <div className={styles.cardImage}>
-                                                <div className={styles.cardImageBg} />
-                                                <div className={styles.cardTag}>Class A Office</div>
-                                        </div>
-                                        <div className={styles.flexBetween} style={{ alignItems: 'flex-end' }}>
-                                                <div>
-                                                        <h3 style={{ fontSize: '1.125rem', fontWeight: '700', color: '#0f172a' }}>Skyline Tower I</h3>
-                                                        <p style={{ fontSize: '0.875rem', color: '#64748b' }}>Manhattan, NY</p>
-                                                </div>
-                                                <div style={{ textAlign: 'right' }}>
-                                                        <div style={{ fontSize: '0.875rem', color: '#94a3b8' }}>Target IRR</div>
-                                                        <div className={styles.financialData} style={{ fontSize: '1.25rem' }}>14.2%</div>
-                                                </div>
-                                        </div>
-                                </div>
-
-                                {/* Card 2: The Graph */}
-                                <div className={styles.cardGraph}>
-                                        <div className={styles.flexCenter} style={{ justifyContent: 'flex-start', gap: '0.75rem', marginBottom: '1rem' }}>
-                                                <div style={{ padding: '0.5rem', backgroundColor: '#dcfce7', color: '#15803d', borderRadius: '0.5rem' }}><Activity size={18} /></div>
-                                                <div>
-                                                        <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: '700', textTransform: 'uppercase' }}>Distributions Paid</div>
-                                                        <div className={styles.financialDataNeutral} style={{ fontSize: '1.125rem' }}>$245,000</div>
-                                                </div>
-                                        </div>
-                                        <div className={styles.graphBars}>
-                                                {[40, 65, 55, 80, 70, 90, 85].map((h, i) => (
-                                                        <div key={i} style={{ height: `${h}%` }} className={styles.graphBar} />
-                                                ))}
-                                        </div>
-                                </div>
+                        <div className={styles.heroButtons}>
+                                <Link href="#marketplace">
+                                        <button className={styles.heroBtnOutlined}>Explore Marketplace</button>
+                                </Link>
+                                <Link href="#waitlist">
+                                        <button className={styles.heroBtnPrimary}>Join Waitlist</button>
+                                </Link>
                         </div>
                 </div>
+
+                <CookieConsent />
         </section>
 );
 
