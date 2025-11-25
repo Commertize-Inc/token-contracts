@@ -10,9 +10,6 @@ const nextConfig: NextConfig = {
         turbopack: {
                 root: monorepoRoot,
         },
-        experimental: {
-                allowedOrigins: ["*"],
-        },
 };
 
 export default nextConfig;
