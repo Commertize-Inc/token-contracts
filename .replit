@@ -39,18 +39,14 @@ localPort = 3000
 externalPort = 3001
 
 [[ports]]
-localPort = 5000
-externalPort = 80
-
-[[ports]]
-localPort = 33173
-externalPort = 3000
-
-[[ports]]
 localPort = 3001
 externalPort = 3001
 
+[[ports]]
+localPort = 5000
+externalPort = 80
+
 [deployment]
 deploymentTarget = "autoscale"
-run = ["pnpm", "--filter", "@commertize/dashboard", "start"]
-build = ["pnpm", "install", "--frozen-lockfile"]
+run = ["bash", "-c", "cd apps/landing && pnpm start"]
+build = ["bash", "-c", "pnpm install --frozen-lockfile && cd apps/landing && pnpm build"]
