@@ -475,9 +475,21 @@
   min-height: 100vh;
   display: flex;
   align-items: center;
-  padding-top: 5rem;
   overflow: hidden;
-  background-color: #FAFAF9;
+}
+
+.heroBgImage {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  will-change: transform;
+}
+
+.heroBgOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.55), rgba(249, 250, 251, 0.45));
 }
 
 .heroBgRight {
@@ -500,6 +512,37 @@
   background-color: rgba(197, 155, 38, 0.05);
   border-radius: 9999px;
   filter: blur(64px);
+}
+
+/* Flipping Text */
+.flippingTextContainer {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  font-size: 3.75rem;
+  font-family: var(--font-serif);
+  font-weight: 500;
+  color: #1f2937;
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+  margin-top: 0.5rem;
+  perspective: 1000px;
+}
+
+@media (min-width: 768px) {
+  .flippingTextContainer {
+    font-size: 6rem;
+  }
+}
+
+.flippingTextPrefix {
+  display: inline-block;
+  color: #0f172a;
+}
+
+
+.flippingTextSuffix {
+  color: #1f2937;
 }
 
 .heroContent {
