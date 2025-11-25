@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Plus_Jakarta_Sans, Space_Mono } from "next/font/google";
+import { Playfair_Display, Plus_Jakarta_Sans, Space_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
 // 1. Configure the Serif (Institutional) Font
@@ -24,6 +24,14 @@ const spaceMono = Space_Mono({
   variable: "--font-space",
 });
 
+// 4. Configure Space Grotesk (Logo/Hero Font - Light 300)
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["300", "400", "500"],
+  display: "swap",
+  variable: "--font-grotesk",
+});
+
 export const metadata: Metadata = {
   title: "Commertize | Tokenized Real Estate Investment",
   description: "Democratizing access to premium real estate investments through blockchain technology.",
@@ -39,7 +47,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${playfair.variable} ${jakarta.variable} ${spaceMono.variable}`}>
+    <html lang="en" className={`${playfair.variable} ${jakarta.variable} ${spaceMono.variable} ${spaceGrotesk.variable}`}>
       <body>
         {children}
       </body>
