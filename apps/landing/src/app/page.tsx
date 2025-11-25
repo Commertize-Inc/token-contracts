@@ -31,7 +31,8 @@ import {
         Wind,
         Calendar,
         Clock,
-        ArrowRight
+        ArrowRight,
+        MapPin
 } from 'lucide-react';
 import Link from 'next/link';
 import styles from './page.module.css';
@@ -39,10 +40,39 @@ import { Button, Logo } from '@commertize/ui';
 
 // --- Mock Data ---
 const MOCK_PROPERTIES = [
-        { id: 1, title: 'Highland Logistics Hub', type: 'Industrial', location: 'Austin, TX', return: '12.5%', funded: 78, min: '25k', valuation: '42.5M' },
-        { id: 2, title: 'Azure Bay Residences', type: 'Multi-Family', location: 'Miami, FL', return: '9.2%', funded: 100, min: '10k', valuation: '18.2M' },
-        { id: 3, title: 'Tech Park Plaza', type: 'Office', location: 'San Francisco, CA', return: '14.0%', funded: 35, min: '50k', valuation: '115M' },
-        { id: 4, title: 'Meridian Cold Storage', type: 'Industrial', location: 'Chicago, IL', return: '11.8%', funded: 12, min: '25k', valuation: '33.1M' },
+        { 
+                id: 1, 
+                title: 'DoubleTree Hilton Head Inn', 
+                type: 'HOTEL', 
+                location: '36 S Forest Beach Dr, Hilton Head Island, SC', 
+                sponsor: 'Passive Partners Capital',
+                status: 'Funding Opens Soon',
+                funded: 0, 
+                units: 79,
+                comingSoon: true
+        },
+        { 
+                id: 2, 
+                title: 'Boardwalk Suites Lafayette', 
+                type: 'HOTEL', 
+                location: '1605 N University Ave Lafayette, LA', 
+                sponsor: 'Passive Partners Capital',
+                status: 'Funding Opens Soon',
+                funded: 0, 
+                units: 140,
+                comingSoon: true
+        },
+        { 
+                id: 3, 
+                title: 'National Hotel under conversion to Hilton', 
+                type: 'HOTEL', 
+                location: '2 Water St Jackson, CA', 
+                sponsor: 'Passive Partners Capital',
+                status: 'Funding Opens Soon',
+                funded: 0, 
+                units: 36,
+                comingSoon: true
+        },
 ];
 
 const MOCK_STATS = [
@@ -569,25 +599,54 @@ const CommertizeCollection = () => (
                                                 transition={{ duration: 0.6, delay: index * 0.1 }}
                                                 className="bg-white rounded-2xl border-2 border-[#D4A024] overflow-hidden hover:shadow-xl transition-all duration-300"
                                         >
-                                                <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                                                <div className="relative h-48 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
                                                         <Building2 size={64} className="text-[#D4A024]/30" />
+                                                        {property.comingSoon && (
+                                                                <div className="absolute top-4 left-4 px-3 py-1 bg-[#F59E0B] text-white text-xs font-light rounded-[0.75rem]">
+                                                                        COMING SOON
+                                                                </div>
+                                                        )}
                                                 </div>
-                                                <div className="p-6">
-                                                        <div className="flex items-center gap-2 mb-2">
-                                                                <span className="px-2 py-1 bg-[#D4A024]/10 text-[#D4A024] text-xs font-light rounded-full">{property.type}</span>
+                                                <div className="p-5">
+                                                        <div className="flex items-start justify-between gap-2 mb-3">
+                                                                <h3 className="text-lg font-logo font-light text-gray-900 leading-tight">{property.title}</h3>
+                                                                <span className="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-light rounded-[0.75rem] whitespace-nowrap border border-gray-200">{property.type}</span>
                                                         </div>
-                                                        <h3 className="text-lg font-logo font-light text-gray-900 mb-1">{property.title}</h3>
-                                                        <p className="text-sm text-gray-500 mb-4">{property.location}</p>
-                                                        <div className="flex justify-between text-sm">
-                                                                <div>
-                                                                        <div className="text-gray-500">Target Return</div>
-                                                                        <div className="font-light text-[#D4A024]">{property.return}</div>
-                                                                </div>
-                                                                <div>
-                                                                        <div className="text-gray-500">Min. Investment</div>
-                                                                        <div className="font-light">${property.min}</div>
-                                                                </div>
+                                                        <div className="flex items-center gap-1 text-sm text-gray-500 mb-4">
+                                                                <MapPin size={14} className="text-[#D4A024]" />
+                                                                <span className="font-light">{property.location}</span>
                                                         </div>
+                                                        
+                                                        <div className="mb-3">
+                                                                <div className="text-xs text-gray-400 font-light">Sponsor</div>
+                                                                <div className="text-sm text-gray-700 font-light">{property.sponsor}</div>
+                                                        </div>
+                                                        
+                                                        <div className="flex items-center justify-between mb-3">
+                                                                <span className="text-sm text-gray-500 font-light">{property.status}</span>
+                                                                <span className="text-sm text-gray-500 font-light">{property.funded}%</span>
+                                                        </div>
+                                                        <div className="w-full h-1.5 bg-gray-100 rounded-full mb-4">
+                                                                <div 
+                                                                        className="h-full bg-[#D4A024] rounded-full transition-all duration-500"
+                                                                        style={{ width: `${property.funded}%` }}
+                                                                />
+                                                        </div>
+                                                        
+                                                        <div className="text-center mb-4">
+                                                                <div className="text-sm text-gray-700 font-light">More Details Coming Soon</div>
+                                                                <div className="text-xs text-gray-400 font-light">Investment details available shortly.</div>
+                                                        </div>
+                                                        
+                                                        <div className="flex items-center justify-center mb-4">
+                                                                <span className="px-4 py-1.5 border border-gray-200 text-gray-600 text-sm font-light rounded-[0.75rem]">
+                                                                        {property.units} Units
+                                                                </span>
+                                                        </div>
+                                                        
+                                                        <button className="w-full py-3 bg-[#D4A024] text-white text-sm font-light rounded-[0.75rem] hover:bg-[#B8860B] transition-colors">
+                                                                View Property
+                                                        </button>
                                                 </div>
                                         </motion.div>
                                 ))}
@@ -1148,7 +1207,7 @@ const Portal = ({ onLogout }: PortalProps) => {
                                                         {/* Active Listings Table Section */}
                                                         <div className={styles.tableContainer}>
                                                                 <div className={styles.tableHeader}>
-                                                                        <h3 style={{ fontWeight: '700', fontSize: '1.125rem', color: '#0f172a' }}>Live Opportunities</h3>
+                                                                        <h3 style={{ fontWeight: '300', fontSize: '1.125rem', color: '#0f172a' }}>Upcoming Opportunities</h3>
                                                                         <div style={{ display: 'flex', gap: '0.5rem' }}>
                                                                                 <button style={{ padding: '0.5rem', borderRadius: '0.25rem', color: '#94a3b8' }}><Filter size={18} /></button>
                                                                         </div>
@@ -1159,9 +1218,8 @@ const Portal = ({ onLogout }: PortalProps) => {
                                                                                         <tr>
                                                                                                 <th className={styles.th}>Property</th>
                                                                                                 <th className={styles.th}>Type</th>
-                                                                                                <th className={styles.th}>Valuation</th>
-                                                                                                <th className={styles.th}>Target Return</th>
-                                                                                                <th className={styles.th}>Min. Investment</th>
+                                                                                                <th className={styles.th}>Sponsor</th>
+                                                                                                <th className={styles.th}>Units</th>
                                                                                                 <th className={styles.th}>Status</th>
                                                                                                 <th className={styles.th}></th>
                                                                                         </tr>
@@ -1170,24 +1228,18 @@ const Portal = ({ onLogout }: PortalProps) => {
                                                                                         {MOCK_PROPERTIES.map((prop) => (
                                                                                                 <tr key={prop.id} className={styles.tableRow}>
                                                                                                         <td className={styles.td}>
-                                                                                                                <div style={{ fontWeight: '700', color: '#0f172a' }}>{prop.title}</div>
+                                                                                                                <div style={{ fontWeight: '300', color: '#0f172a' }}>{prop.title}</div>
                                                                                                                 <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{prop.location}</div>
                                                                                                         </td>
                                                                                                         <td className={styles.td} style={{ fontSize: '0.875rem', color: '#475569' }}>{prop.type}</td>
                                                                                                         <td className={styles.td}>
-                                                                                                                <span className={styles.financialDataNeutral} style={{ fontSize: '0.875rem' }}>${prop.valuation}</span>
+                                                                                                                <span className={styles.financialDataNeutral} style={{ fontSize: '0.875rem' }}>{prop.sponsor}</span>
                                                                                                         </td>
                                                                                                         <td className={styles.td}>
-                                                                                                                <span className={styles.financialData} style={{ fontSize: '0.875rem', color: '#16a34a' }}>{prop.return}</span>
+                                                                                                                <span className={styles.financialData} style={{ fontSize: '0.875rem', color: '#475569' }}>{prop.units} Units</span>
                                                                                                         </td>
                                                                                                         <td className={styles.td}>
-                                                                                                                <span className={styles.financialDataNeutral} style={{ fontSize: '0.875rem', color: '#475569' }}>${prop.min}</span>
-                                                                                                        </td>
-                                                                                                        <td className={styles.td}>
-                                                                                                                <div className={styles.progressBar}>
-                                                                                                                        <div className={styles.progressFill} style={{ width: `${prop.funded}%` }}></div>
-                                                                                                                </div>
-                                                                                                                <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.25rem' }}>{prop.funded}% Funded</div>
+                                                                                                                <span style={{ fontSize: '0.75rem', color: '#F59E0B', fontWeight: '300' }}>{prop.status}</span>
                                                                                                         </td>
                                                                                                         <td className={styles.td} style={{ textAlign: 'right' }}>
                                                                                                                 <button className={styles.viewDealBtn}>View Deal</button>
