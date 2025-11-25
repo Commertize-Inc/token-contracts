@@ -49,7 +49,8 @@ const MOCK_PROPERTIES = [
                 status: 'Funding Opens Soon',
                 funded: 0, 
                 units: 79,
-                comingSoon: true
+                comingSoon: true,
+                image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=400&fit=crop'
         },
         { 
                 id: 2, 
@@ -60,7 +61,8 @@ const MOCK_PROPERTIES = [
                 status: 'Funding Opens Soon',
                 funded: 0, 
                 units: 140,
-                comingSoon: true
+                comingSoon: true,
+                image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=600&h=400&fit=crop'
         },
         { 
                 id: 3, 
@@ -71,7 +73,8 @@ const MOCK_PROPERTIES = [
                 status: 'Funding Opens Soon',
                 funded: 0, 
                 units: 36,
-                comingSoon: true
+                comingSoon: true,
+                image: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600&h=400&fit=crop'
         },
 ];
 
@@ -599,8 +602,18 @@ const CommertizeCollection = () => (
                                                 transition={{ duration: 0.6, delay: index * 0.1 }}
                                                 className="bg-white rounded-2xl border-2 border-[#D4A024] overflow-hidden hover:shadow-xl transition-all duration-300"
                                         >
-                                                <div className="relative h-48 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-                                                        <Building2 size={64} className="text-[#D4A024]/30" />
+                                                <div className="relative h-48 bg-gradient-to-br from-gray-200 to-gray-300 overflow-hidden">
+                                                        {property.image ? (
+                                                                <img 
+                                                                        src={property.image} 
+                                                                        alt={property.title}
+                                                                        className="w-full h-full object-cover"
+                                                                />
+                                                        ) : (
+                                                                <div className="w-full h-full flex items-center justify-center">
+                                                                        <Building2 size={64} className="text-[#D4A024]/30" />
+                                                                </div>
+                                                        )}
                                                         {property.comingSoon && (
                                                                 <div className="absolute top-4 left-4 px-3 py-1 bg-[#F59E0B] text-white text-xs font-light rounded-[0.75rem]">
                                                                         COMING SOON
