@@ -125,7 +125,7 @@ const Navbar = () => {
                         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                                 <div className="flex items-center justify-between h-16">
                                         <Link href="/" className="flex-shrink-0">
-                                                <Logo src="/assets/logo.png" width={200} height={65} />
+                                                <Logo src="/assets/logo.png" width={240} height={75} />
                                         </Link>
 
                                         <div className="hidden md:flex items-center gap-6 lg:gap-8">
