@@ -388,13 +388,13 @@ const AboutUs = () => {
         const companyName = "Commertize";
 
         return (
-                <section id="about" className="pt-20 relative overflow-hidden min-h-[600px]">
+                <section id="about" className="relative overflow-hidden min-h-[800px]">
                         <div className="absolute inset-0">
                                 <motion.div
                                         className="absolute inset-0"
-                                        animate={{ scale: [1.0, 1.4] }}
+                                        animate={{ scale: [1.0, 1.15] }}
                                         transition={{
-                                                duration: 20,
+                                                duration: 25,
                                                 repeat: Infinity,
                                                 ease: "easeInOut",
                                                 repeatType: "reverse"
@@ -406,65 +406,83 @@ const AboutUs = () => {
                                                 className="w-full h-full object-cover"
                                         />
                                 </motion.div>
-                                <div className="absolute inset-0 bg-black/50"></div>
+                                <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50"></div>
                         </div>
 
-                        <div className="container relative z-10 px-4">
+                        <div className="container relative z-10 px-4 py-20 md:py-28">
                                 <motion.div 
-                                        className="max-w-3xl mx-auto"
-                                        initial={{ opacity: 0, y: 100 }}
+                                        className="max-w-4xl mx-auto"
+                                        initial={{ opacity: 0, y: 60 }}
                                         whileInView={{ opacity: 1, y: 0 }}
-                                        viewport={{ once: true, amount: 0.3 }}
-                                        transition={{ duration: 1.2, ease: "easeOut" }}
+                                        viewport={{ once: true, amount: 0.2 }}
+                                        transition={{ duration: 1, ease: "easeOut" }}
                                 >
                                         <motion.h2 
-                                                className="text-3xl font-logo font-light text-center mb-8 text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]"
-                                                initial={{ opacity: 0, scale: 0.8 }}
-                                                whileInView={{ opacity: 1, scale: 1 }}
+                                                className="text-3xl md:text-4xl font-logo font-light text-center mb-10 text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.9)]"
+                                                initial={{ opacity: 0, y: 30 }}
+                                                whileInView={{ opacity: 1, y: 0 }}
                                                 viewport={{ once: true, amount: 0.5 }}
                                                 transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
                                         >
                                                 The {companyName} Vision
                                         </motion.h2>
                                         
-                                        <div className="prose max-w-none text-center">
+                                        <div className="prose max-w-none text-center space-y-6">
                                                 <motion.p 
-                                                        className="text-lg md:text-xl font-logo font-light text-white mb-6 drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]"
-                                                        initial={{ opacity: 0, x: -50 }}
-                                                        whileInView={{ opacity: 1, x: 0 }}
+                                                        className="text-base md:text-lg font-logo font-light text-white/95 leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
+                                                        initial={{ opacity: 0, y: 20 }}
+                                                        whileInView={{ opacity: 1, y: 0 }}
                                                         viewport={{ once: true, amount: 0.3 }}
-                                                        transition={{ duration: 0.9, delay: 0.4, ease: "easeOut" }}
+                                                        transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
                                                 >
-                                                        {companyName} is building the next-generation platform for commercial real estate, merging the power of AI, blockchain tokenization, and decentralized finance (DeFi).
+                                                        {companyName} is building the next-generation platform and ecosystem for commercial real estate and infrastructure, merging the power of AI, blockchain, tokenization, and decentralized finance (DeFi) into one intelligent network.
                                                 </motion.p>
                                                 <motion.p 
-                                                        className="text-lg md:text-xl font-logo font-light text-white mb-6 drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]"
-                                                        initial={{ opacity: 0, x: 50 }}
-                                                        whileInView={{ opacity: 1, x: 0 }}
+                                                        className="text-base md:text-lg font-logo font-light text-white/95 leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
+                                                        initial={{ opacity: 0, y: 20 }}
+                                                        whileInView={{ opacity: 1, y: 0 }}
                                                         viewport={{ once: true, amount: 0.3 }}
-                                                        transition={{ duration: 0.9, delay: 0.6, ease: "easeOut" }}
+                                                        transition={{ duration: 0.8, delay: 0.45, ease: "easeOut" }}
                                                 >
-                                                        Our mission is to create the digital foundation that connects real-world assets to global capital markets.
+                                                        Our mission is to create the digital foundation that connects real-world assets to global capital markets—enhancing liquidity, transparency, and access across the commercial real estate landscape.
+                                                </motion.p>
+                                                <motion.p 
+                                                        className="text-base md:text-lg font-logo font-light text-white/95 leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
+                                                        initial={{ opacity: 0, y: 20 }}
+                                                        whileInView={{ opacity: 1, y: 0 }}
+                                                        viewport={{ once: true, amount: 0.3 }}
+                                                        transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
+                                                >
+                                                        Through AI-driven analytics, blockchain-enabled trust, and a compliant financial infrastructure, {companyName} empowers investors and property owners to own, trade, and build the next era of real estate finance.
+                                                </motion.p>
+                                                <motion.p 
+                                                        className="text-base md:text-lg font-logo font-light text-white/95 leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
+                                                        initial={{ opacity: 0, y: 20 }}
+                                                        whileInView={{ opacity: 1, y: 0 }}
+                                                        viewport={{ once: true, amount: 0.3 }}
+                                                        transition={{ duration: 0.8, delay: 0.75, ease: "easeOut" }}
+                                                >
+                                                        From office buildings and multifamily properties to data centers, solar farms, and sustainable infrastructure, {companyName} is redefining how the world invests in the built environment—making real assets as dynamic, efficient, and borderless as digital ones.
                                                 </motion.p>
                                         </div>
                                 </motion.div>
                         </div>
 
-                        <div className="relative h-16 md:h-20 flex items-center overflow-hidden w-full pb-8">
+                        <div className="absolute bottom-0 left-0 right-0 h-20 md:h-24 flex items-center overflow-hidden">
                                 <motion.div
                                         animate={{ x: [0, -1600] }}
                                         transition={{
-                                                duration: 20,
+                                                duration: 25,
                                                 repeat: Infinity,
                                                 ease: "linear",
                                                 repeatType: "loop"
                                         }}
-                                        className="flex items-center space-x-24 whitespace-nowrap"
+                                        className="flex items-center space-x-32 whitespace-nowrap"
                                         style={{ minWidth: "3200px" }}
                                 >
-                                        {["Digital Assets, Real-World Value", "Shaping the Future of Ownership", 
-                                                "Digital Assets, Real-World Value", "Shaping the Future of Ownership",
-                                                "Digital Assets, Real-World Value", "Shaping the Future of Ownership"].map((phrase, index) => (
+                                        {["Shaping the Future of Ownership", "Digital Assets, Real-World Value", 
+                                                "Shaping the Future of Ownership", "Digital Assets, Real-World Value",
+                                                "Shaping the Future of Ownership", "Digital Assets, Real-World Value"].map((phrase, index) => (
                                                 <motion.div
                                                         key={`${phrase}-${index}`}
                                                         whileHover={{ 
@@ -475,7 +493,7 @@ const AboutUs = () => {
                                                         className="cursor-pointer group flex-shrink-0"
                                                         style={{ minWidth: "500px", textAlign: "center" }}
                                                 >
-                                                        <span className="text-2xl md:text-3xl font-logo font-light text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
+                                                        <span className="text-xl md:text-2xl font-logo font-light text-white/90 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
                                                                 {phrase}
                                                         </span>
                                                 </motion.div>
