@@ -125,7 +125,7 @@ const Navbar = () => {
                         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                                 <div className="flex items-center justify-between h-16">
                                         <Link href="/" className="flex-shrink-0">
-                                                <Logo src="/assets/logo.png" width={220} height={70} />
+                                                <Logo src="/assets/logo.png" width={180} height={60} />
                                         </Link>
 
                                         <div className="hidden md:flex items-center gap-6 lg:gap-8">
@@ -318,7 +318,7 @@ const Hero = () => (
                                         repeatType: "reverse"
                                 }}
                         />
-                        <div className="absolute inset-0 bg-gradient-to-br from-white/70 via-white/50 to-gray-50/40"></div>
+                        <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-white/70 to-white/60"></div>
                 </div>
 
                 <div className="container relative z-10 px-4">
