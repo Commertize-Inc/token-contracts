@@ -46,6 +46,11 @@ The project uses **pnpm workspaces** to manage a monorepo with the following str
 
 **Design Philosophy**: Premium, trustworthy aesthetic using glassmorphism, subtle animations, and clean data presentation. The color palette centers on Commertize Gold (`#C59B26`) combined with neutral slate tones.
 
+**Hero Section Animations** (Landing Page):
+- **FlippingText Component**: Uses framer-motion `AnimatePresence` to cycle through prefixes ("Token", "Digit", "Fractional", "Democrat", "Modern", "Global") + "ized." suffix every 2.5 seconds
+- **Background Zoom**: Continuous zoom animation (1.0 to 1.25 scale over 12s infinite loop) using framer-motion on the hero background image
+- **Hydration Pattern**: Uses `hasMounted` state to defer animations until after hydration, preventing SSR/client divergence. Server renders static text while client renders animated version.
+
 ### Authentication & Authorization
 
 **Primary Provider**: Privy (`@privy-io/react-auth` and `@privy-io/server-auth`)
