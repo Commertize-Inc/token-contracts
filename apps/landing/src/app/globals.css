@@ -102,3 +102,122 @@
   transform-style: preserve-3d;
   display: inline-block;
 }
+
+/* Custom scrolling animation */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 15s linear infinite;
+}
+
+/* Sliding background animation */
+@keyframes slide {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(40px);
+  }
+}
+
+/* Shimmer animation for gold border effect */
+@keyframes shimmer {
+  0% {
+    background-position: -400% 0;
+  }
+  100% {
+    background-position: 400% 0;
+  }
+}
+
+/* Moving pulse animation */
+@keyframes movingPulse {
+  0% {
+    top: -6px;
+    left: -6px;
+    opacity: 1;
+  }
+  25% {
+    top: -6px;
+    left: calc(100% - 6px);
+    opacity: 0.8;
+  }
+  50% {
+    top: calc(100% - 6px);
+    left: calc(100% - 6px);
+    opacity: 0.6;
+  }
+  75% {
+    top: calc(100% - 6px);
+    left: -6px;
+    opacity: 0.8;
+  }
+  100% {
+    top: -6px;
+    left: -6px;
+    opacity: 1;
+  }
+}
+
+.moving-pulse {
+  animation: movingPulse 6s linear infinite;
+}
+
+/* Smooth scrolling animation for analytics */
+@keyframes scroll-analytics {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Slow moving background animation */
+@keyframes slowPan {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-slow-pan {
+  animation: slowPan 20s ease-in-out infinite;
+}
+
+/* Gold scrollbar styling */
+.gold-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #D4A024 #f1f1f1;
+}
+
+.gold-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.gold-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.gold-scrollbar::-webkit-scrollbar-thumb {
+  background: #D4A024;
+  border-radius: 4px;
+  border: 1px solid #be8d00;
+}
+
+.gold-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #be8d00;
+}
