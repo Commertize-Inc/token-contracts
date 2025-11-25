@@ -261,7 +261,7 @@ const FlippingText = () => {
                                 <AnimatePresence mode="wait" initial={false}>
                                         <motion.span
                                                 key={currentIndex}
-                                                className="inline-flex min-w-[9ch] justify-end text-[#D4A024]"
+                                                className="inline-flex min-w-[9ch] justify-end text-gray-600"
                                                 initial={isAnimating ? { opacity: 0, y: 20 } : false}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -20 }}
@@ -271,7 +271,7 @@ const FlippingText = () => {
                                                 {FLIP_PREFIXES[currentIndex]}
                                         </motion.span>
                                 </AnimatePresence>
-                                <span className="text-gray-700">ized.</span>
+                                <span className="text-gray-600">ized.</span>
                         </div>
                 </div>
         );
@@ -352,10 +352,10 @@ const Hero = () => (
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ duration: 0.8, delay: 0.3 }}
-                                        className="flex items-center gap-2 text-gray-600 text-sm sm:text-base font-light"
+                                        className="flex items-center gap-3 text-gray-600 text-sm sm:text-base font-light"
                                 >
                                         <span>Welcome to</span>
-                                        <span className="font-logo tracking-widest text-gray-800">COMMERTIZE</span>
+                                        <Logo src="/assets/logo.png" width={140} height={45} />
                                 </motion.div>
 
                                 <motion.div
