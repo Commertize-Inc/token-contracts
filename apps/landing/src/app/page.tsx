@@ -319,31 +319,41 @@ const Hero = () => (
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ duration: 0.8, ease: "easeOut" }}
                                 >
-                                        <h1 className="text-gray-900 font-logo">
-                                                <span className="block font-extralight text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-2">
+                                        <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl text-gray-900 font-logo">
+                                                <span className="block font-extralight text-xl sm:text-2xl md:text-4xl">
                                                         Commercial Real Estate
                                                 </span>
                                                 <FlippingText />
                                         </h1>
                                 </motion.div>
 
-                                <motion.p
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ duration: 0.8, delay: 0.2 }}
-                                        className="max-w-2xl mx-auto text-gray-600 text-base sm:text-lg md:text-xl font-light"
-                                >
-                                        Your Gateway to Commercial Real Estate's Digital Future.
-                                </motion.p>
-
                                 <motion.div
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
-                                        transition={{ duration: 0.8, delay: 0.3 }}
-                                        className="flex items-center gap-2 text-gray-500 text-sm sm:text-base font-light"
+                                        transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+                                        className="mb-20"
                                 >
-                                        <span>Welcome to</span>
-                                        <span className="font-logo tracking-[0.2em] text-gray-700 text-sm sm:text-base">COMMERTIZE</span>
+                                        <p className="max-w-3xl mx-auto text-gray-800 drop-shadow-sm text-base sm:text-lg md:text-xl font-logo font-light px-4">
+                                                Your Gateway to Commercial Real Estate's Digital Future.
+
+                                                <motion.span 
+                                                        className="block mt-4 text-gray-700 font-light"
+                                                        initial={{ opacity: 0, y: 20 }}
+                                                        animate={{ opacity: 1, y: 0 }}
+                                                        transition={{ delay: 1.2, duration: 0.8 }}
+                                                >
+                                                        Welcome to<img 
+                                                                src="/assets/logo.png" 
+                                                                alt="Commertize" 
+                                                                className="inline h-4 sm:h-5 w-auto"
+                                                                style={{
+                                                                        verticalAlign: "baseline",
+                                                                        clipPath: "inset(0 0 0 20%)",
+                                                                        transform: "translateY(4px) translateX(-22px)"
+                                                                }}
+                                                        />
+                                                </motion.span>
+                                        </p>
                                 </motion.div>
 
                                 <motion.div
@@ -994,8 +1004,7 @@ const SubmitProperty = () => {
                                                         </motion.div>
                                                         
                                                         <div className="absolute flex items-center gap-2" style={{ zIndex: 2 }}>
-                                                                <img src="/assets/logo-icon.png" alt="Commertize" className="w-8 h-8 object-contain" />
-                                                                <span className="text-sm font-logo font-light text-gray-600 tracking-wide">COMMERTIZE</span>
+                                                                <img src="/assets/logo.png" alt="Commertize" className="h-8 w-auto object-contain" />
                                                         </div>
                                                 </div>
                                         </div>
