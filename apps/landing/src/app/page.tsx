@@ -92,7 +92,7 @@ const Navbar = () => {
                         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                                 <div className="flex items-center justify-between h-16">
                                         <Link href="/" className="flex-shrink-0">
-                                                <Logo src="/assets/logo.png" />
+                                                <Logo src="/assets/logo.png" width={220} height={70} />
                                         </Link>
 
                                         <div className="hidden md:flex items-center gap-6 lg:gap-8">
@@ -152,7 +152,7 @@ const Navbar = () => {
                                         <div className="hidden md:block">
                                                 <a 
                                                         href="http://localhost:3001" 
-                                                        className="inline-flex items-center justify-center px-5 py-2 bg-[#D4A024] text-white text-sm font-medium rounded-lg hover:bg-[#B8881C] transition-colors"
+                                                        className="inline-flex items-center justify-center px-5 py-2 bg-[#D4A024] text-white text-sm font-light rounded-lg hover:bg-[#B8881C] transition-colors"
                                                 >
                                                         Sign In
                                                 </a>
@@ -189,7 +189,7 @@ const Navbar = () => {
                                                 <div className="pt-4 border-t border-gray-100">
                                                         <a 
                                                                 href="http://localhost:3001" 
-                                                                className="block w-full text-center px-5 py-3 bg-[#D4A024] text-white font-medium rounded-lg"
+                                                                className="block w-full text-center px-5 py-3 bg-[#D4A024] text-white font-light rounded-lg"
                                                                 onClick={() => setIsOpen(false)}
                                                         >
                                                                 Sign In
@@ -203,7 +203,7 @@ const Navbar = () => {
 };
 
 const FlippingText = () => {
-        const words = ["Tokenized.", "Digitized.", "Fractionalized.", "Democratized.", "Modernized.", "Globalized."];
+        const prefixes = ["Token", "Digit", "Fractional", "Democrat", "Modern", "Global", "Revolution"];
         const [currentIndex, setCurrentIndex] = useState(0);
         const [hasMounted, setHasMounted] = useState(false);
 
@@ -215,25 +215,28 @@ const FlippingText = () => {
                 if (!hasMounted) return;
                 
                 const interval = setInterval(() => {
-                        setCurrentIndex((prev) => (prev + 1) % words.length);
+                        setCurrentIndex((prev) => (prev + 1) % prefixes.length);
                 }, 2500);
                 return () => clearInterval(interval);
-        }, [hasMounted, words.length]);
+        }, [hasMounted, prefixes.length]);
 
         return (
                 <div className="relative h-12 sm:h-14 md:h-16 lg:h-20 flex items-center justify-center">
-                        <AnimatePresence mode="wait">
-                                <motion.span
-                                        key={currentIndex}
-                                        className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gray-700 font-logo font-light"
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: -20 }}
-                                        transition={{ duration: 0.4 }}
-                                >
-                                        {hasMounted ? words[currentIndex] : words[0]}
-                                </motion.span>
-                        </AnimatePresence>
+                        <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gray-700 font-logo font-light flex items-center">
+                                <AnimatePresence mode="wait">
+                                        <motion.span
+                                                key={currentIndex}
+                                                className="inline-block"
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: -20 }}
+                                                transition={{ duration: 0.4 }}
+                                        >
+                                                {hasMounted ? prefixes[currentIndex] : prefixes[0]}
+                                        </motion.span>
+                                </AnimatePresence>
+                                <span>ized.</span>
+                        </div>
                 </div>
         );
 };
@@ -553,18 +556,18 @@ const CommertizeCollection = () => (
                                                 </div>
                                                 <div className="p-6">
                                                         <div className="flex items-center gap-2 mb-2">
-                                                                <span className="px-2 py-1 bg-[#D4A024]/10 text-[#D4A024] text-xs font-medium rounded-full">{property.type}</span>
+                                                                <span className="px-2 py-1 bg-[#D4A024]/10 text-[#D4A024] text-xs font-light rounded-full">{property.type}</span>
                                                         </div>
                                                         <h3 className="text-lg font-logo font-light text-gray-900 mb-1">{property.title}</h3>
                                                         <p className="text-sm text-gray-500 mb-4">{property.location}</p>
                                                         <div className="flex justify-between text-sm">
                                                                 <div>
                                                                         <div className="text-gray-500">Target Return</div>
-                                                                        <div className="font-medium text-[#D4A024]">{property.return}</div>
+                                                                        <div className="font-light text-[#D4A024]">{property.return}</div>
                                                                 </div>
                                                                 <div>
                                                                         <div className="text-gray-500">Min. Investment</div>
-                                                                        <div className="font-medium">${property.min}</div>
+                                                                        <div className="font-light">${property.min}</div>
                                                                 </div>
                                                         </div>
                                                 </div>
@@ -670,7 +673,7 @@ const TokenizationInfo = () => {
                                                                                                 <h3 className="text-lg text-[#D4A024] mb-2 font-logo font-light">
                                                                                                         {section.title}
                                                                                                 </h3>
-                                                                                                <p className="text-sm text-gray-700 font-medium font-logo">
+                                                                                                <p className="text-sm text-gray-700 font-light font-logo">
                                                                                                         {section.description}
                                                                                                 </p>
                                                                                         </div>
@@ -813,7 +816,7 @@ const SubmitProperty = () => {
                                                                                                 <method.icon className="w-8 h-8 text-[#D4A024]" />
                                                                                         </div>
                                                                                         <div>
-                                                                                                <div className="text-xl font-bold text-gray-900 mb-1">{method.name}</div>
+                                                                                                <div className="text-xl font-light text-gray-900 mb-1">{method.name}</div>
                                                                                                 <div className="text-sm text-gray-500">{method.description}</div>
                                                                                                 {method.currencies.length > 1 && (
                                                                                                         <div className="flex items-center justify-center gap-2 mt-2">
@@ -947,7 +950,7 @@ const LatestNews = () => {
                                                                                                         />
                                                                                                 )}
                                                                                                 <div className="absolute top-4 left-4">
-                                                                                                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getCategoryColor(article.category)}`}>
+                                                                                                        <span className={`px-3 py-1 rounded-full text-xs font-light ${getCategoryColor(article.category)}`}>
                                                                                                                 {article.category}
                                                                                                         </span>
                                                                                                 </div>
@@ -973,7 +976,7 @@ const LatestNews = () => {
                                                                                                         </div>
                                                                                                 </div>
 
-                                                                                                <div className="flex items-center gap-2 text-[#D4A024] text-sm font-medium group-hover:gap-3 transition-all mt-auto">
+                                                                                                <div className="flex items-center gap-2 text-[#D4A024] text-sm font-light group-hover:gap-3 transition-all mt-auto">
                                                                                                         <span>Read More</span>
                                                                                                         <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                                                                                                 </div>
@@ -987,7 +990,7 @@ const LatestNews = () => {
 
                                         <div className="text-center mt-12">
                                                 <Link href="/news">
-                                                        <button className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#D4A024] to-yellow-600 text-white rounded-xl font-medium hover:shadow-lg transition-all">
+                                                        <button className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#D4A024] to-yellow-600 text-white rounded-xl font-light hover:shadow-lg transition-all">
                                                                 <span>View All News & Insights</span>
                                                                 <ArrowRight size={18} />
                                                         </button>
