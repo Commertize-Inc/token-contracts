@@ -883,13 +883,18 @@ const TokenizationInfo = () => {
 
 // --- Submit Property Section ---
 const propertyTypes = [
-        { id: "multifamily", name: "Multifamily", icon: Building2 },
-        { id: "office", name: "Office", icon: Building },
-        { id: "industrial", name: "Industrial", icon: Warehouse },
-        { id: "mixed-use", name: "Mixed Use", icon: Layers },
-        { id: "condominium", name: "Condominium", icon: HomeIcon },
-        { id: "solar-farms", name: "Solar Farms", icon: Sun },
+        { id: "ev-charging", name: "EV Charging Stations", icon: Activity },
         { id: "wind-farms", name: "Wind Farms", icon: Wind },
+        { id: "solar-farms", name: "Solar Farms", icon: Sun },
+        { id: "multifamily", name: "Multifamily", icon: Building2 },
+        { id: "hospitality", name: "Hospitality", icon: Building },
+        { id: "office", name: "Office", icon: Building },
+        { id: "student-housing", name: "Student Housing", icon: HomeIcon },
+        { id: "datacenters", name: "Datacenters", icon: Warehouse },
+        { id: "mixed-use", name: "Mixed Use", icon: Layers },
+        { id: "retail", name: "Retail", icon: Building2 },
+        { id: "condominium", name: "Condominium", icon: HomeIcon },
+        { id: "industrial", name: "Industrial", icon: Warehouse },
 ];
 
 const paymentMethods = [
@@ -901,31 +906,54 @@ const SubmitProperty = () => {
         return (
                 <section className="py-20 bg-white">
                         <div className="container max-w-6xl mx-auto px-4">
-                                <div className="text-center mb-16">
-                                        <h2 className="text-3xl md:text-4xl font-logo font-light text-gray-900 mb-3">
+                                <div className="text-center mb-12">
+                                        <h2 className="text-3xl md:text-4xl font-logo font-light text-gray-900 mb-6">
                                                 List Your Property on <span className="text-[#D4A024]">Commertize</span>
                                         </h2>
-                                        <div className="w-20 h-1 bg-gradient-to-r from-[#D4A024] to-yellow-600 rounded-full mx-auto mb-6"></div>
-                                        <p className="text-gray-600 mb-12 leading-relaxed max-w-4xl mx-auto text-lg font-light">
-                                                Connect your commercial property to a worldwide network of qualified investors. Our platform makes it simple to tokenize your CRE and open it to fractional investment.
+                                        <p className="text-gray-600 leading-relaxed max-w-4xl mx-auto text-base md:text-lg font-light">
+                                                Commertize connects your commercial property to a worldwide network of qualified investors. Whether you're an owner, developer, or asset manager, our platform makes it simple to tokenize your CRE and open it to fractional investment. Reach a broader audience, secure capital faster, and retain control — all with blockchain-powered transparency and efficiency.
                                         </p>
                                 </div>
                                         
                                 <div className="mb-12">
-                                        <h3 className="text-2xl md:text-3xl font-light font-logo mb-12 text-gray-900 text-center">
+                                        <h3 className="text-2xl md:text-3xl font-light font-logo mb-8 text-gray-900 text-center">
                                                 Your Property, Our Global Marketplace
                                         </h3>
                                         
-                                        <div className="mb-16">
-                                                <div className="relative h-[400px] md:h-[500px] w-full flex items-center justify-center overflow-hidden bg-white rounded-2xl border border-gray-200">
+                                        <div className="mb-8">
+                                                <div className="relative h-[450px] md:h-[550px] w-full flex items-center justify-center overflow-hidden bg-white rounded-2xl border border-gray-200">
+                                                        <svg className="absolute inset-0 w-full h-full" style={{ zIndex: 0 }}>
+                                                                {propertyTypes.map((_, index) => {
+                                                                        const angle = (index / propertyTypes.length) * 360 - 90;
+                                                                        const radius = 180;
+                                                                        const centerX = 50;
+                                                                        const centerY = 50;
+                                                                        const x = centerX + Math.cos(angle * Math.PI / 180) * (radius / 5);
+                                                                        const y = centerY + Math.sin(angle * Math.PI / 180) * (radius / 5);
+                                                                        return (
+                                                                                <line
+                                                                                        key={`line-${index}`}
+                                                                                        x1="50%"
+                                                                                        y1="50%"
+                                                                                        x2={`${x}%`}
+                                                                                        y2={`${y}%`}
+                                                                                        stroke="#D4A024"
+                                                                                        strokeWidth="1"
+                                                                                        strokeOpacity="0.4"
+                                                                                />
+                                                                        );
+                                                                })}
+                                                        </svg>
+                                                        
                                                         <motion.div
-                                                                className="relative"
+                                                                className="relative w-[380px] h-[380px] md:w-[480px] md:h-[480px]"
                                                                 animate={{ rotate: 360 }}
-                                                                transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
+                                                                transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+                                                                style={{ zIndex: 1 }}
                                                         >
                                                                 {propertyTypes.map((type, index) => {
-                                                                        const angle = (index / propertyTypes.length) * 360;
-                                                                        const radius = 150;
+                                                                        const angle = (index / propertyTypes.length) * 360 - 90;
+                                                                        const radius = 160;
                                                                         const x = Math.cos(angle * Math.PI / 180) * radius;
                                                                         const y = Math.sin(angle * Math.PI / 180) * radius;
                                                                         
@@ -933,70 +961,30 @@ const SubmitProperty = () => {
                                                                                 <motion.div
                                                                                         key={type.id}
                                                                                         className="absolute"
-                                                                                        style={{ left: x - 60, top: y - 18 }}
+                                                                                        style={{ 
+                                                                                                left: `calc(50% + ${x}px - 55px)`, 
+                                                                                                top: `calc(50% + ${y}px - 16px)` 
+                                                                                        }}
                                                                                         animate={{ rotate: -360 }}
-                                                                                        transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
+                                                                                        transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
                                                                                 >
-                                                                                        <div className="flex items-center space-x-2 bg-gradient-to-br from-[#D4A024]/5 to-[#D4A024]/10 border-2 border-[#D4A024]/40 rounded-lg px-3 py-2">
-                                                                                                <div className="w-7 h-7 rounded-full bg-[#D4A024]/20 border border-[#D4A024]/50 flex items-center justify-center">
-                                                                                                        <type.icon className="w-4 h-4 text-[#D4A024]" />
+                                                                                        <div className="flex items-center space-x-2 bg-white border-2 border-[#D4A024] rounded-[0.75rem] px-3 py-2 shadow-sm hover:shadow-md transition-shadow">
+                                                                                                <div className="w-6 h-6 rounded-full bg-[#D4A024] flex items-center justify-center">
+                                                                                                        <type.icon className="w-3.5 h-3.5 text-white" />
                                                                                                 </div>
-                                                                                                <div className="text-xs font-semibold text-gray-800">{type.name}</div>
+                                                                                                <div className="text-xs font-light text-gray-800 whitespace-nowrap">{type.name}</div>
                                                                                         </div>
                                                                                 </motion.div>
                                                                         );
                                                                 })}
                                                         </motion.div>
                                                         
-                                                        <div className="absolute">
-                                                                <img src="/assets/logo.png" alt="Logo" className="w-24 h-24 md:w-32 md:h-32 object-contain" />
+                                                        <div className="absolute flex items-center gap-2" style={{ zIndex: 2 }}>
+                                                                <img src="/assets/logo-icon.png" alt="Commertize" className="w-8 h-8 object-contain" />
+                                                                <span className="text-sm font-logo font-light text-gray-600 tracking-wide">COMMERTIZE</span>
                                                         </div>
                                                 </div>
                                         </div>
-
-                                        <div className="space-y-6 text-center">
-                                                <h4 className="text-xl font-light font-logo text-gray-900 flex items-center justify-center gap-2">
-                                                        <Shield className="w-6 h-6 text-[#D4A024]" />
-                                                        Accepted Payment Methods
-                                                </h4>
-                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-2xl mx-auto">
-                                                        {paymentMethods.map((method) => (
-                                                                <div key={method.name} className="group">
-                                                                        <div className="p-8 rounded-2xl bg-white border border-gray-100 hover:border-[#D4A024]/30 hover:shadow-xl transition-all duration-300">
-                                                                                <div className="flex flex-col items-center text-center space-y-4">
-                                                                                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#D4A024]/10 to-[#D4A024]/20 flex items-center justify-center">
-                                                                                                <method.icon className="w-8 h-8 text-[#D4A024]" />
-                                                                                        </div>
-                                                                                        <div>
-                                                                                                <div className="text-xl font-light text-gray-900 mb-1">{method.name}</div>
-                                                                                                <div className="text-sm text-gray-500">{method.description}</div>
-                                                                                                {method.currencies.length > 1 && (
-                                                                                                        <div className="flex items-center justify-center gap-2 mt-2">
-                                                                                                                {method.currencies.map((currency) => (
-                                                                                                                        <span key={currency} className="px-3 py-1 bg-[#D4A024]/10 text-[#D4A024] text-xs font-semibold rounded-full">
-                                                                                                                                {currency}
-                                                                                                                        </span>
-                                                                                                                ))}
-                                                                                                        </div>
-                                                                                                )}
-                                                                                        </div>
-                                                                                </div>
-                                                                        </div>
-                                                                </div>
-                                                        ))}
-                                                </div>
-                                        </div>
-                                </div>
-
-                                <div className="text-center">
-                                        <p className="text-gray-600 mb-8 leading-relaxed text-lg max-w-3xl mx-auto font-light">
-                                                Take advantage of our global reach—submit your property today.
-                                        </p>
-                                        <Link href="/submit">
-                                                <button className="bg-[#D4A024] hover:bg-[#B8881C] text-white shadow-lg text-lg px-8 py-4 rounded-xl transition-colors">
-                                                        Submit Your Property
-                                                </button>
-                                        </Link>
                                 </div>
                         </div>
                 </section>
