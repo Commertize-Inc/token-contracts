@@ -256,8 +256,8 @@ const FlippingText = () => {
         }, [isAnimating]);
 
         return (
-                <div className="relative h-14 sm:h-16 md:h-20 lg:h-24 flex items-center justify-center" suppressHydrationWarning>
-                        <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-logo font-light flex items-center justify-center" suppressHydrationWarning>
+                <div className="relative h-16 sm:h-20 md:h-24 lg:h-28 flex items-center justify-center" suppressHydrationWarning>
+                        <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-logo font-light flex items-center justify-center" suppressHydrationWarning>
                                 <AnimatePresence mode="wait" initial={false}>
                                         <motion.span
                                                 key={currentIndex}
@@ -332,7 +332,7 @@ const Hero = () => (
                                         transition={{ duration: 0.8, ease: "easeOut" }}
                                 >
                                         <h1 className="text-gray-900 font-logo">
-                                                <span className="block font-extralight text-lg sm:text-xl md:text-2xl lg:text-3xl mb-1">
+                                                <span className="block font-extralight text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-2">
                                                         Commercial Real Estate
                                                 </span>
                                                 <FlippingText />
