@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
         Building,
+        Building2,
         Wallet,
         LayoutDashboard,
         PieChart,
@@ -13,13 +14,24 @@ import {
         TrendingUp,
         ShieldCheck,
         ChevronRight,
+        ChevronDown,
         Menu,
         X,
         Bell,
         Search,
         Filter,
         DollarSign,
-        Activity
+        Activity,
+        Coins,
+        Shield,
+        Warehouse,
+        Home as HomeIcon,
+        Layers,
+        Sun,
+        Wind,
+        Calendar,
+        Clock,
+        ArrowRight
 } from 'lucide-react';
 import Link from 'next/link';
 import styles from './page.module.css';
@@ -368,6 +380,625 @@ const BentoFeatures = () => (
         </div>
 );
 
+// --- About Us / Vision Section ---
+const AboutUs = () => {
+        const companyName = "Commertize";
+
+        return (
+                <section id="about" className="pt-20 relative overflow-hidden min-h-[600px]">
+                        <div className="absolute inset-0">
+                                <motion.div
+                                        className="absolute inset-0"
+                                        animate={{ scale: [1.0, 1.4] }}
+                                        transition={{
+                                                duration: 20,
+                                                repeat: Infinity,
+                                                ease: "easeInOut",
+                                                repeatType: "reverse"
+                                        }}
+                                >
+                                        <img 
+                                                src="/assets/commertize-vision-bg.jpg"
+                                                alt="" 
+                                                className="w-full h-full object-cover"
+                                        />
+                                </motion.div>
+                                <div className="absolute inset-0 bg-black/50"></div>
+                        </div>
+
+                        <div className="container relative z-10 px-4">
+                                <motion.div 
+                                        className="max-w-3xl mx-auto"
+                                        initial={{ opacity: 0, y: 100 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        viewport={{ once: true, amount: 0.3 }}
+                                        transition={{ duration: 1.2, ease: "easeOut" }}
+                                >
+                                        <motion.h2 
+                                                className="text-3xl font-logo font-light text-center mb-8 text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]"
+                                                initial={{ opacity: 0, scale: 0.8 }}
+                                                whileInView={{ opacity: 1, scale: 1 }}
+                                                viewport={{ once: true, amount: 0.5 }}
+                                                transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+                                        >
+                                                The {companyName} Vision
+                                        </motion.h2>
+                                        
+                                        <div className="prose max-w-none text-center">
+                                                <motion.p 
+                                                        className="text-lg md:text-xl font-logo font-light text-white mb-6 drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]"
+                                                        initial={{ opacity: 0, x: -50 }}
+                                                        whileInView={{ opacity: 1, x: 0 }}
+                                                        viewport={{ once: true, amount: 0.3 }}
+                                                        transition={{ duration: 0.9, delay: 0.4, ease: "easeOut" }}
+                                                >
+                                                        {companyName} is building the next-generation platform for commercial real estate, merging the power of AI, blockchain tokenization, and decentralized finance (DeFi).
+                                                </motion.p>
+                                                <motion.p 
+                                                        className="text-lg md:text-xl font-logo font-light text-white mb-6 drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]"
+                                                        initial={{ opacity: 0, x: 50 }}
+                                                        whileInView={{ opacity: 1, x: 0 }}
+                                                        viewport={{ once: true, amount: 0.3 }}
+                                                        transition={{ duration: 0.9, delay: 0.6, ease: "easeOut" }}
+                                                >
+                                                        Our mission is to create the digital foundation that connects real-world assets to global capital markets.
+                                                </motion.p>
+                                        </div>
+                                </motion.div>
+                        </div>
+
+                        <div className="relative h-16 md:h-20 flex items-center overflow-hidden w-full pb-8">
+                                <motion.div
+                                        animate={{ x: [0, -1600] }}
+                                        transition={{
+                                                duration: 20,
+                                                repeat: Infinity,
+                                                ease: "linear",
+                                                repeatType: "loop"
+                                        }}
+                                        className="flex items-center space-x-24 whitespace-nowrap"
+                                        style={{ minWidth: "3200px" }}
+                                >
+                                        {["Digital Assets, Real-World Value", "Shaping the Future of Ownership", 
+                                                "Digital Assets, Real-World Value", "Shaping the Future of Ownership",
+                                                "Digital Assets, Real-World Value", "Shaping the Future of Ownership"].map((phrase, index) => (
+                                                <motion.div
+                                                        key={`${phrase}-${index}`}
+                                                        whileHover={{ 
+                                                                scale: 1.05,
+                                                                color: "#D4A024",
+                                                                transition: { duration: 0.2 }
+                                                        }}
+                                                        className="cursor-pointer group flex-shrink-0"
+                                                        style={{ minWidth: "500px", textAlign: "center" }}
+                                                >
+                                                        <span className="text-2xl md:text-3xl font-logo font-light text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
+                                                                {phrase}
+                                                        </span>
+                                                </motion.div>
+                                        ))}
+                                </motion.div>
+                        </div>
+                </section>
+        );
+};
+
+// --- Commertize Collection Section ---
+const CommertizeCollection = () => (
+        <section id="properties" className="py-16 md:py-24 bg-white">
+                <div className="relative w-full overflow-hidden mb-6">
+                        <motion.div
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, margin: "-100px" }}
+                                transition={{ duration: 0.8, ease: "easeOut" }}
+                                className="text-center"
+                        >
+                                <div className="relative h-12 sm:h-16 md:h-20 flex items-center overflow-hidden mb-4 sm:mb-6">
+                                        <motion.div
+                                                animate={{ x: [0, -800] }}
+                                                transition={{
+                                                        duration: 16,
+                                                        repeat: Infinity,
+                                                        ease: "linear",
+                                                        repeatType: "loop"
+                                                }}
+                                                className="flex items-center space-x-24"
+                                                style={{ minWidth: "1600px" }}
+                                        >
+                                                {["The Commertize Collection", "The Commertize Collection", 
+                                                        "The Commertize Collection", "The Commertize Collection"].map((text, index) => (
+                                                        <motion.h2 
+                                                                key={`${text}-${index}`}
+                                                                className="text-3xl md:text-4xl lg:text-5xl font-logo font-light text-gray-900 flex-shrink-0"
+                                                                style={{ minWidth: "400px", textAlign: "center" }}
+                                                                whileHover={{ 
+                                                                        scale: 1.05,
+                                                                        transition: { duration: 0.2 }
+                                                                }}
+                                                        >
+                                                                The Commertize <span className="text-[#D4A024]">Collection</span>
+                                                        </motion.h2>
+                                                ))}
+                                        </motion.div>
+                                </div>
+                        </motion.div>
+                </div>
+
+                <div className="container mx-auto px-4">
+                        <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, margin: "-100px" }}
+                                transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+                                className="text-center mb-12 sm:mb-16 md:mb-20"
+                        >
+                                <p className="text-base md:text-lg max-w-2xl mx-auto text-gray-600 px-4 font-light">
+                                        Explore a curated selection of commercial real estate opportunities across multiple sectors, sourced and vetted for quality and performance potential.
+                                </p>
+                        </motion.div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {MOCK_PROPERTIES.slice(0, 3).map((property, index) => (
+                                        <motion.div
+                                                key={property.id}
+                                                initial={{ opacity: 0, y: 30 }}
+                                                whileInView={{ opacity: 1, y: 0 }}
+                                                viewport={{ once: true }}
+                                                transition={{ duration: 0.6, delay: index * 0.1 }}
+                                                className="bg-white rounded-2xl border-2 border-[#D4A024] overflow-hidden hover:shadow-xl transition-all duration-300"
+                                        >
+                                                <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                                                        <Building2 size={64} className="text-[#D4A024]/30" />
+                                                </div>
+                                                <div className="p-6">
+                                                        <div className="flex items-center gap-2 mb-2">
+                                                                <span className="px-2 py-1 bg-[#D4A024]/10 text-[#D4A024] text-xs font-medium rounded-full">{property.type}</span>
+                                                        </div>
+                                                        <h3 className="text-lg font-logo font-light text-gray-900 mb-1">{property.title}</h3>
+                                                        <p className="text-sm text-gray-500 mb-4">{property.location}</p>
+                                                        <div className="flex justify-between text-sm">
+                                                                <div>
+                                                                        <div className="text-gray-500">Target Return</div>
+                                                                        <div className="font-medium text-[#D4A024]">{property.return}</div>
+                                                                </div>
+                                                                <div>
+                                                                        <div className="text-gray-500">Min. Investment</div>
+                                                                        <div className="font-medium">${property.min}</div>
+                                                                </div>
+                                                        </div>
+                                                </div>
+                                        </motion.div>
+                                ))}
+                        </div>
+                </div>
+        </section>
+);
+
+// --- Tokenization Info Section ---
+const tokenizationSections = [
+        {
+                title: "Real Estate Developers",
+                description: "Tokenize Your Projects. Raise Capital Faster",
+                details: [
+                        "Offer fractional ownership to reduce funding time",
+                        "Attract global investors with lower entry points",
+                        "Increase liquidity for illiquid assets",
+                ],
+        },
+        {
+                title: "Institutional Investors",
+                description: "Access Premium CRE Without Full Property Acquisition",
+                details: [
+                        "Pension funds gain fractional exposure",
+                        "Lower capital commitments with diversified portfolios",
+                        "Transparent, on-chain reporting for compliance",
+                ],
+        },
+        {
+                title: "Accredited Retail Investors",
+                description: "Access Institutional-Grade CRE with Low Minimums",
+                details: [
+                        "Access top-tier properties with $100-$1,000 minimums",
+                        "Portfolio diversification beyond stocks and bonds",
+                        "Passive income through automated distributions",
+                ],
+        },
+        {
+                title: "Family Offices",
+                description: "Multi-Generational Wealth Management Simplified",
+                details: [
+                        "Easier estate planning through tokens",
+                        "Diversification across multiple properties",
+                        "Simplified asset transfers between family members",
+                ],
+        },
+];
+
+const TokenizationInfo = () => {
+        const [expandedSections, setExpandedSections] = useState<Set<number>>(new Set());
+
+        const toggleSection = (index: number) => {
+                const newExpanded = new Set(expandedSections);
+                if (newExpanded.has(index)) {
+                        newExpanded.delete(index);
+                } else {
+                        newExpanded.add(index);
+                }
+                setExpandedSections(newExpanded);
+        };
+
+        return (
+                <section className="py-20 relative overflow-hidden bg-gray-50">
+                        <div className="container mx-auto px-4 relative z-10">
+                                <div className="max-w-7xl mx-auto">
+                                        <motion.h2 
+                                                className="text-3xl md:text-4xl font-logo font-light text-center mb-4 text-gray-900"
+                                                initial={{ opacity: 0, y: 30 }}
+                                                whileInView={{ opacity: 1, y: 0 }}
+                                                viewport={{ once: true }}
+                                                transition={{ duration: 0.8 }}
+                                        >
+                                                From Concrete to Capital — Who Wins
+                                        </motion.h2>
+                                        <motion.p 
+                                                className="text-center text-gray-600 mb-12 text-lg font-light"
+                                                initial={{ opacity: 0, y: 20 }}
+                                                whileInView={{ opacity: 1, y: 0 }}
+                                                viewport={{ once: true }}
+                                                transition={{ duration: 0.8, delay: 0.2 }}
+                                        >
+                                                From unlocking liquidity to global investor access, tokenization changes the game for everyone.
+                                        </motion.p>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                                                {tokenizationSections.map((section, index) => (
+                                                        <motion.div
+                                                                key={index}
+                                                                initial={{ opacity: 0, y: 50 }}
+                                                                whileInView={{ opacity: 1, y: 0 }}
+                                                                viewport={{ once: true }}
+                                                                transition={{ duration: 0.7, delay: index * 0.05 }}
+                                                        >
+                                                                <div className="bg-white border-2 border-[#D4A024] rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+                                                                        <div className="p-6 pb-4">
+                                                                                <div
+                                                                                        className="flex items-center justify-between cursor-pointer"
+                                                                                        onClick={() => toggleSection(index)}
+                                                                                >
+                                                                                        <div className="flex-1">
+                                                                                                <h3 className="text-lg text-[#D4A024] mb-2 font-logo font-light">
+                                                                                                        {section.title}
+                                                                                                </h3>
+                                                                                                <p className="text-sm text-gray-700 font-medium font-logo">
+                                                                                                        {section.description}
+                                                                                                </p>
+                                                                                        </div>
+                                                                                        <motion.div 
+                                                                                                className="ml-4 text-[#D4A024]"
+                                                                                                animate={{ rotate: expandedSections.has(index) ? 0 : -90 }}
+                                                                                                transition={{ duration: 0.3 }}
+                                                                                        >
+                                                                                                <ChevronDown className="h-5 w-5" />
+                                                                                        </motion.div>
+                                                                                </div>
+                                                                        </div>
+
+                                                                        <AnimatePresence>
+                                                                                {expandedSections.has(index) && (
+                                                                                        <motion.div
+                                                                                                initial={{ height: 0, opacity: 0 }}
+                                                                                                animate={{ height: "auto", opacity: 1 }}
+                                                                                                exit={{ height: 0, opacity: 0 }}
+                                                                                                transition={{ duration: 0.4 }}
+                                                                                                style={{ overflow: "hidden" }}
+                                                                                        >
+                                                                                                <div className="px-6 pb-6 pt-0">
+                                                                                                        <div className="border-t border-gray-200 pt-4">
+                                                                                                                <ul className="space-y-2.5">
+                                                                                                                        {section.details.map((detail, i) => (
+                                                                                                                                <motion.li
+                                                                                                                                        key={i}
+                                                                                                                                        initial={{ x: -20, opacity: 0 }}
+                                                                                                                                        animate={{ x: 0, opacity: 1 }}
+                                                                                                                                        transition={{ delay: i * 0.1 }}
+                                                                                                                                        className="flex items-start"
+                                                                                                                                >
+                                                                                                                                        <div className="w-2 h-2 bg-[#D4A024] rounded-full mt-2 mr-3" />
+                                                                                                                                        <span className="text-gray-700 font-logo text-sm">
+                                                                                                                                                {detail}
+                                                                                                                                        </span>
+                                                                                                                                </motion.li>
+                                                                                                                        ))}
+                                                                                                                </ul>
+                                                                                                        </div>
+                                                                                                </div>
+                                                                                        </motion.div>
+                                                                                )}
+                                                                        </AnimatePresence>
+                                                                </div>
+                                                        </motion.div>
+                                                ))}
+                                        </div>
+                                </div>
+                        </div>
+                </section>
+        );
+};
+
+// --- Submit Property Section ---
+const propertyTypes = [
+        { id: "multifamily", name: "Multifamily", icon: Building2 },
+        { id: "office", name: "Office", icon: Building },
+        { id: "industrial", name: "Industrial", icon: Warehouse },
+        { id: "mixed-use", name: "Mixed Use", icon: Layers },
+        { id: "condominium", name: "Condominium", icon: HomeIcon },
+        { id: "solar-farms", name: "Solar Farms", icon: Sun },
+        { id: "wind-farms", name: "Wind Farms", icon: Wind },
+];
+
+const paymentMethods = [
+        { name: "USD", icon: DollarSign, description: "Traditional payments", currencies: ["USD"] },
+        { name: "Stablecoins", icon: Coins, description: "Digital currency", currencies: ["USDC", "USDT"] },
+];
+
+const SubmitProperty = () => {
+        return (
+                <section className="py-20 bg-white">
+                        <div className="container max-w-6xl mx-auto px-4">
+                                <div className="text-center mb-16">
+                                        <h2 className="text-3xl md:text-4xl font-logo font-light text-gray-900 mb-3">
+                                                List Your Property on <span className="text-[#D4A024]">Commertize</span>
+                                        </h2>
+                                        <div className="w-20 h-1 bg-gradient-to-r from-[#D4A024] to-yellow-600 rounded-full mx-auto mb-6"></div>
+                                        <p className="text-gray-600 mb-12 leading-relaxed max-w-4xl mx-auto text-lg font-light">
+                                                Connect your commercial property to a worldwide network of qualified investors. Our platform makes it simple to tokenize your CRE and open it to fractional investment.
+                                        </p>
+                                </div>
+                                        
+                                <div className="mb-12">
+                                        <h3 className="text-2xl md:text-3xl font-light font-logo mb-12 text-gray-900 text-center">
+                                                Your Property, Our Global Marketplace
+                                        </h3>
+                                        
+                                        <div className="mb-16">
+                                                <div className="relative h-[400px] md:h-[500px] w-full flex items-center justify-center overflow-hidden bg-white rounded-2xl border border-gray-200">
+                                                        <motion.div
+                                                                className="relative"
+                                                                animate={{ rotate: 360 }}
+                                                                transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
+                                                        >
+                                                                {propertyTypes.map((type, index) => {
+                                                                        const angle = (index / propertyTypes.length) * 360;
+                                                                        const radius = 150;
+                                                                        const x = Math.cos(angle * Math.PI / 180) * radius;
+                                                                        const y = Math.sin(angle * Math.PI / 180) * radius;
+                                                                        
+                                                                        return (
+                                                                                <motion.div
+                                                                                        key={type.id}
+                                                                                        className="absolute"
+                                                                                        style={{ left: x - 60, top: y - 18 }}
+                                                                                        animate={{ rotate: -360 }}
+                                                                                        transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
+                                                                                >
+                                                                                        <div className="flex items-center space-x-2 bg-gradient-to-br from-[#D4A024]/5 to-[#D4A024]/10 border-2 border-[#D4A024]/40 rounded-lg px-3 py-2">
+                                                                                                <div className="w-7 h-7 rounded-full bg-[#D4A024]/20 border border-[#D4A024]/50 flex items-center justify-center">
+                                                                                                        <type.icon className="w-4 h-4 text-[#D4A024]" />
+                                                                                                </div>
+                                                                                                <div className="text-xs font-semibold text-gray-800">{type.name}</div>
+                                                                                        </div>
+                                                                                </motion.div>
+                                                                        );
+                                                                })}
+                                                        </motion.div>
+                                                        
+                                                        <div className="absolute">
+                                                                <img src="/assets/logo.png" alt="Logo" className="w-24 h-24 md:w-32 md:h-32 object-contain" />
+                                                        </div>
+                                                </div>
+                                        </div>
+
+                                        <div className="space-y-6 text-center">
+                                                <h4 className="text-xl font-light font-logo text-gray-900 flex items-center justify-center gap-2">
+                                                        <Shield className="w-6 h-6 text-[#D4A024]" />
+                                                        Accepted Payment Methods
+                                                </h4>
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-2xl mx-auto">
+                                                        {paymentMethods.map((method) => (
+                                                                <div key={method.name} className="group">
+                                                                        <div className="p-8 rounded-2xl bg-white border border-gray-100 hover:border-[#D4A024]/30 hover:shadow-xl transition-all duration-300">
+                                                                                <div className="flex flex-col items-center text-center space-y-4">
+                                                                                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#D4A024]/10 to-[#D4A024]/20 flex items-center justify-center">
+                                                                                                <method.icon className="w-8 h-8 text-[#D4A024]" />
+                                                                                        </div>
+                                                                                        <div>
+                                                                                                <div className="text-xl font-bold text-gray-900 mb-1">{method.name}</div>
+                                                                                                <div className="text-sm text-gray-500">{method.description}</div>
+                                                                                                {method.currencies.length > 1 && (
+                                                                                                        <div className="flex items-center justify-center gap-2 mt-2">
+                                                                                                                {method.currencies.map((currency) => (
+                                                                                                                        <span key={currency} className="px-3 py-1 bg-[#D4A024]/10 text-[#D4A024] text-xs font-semibold rounded-full">
+                                                                                                                                {currency}
+                                                                                                                        </span>
+                                                                                                                ))}
+                                                                                                        </div>
+                                                                                                )}
+                                                                                        </div>
+                                                                                </div>
+                                                                        </div>
+                                                                </div>
+                                                        ))}
+                                                </div>
+                                        </div>
+                                </div>
+
+                                <div className="text-center">
+                                        <p className="text-gray-600 mb-8 leading-relaxed text-lg max-w-3xl mx-auto font-light">
+                                                Take advantage of our global reach—submit your property today.
+                                        </p>
+                                        <Link href="/submit">
+                                                <button className="bg-[#D4A024] hover:bg-[#B8881C] text-white shadow-lg text-lg px-8 py-4 rounded-xl transition-colors">
+                                                        Submit Your Property
+                                                </button>
+                                        </Link>
+                                </div>
+                        </div>
+                </section>
+        );
+};
+
+// --- Latest News Section ---
+const sampleArticles = [
+        {
+                id: "1",
+                title: "Tokenization Revolutionizes Commercial Real Estate",
+                slug: "tokenization-revolutionizes-cre",
+                summary: "How blockchain technology is transforming property investment and ownership.",
+                category: "Tokenization",
+                imageUrl: "/assets/building-modern.jpg",
+                readTime: 5,
+                publishedAt: "Jan 15, 2025"
+        },
+        {
+                id: "2",
+                title: "The Future of Fractional Property Investment",
+                slug: "future-fractional-investment",
+                summary: "Exploring how fractional ownership is democratizing real estate access.",
+                category: "Markets",
+                imageUrl: "/assets/building-tall.jpg",
+                readTime: 4,
+                publishedAt: "Jan 10, 2025"
+        },
+        {
+                id: "3",
+                title: "AI-Powered Property Valuation Models",
+                slug: "ai-property-valuation",
+                summary: "Machine learning is changing how we assess commercial property values.",
+                category: "Technology",
+                imageUrl: "/assets/building-curved.jpg",
+                readTime: 6,
+                publishedAt: "Jan 5, 2025"
+        },
+];
+
+const LatestNews = () => {
+        const getCategoryColor = (category: string) => {
+                const colors: Record<string, string> = {
+                        'Tokenization': 'bg-purple-100 text-purple-700',
+                        'Markets': 'bg-yellow-100 text-yellow-700',
+                        'Technology': 'bg-indigo-100 text-indigo-700',
+                };
+                return colors[category] || 'bg-gray-100 text-gray-700';
+        };
+
+        return (
+                <section className="py-24 bg-gradient-to-br from-gray-50/50 to-white relative overflow-hidden">
+                        <div className="relative z-10 w-full overflow-hidden mb-6">
+                                <div className="relative h-12 sm:h-16 md:h-20 flex items-center overflow-hidden mb-4">
+                                        <motion.div
+                                                animate={{ x: [0, -800] }}
+                                                transition={{ duration: 16, repeat: Infinity, ease: "linear", repeatType: "loop" }}
+                                                className="flex items-center space-x-24"
+                                                style={{ minWidth: "1600px" }}
+                                        >
+                                                {["Latest News & Insights", "Latest News & Insights", 
+                                                        "Latest News & Insights", "Latest News & Insights"].map((text, index) => (
+                                                        <motion.h2 
+                                                                key={`${text}-${index}`}
+                                                                className="text-3xl md:text-4xl lg:text-5xl font-logo font-light text-gray-900 flex-shrink-0"
+                                                                style={{ minWidth: "400px", textAlign: "center" }}
+                                                        >
+                                                                Latest News & <span className="text-[#D4A024]">Insights</span>
+                                                        </motion.h2>
+                                                ))}
+                                        </motion.div>
+                                </div>
+                        </div>
+
+                        <div className="container mx-auto px-4 relative z-10">
+                                <div className="max-w-6xl mx-auto">
+                                        <div className="text-center mb-16">
+                                                <div className="w-24 h-1 bg-gradient-to-r from-[#D4A024] to-yellow-600 rounded-full mx-auto mb-6"></div>
+                                                <p className="text-xl text-gray-600 font-logo font-light max-w-3xl mx-auto">
+                                                        Stay informed with the latest developments in commercial real estate and tokenization
+                                                </p>
+                                        </div>
+
+                                        <div className="grid md:grid-cols-3 gap-8">
+                                                {sampleArticles.map((article, index) => (
+                                                        <motion.article
+                                                                key={article.id}
+                                                                className="w-full"
+                                                                initial={{ opacity: 0, y: 30 }}
+                                                                whileInView={{ opacity: 1, y: 0 }}
+                                                                transition={{ duration: 0.6, delay: index * 0.1 }}
+                                                                viewport={{ once: true }}
+                                                        >
+                                                                <div className="bg-white rounded-2xl shadow-sm border-2 border-[#D4A024] overflow-hidden group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full">
+                                                                        <Link href={`/news/${article.slug}`}>
+                                                                                <div className="cursor-pointer h-full flex flex-col">
+                                                                                        <div className="relative h-48 overflow-hidden flex-shrink-0 bg-gray-200">
+                                                                                                {article.imageUrl && (
+                                                                                                        <img
+                                                                                                                src={article.imageUrl}
+                                                                                                                alt={article.title}
+                                                                                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                                                                        />
+                                                                                                )}
+                                                                                                <div className="absolute top-4 left-4">
+                                                                                                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getCategoryColor(article.category)}`}>
+                                                                                                                {article.category}
+                                                                                                        </span>
+                                                                                                </div>
+                                                                                        </div>
+
+                                                                                        <div className="p-6 flex-grow flex flex-col">
+                                                                                                <h3 className="text-lg font-logo font-light text-gray-900 mb-3 line-clamp-2 group-hover:text-[#D4A024] transition-colors">
+                                                                                                        {article.title}
+                                                                                                </h3>
+                                                                                                
+                                                                                                <p className="text-gray-600 font-logo font-light text-sm mb-4 line-clamp-3 flex-grow">
+                                                                                                        {article.summary}
+                                                                                                </p>
+
+                                                                                                <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
+                                                                                                        <div className="flex items-center gap-1">
+                                                                                                                <Calendar size={12} />
+                                                                                                                <span>{article.publishedAt}</span>
+                                                                                                        </div>
+                                                                                                        <div className="flex items-center gap-1">
+                                                                                                                <Clock size={12} />
+                                                                                                                <span>{article.readTime} min</span>
+                                                                                                        </div>
+                                                                                                </div>
+
+                                                                                                <div className="flex items-center gap-2 text-[#D4A024] text-sm font-medium group-hover:gap-3 transition-all mt-auto">
+                                                                                                        <span>Read More</span>
+                                                                                                        <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                                                                                                </div>
+                                                                                        </div>
+                                                                                </div>
+                                                                        </Link>
+                                                                </div>
+                                                        </motion.article>
+                                                ))}
+                                        </div>
+
+                                        <div className="text-center mt-12">
+                                                <Link href="/news">
+                                                        <button className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#D4A024] to-yellow-600 text-white rounded-xl font-medium hover:shadow-lg transition-all">
+                                                                <span>View All News & Insights</span>
+                                                                <ArrowRight size={18} />
+                                                        </button>
+                                                </Link>
+                                        </div>
+                                </div>
+                        </div>
+                </section>
+        );
+};
+
 // --- Portal (Dashboard) Logic ---
 
 interface SidebarItemProps {
@@ -579,6 +1210,11 @@ export default function Home() {
                 <div style={{ minHeight: '100vh', fontFamily: 'var(--font-sans)', backgroundColor: '#FAFAF9', color: '#0f172a' }}>
                         <Navbar />
                         <Hero />
+                        <AboutUs />
+                        <CommertizeCollection />
+                        <TokenizationInfo />
+                        <SubmitProperty />
+                        <LatestNews />
                         <BentoFeatures />
 
                         {/* Mission Section */}

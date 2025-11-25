@@ -1,0 +1,163 @@
+import { motion } from "framer-motion";
+import { Calendar, Clock, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { Link } from "wouter";
+import { useState, useEffect } from "react";
+
+interface NewsArticle {
+  id: string;
+  title: string;
+  slug: string;
+  summary: string;
+  category: string;
+  imageUrl?: string;
+  readTime: number;
+  publishedAt: string;
+}
+
+// Sample data - replace with your API call
+const sampleArticles: NewsArticle[] = [
+  {
+    id: "1",
+    title: "Tokenization Revolutionizes Commercial Real Estate",
+    slug: "tokenization-revolutionizes-cre",
+    summary: "How blockchain technology is transforming property investment and ownership.",
+    category: "Tokenization",
+    imageUrl: "/news-1.jpg",
+    readTime: 5,
+    publishedAt: "2025-01-15"
+  },
+  // Add more articles...
+];
+
+const LatestNews = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [articles] = useState(sampleArticles);
+
+  const getCategoryColor = (category: string) => {
+    const colors: Record<string, string> = {
+      'Tokenization': 'bg-purple-100 text-purple-700',
+      'Markets': 'bg-yellow-100 text-yellow-700',
+      'Technology': 'bg-indigo-100 text-indigo-700',
+    };
+    return colors[category] || 'bg-gray-100 text-gray-700';
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "short", day: "numeric", year: "numeric"
+    });
+  };
+
+  return (
+    <section className="py-24 bg-gradient-to-br from-gray-50/50 to-white relative overflow-hidden">
+      {/* Scrolling Title */}
+      <div className="relative z-10 w-full overflow-hidden mb-6">
+        <div className="relative h-12 sm:h-16 md:h-20 flex items-center overflow-hidden mb-4">
+          <motion.div
+            animate={{ x: [0, -800] }}
+            transition={{ duration: 16, repeat: Infinity, ease: "linear", repeatType: "loop" }}
+            className="flex items-center space-x-24"
+            style={{ minWidth: "1600px" }}
+          >
+            {["Latest News & Insights", "Latest News & Insights", 
+              "Latest News & Insights", "Latest News & Insights"].map((text, index) => (
+              <motion.h2 
+                key={`${text}-${index}`}
+                className="text-4xl md:text-5xl font-logo font-light text-black flex-shrink-0"
+                style={{ minWidth: "400px", textAlign: "center" }}
+              >
+                Latest News & <span className="text-primary">Insights</span>
+              </motion.h2>
+            ))}
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="container relative z-10">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <div className="w-24 h-1 bg-gradient-to-r from-primary to-yellow-600 rounded-full mx-auto mb-6"></div>
+            <p className="text-xl text-gray-600 font-logo font-light max-w-3xl mx-auto">
+              Stay informed with the latest developments in commercial real estate and tokenization
+            </p>
+          </div>
+
+          {/* Articles Grid */}
+          <div className="grid md:grid-cols-3 gap-8">
+            {articles.map((article, index) => (
+              <motion.article
+                key={article.id}
+                className="w-full"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                viewport={{ once: true }}
+              >
+                <div className="bg-white rounded-2xl shadow-sm border-2 border-[#D4A024] overflow-hidden group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full">
+                  <Link href={`/news/${article.slug}`}>
+                    <div className="cursor-pointer h-full flex flex-col">
+                      {/* Image */}
+                      <div className="relative h-48 overflow-hidden flex-shrink-0 bg-gray-200">
+                        {article.imageUrl && (
+                          <img
+                            src={article.imageUrl}
+                            alt={article.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        )}
+                        <div className="absolute top-4 left-4">
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${getCategoryColor(article.category)}`}>
+                            {article.category}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <div className="p-6 flex-grow flex flex-col">
+                        <h3 className="text-lg font-logo font-light text-black mb-3 line-clamp-2 group-hover:text-primary transition-colors">
+                          {article.title}
+                        </h3>
+                        
+                        <p className="text-gray-600 font-logo font-light text-sm mb-4 line-clamp-3 flex-grow">
+                          {article.summary}
+                        </p>
+
+                        <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
+                          <div className="flex items-center gap-1">
+                            <Calendar size={12} />
+                            <span>{formatDate(article.publishedAt)}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Clock size={12} />
+                            <span>{article.readTime} min</span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 text-primary text-sm font-medium group-hover:gap-3 transition-all mt-auto">
+                          <span>Read More</span>
+                          <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                </div>
+              </motion.article>
+            ))}
+          </div>
+
+          {/* View All Button */}
+          <div className="text-center mt-12">
+            <Link href="/news">
+              <button className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary to-yellow-600 text-white rounded-xl font-medium hover:shadow-lg transition-all">
+                <span>View All News & Insights</span>
+                <ArrowRight size={18} />
+              </button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default LatestNews;

@@ -1,0 +1,65 @@
+{/* Add to your Home page */}
+import { motion } from "framer-motion";
+import PropertyCard from "@/components/PropertyCard";
+
+{/* The Commertize Collection Section */}
+<section id="properties" className="section bg-white">
+  {/* Full-width scrolling title */}
+  <div className="relative w-full overflow-hidden mb-6">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      className="text-center"
+    >
+      <div className="relative h-12 sm:h-16 md:h-20 flex items-center overflow-hidden mb-4 sm:mb-6">
+        <motion.div
+          animate={{ x: [0, -800] }}
+          transition={{
+            duration: 16,
+            repeat: Infinity,
+            ease: "linear",
+            repeatType: "loop"
+          }}
+          className="flex items-center space-x-24"
+          style={{ minWidth: "1600px" }}
+        >
+          {["The Commertize Collection", "The Commertize Collection", 
+            "The Commertize Collection", "The Commertize Collection"].map((text, index) => (
+            <motion.h2 
+              key={`${text}-${index}`}
+              className="display-2 text-foreground flex-shrink-0"
+              style={{ minWidth: "400px", textAlign: "center" }}
+              whileHover={{ 
+                scale: 1.05,
+                transition: { duration: 0.2 }
+              }}
+            >
+              The Commertize <span className="text-primary">Collection</span>
+            </motion.h2>
+          ))}
+        </motion.div>
+      </div>
+    </motion.div>
+  </div>
+
+  <div className="container">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+      className="text-center mb-12 sm:mb-16 md:mb-20"
+    >
+      <p className="body-large max-w-2xl mx-auto text-black px-4">
+        Explore a curated selection of commercial real estate opportunities across multiple sectors, sourced and vetted for quality and performance potential.
+      </p>
+    </motion.div>
+    
+    {/* Property Cards Grid - Add your own data */}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Your property cards go here */}
+    </div>
+  </div>
+</section>
