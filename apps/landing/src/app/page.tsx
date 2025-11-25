@@ -66,10 +66,7 @@ const Navbar = () => {
 
         useEffect(() => {
                 const handleScroll = () => setScrolled(window.scrollY > 50);
-
-                // Check scroll position on mount
                 handleScroll();
-
                 window.addEventListener('scroll', handleScroll);
                 return () => {
                         window.removeEventListener('scroll', handleScroll);
@@ -79,128 +76,113 @@ const Navbar = () => {
         }, []);
 
         return (
-                <nav className={`${styles.navbar} ${scrolled ? styles.navbarScrolled : styles.navbarTransparent}`}>
-                        <div className={styles.container}>
-                                <div className={styles.flexBetween}>
-                                        {/* Logo */}
-                                        <Link href="/" className={styles.logoLink}>
+                <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-md shadow-sm' : 'bg-white/80 backdrop-blur-sm'}`}>
+                        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                                <div className="flex items-center justify-between h-16">
+                                        <Link href="/" className="flex-shrink-0">
                                                 <Logo src="/assets/logo.png" />
                                         </Link>
 
-                                        <div className={styles.navLinks}>
-                                                <button className={styles.navLink}>Mission</button>
-                                                <button className={styles.navLink}>Marketplace</button>
-                                                <button className={styles.navLink}>Nexus</button>
-                                                <button className={styles.navLink}>OmniGrid</button>
+                                        <div className="hidden md:flex items-center gap-6 lg:gap-8">
+                                                <button className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light">Mission</button>
+                                                <button className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light">Marketplace</button>
+                                                <button className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light">Nexus</button>
+                                                <button className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light">OmniGrid</button>
 
-                                                {/* Intelligence Dropdown */}
                                                 <div
-                                                        className={styles.navDropdown}
+                                                        className="relative"
                                                         onMouseEnter={() => {
                                                                 if (intelligenceTimeoutRef.current) clearTimeout(intelligenceTimeoutRef.current);
                                                                 setIntelligenceOpen(true);
                                                         }}
                                                         onMouseLeave={() => {
-                                                                intelligenceTimeoutRef.current = setTimeout(() => {
-                                                                        setIntelligenceOpen(false);
-                                                                }, 150);
+                                                                intelligenceTimeoutRef.current = setTimeout(() => setIntelligenceOpen(false), 150);
                                                         }}
                                                 >
-                                                        <button className={styles.navLinkDropdown}>
+                                                        <button className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light flex items-center gap-1">
                                                                 Intelligence
-                                                                <ChevronRight size={12} className={styles.chevron} style={{ transform: intelligenceOpen ? 'rotate(90deg)' : 'rotate(0deg)' }} />
+                                                                <ChevronRight size={12} className={`transition-transform ${intelligenceOpen ? 'rotate-90' : ''}`} />
                                                         </button>
                                                         {intelligenceOpen && (
-                                                                <div
-                                                                        className={styles.dropdownMenu}
-                                                                        onMouseEnter={() => {
-                                                                                if (intelligenceTimeoutRef.current) clearTimeout(intelligenceTimeoutRef.current);
-                                                                        }}
-                                                                        onMouseLeave={() => {
-                                                                                intelligenceTimeoutRef.current = setTimeout(() => {
-                                                                                        setIntelligenceOpen(false);
-                                                                                }, 150);
-                                                                        }}
-                                                                >
-                                                                        <a href="#" className={styles.dropdownItem}>Market Analytics</a>
-                                                                        <a href="#" className={styles.dropdownItem}>AI Insights</a>
-                                                                        <a href="#" className={styles.dropdownItem}>Reports</a>
+                                                                <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-2">
+                                                                        <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4A024]">Market Analytics</a>
+                                                                        <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4A024]">AI Insights</a>
+                                                                        <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4A024]">Reports</a>
                                                                 </div>
                                                         )}
                                                 </div>
 
-                                                {/* Company Dropdown */}
                                                 <div
-                                                        className={styles.navDropdown}
+                                                        className="relative"
                                                         onMouseEnter={() => {
                                                                 if (companyTimeoutRef.current) clearTimeout(companyTimeoutRef.current);
                                                                 setCompanyOpen(true);
                                                         }}
                                                         onMouseLeave={() => {
-                                                                companyTimeoutRef.current = setTimeout(() => {
-                                                                        setCompanyOpen(false);
-                                                                }, 150);
+                                                                companyTimeoutRef.current = setTimeout(() => setCompanyOpen(false), 150);
                                                         }}
                                                 >
-                                                        <button className={styles.navLinkDropdown}>
+                                                        <button className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light flex items-center gap-1">
                                                                 Company
-                                                                <ChevronRight size={12} className={styles.chevron} style={{ transform: companyOpen ? 'rotate(90deg)' : 'rotate(0deg)' }} />
+                                                                <ChevronRight size={12} className={`transition-transform ${companyOpen ? 'rotate-90' : ''}`} />
                                                         </button>
                                                         {companyOpen && (
-                                                                <div
-                                                                        className={styles.dropdownMenu}
-                                                                        onMouseEnter={() => {
-                                                                                if (companyTimeoutRef.current) clearTimeout(companyTimeoutRef.current);
-                                                                        }}
-                                                                        onMouseLeave={() => {
-                                                                                companyTimeoutRef.current = setTimeout(() => {
-                                                                                        setCompanyOpen(false);
-                                                                                }, 150);
-                                                                        }}
-                                                                >
-                                                                        <a href="#" className={styles.dropdownItem}>About Us</a>
-                                                                        <a href="#" className={styles.dropdownItem}>Contact</a>
-                                                                        <a href="#" className={styles.dropdownItem}>Careers</a>
-                                                                        <a href="#" className={styles.dropdownItem}>Press</a>
+                                                                <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-2">
+                                                                        <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4A024]">About Us</a>
+                                                                        <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4A024]">Contact</a>
+                                                                        <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4A024]">Careers</a>
+                                                                        <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4A024]">Press</a>
                                                                 </div>
                                                         )}
                                                 </div>
                                         </div>
 
-                                        <div className={styles.navActions}>
-                                                <a href="http://localhost:3001" className={styles.signInBtn}>Sign In</a>
+                                        <div className="hidden md:block">
+                                                <a 
+                                                        href="http://localhost:3001" 
+                                                        className="inline-flex items-center justify-center px-5 py-2 bg-[#D4A024] text-white text-sm font-medium rounded-lg hover:bg-[#B8881C] transition-colors"
+                                                >
+                                                        Sign In
+                                                </a>
                                         </div>
-                                        <div className={styles.mobileMenuBtn}>
-                                                <button onClick={() => setIsOpen(!isOpen)} className={styles.hamburger}>
+
+                                        <div className="md:hidden">
+                                                <button onClick={() => setIsOpen(!isOpen)} className="text-gray-700 p-2">
                                                         {isOpen ? <X size={24} /> : <Menu size={24} />}
                                                 </button>
                                         </div>
                                 </div>
                         </div>
-                        {/* Mobile Menu */}
+
                         {isOpen && (
-                                <div className={styles.mobileMenu} onClick={() => setIsOpen(false)}>
-                                        <div className={styles.mobileMenuContent} onClick={(e) => e.stopPropagation()}>
-                                                <a href="#" className={styles.mobileMenuItem} onClick={() => setIsOpen(false)}>Mission</a>
-                                                <a href="#" className={styles.mobileMenuItem} onClick={() => setIsOpen(false)}>Marketplace</a>
-                                                <a href="#" className={styles.mobileMenuItem} onClick={() => setIsOpen(false)}>Nexus</a>
-                                                <a href="#" className={styles.mobileMenuItem} onClick={() => setIsOpen(false)}>OmniGrid</a>
-                                                <div className={styles.mobileMenuDivider} />
-                                                <div className={styles.mobileMenuSection}>
-                                                        <div className={styles.mobileMenuSectionTitle}>Intelligence</div>
-                                                        <a href="#" className={styles.mobileMenuItemSub} onClick={() => setIsOpen(false)}>Market Analytics</a>
-                                                        <a href="#" className={styles.mobileMenuItemSub} onClick={() => setIsOpen(false)}>AI Insights</a>
-                                                        <a href="#" className={styles.mobileMenuItemSub} onClick={() => setIsOpen(false)}>Reports</a>
+                                <div className="md:hidden fixed inset-0 top-16 bg-black/50" onClick={() => setIsOpen(false)}>
+                                        <div className="bg-white p-4 shadow-lg" onClick={(e) => e.stopPropagation()}>
+                                                <a href="#" className="block py-3 text-gray-700 border-b border-gray-100" onClick={() => setIsOpen(false)}>Mission</a>
+                                                <a href="#" className="block py-3 text-gray-700 border-b border-gray-100" onClick={() => setIsOpen(false)}>Marketplace</a>
+                                                <a href="#" className="block py-3 text-gray-700 border-b border-gray-100" onClick={() => setIsOpen(false)}>Nexus</a>
+                                                <a href="#" className="block py-3 text-gray-700 border-b border-gray-100" onClick={() => setIsOpen(false)}>OmniGrid</a>
+                                                <div className="py-2">
+                                                        <div className="text-xs text-gray-500 uppercase tracking-wider mb-2">Intelligence</div>
+                                                        <a href="#" className="block py-2 pl-4 text-gray-600 text-sm" onClick={() => setIsOpen(false)}>Market Analytics</a>
+                                                        <a href="#" className="block py-2 pl-4 text-gray-600 text-sm" onClick={() => setIsOpen(false)}>AI Insights</a>
+                                                        <a href="#" className="block py-2 pl-4 text-gray-600 text-sm" onClick={() => setIsOpen(false)}>Reports</a>
                                                 </div>
-                                                <div className={styles.mobileMenuSection}>
-                                                        <div className={styles.mobileMenuSectionTitle}>Company</div>
-                                                        <a href="#" className={styles.mobileMenuItemSub} onClick={() => setIsOpen(false)}>About Us</a>
-                                                        <a href="#" className={styles.mobileMenuItemSub} onClick={() => setIsOpen(false)}>Contact</a>
-                                                        <a href="#" className={styles.mobileMenuItemSub} onClick={() => setIsOpen(false)}>Careers</a>
-                                                        <a href="#" className={styles.mobileMenuItemSub} onClick={() => setIsOpen(false)}>Press</a>
+                                                <div className="py-2 border-t border-gray-100">
+                                                        <div className="text-xs text-gray-500 uppercase tracking-wider mb-2">Company</div>
+                                                        <a href="#" className="block py-2 pl-4 text-gray-600 text-sm" onClick={() => setIsOpen(false)}>About Us</a>
+                                                        <a href="#" className="block py-2 pl-4 text-gray-600 text-sm" onClick={() => setIsOpen(false)}>Contact</a>
+                                                        <a href="#" className="block py-2 pl-4 text-gray-600 text-sm" onClick={() => setIsOpen(false)}>Careers</a>
+                                                        <a href="#" className="block py-2 pl-4 text-gray-600 text-sm" onClick={() => setIsOpen(false)}>Press</a>
                                                 </div>
-                                                <div className={styles.mobileMenuDivider} />
-                                                <a href="http://localhost:3001" className={styles.mobileMenuSignIn} onClick={() => setIsOpen(false)}>Sign In</a>
+                                                <div className="pt-4 border-t border-gray-100">
+                                                        <a 
+                                                                href="http://localhost:3001" 
+                                                                className="block w-full text-center px-5 py-3 bg-[#D4A024] text-white font-medium rounded-lg"
+                                                                onClick={() => setIsOpen(false)}
+                                                        >
+                                                                Sign In
+                                                        </a>
+                                                </div>
                                         </div>
                                 </div>
                         )}
