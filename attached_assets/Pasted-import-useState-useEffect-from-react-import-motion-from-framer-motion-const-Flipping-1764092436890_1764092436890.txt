@@ -1,0 +1,105 @@
+import { useState, useEffect } from 'react';
+import { motion } from "framer-motion";
+
+const FlippingText = () => {
+  const prefixes = ["Token", "Digit", "Fractional", "Democrat", "Modern", "Global"];
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [animationKey, setAnimationKey] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setAnimationKey(prev => prev + 1);
+      setTimeout(() => {
+        setCurrentIndex((prev) => (prev + 1) % prefixes.length);
+      }, 100);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, [prefixes.length]);
+
+  return (
+    <div className="relative h-12 sm:h-16 md:h-20 lg:h-24 flex items-center justify-center mt-4">
+      <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gray-700 font-logo font-light flex items-baseline justify-center">
+        <span key={animationKey} className="text-flip inline-block">
+          {prefixes[currentIndex]}
+        </span>
+        <span>ized.</span>
+      </div>
+    </div>
+  );
+};
+
+const Hero = () => {
+  return (
+    <section className="relative min-h-screen flex items-center overflow-hidden">
+      <div className="absolute inset-0">
+        <motion.div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ 
+            backgroundImage: `url('/your-background.jpg')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+          animate={{ scale: [1.0, 1.25] }}
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            ease: "easeInOut",
+            repeatType: "reverse"
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-white/70 via-white/50 to-gray-50/40"></div>
+      </div>
+
+      <div className="container relative z-10 pt-16">
+        <div className="max-w-5xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="mb-8"
+          >
+            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl text-gray-900 mb-6 font-logo">
+              <span className="block font-extralight text-xl sm:text-2xl md:text-4xl">
+                Commercial Real Estate
+              </span>
+              <FlippingText />
+            </h1>
+          </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="max-w-3xl mx-auto text-gray-800 text-lg font-light mb-12"
+          >
+            Your Gateway to Digital Real Estate
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="flex gap-4 justify-center"
+          >
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="px-8 py-3 bg-white text-primary rounded-lg font-light border-2 border-[#D4A024] shadow-lg"
+            >
+              Explore
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="px-8 py-3 bg-primary text-white rounded-lg font-light"
+            >
+              Get Started
+            </motion.button>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Hero;
