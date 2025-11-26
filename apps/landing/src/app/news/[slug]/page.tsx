@@ -102,6 +102,96 @@ const articlesData: Record<string, {
     imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&h=600&fit=crop",
     readTime: 6,
     publishedAt: "Jan 5, 2025"
+  },
+  "understanding-rwa-tokenization": {
+    id: "4",
+    title: "Understanding Real-World Asset (RWA) Tokenization",
+    slug: "understanding-rwa-tokenization",
+    summary: "A comprehensive guide to how real-world assets are being brought on-chain.",
+    content: `
+      <p>Real-World Asset (RWA) tokenization is one of the most significant developments in the intersection of traditional finance and blockchain technology. This guide explains how physical assets are being digitized and traded on-chain.</p>
+      
+      <h2>What Are Real-World Assets?</h2>
+      <p>Real-world assets include any tangible or intangible assets that exist outside of the blockchain ecosystem: real estate, commodities, art, intellectual property, and even revenue streams from traditional businesses.</p>
+      
+      <h2>The Tokenization Process</h2>
+      <p><strong>Asset Selection:</strong> Identifying suitable assets with clear ownership and valuation.</p>
+      <p><strong>Legal Structuring:</strong> Creating the appropriate legal framework to represent ownership through tokens.</p>
+      <p><strong>Token Creation:</strong> Minting digital tokens on a blockchain that represent fractional ownership.</p>
+      <p><strong>Distribution:</strong> Offering tokens to qualified investors through compliant platforms.</p>
+      
+      <h2>Why RWA Tokenization Matters</h2>
+      <p>The total addressable market for RWA tokenization is estimated to exceed $16 trillion by 2030. By bringing traditionally illiquid assets on-chain, tokenization creates new opportunities for both asset owners seeking capital and investors seeking diversification.</p>
+      
+      <h2>Regulatory Considerations</h2>
+      <p>RWA tokens are typically classified as securities and must comply with relevant regulations. Platforms like Commertize work within established regulatory frameworks to ensure investor protection and legal compliance.</p>
+    `,
+    category: "Tokenization",
+    tags: ["RWA", "Blockchain", "Digital Assets", "Compliance"],
+    imageUrl: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=1200&h=600&fit=crop",
+    readTime: 7,
+    publishedAt: "Dec 28, 2024"
+  },
+  "institutional-defi-real-estate": {
+    id: "5",
+    title: "The Rise of Institutional DeFi in Real Estate",
+    slug: "institutional-defi-real-estate",
+    summary: "How traditional institutions are embracing decentralized finance for property investments.",
+    content: `
+      <p>Institutional investors are increasingly exploring decentralized finance (DeFi) protocols for real estate investment, signaling a major shift in how traditional finance views blockchain technology.</p>
+      
+      <h2>Institutional Interest Growing</h2>
+      <p>Major financial institutions, pension funds, and family offices are allocating capital to tokenized real estate. This institutional adoption is driven by the efficiency, transparency, and accessibility that blockchain technology provides.</p>
+      
+      <h2>Benefits for Institutions</h2>
+      <p><strong>Operational Efficiency:</strong> Smart contracts automate complex processes like dividend distributions and ownership transfers.</p>
+      <p><strong>24/7 Markets:</strong> Unlike traditional real estate transactions, tokenized assets can be traded around the clock.</p>
+      <p><strong>Global Reach:</strong> Institutions can access international real estate markets without the friction of cross-border transactions.</p>
+      <p><strong>Programmable Compliance:</strong> Regulatory requirements can be encoded directly into smart contracts.</p>
+      
+      <h2>Challenges and Solutions</h2>
+      <p>Institutional adoption requires robust custody solutions, regulatory clarity, and institutional-grade infrastructure. Leading platforms are addressing these needs through partnerships with established custodians and regulatory compliance frameworks.</p>
+      
+      <h2>The Path Forward</h2>
+      <p>As institutional participation grows, we expect to see increased liquidity, improved price discovery, and greater market efficiency in tokenized real estate markets.</p>
+    `,
+    category: "Markets",
+    tags: ["DeFi", "Institutional", "Finance", "Blockchain"],
+    imageUrl: "https://images.unsplash.com/photo-1460472178825-e5240623afd5?w=1200&h=600&fit=crop",
+    readTime: 5,
+    publishedAt: "Dec 20, 2024"
+  },
+  "smart-contracts-cre": {
+    id: "6",
+    title: "Smart Contracts in Commercial Real Estate Transactions",
+    slug: "smart-contracts-cre",
+    summary: "Automating complex property transactions with blockchain technology.",
+    content: `
+      <p>Smart contracts are revolutionizing how commercial real estate transactions are executed, reducing friction, costs, and time while increasing transparency and trust.</p>
+      
+      <h2>What Are Smart Contracts?</h2>
+      <p>Smart contracts are self-executing programs stored on a blockchain that automatically enforce the terms of an agreement when predefined conditions are met. In real estate, they can automate everything from rental payments to property transfers.</p>
+      
+      <h2>Applications in CRE</h2>
+      <p><strong>Automated Rent Collection:</strong> Smart contracts can automatically collect and distribute rental payments to token holders.</p>
+      <p><strong>Escrow Services:</strong> Funds are held and released automatically based on transaction milestones.</p>
+      <p><strong>Ownership Transfers:</strong> Property ownership can be transferred instantly upon payment confirmation.</p>
+      <p><strong>Dividend Distributions:</strong> Rental income is automatically distributed to all token holders proportionally.</p>
+      
+      <h2>Benefits Over Traditional Methods</h2>
+      <p>Traditional real estate transactions involve multiple intermediaries, extensive paperwork, and weeks of processing time. Smart contracts can reduce settlement time from weeks to minutes while eliminating the need for many intermediaries.</p>
+      
+      <h2>Security and Auditability</h2>
+      <p>Smart contracts are immutable once deployed, meaning their logic cannot be altered. All transactions are recorded on the blockchain, creating a permanent, auditable record of all property-related activities.</p>
+      
+      <h2>The Commertize Implementation</h2>
+      <p>At Commertize, our smart contracts are thoroughly audited and designed to handle the complex requirements of commercial real estate investment, from regulatory compliance to investor protections.</p>
+    `,
+    category: "Technology",
+    tags: ["Smart Contracts", "Automation", "Blockchain", "Transactions"],
+    imageUrl: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=1200&h=600&fit=crop",
+    readTime: 6,
+    publishedAt: "Dec 15, 2024"
   }
 };
 
