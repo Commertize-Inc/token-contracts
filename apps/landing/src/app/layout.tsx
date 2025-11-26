@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Plus_Jakarta_Sans, Space_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
+import QueryProvider from "@/components/QueryProvider";
+import { ToastProvider } from "@/hooks/use-toast";
 
 // 1. Configure the Serif (Institutional) Font
 const playfair = Playfair_Display({
@@ -49,7 +51,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${playfair.variable} ${jakarta.variable} ${spaceMono.variable} ${spaceGrotesk.variable}`}>
       <body>
-        {children}
+        <QueryProvider>
+          <ToastProvider>
+            {children}
+          </ToastProvider>
+        </QueryProvider>
       </body>
     </html>
   );

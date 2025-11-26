@@ -37,7 +37,7 @@ import {
 import Link from 'next/link';
 import styles from './page.module.css';
 import { Button, Logo } from '@commertize/ui';
-import ChatWidget from '@/components/ChatWidget';
+import ChatGPTWidget from '@/components/ChatGPTWidget';
 
 // --- Mock Data ---
 const MOCK_PROPERTIES = [
@@ -1692,7 +1692,7 @@ export default function Home() {
                                         </div>
                                 </div>
                         </footer >
-                        <ChatWidget />
+                        <ChatGPTWidget />
                 </div >
         );
 }

@@ -1,0 +1,47 @@
+app.post("/api/chat", express.json(), async (req: Request, res: Response) => {
+  try {
+    const { message, context } = req.body;
+    
+    let response = "";
+    let suggestedActions: string[] = [];
+    
+    const messageLower = message.toLowerCase();
+    
+    if (messageLower.includes('defi') || messageLower.includes('nexus') || messageLower.includes('lending') || messageLower.includes('borrow')) {
+      response = `💎 Commertize Nexus - CRE-Focused DeFi\n\nCommertize Nexus is our advanced DeFi lending and borrowing platform:\n\n• Supply Liquidity: Lend stablecoins (USDC/USDT) and earn yield\n• Borrow Against Properties: Use tokenized CRE as collateral\n• Automated Yield Distribution: Smart contracts distribute rental income\n• Multi-Chain Support: Ethereum & Hedera blockchain\n\nHow It Works:\n1. Supply stablecoins to earn 8-12% APY\n2. Borrow against tokenized property (up to 75% LTV)\n3. Participate in DAO governance`;
+      suggestedActions = ['Visit Nexus DeFi', 'Supply liquidity', 'View governance', 'Check APY rates'];
+    } else if (messageLower.includes('omnigrid') || messageLower.includes('green') || messageLower.includes('solar') || messageLower.includes('renewable')) {
+      response = `🌱 OmniGrid - Green Infrastructure\n\nOmniGrid is Commertize's renewable energy vertical:\n\n• Solar Farms: Utility-scale solar installations\n• Data Centers: Renewable-powered computing facilities\n• Wind Farms: Large-scale wind energy projects\n• Battery Storage: Grid-scale energy storage\n\nWhy OmniGrid?\n• Invest in clean energy transition\n• Earn from renewable revenue streams\n• Portfolio diversification with green infrastructure`;
+      suggestedActions = ['View OmniGrid projects', 'Solar farm opportunities', 'Data center assets'];
+    } else if (messageLower.includes('creusd') || messageLower.includes('stablecoin')) {
+      response = `💵 CREUSD - Stablecoin for Real Estate\n\nCREUSD is Commertize's stablecoin for commercial real estate:\n\n• CRE-Optimized: For property transactions and yield\n• Overcollateralized: Backed by tokenized assets\n• Transparent: Real-time attestations\n• Bridge to TradFi: Seamless USDC/USDT conversion\n\nUse Cases:\n• Property investments and yield payments\n• DeFi vault deposits (Nexus platform)\n• Cross-border real estate transactions`;
+      suggestedActions = ['CREUSD vs USDC', 'Stablecoin mechanics', 'Investment use cases'];
+    } else if (messageLower.includes('tokeniz') || messageLower.includes('how') || messageLower.includes('work')) {
+      response = `⚙️ How Tokenization Works\n\nCommertize transforms real estate into digital tokens:\n\n1. Property Selection: Vetted commercial properties\n2. Legal Structure: SEC-compliant SPV creation\n3. Token Issuance: ERC-3643 compliant tokens\n4. Investor Access: Fractional ownership from $1,000\n5. Yield Distribution: Automated rental income\n\nBenefits:\n• Fractional ownership (no $1M+ minimums)\n• 24/7 liquidity on secondary markets\n• Transparent blockchain transactions\n• Automated compliance`;
+      suggestedActions = ['View properties', 'Start investing', 'Security tokens explained'];
+    } else if (messageLower.includes('invest') || messageLower.includes('opportunit') || messageLower.includes('propert')) {
+      response = `🏢 Investment Opportunities\n\nCommertize offers tokenized commercial real estate:\n\n• Office Buildings: Class A properties in major metros\n• Industrial: Warehouses and logistics centers\n• Retail: Shopping centers and mixed-use\n• Multifamily: Large apartment complexes\n\nTarget Returns: 8-12% annual yield\nMinimum Investment: $1,000\nLiquidity: Secondary market trading`;
+      suggestedActions = ['View marketplace', 'Property analysis', 'Start KYC process'];
+    } else if (messageLower.includes('market') || messageLower.includes('trend') || messageLower.includes('cap rate')) {
+      response = `📊 CRE Market Insights\n\nCurrent market highlights:\n\n• Cap Rates: 6-8% across major markets\n• Occupancy: Office recovering, industrial strong\n• Investment Volume: $400B+ annually in U.S.\n• Tokenization Growth: Digital real estate expanding\n• Yield Opportunities: 8-12% target returns\n\nWant property-specific analysis?`;
+      suggestedActions = ['Property analysis', 'Market comparisons', 'Investment calculator'];
+    } else if (messageLower.includes('qualify') || messageLower.includes('requirement') || messageLower.includes('kyc')) {
+      response = `✅ Investment Qualification\n\nOur tokenized approach makes investing accessible:\n\n• Minimum Investment: $1,000 to start\n• Accreditation: Required for Reg D offerings\n• Simple KYC: Basic identity verification\n• Payment Methods: USD, USDC, other digital assets\n• Global Access: Invest from anywhere with compliance\n\nReady to start your investment journey?`;
+      suggestedActions = ['Start KYC process', 'View properties', 'Payment options'];
+    } else if (messageLower.includes('regulat') || messageLower.includes('compliance') || messageLower.includes('sec')) {
+      response = `⚖️ Regulatory Framework\n\nCommertize operates within robust frameworks:\n\n• Reg D 506(c) compliant tokenized securities\n• Proper investor accreditation and KYC/AML\n• SEC-compliant transfer restrictions\n• Global standards (U.S., EU MiCA, Singapore MAS)\n• Regular third-party audits\n\nTrust and transparency are our foundation.`;
+      suggestedActions = ['GENIUS Act details', 'Investor requirements', 'Audit reports'];
+    } else {
+      response = `👋 Hello! I'm RUNE.CTZ, your AI guide to Commertize.\n\nI can help you explore:\n\n• 🏢 Tokenized commercial real estate investments\n• 💎 Nexus DeFi (lending & borrowing)\n• 🌱 OmniGrid green infrastructure\n• 📊 Market trends and analysis\n• ⚖️ Regulatory compliance\n\nWhat interests you most?`;
+      suggestedActions = ['Investment opportunities', 'How tokenization works', 'Nexus DeFi', 'OmniGrid projects'];
+    }
+
+    res.json({ response, suggestedActions });
+  } catch (error) {
+    console.error('Chat API error:', error);
+    res.status(500).json({ 
+      response: "I apologize, but I'm experiencing technical difficulties. Please try again.",
+      suggestedActions: ['Try again', 'Contact support']
+    });
+  }
+});
