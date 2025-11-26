@@ -262,7 +262,7 @@ export default function NewsPage() {
             )}
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {articles.map((article, index) => (
               <motion.article
                 key={article.id}
@@ -272,38 +272,38 @@ export default function NewsPage() {
                 className="group cursor-pointer"
               >
                 <Link href={`/news/${article.slug}`}>
-                  <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 h-full flex flex-col">
-                    <div className="relative h-48 overflow-hidden">
+                  <div className="bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 h-full flex flex-col">
+                    <div className="relative h-52 overflow-hidden">
                       <img
                         src={article.imageUrl || 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&h=500&fit=crop'}
                         alt={article.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
                           target.src = 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&h=500&fit=crop';
                         }}
                       />
                       <div className="absolute top-4 left-4">
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium text-white ${getCategoryColor(article.category)}`}>
+                        <span className={`px-3 py-1.5 rounded-full text-xs font-medium text-white shadow-sm ${getCategoryColor(article.category)}`}>
                           {article.category}
                         </span>
                       </div>
                     </div>
                     
-                    <div className="p-6 flex flex-col flex-1">
-                      <h2 className="text-lg font-medium text-gray-900 mb-3 line-clamp-2 group-hover:text-[#D4A024] transition-colors">
+                    <div className="p-5 flex flex-col flex-1 bg-white">
+                      <h2 className="text-base font-semibold text-gray-900 mb-2 line-clamp-2 leading-snug">
                         {article.title}
                       </h2>
-                      <p className="text-gray-600 text-sm font-light mb-4 line-clamp-3 flex-1">
+                      <p className="text-gray-500 text-sm font-light mb-4 line-clamp-3 flex-1 leading-relaxed">
                         {article.summary}
                       </p>
-                      <div className="flex items-center gap-4 text-gray-400 text-xs pt-4 border-t border-gray-100">
-                        <div className="flex items-center gap-1">
-                          <Calendar size={14} />
+                      <div className="flex items-center gap-4 text-gray-400 text-xs">
+                        <div className="flex items-center gap-1.5">
+                          <Calendar size={13} className="text-gray-400" />
                           <span>{formatDate(article.publishedAt)}</span>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <Clock size={14} />
+                        <div className="flex items-center gap-1.5">
+                          <Clock size={13} className="text-gray-400" />
                           <span>{article.readTime} min read</span>
                         </div>
                       </div>

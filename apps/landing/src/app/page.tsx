@@ -1463,16 +1463,17 @@ const LatestNews = () => {
 
         const getCategoryColor = (category: string) => {
                 const colors: Record<string, string> = {
-                        'Tokenization': 'bg-purple-100 text-purple-700',
-                        'Markets': 'bg-yellow-100 text-yellow-700',
-                        'Technology': 'bg-indigo-100 text-indigo-700',
-                        'Regulation': 'bg-red-100 text-red-700',
-                        'DeFi': 'bg-cyan-100 text-cyan-700',
-                        'RWA': 'bg-green-100 text-green-700',
-                        'Crypto': 'bg-orange-100 text-orange-700',
-                        'Infrastructure': 'bg-teal-100 text-teal-700',
+                        'CRE': 'bg-[#D4A024]',
+                        'Tokenization': 'bg-purple-500',
+                        'Markets': 'bg-yellow-500',
+                        'Technology': 'bg-blue-500',
+                        'Regulation': 'bg-red-500',
+                        'DeFi': 'bg-cyan-500',
+                        'RWA': 'bg-green-500',
+                        'Crypto': 'bg-orange-500',
+                        'Infrastructure': 'bg-teal-500',
                 };
-                return colors[category] || 'bg-gray-100 text-gray-700';
+                return colors[category] || 'bg-gray-500';
         };
 
         return (
@@ -1508,62 +1509,53 @@ const LatestNews = () => {
                                                 </p>
                                         </div>
 
-                                        <div className="grid md:grid-cols-3 gap-8">
+                                        <div className="grid md:grid-cols-3 gap-6">
                                                 {articles.map((article, index) => (
                                                         <motion.article
                                                                 key={article.id}
-                                                                className="w-full"
+                                                                className="w-full group cursor-pointer"
                                                                 initial={{ opacity: 0, y: 30 }}
                                                                 whileInView={{ opacity: 1, y: 0 }}
                                                                 transition={{ duration: 0.6, delay: index * 0.1 }}
                                                                 viewport={{ once: true }}
                                                         >
-                                                                <div className="bg-white rounded-2xl shadow-sm border-2 border-[#D4A024] overflow-hidden group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full">
-                                                                        <Link href={`/news/${article.slug}`}>
-                                                                                <div className="cursor-pointer h-full flex flex-col">
-                                                                                        <div className="relative h-48 overflow-hidden flex-shrink-0 bg-gray-200">
-                                                                                                {article.imageUrl && (
-                                                                                                        <img
-                                                                                                                src={article.imageUrl}
-                                                                                                                alt={article.title}
-                                                                                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                                                                                        />
-                                                                                                )}
-                                                                                                <div className="absolute top-4 left-4">
-                                                                                                        <span className={`px-3 py-1 rounded-full text-xs font-light ${getCategoryColor(article.category)}`}>
-                                                                                                                {article.category}
-                                                                                                        </span>
-                                                                                                </div>
+                                                                <Link href={`/news/${article.slug}`}>
+                                                                        <div className="bg-white rounded-3xl shadow-md hover:shadow-xl overflow-hidden transition-all duration-300 h-full flex flex-col">
+                                                                                <div className="relative h-52 overflow-hidden flex-shrink-0">
+                                                                                        <img
+                                                                                                src={article.imageUrl || 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&h=500&fit=crop'}
+                                                                                                alt={article.title}
+                                                                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                                                        />
+                                                                                        <div className="absolute top-4 left-4">
+                                                                                                <span className={`px-3 py-1.5 rounded-full text-xs font-medium text-white shadow-sm ${getCategoryColor(article.category)}`}>
+                                                                                                        {article.category}
+                                                                                                </span>
                                                                                         </div>
+                                                                                </div>
 
-                                                                                        <div className="p-6 flex-grow flex flex-col">
-                                                                                                <h3 className="text-lg font-logo font-light text-gray-900 mb-3 line-clamp-2 group-hover:text-[#D4A024] transition-colors">
-                                                                                                        {article.title}
-                                                                                                </h3>
-                                                                                                
-                                                                                                <p className="text-gray-600 font-logo font-light text-sm mb-4 line-clamp-3 flex-grow">
-                                                                                                        {article.summary}
-                                                                                                </p>
+                                                                                <div className="p-5 flex-grow flex flex-col bg-white">
+                                                                                        <h3 className="text-base font-semibold text-gray-900 mb-2 line-clamp-2 leading-snug">
+                                                                                                {article.title}
+                                                                                        </h3>
+                                                                                        
+                                                                                        <p className="text-gray-500 text-sm font-light mb-4 line-clamp-3 flex-grow leading-relaxed">
+                                                                                                {article.summary}
+                                                                                        </p>
 
-                                                                                                <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
-                                                                                                        <div className="flex items-center gap-1">
-                                                                                                                <Calendar size={12} />
-                                                                                                                <span>{formatNewsDate(article.publishedAt)}</span>
-                                                                                                        </div>
-                                                                                                        <div className="flex items-center gap-1">
-                                                                                                                <Clock size={12} />
-                                                                                                                <span>{article.readTime} min</span>
-                                                                                                        </div>
+                                                                                        <div className="flex items-center gap-4 text-gray-400 text-xs">
+                                                                                                <div className="flex items-center gap-1.5">
+                                                                                                        <Calendar size={13} className="text-gray-400" />
+                                                                                                        <span>{formatNewsDate(article.publishedAt)}</span>
                                                                                                 </div>
-
-                                                                                                <div className="flex items-center gap-2 text-[#D4A024] text-sm font-light group-hover:gap-3 transition-all mt-auto">
-                                                                                                        <span>Read More</span>
-                                                                                                        <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                                                                                                <div className="flex items-center gap-1.5">
+                                                                                                        <Clock size={13} className="text-gray-400" />
+                                                                                                        <span>{article.readTime} min read</span>
                                                                                                 </div>
                                                                                         </div>
                                                                                 </div>
-                                                                        </Link>
-                                                                </div>
+                                                                        </div>
+                                                                </Link>
                                                         </motion.article>
                                                 ))}
                                         </div>
