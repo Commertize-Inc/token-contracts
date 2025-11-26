@@ -790,19 +790,19 @@ const CommertizeCollection = () => (
                                                                 <h3 className="text-lg font-logo font-light text-gray-900 leading-tight">{property.title}</h3>
                                                                 <span className="px-3 py-1 bg-white text-[#92710A] text-xs font-medium rounded-[0.75rem] whitespace-nowrap border-2 border-[#D4A024]">{property.type}</span>
                                                         </div>
-                                                        <div className="flex items-center gap-1 text-sm text-gray-500 mb-4">
+                                                        <div className="flex items-center gap-1 text-sm text-gray-900 mb-4">
                                                                 <MapPin size={14} className="text-[#D4A024]" />
                                                                 <span className="font-light">{property.location}</span>
                                                         </div>
                                                         
                                                         <div className="mb-3">
-                                                                <div className="text-xs text-gray-400 font-light">Sponsor</div>
-                                                                <div className="text-sm text-gray-700 font-light">{property.sponsor}</div>
+                                                                <div className="text-xs text-gray-900 font-light">Sponsor</div>
+                                                                <div className="text-sm text-gray-900 font-light">{property.sponsor}</div>
                                                         </div>
                                                         
                                                         <div className="flex items-center justify-between mb-3">
-                                                                <span className="text-sm text-gray-500 font-light">{property.status}</span>
-                                                                <span className="text-sm text-gray-500 font-light">{property.funded}%</span>
+                                                                <span className="text-sm text-gray-900 font-light">{property.status}</span>
+                                                                <span className="text-sm text-gray-900 font-light">{property.funded}%</span>
                                                         </div>
                                                         <div className="w-full h-1.5 bg-gray-100 rounded-full mb-4">
                                                                 <div 
@@ -812,8 +812,8 @@ const CommertizeCollection = () => (
                                                         </div>
                                                         
                                                         <div className="text-center mb-4">
-                                                                <div className="text-sm text-gray-700 font-light">More Details Coming Soon</div>
-                                                                <div className="text-xs text-gray-400 font-light">Investment details available shortly.</div>
+                                                                <div className="text-sm text-gray-900 font-light">More Details Coming Soon</div>
+                                                                <div className="text-xs text-gray-900 font-light">Investment details available shortly.</div>
                                                         </div>
                                                         
                                                         <div className="flex items-center justify-center mb-4">
