@@ -170,7 +170,7 @@ const MOCK_PROPERTIES = [
                 funded: 0, 
                 units: 140,
                 comingSoon: true,
-                image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=600&h=400&fit=crop'
+                image: '/assets/boardwalk-suites-lafayette.jpg'
         },
         { 
                 id: 3, 
