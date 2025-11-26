@@ -158,7 +158,7 @@ const MOCK_PROPERTIES = [
                 funded: 0, 
                 units: 79,
                 comingSoon: true,
-                image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=400&fit=crop'
+                image: '/assets/doubletree-hilton-head.jpg'
         },
         { 
                 id: 2, 
