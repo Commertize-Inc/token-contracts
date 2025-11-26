@@ -32,7 +32,8 @@ import {
         Calendar,
         Clock,
         ArrowRight,
-        MapPin
+        MapPin,
+        Cookie
 } from 'lucide-react';
 import Link from 'next/link';
 import styles from './page.module.css';
@@ -384,17 +385,29 @@ const CookieConsent = () => {
 
         useEffect(() => {
                 setHasMounted(true);
-                setIsVisible(true);
+                const timer = setTimeout(() => setIsVisible(true), 1000);
+                return () => clearTimeout(timer);
         }, []);
 
         if (!hasMounted || !isVisible) return null;
 
         return (
-                <div className={styles.cookieConsent}>
+                <motion.div 
+                        className={styles.cookieConsent}
+                        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 20, scale: 0.95 }}
+                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                >
                         <button className={styles.cookieClose} onClick={() => setIsVisible(false)}>
-                                <X size={16} />
+                                <X size={14} />
                         </button>
-                        <h4 className={styles.cookieTitle}>Cookie Settings</h4>
+                        <div className={styles.cookieHeader}>
+                                <div className={styles.cookieIcon}>
+                                        <Cookie size={20} />
+                                </div>
+                                <h4 className={styles.cookieTitle}>Cookie Preferences</h4>
+                        </div>
                         <p className={styles.cookieText}>
                                 We use cookies to enhance your browsing experience, serve personalized content, and analyze our traffic. Please choose your preference.
                         </p>
@@ -406,7 +419,7 @@ const CookieConsent = () => {
                                         Accept All
                                 </button>
                         </div>
-                </div>
+                </motion.div>
         );
 };
 
