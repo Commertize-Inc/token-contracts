@@ -239,8 +239,14 @@ const FlippingText = () => {
         const prefixes = ["Token", "Digit", "Fractional", "Democrat", "Collateral", "Modern", "Global", "Revolution"];
         const [currentIndex, setCurrentIndex] = useState(0);
         const [animationKey, setAnimationKey] = useState(0);
+        const [hasMounted, setHasMounted] = useState(false);
 
         useEffect(() => {
+                setHasMounted(true);
+        }, []);
+
+        useEffect(() => {
+                if (!hasMounted) return;
                 const interval = setInterval(() => {
                         setAnimationKey(prev => prev + 1);
                         setTimeout(() => {
@@ -248,14 +254,14 @@ const FlippingText = () => {
                         }, 100);
                 }, 2500);
                 return () => clearInterval(interval);
-        }, [prefixes.length]);
+        }, [hasMounted, prefixes.length]);
 
         return (
                 <div className="relative h-12 sm:h-16 md:h-20 lg:h-24 flex items-center justify-center mt-4">
                         <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gray-700 font-logo font-light flex items-baseline justify-center">
                                 <span 
-                                        key={animationKey}
-                                        className="text-flip inline-block"
+                                        key={hasMounted ? animationKey : 'initial'}
+                                        className={hasMounted ? "text-flip inline-block" : "inline-block"}
                                 >
                                         {prefixes[currentIndex]}
                                 </span>
@@ -266,9 +272,15 @@ const FlippingText = () => {
 };
 
 const CookieConsent = () => {
-        const [isVisible, setIsVisible] = useState(true);
+        const [isVisible, setIsVisible] = useState(false);
+        const [hasMounted, setHasMounted] = useState(false);
 
-        if (!isVisible) return null;
+        useEffect(() => {
+                setHasMounted(true);
+                setIsVisible(true);
+        }, []);
+
+        if (!hasMounted || !isVisible) return null;
 
         return (
                 <div className={styles.cookieConsent}>
@@ -292,14 +304,20 @@ const CookieConsent = () => {
 };
 
 const Hero = () => (
-        <section className="relative h-screen flex items-center justify-center overflow-hidden">
+        <section className="relative min-h-screen flex items-center overflow-hidden">
                 <div className="absolute inset-0">
                         <motion.div 
-                                className="absolute inset-0 bg-cover bg-center"
+                                className="absolute inset-0 bg-no-repeat"
                                 style={{ 
                                         backgroundImage: `url('/assets/hero-pattern.jpg')`,
-                                        backgroundSize: 'cover',
-                                        backgroundPosition: 'center'
+                                        imageRendering: '-webkit-optimize-contrast' as React.CSSProperties['imageRendering'],
+                                        WebkitBackfaceVisibility: 'hidden',
+                                        backfaceVisibility: 'hidden',
+                                        transform: 'translateZ(0)',
+                                        willChange: 'transform',
+                                        filter: 'contrast(1.0) brightness(1.0) saturate(1.0)',
+                                        backgroundPosition: 'center center',
+                                        backgroundSize: 'cover'
                                 }}
                                 animate={{ scale: [1.0, 1.25] }}
                                 transition={{
