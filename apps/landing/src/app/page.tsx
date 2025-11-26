@@ -593,9 +593,10 @@ const AboutUs = () => {
                         <div className="absolute inset-0">
                                 <motion.div
                                         className="absolute inset-0"
-                                        animate={{ scale: [1.0, 1.05] }}
+                                        initial={{ scale: 1 }}
+                                        animate={{ scale: [1.0, 1.2] }}
                                         transition={{
-                                                duration: 30,
+                                                duration: 20,
                                                 repeat: Infinity,
                                                 ease: "easeInOut",
                                                 repeatType: "reverse"
