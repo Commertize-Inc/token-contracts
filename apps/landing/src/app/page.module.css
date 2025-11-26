@@ -1509,3 +1509,63 @@
     display: block;
   }
 }
+
+/* --- Marketplace Section --- */
+.marketplaceSection {
+  padding: 6rem 0;
+  background: linear-gradient(to bottom, #FAFAF9, white);
+}
+
+.marketplaceIntro {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 3rem;
+  font-size: 1.125rem;
+  color: #64748b;
+  font-weight: 300;
+  line-height: 1.7;
+}
+
+.marketplaceGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 640px) {
+  .marketplaceGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .marketplaceGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.marketplaceCta {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+}
+
+.marketplaceBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  background: #D4A024;
+  color: white;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.marketplaceBtn:hover {
+  background: #B8891F;
+  box-shadow: 0 10px 25px -5px rgba(212, 160, 36, 0.3);
+}

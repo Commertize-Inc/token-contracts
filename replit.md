@@ -43,6 +43,18 @@ The project uses **pnpm workspaces** to manage a monorepo with the following str
 - **Chip**: Active/inactive state indicators
 - **Logo**: Brand logo with theme support
 - **Navbar**: Navigation with auth integration
+- **PropertyCard**: Real estate property card with gold border styling, investment metrics, token progress bar, and status badges
+
+**PropertyCard Component** (packages/ui/PropertyCard.tsx):
+- Gold border design (`border-2 border-[#D4A024]`)
+- Image panel with gradient overlay and zoom on hover
+- Status badges (Active, Coming Soon)
+- Optional favorite button with star icon
+- Property type chip (Medical, Industrial, Office, Retail, etc.)
+- Token progress bar showing percentage sold
+- Investment metrics grid (IRR, Cap Rate, Hold Period, Units)
+- Circular token price badge
+- Responsive design with mobile-optimized layout
 
 **Design Philosophy**: Premium, trustworthy aesthetic using glassmorphism, subtle animations, and clean data presentation. The color palette centers on Commertize Gold (`#C59B26` / `#D4A024`) combined with neutral slate tones.
 
@@ -60,6 +72,13 @@ The project uses **pnpm workspaces** to manage a monorepo with the following str
 - **Hydration Pattern**: Uses `hasMounted` state to defer animations until after hydration, preventing SSR/client divergence
 - **Cookie Consent**: Fixed position banner in bottom-left corner with Accept/Reject options
 - **Hero Buttons**: "Explore Marketplace" (outlined gold) and "Join Waitlist" (filled gold)
+
+**Marketplace Section** (Landing Page):
+- **Featured Properties**: Grid display of sample property cards using the shared PropertyCard component
+- **Responsive Grid**: 1 column (mobile) → 2 columns (tablet) → 3 columns (desktop)
+- **Sample Data**: 6 pre-configured properties including Medical, Industrial, Office, Retail, Multifamily, and Hotel types
+- **Call-to-Action**: "View All Properties" button with gold styling
+- **Section Styling**: Gradient background from #FAFAF9 to white
 
 ### Authentication & Authorization
 

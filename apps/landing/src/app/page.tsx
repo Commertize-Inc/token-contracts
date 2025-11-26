@@ -36,8 +36,114 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import styles from './page.module.css';
-import { Button, Logo } from '@commertize/ui';
+import { Button, Logo, PropertyCard, PropertyData } from '@commertize/ui';
 import ChatGPTWidget from '@/components/ChatGPTWidget';
+
+const SAMPLE_PROPERTIES: PropertyData[] = [
+        {
+                id: '1',
+                name: 'Gateway Medical Plaza',
+                location: 'Austin, TX',
+                imageUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&h=400&fit=crop',
+                propertyValue: 24500000,
+                pricePerToken: 100,
+                minInvestment: 25000,
+                totalTokens: 245000,
+                tokensSold: 147000,
+                status: 'Active',
+                propertyType: 'medical',
+                targetedIRR: 14.5,
+                capRate: 6.8,
+                holdPeriod: 5,
+                units: 48
+        },
+        {
+                id: '2',
+                name: 'Riverside Industrial Park',
+                location: 'Phoenix, AZ',
+                imageUrl: 'https://images.unsplash.com/photo-1565793298595-6a879b1d9492?w=600&h=400&fit=crop',
+                propertyValue: 18750000,
+                pricePerToken: 75,
+                minInvestment: 50000,
+                totalTokens: 250000,
+                tokensSold: 200000,
+                status: 'Active',
+                propertyType: 'industrial',
+                targetedIRR: 16.2,
+                capRate: 7.5,
+                holdPeriod: 7,
+                units: 12
+        },
+        {
+                id: '3',
+                name: 'Metropolitan Tower',
+                location: 'Denver, CO',
+                imageUrl: 'https://images.unsplash.com/photo-1554435493-93422e8220c8?w=600&h=400&fit=crop',
+                propertyValue: 52000000,
+                pricePerToken: 250,
+                minInvestment: 100000,
+                totalTokens: 208000,
+                tokensSold: 83200,
+                status: 'Active',
+                propertyType: 'office',
+                targetedIRR: 12.8,
+                capRate: 5.9,
+                holdPeriod: 10,
+                units: 320
+        },
+        {
+                id: '4',
+                name: 'Sunrise Retail Center',
+                location: 'Miami, FL',
+                imageUrl: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&h=400&fit=crop',
+                propertyValue: 15200000,
+                pricePerToken: 50,
+                minInvestment: 25000,
+                totalTokens: 304000,
+                tokensSold: 243200,
+                status: 'Active',
+                propertyType: 'retail',
+                targetedIRR: 11.5,
+                capRate: 6.2,
+                holdPeriod: 5,
+                units: 24
+        },
+        {
+                id: '5',
+                name: 'Pacific Heights Multifamily',
+                location: 'Seattle, WA',
+                imageUrl: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&h=400&fit=crop',
+                propertyValue: 38000000,
+                pricePerToken: 150,
+                minInvestment: 50000,
+                totalTokens: 253333,
+                tokensSold: 177333,
+                status: 'Active',
+                propertyType: 'multifamily',
+                targetedIRR: 13.2,
+                capRate: 5.4,
+                holdPeriod: 7,
+                units: 156
+        },
+        {
+                id: '6',
+                name: 'Harbor View Hotel',
+                location: 'San Diego, CA',
+                imageUrl: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=400&fit=crop',
+                propertyValue: 45000000,
+                pricePerToken: 200,
+                minInvestment: 75000,
+                totalTokens: 225000,
+                tokensSold: 0,
+                status: 'Coming Soon',
+                propertyType: 'hotel',
+                targetedIRR: 15.8,
+                capRate: 7.2,
+                holdPeriod: 8,
+                units: 180,
+                comingSoon: true
+        }
+];
 
 // --- Mock Data ---
 const MOCK_PROPERTIES = [
@@ -401,6 +507,36 @@ const Hero = () => (
                 </div>
 
                 <CookieConsent />
+        </section>
+);
+
+const Marketplace = () => (
+        <section className={styles.marketplaceSection} id="marketplace">
+                <div className={styles.container}>
+                        <SectionHeading subtitle="Featured Properties" title="Explore Our Marketplace" />
+                        <p className={styles.marketplaceIntro}>
+                                Discover institutional-grade commercial real estate investments, tokenized for accessibility and liquidity.
+                        </p>
+                        <div className={styles.marketplaceGrid}>
+                                {SAMPLE_PROPERTIES.map((property) => (
+                                        <PropertyCard
+                                                key={property.id}
+                                                property={property}
+                                                showFavoriteButton={false}
+                                        />
+                                ))}
+                        </div>
+                        <div className={styles.marketplaceCta}>
+                                <motion.button
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        className={styles.marketplaceBtn}
+                                >
+                                        View All Properties
+                                        <ArrowRight size={16} />
+                                </motion.button>
+                        </div>
+                </div>
         </section>
 );
 
@@ -1427,6 +1563,7 @@ export default function Home() {
                         <TokenizationInfo />
                         <SubmitProperty />
                         <LatestNews />
+                        <Marketplace />
                         <BentoFeatures />
 
                         {/* Mission Section */}
