@@ -754,7 +754,7 @@ const WhyCommertize = () => {
                                         className="text-center mb-16"
                                 >
                                         <h2 className="text-3xl md:text-4xl lg:text-5xl font-logo font-light text-gray-900 mb-4">
-                                                Why <span className="text-[#D4A024]">Commertize</span>
+                                                Powered by <span className="text-[#D4A024]">Innovation</span>
                                         </h2>
                                         <p className="text-base md:text-lg font-logo font-light text-gray-600 max-w-2xl mx-auto">
                                                 The future of real estate investing, powered by blockchain technology and institutional expertise.
