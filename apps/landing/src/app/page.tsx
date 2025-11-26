@@ -1230,7 +1230,7 @@ const sampleArticles = [
                 slug: "tokenization-revolutionizes-cre",
                 summary: "How blockchain technology is transforming property investment and ownership.",
                 category: "Tokenization",
-                imageUrl: "/assets/building-modern.jpg",
+                imageUrl: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600&h=400&fit=crop",
                 readTime: 5,
                 publishedAt: "Jan 15, 2025"
         },
@@ -1240,7 +1240,7 @@ const sampleArticles = [
                 slug: "future-fractional-investment",
                 summary: "Exploring how fractional ownership is democratizing real estate access.",
                 category: "Markets",
-                imageUrl: "/assets/building-tall.jpg",
+                imageUrl: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&h=400&fit=crop",
                 readTime: 4,
                 publishedAt: "Jan 10, 2025"
         },
@@ -1250,7 +1250,7 @@ const sampleArticles = [
                 slug: "ai-property-valuation",
                 summary: "Machine learning is changing how we assess commercial property values.",
                 category: "Technology",
-                imageUrl: "/assets/building-curved.jpg",
+                imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&h=400&fit=crop",
                 readTime: 6,
                 publishedAt: "Jan 5, 2025"
         },
