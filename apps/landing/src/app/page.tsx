@@ -1930,51 +1930,6 @@ export default function Home() {
                                 </div>
                         </section>
 
-                        {/* Technology Section */}
-                        <div className={styles.techSection}>
-                                <div className={styles.container}>
-                                        <div className={styles.techHeading}>
-                                                <div className={styles.techSubtitle}>Built on Blockchain</div>
-                                                <h2 className={styles.techSectionTitle}>Multi-Chain Infrastructure</h2>
-                                        </div>
-                                        <div className={styles.techGrid}>
-                                                <div className={styles.techCard}>
-                                                        <div className={styles.techIcon}>
-                                                                <ShieldCheck size={32} color="#C59B26" />
-                                                        </div>
-                                                        <h4 className={styles.techTitle}>Hedera Network</h4>
-                                                        <p className={styles.techDesc}>Property tokenization using ERC-3643 compliant security tokens for regulatory compliance and transfer restrictions.</p>
-                                                        <div className={styles.techFeatures}>
-                                                                <div className={styles.techFeature}>✓ Sub-second finality</div>
-                                                                <div className={styles.techFeature}>✓ Low transaction fees</div>
-                                                                <div className={styles.techFeature}>✓ Carbon negative</div>
-                                                        </div>
-                                                </div>
-                                                <div className={styles.techCard}>
-                                                        <div className={styles.techIcon}>
-                                                                <TrendingUp size={32} color="#64FFDA" />
-                                                        </div>
-                                                        <h4 className={styles.techTitle}>Ethereum Mainnet</h4>
-                                                        <p className={styles.techDesc}>DeFi integration for lending, liquidity provision, and advanced trading via Aave V3 and Uniswap protocols.</p>
-                                                        <div className={styles.techFeatures}>
-                                                                <div className={styles.techFeature}>✓ Deep liquidity pools</div>
-                                                                <div className={styles.techFeature}>✓ Composable DeFi</div>
-                                                                <div className={styles.techFeature}>✓ Decentralized trading</div>
-                                                        </div>
-                                                </div>
-                                        </div>
-                                        <div className={styles.partnersSection}>
-                                                <h4 className={styles.partnersTitle}>Integration Partners</h4>
-                                                <div className={styles.partnersGrid}>
-                                                        <div className={styles.partnerBadge}>Plaid</div>
-                                                        <div className={styles.partnerBadge}>Privy</div>
-                                                        <div className={styles.partnerBadge}>Hedera</div>
-                                                        <div className={styles.partnerBadge}>Arc</div>
-                                                </div>
-                                        </div>
-                                </div>
-                        </div>
-
                         {/* Asset Classes Section */}
                         <div className={styles.assetClassesSection}>
                                 <div className={styles.container}>
