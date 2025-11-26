@@ -465,7 +465,7 @@ const AboutUs = () => {
                                         }}
                                 >
                                         <img 
-                                                src="/assets/commertize-vision-bg.jpg"
+                                                src="/assets/vision-bg.jpg"
                                                 alt="" 
                                                 className="w-full h-full object-cover"
                                         />
