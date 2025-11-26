@@ -467,8 +467,12 @@ const AboutUs = () => {
                                         <img 
                                                 src="/assets/vision-bg.jpg"
                                                 alt="" 
-                                                className="w-full h-full object-cover"
-                                                style={{ objectPosition: 'right bottom' }}
+                                                className="w-full h-full"
+                                                style={{ 
+                                                        objectFit: 'contain',
+                                                        objectPosition: 'center center',
+                                                        backgroundColor: '#f5f5f5'
+                                                }}
                                         />
                                 </motion.div>
                         </div>
