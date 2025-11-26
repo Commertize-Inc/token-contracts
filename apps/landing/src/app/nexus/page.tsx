@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import {
-  RefreshCw,
   Shield,
   Coins,
   Zap,
@@ -152,21 +152,26 @@ export default function Nexus() {
               transition={{ duration: 0.8 }}
               className="text-center max-w-4xl mx-auto"
             >
-              <div className="flex items-center justify-center mb-6">
+              <div className="flex items-center justify-center mb-8">
                 <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                  className="w-20 h-20 bg-gradient-to-br from-[#D4A024] to-[#B8860B] rounded-full flex items-center justify-center shadow-lg"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6 }}
                 >
-                  <RefreshCw className="w-10 h-10 text-white" />
+                  <Image
+                    src="/assets/nexus-logo.png"
+                    alt="Nexus"
+                    width={400}
+                    height={81}
+                    className="max-w-[320px] md:max-w-[400px]"
+                    style={{ width: 'auto', height: 'auto' }}
+                    priority
+                  />
                 </motion.div>
               </div>
               <span className="inline-block mb-4 px-4 py-1.5 bg-[#D4A024]/10 text-[#D4A024] text-sm font-medium rounded-full border border-[#D4A024]/30">
                 DeFi Protocol
               </span>
-              <h1 className="text-5xl md:text-6xl font-light mb-6 bg-gradient-to-r from-[#D4A024] to-[#B8860B] bg-clip-text text-transparent" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                Nexus
-              </h1>
               <p className="text-xl text-gray-600 mb-4 font-light">
                 The Liquidity Engine for Tokenized Real Estate
               </p>

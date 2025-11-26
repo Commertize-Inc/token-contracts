@@ -4,6 +4,7 @@ expertMode = true
 
 [nix]
 channel = "stable-25_05"
+packages = ["imagemagick"]
 
 [userenv]
 
@@ -47,7 +48,7 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 36621
+localPort = 34455
 externalPort = 3002
 
 [[ports]]
