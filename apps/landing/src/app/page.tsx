@@ -482,7 +482,7 @@ const AboutUs = () => {
                                         transition={{ duration: 1, ease: "easeOut" }}
                                 >
                                         <motion.h2 
-                                                className="text-2xl md:text-3xl lg:text-4xl font-logo font-light mb-8 text-gray-900"
+                                                className="text-2xl md:text-3xl lg:text-4xl font-logo font-light mb-6 text-gray-900"
                                                 initial={{ opacity: 0, y: 30 }}
                                                 whileInView={{ opacity: 1, y: 0 }}
                                                 viewport={{ once: true, amount: 0.5 }}
@@ -491,7 +491,7 @@ const AboutUs = () => {
                                                 The {companyName} Vision
                                         </motion.h2>
                                         
-                                        <div className="space-y-5 md:space-y-6">
+                                        <div className="space-y-4 md:space-y-5">
                                                 <motion.p 
                                                         className="text-sm md:text-base font-logo font-light text-gray-700 leading-relaxed"
                                                         initial={{ opacity: 0, y: 20 }}
@@ -499,7 +499,7 @@ const AboutUs = () => {
                                                         viewport={{ once: true, amount: 0.3 }}
                                                         transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
                                                 >
-                                                        {companyName} is building the next-generation platform and ecosystem for commercial real estate and infrastructure, merging the power of AI, blockchain, tokenization, and decentralized finance (DeFi) into one intelligent network.
+                                                        {companyName} merges AI, blockchain, and tokenization to connect commercial real estate with global capital markets.
                                                 </motion.p>
                                                 <motion.p 
                                                         className="text-sm md:text-base font-logo font-light text-gray-700 leading-relaxed"
@@ -508,25 +508,7 @@ const AboutUs = () => {
                                                         viewport={{ once: true, amount: 0.3 }}
                                                         transition={{ duration: 0.8, delay: 0.45, ease: "easeOut" }}
                                                 >
-                                                        Our mission is to create the digital foundation that connects real-world assets to global capital markets—enhancing liquidity, transparency, and access across the commercial real estate landscape.
-                                                </motion.p>
-                                                <motion.p 
-                                                        className="text-sm md:text-base font-logo font-light text-gray-700 leading-relaxed"
-                                                        initial={{ opacity: 0, y: 20 }}
-                                                        whileInView={{ opacity: 1, y: 0 }}
-                                                        viewport={{ once: true, amount: 0.3 }}
-                                                        transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
-                                                >
-                                                        Through AI-driven analytics, blockchain-enabled trust, and a compliant financial infrastructure, {companyName} empowers investors and property owners to own, trade, and build the next era of real estate finance.
-                                                </motion.p>
-                                                <motion.p 
-                                                        className="text-sm md:text-base font-logo font-light text-gray-700 leading-relaxed"
-                                                        initial={{ opacity: 0, y: 20 }}
-                                                        whileInView={{ opacity: 1, y: 0 }}
-                                                        viewport={{ once: true, amount: 0.3 }}
-                                                        transition={{ duration: 0.8, delay: 0.75, ease: "easeOut" }}
-                                                >
-                                                        From office buildings and multifamily properties to data centers, solar farms, and sustainable infrastructure, {companyName} is redefining how the world invests in the built environment—making real assets as dynamic, efficient, and borderless as digital ones.
+                                                        We empower investors and property owners to own, trade, and build the next era of real estate finance—making real assets as dynamic and borderless as digital ones.
                                                 </motion.p>
                                         </div>
                                 </motion.div>
