@@ -246,7 +246,7 @@ const Navbar = () => {
 
                                         <div className="hidden md:flex items-center gap-6 lg:gap-8">
                                                 <button className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light">Mission</button>
-                                                <button className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light">Marketplace</button>
+                                                <Link href="/marketplace" className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light">Marketplace</Link>
                                                 <button className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light">Nexus</button>
                                                 <button className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light">OmniGrid</button>
 
@@ -319,7 +319,7 @@ const Navbar = () => {
                                 <div className="md:hidden fixed inset-0 top-16 bg-black/50" onClick={() => setIsOpen(false)}>
                                         <div className="bg-white p-4 shadow-lg" onClick={(e) => e.stopPropagation()}>
                                                 <a href="#" className="block py-3 text-gray-700 border-b border-gray-100" onClick={() => setIsOpen(false)}>Mission</a>
-                                                <a href="#" className="block py-3 text-gray-700 border-b border-gray-100" onClick={() => setIsOpen(false)}>Marketplace</a>
+                                                <Link href="/marketplace" className="block py-3 text-gray-700 border-b border-gray-100" onClick={() => setIsOpen(false)}>Marketplace</Link>
                                                 <a href="#" className="block py-3 text-gray-700 border-b border-gray-100" onClick={() => setIsOpen(false)}>Nexus</a>
                                                 <a href="#" className="block py-3 text-gray-700 border-b border-gray-100" onClick={() => setIsOpen(false)}>OmniGrid</a>
                                                 <div className="py-2">
