@@ -1627,7 +1627,6 @@ export default function Home() {
                         <TokenizationInfo />
                         <SubmitProperty />
                         <LatestNews />
-                        <Marketplace />
                         <BentoFeatures />
 
                         {/* Mission Section */}
