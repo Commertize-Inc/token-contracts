@@ -840,12 +840,21 @@ const TokenizationInfo = () => {
                 <section className="py-20 relative overflow-hidden bg-gray-50">
                         <div className="container mx-auto px-4 relative z-10">
                                 <div className="max-w-7xl mx-auto">
+                                        <motion.h2 
+                                                className="text-center text-3xl md:text-4xl font-logo font-light text-gray-900 mb-4"
+                                                initial={{ opacity: 0, y: 20 }}
+                                                whileInView={{ opacity: 1, y: 0 }}
+                                                viewport={{ once: true }}
+                                                transition={{ duration: 0.8 }}
+                                        >
+                                                From Concrete to Capital — Who Wins
+                                        </motion.h2>
                                         <motion.p 
                                                 className="text-center text-gray-600 mb-12 text-lg font-light max-w-4xl mx-auto"
                                                 initial={{ opacity: 0, y: 20 }}
                                                 whileInView={{ opacity: 1, y: 0 }}
                                                 viewport={{ once: true }}
-                                                transition={{ duration: 0.8 }}
+                                                transition={{ duration: 0.8, delay: 0.1 }}
                                         >
                                                 From unlocking liquidity to global investor access, tokenization changes the game for everyone in CRE.
                                         </motion.p>
