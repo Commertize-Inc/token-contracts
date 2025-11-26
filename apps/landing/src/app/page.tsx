@@ -468,21 +468,21 @@ const AboutUs = () => {
                                                 src="/assets/vision-bg.jpg"
                                                 alt="" 
                                                 className="w-full h-full object-cover"
-                                                style={{ objectPosition: 'left center' }}
+                                                style={{ objectPosition: 'right bottom' }}
                                         />
                                 </motion.div>
                         </div>
 
-                        <div className="absolute inset-0 flex items-center justify-end z-10">
+                        <div className="absolute inset-0 flex items-center justify-start z-10">
                                 <motion.div 
-                                        className="w-[42%] md:w-[38%] lg:w-[36%] text-right px-4 md:px-6 lg:px-10"
-                                        initial={{ opacity: 0, x: 60 }}
+                                        className="w-[50%] md:w-[45%] lg:w-[42%] text-left pl-8 md:pl-16 lg:pl-24 pr-4"
+                                        initial={{ opacity: 0, x: -60 }}
                                         whileInView={{ opacity: 1, x: 0 }}
                                         viewport={{ once: true, amount: 0.2 }}
                                         transition={{ duration: 1, ease: "easeOut" }}
                                 >
                                         <motion.h2 
-                                                className="text-2xl md:text-3xl lg:text-4xl font-logo font-light mb-8 text-gray-900"
+                                                className="text-2xl md:text-3xl lg:text-4xl font-logo font-light mb-8 text-gray-800"
                                                 initial={{ opacity: 0, y: 30 }}
                                                 whileInView={{ opacity: 1, y: 0 }}
                                                 viewport={{ once: true, amount: 0.5 }}
