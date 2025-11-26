@@ -475,7 +475,7 @@ const AboutUs = () => {
 
                         <div className="absolute inset-0 flex items-center justify-end z-10">
                                 <motion.div 
-                                        className="w-[38%] md:w-[35%] lg:w-[32%] text-right px-4 md:px-8 lg:px-12"
+                                        className="w-[42%] md:w-[38%] lg:w-[36%] text-right px-4 md:px-6 lg:px-10"
                                         initial={{ opacity: 0, x: 60 }}
                                         whileInView={{ opacity: 1, x: 0 }}
                                         viewport={{ once: true, amount: 0.2 }}
