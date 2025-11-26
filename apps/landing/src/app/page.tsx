@@ -974,39 +974,91 @@ const SubmitProperty = () => {
                                         </h3>
                                         
                                         <div className="mb-8">
-                                                <div className="relative h-[450px] md:h-[550px] w-full flex items-center justify-center overflow-hidden bg-white rounded-2xl border border-gray-200">
-                                                        <svg className="absolute inset-0 w-full h-full" style={{ zIndex: 0 }}>
+                                                <div className="relative h-[500px] md:h-[600px] w-full flex items-center justify-center overflow-hidden bg-gray-50 rounded-2xl border border-gray-200">
+                                                        <motion.svg 
+                                                                className="absolute inset-0 w-full h-full" 
+                                                                style={{ zIndex: 0 }}
+                                                                animate={{ rotate: 360 }}
+                                                                transition={{ duration: 90, repeat: Infinity, ease: "linear" }}
+                                                        >
                                                                 {propertyTypes.map((_, index) => {
                                                                         const angle = (index / propertyTypes.length) * 360 - 90;
-                                                                        const radius = 180;
+                                                                        const radiusPercent = 32;
                                                                         const centerX = 50;
                                                                         const centerY = 50;
-                                                                        const x = centerX + Math.cos(angle * Math.PI / 180) * (radius / 5);
-                                                                        const y = centerY + Math.sin(angle * Math.PI / 180) * (radius / 5);
+                                                                        const x = centerX + Math.cos(angle * Math.PI / 180) * radiusPercent;
+                                                                        const y = centerY + Math.sin(angle * Math.PI / 180) * radiusPercent;
                                                                         return (
                                                                                 <line
-                                                                                        key={`line-${index}`}
+                                                                                        key={`line-center-${index}`}
                                                                                         x1="50%"
                                                                                         y1="50%"
                                                                                         x2={`${x}%`}
                                                                                         y2={`${y}%`}
                                                                                         stroke="#D4A024"
                                                                                         strokeWidth="1"
-                                                                                        strokeOpacity="0.4"
+                                                                                        strokeOpacity="0.3"
                                                                                 />
                                                                         );
                                                                 })}
-                                                        </svg>
+                                                                {propertyTypes.map((_, index) => {
+                                                                        const angle1 = (index / propertyTypes.length) * 360 - 90;
+                                                                        const angle2 = ((index + 1) / propertyTypes.length) * 360 - 90;
+                                                                        const radiusPercent = 32;
+                                                                        const x1 = 50 + Math.cos(angle1 * Math.PI / 180) * radiusPercent;
+                                                                        const y1 = 50 + Math.sin(angle1 * Math.PI / 180) * radiusPercent;
+                                                                        const x2 = 50 + Math.cos(angle2 * Math.PI / 180) * radiusPercent;
+                                                                        const y2 = 50 + Math.sin(angle2 * Math.PI / 180) * radiusPercent;
+                                                                        return (
+                                                                                <line
+                                                                                        key={`line-connect-${index}`}
+                                                                                        x1={`${x1}%`}
+                                                                                        y1={`${y1}%`}
+                                                                                        x2={`${x2}%`}
+                                                                                        y2={`${y2}%`}
+                                                                                        stroke="#D4A024"
+                                                                                        strokeWidth="1"
+                                                                                        strokeOpacity="0.25"
+                                                                                />
+                                                                        );
+                                                                })}
+                                                                {propertyTypes.map((_, index) => {
+                                                                        if (index % 2 === 0 && index + 3 < propertyTypes.length) {
+                                                                                const angle1 = (index / propertyTypes.length) * 360 - 90;
+                                                                                const angle2 = ((index + 3) / propertyTypes.length) * 360 - 90;
+                                                                                const radiusPercent = 32;
+                                                                                const x1 = 50 + Math.cos(angle1 * Math.PI / 180) * radiusPercent;
+                                                                                const y1 = 50 + Math.sin(angle1 * Math.PI / 180) * radiusPercent;
+                                                                                const x2 = 50 + Math.cos(angle2 * Math.PI / 180) * radiusPercent;
+                                                                                const y2 = 50 + Math.sin(angle2 * Math.PI / 180) * radiusPercent;
+                                                                                return (
+                                                                                        <line
+                                                                                                key={`line-cross-${index}`}
+                                                                                                x1={`${x1}%`}
+                                                                                                y1={`${y1}%`}
+                                                                                                x2={`${x2}%`}
+                                                                                                y2={`${y2}%`}
+                                                                                                stroke="#D4A024"
+                                                                                                strokeWidth="0.5"
+                                                                                                strokeOpacity="0.15"
+                                                                                        />
+                                                                                );
+                                                                        }
+                                                                        return null;
+                                                                })}
+                                                        </motion.svg>
                                                         
                                                         <motion.div
-                                                                className="relative w-[380px] h-[380px] md:w-[480px] md:h-[480px]"
+                                                                className="relative w-[420px] h-[420px] md:w-[520px] md:h-[520px]"
                                                                 animate={{ rotate: 360 }}
-                                                                transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+                                                                transition={{ duration: 90, repeat: Infinity, ease: "linear" }}
                                                                 style={{ zIndex: 1 }}
                                                         >
                                                                 {propertyTypes.map((type, index) => {
                                                                         const angle = (index / propertyTypes.length) * 360 - 90;
-                                                                        const radius = 160;
+                                                                        const baseRadius = 180;
+                                                                        const radiusVariation = (index % 3 === 0 ? 0 : index % 3 === 1 ? 15 : -10);
+                                                                        const radius = baseRadius + radiusVariation;
                                                                         const x = Math.cos(angle * Math.PI / 180) * radius;
                                                                         const y = Math.sin(angle * Math.PI / 180) * radius;
                                                                         
@@ -1015,14 +1067,14 @@ const SubmitProperty = () => {
                                                                                         key={type.id}
                                                                                         className="absolute"
                                                                                         style={{ 
-                                                                                                left: `calc(50% + ${x}px - 55px)`, 
-                                                                                                top: `calc(50% + ${y}px - 16px)` 
+                                                                                                left: `calc(50% + ${x}px - 60px)`, 
+                                                                                                top: `calc(50% + ${y}px - 18px)` 
                                                                                         }}
                                                                                         animate={{ rotate: -360 }}
-                                                                                        transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+                                                                                        transition={{ duration: 90, repeat: Infinity, ease: "linear" }}
                                                                                 >
-                                                                                        <div className="flex items-center space-x-2 bg-white border-2 border-[#D4A024] rounded-[0.75rem] px-3 py-2 shadow-sm hover:shadow-md transition-shadow">
-                                                                                                <div className="w-6 h-6 rounded-full bg-[#D4A024] flex items-center justify-center">
+                                                                                        <div className="flex items-center space-x-2 bg-white border-2 border-[#D4A024] rounded-[0.75rem] px-3 py-2 shadow-sm hover:shadow-lg transition-all hover:scale-105 cursor-pointer">
+                                                                                                <div className="w-6 h-6 rounded-lg bg-[#D4A024] flex items-center justify-center">
                                                                                                         <type.icon className="w-3.5 h-3.5 text-white" />
                                                                                                 </div>
                                                                                                 <div className="text-xs font-light text-gray-800 whitespace-nowrap">{type.name}</div>
@@ -1032,7 +1084,7 @@ const SubmitProperty = () => {
                                                                 })}
                                                         </motion.div>
                                                         
-                                                        <div className="absolute flex items-center gap-2" style={{ zIndex: 2 }}>
+                                                        <div className="absolute flex flex-col items-center gap-1" style={{ zIndex: 2 }}>
                                                                 <img src="/assets/logo.png" alt="Commertize" className="h-8 w-auto object-contain" />
                                                         </div>
                                                 </div>
