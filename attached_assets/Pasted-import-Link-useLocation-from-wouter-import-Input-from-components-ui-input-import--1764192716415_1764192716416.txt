@@ -1,0 +1,314 @@
+import { Link, useLocation } from "wouter";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
+import {
+  SiLinkedin,
+  SiDiscord,
+  SiInstagram,
+  SiX,
+  SiFacebook,
+  SiTelegram,
+  SiYoutube,
+  SiTiktok,
+} from "react-icons/si";
+
+const Footer = () => {
+  const [, setLocation] = useLocation();
+  const [email, setEmail] = useState("");
+  const [isSubscribing, setIsSubscribing] = useState(false);
+  const { toast } = useToast();
+
+  // Social links (can be dynamic from settings or hardcoded)
+  const socialLinks = {
+    linkedin: "https://linkedin.com/company/commertize",
+    twitter: "https://x.com/commertize",
+    youtube: "https://youtube.com/@commertize",
+    instagram: "https://instagram.com/commertize",
+    facebook: "https://facebook.com/commertize",
+    tiktok: "https://tiktok.com/@commertize",
+    discord: "https://discord.gg/commertize",
+    telegram: "https://t.me/commertize"
+  };
+
+  const handleLinkClick = (path: string) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    setLocation(path);
+    window.scrollTo({ top: 0, behavior: "auto" });
+  };
+
+  const handleSectionNavigation = (sectionId: string) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    // If on home page, scroll to section
+    if (window.location.pathname === "/") {
+      const element = document.getElementById(sectionId);
+      element?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      // Navigate to home page then scroll
+      setLocation("/");
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        element?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    }
+  };
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please enter your email address.",
+      });
+      return;
+    }
+
+    setIsSubscribing(true);
+    try {
+      // Save to database/API
+      const response = await fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) throw new Error("Failed to subscribe");
+
+      toast({
+        title: "Success!",
+        description: "Thank you for subscribing to our newsletter.",
+      });
+      setEmail("");
+    } catch (error) {
+      console.error("Newsletter subscription error:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to subscribe. Please try again later.",
+      });
+    } finally {
+      setIsSubscribing(false);
+    }
+  };
+
+  return (
+    <footer className="footer bg-white relative z-20">
+      <div className="container py-12">
+        
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+          {/* Column 1: Logo & Social */}
+          <div>
+            <div className="mb-4">
+              <img 
+                src="/assets/commertize-logo.png" 
+                alt="Commertize Logo" 
+                className="h-8 w-auto"
+              />
+            </div>
+            <p className="text-sm mb-6">
+              Commercial Real Estate, Revolutionized.<br />
+              Liquid. Transparent. Global.
+            </p>
+            <div className="mb-6">
+              <a
+                href="mailto:support@commertize.com"
+                className="text-sm text-primary hover:text-primary/80 transition-colors"
+              >
+                support@commertize.com
+              </a>
+            </div>
+            
+            {/* Social Links */}
+            <div className="mb-6">
+              <h4 className="font-semibold mb-3 text-sm text-primary">Social Links</h4>
+              <div className="flex flex-wrap gap-3">
+                {socialLinks.linkedin && (
+                  <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 transition-colors" title="LinkedIn">
+                    <SiLinkedin className="h-5 w-5" />
+                  </a>
+                )}
+                {socialLinks.twitter && (
+                  <a href={socialLinks.twitter} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 transition-colors" title="X (Twitter)">
+                    <SiX className="h-5 w-5" />
+                  </a>
+                )}
+                {socialLinks.youtube && (
+                  <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 transition-colors" title="YouTube">
+                    <SiYoutube className="h-5 w-5" />
+                  </a>
+                )}
+                {socialLinks.instagram && (
+                  <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 transition-colors" title="Instagram">
+                    <SiInstagram className="h-5 w-5" />
+                  </a>
+                )}
+                {socialLinks.facebook && (
+                  <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 transition-colors" title="Facebook">
+                    <SiFacebook className="h-5 w-5" />
+                  </a>
+                )}
+                {socialLinks.tiktok && (
+                  <a href={socialLinks.tiktok} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 transition-colors" title="TikTok">
+                    <SiTiktok className="h-5 w-5" />
+                  </a>
+                )}
+                {socialLinks.discord && (
+                  <a href={socialLinks.discord} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 transition-colors" title="Discord">
+                    <SiDiscord className="h-5 w-5" />
+                  </a>
+                )}
+                {socialLinks.telegram && (
+                  <a href={socialLinks.telegram} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 transition-colors" title="Telegram">
+                    <SiTelegram className="h-5 w-5" />
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Column 2: Quick Links */}
+          <div>
+            <h4 className="font-semibold mb-4 text-primary">Quick Links</h4>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/marketplace" onClick={handleLinkClick("/marketplace")} className="text-primary hover:text-primary/80 transition-colors">
+                  Explore Marketplace
+                </Link>
+              </li>
+              <li>
+                <Link href="/dashboard" onClick={handleLinkClick("/dashboard")} className="text-primary hover:text-primary/80 transition-colors">
+                  Submit Property
+                </Link>
+              </li>
+              <li>
+                <a href="/#about" onClick={handleSectionNavigation("about")} className="text-primary hover:text-primary/80 transition-colors">
+                  About Us
+                </a>
+              </li>
+              <li>
+                <a href="/#contact" onClick={handleSectionNavigation("contact")} className="text-primary hover:text-primary/80 transition-colors">
+                  Contact
+                </a>
+              </li>
+              <li>
+                <Link href="/waitlist" onClick={handleLinkClick("/waitlist")} className="text-primary hover:text-primary/80 transition-colors">
+                  Join Waitlist
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 3: Divisions */}
+          <div>
+            <h4 className="font-semibold mb-4 text-primary">Divisions</h4>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/marketplace" onClick={handleLinkClick("/marketplace")} className="text-primary hover:text-primary/80 transition-colors">
+                  Marketplace
+                </Link>
+              </li>
+              <li>
+                <Link href="/defi" onClick={handleLinkClick("/defi")} className="text-primary hover:text-primary/80 transition-colors">
+                  DeFi & Nexus
+                </Link>
+              </li>
+              <li>
+                <Link href="/omniGrid" onClick={handleLinkClick("/omniGrid")} className="text-primary hover:text-primary/80 transition-colors">
+                  OmniGrid
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 4: Legal */}
+          <div>
+            <h4 className="font-semibold mb-4 text-primary">Legal</h4>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/privacy" onClick={handleLinkClick("/privacy")} className="text-primary hover:text-primary/80 transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms" onClick={handleLinkClick("/terms")} className="text-primary hover:text-primary/80 transition-colors">
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link href="/disclaimer" onClick={handleLinkClick("/disclaimer")} className="text-primary hover:text-primary/80 transition-colors">
+                  Disclaimer
+                </Link>
+              </li>
+              <li>
+                <Link href="/aml-policy" onClick={handleLinkClick("/aml-policy")} className="text-primary hover:text-primary/80 transition-colors">
+                  AML Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/cookie-policy" onClick={handleLinkClick("/cookie-policy")} className="text-primary hover:text-primary/80 transition-colors">
+                  Cookie Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/kyb-policy" onClick={handleLinkClick("/kyb-policy")} className="text-primary hover:text-primary/80 transition-colors">
+                  KYB Policy
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 5: Newsletter */}
+          <div>
+            <h4 className="font-semibold mb-4 text-primary">Newsletter</h4>
+            <p className="text-sm mb-4 text-primary">
+              Stay updated with our latest properties and news
+            </p>
+            <form onSubmit={handleSubscribe} className="flex gap-2">
+              <Input
+                type="email"
+                placeholder="Enter your email"
+                className="text-black placeholder:text-black bg-primary/10"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isSubscribing}
+              />
+              <Button type="submit" disabled={isSubscribing}>
+                {isSubscribing ? "..." : "Subscribe"}
+              </Button>
+            </form>
+          </div>
+        </div>
+
+        {/* Bottom Section */}
+        <div className="border-t mt-8 pt-8 space-y-4">
+          {/* Copyright */}
+          <div className="text-center text-sm">
+            <p>© 2025 Commertize. All rights reserved.</p>
+          </div>
+          
+          {/* Legal Disclaimer Box */}
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-xs text-amber-900">
+            <p className="font-semibold mb-2">Legal & Regulatory Compliance</p>
+            <p className="mb-2">
+              Commertize operates in compliance with the GENIUS Act (Greater Equity and Nondiscrimination for Investors Using Security Tokens). 
+              All tokenized securities offered on this platform are subject to federal securities laws and regulations.
+            </p>
+            <p className="mb-2">
+              <strong>Investment Risks:</strong> Real estate investments involve substantial risk. Past performance does not guarantee future results. 
+              Investors may lose all or a portion of their investment. All investments are subject to market, regulatory, and liquidity risks.
+            </p>
+            <p>
+              <strong>Regulatory Status:</strong> Securities offered through this platform are conducted in accordance with applicable exemptions 
+              under Regulation D (506(b)/506(c)), Regulation A+, or Regulation Crowdfunding. Investors must meet accreditation requirements where applicable. 
+              This platform does not provide investment, legal, or tax advice. Consult with qualified professionals before making investment decisions.
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default Footer;
