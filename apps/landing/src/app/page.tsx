@@ -1783,57 +1783,6 @@ export default function Home() {
                         <SubmitProperty />
                         <LatestNews />
 
-                        {/* Mission Section */}
-                        <div className={styles.missionSection}>
-                                <div className={styles.container}>
-                                        <SectionHeading subtitle="Our Mission" title="Democratizing Access to Institutional Real Estate" />
-                                        <div className={styles.missionGrid}>
-                                                <div className={styles.missionContent}>
-                                                        <p className={styles.missionText}>
-                                                                For decades, only institutions and ultra-high-net-worth individuals had access to premium commercial real estate investments. High minimums, long lock-up periods, and zero liquidity kept everyday accredited investors on the sidelines.
-                                                        </p>
-                                                        <p className={styles.missionText}>
-                                                                Commertize changes that. By leveraging blockchain technology, we fractionalize ownership and create a liquid secondary market. Now accredited investors can participate in institutional-grade deals with as little as $25,000.
-                                                        </p>
-                                                        <div className={styles.missionStats}>
-                                                                <div className={styles.missionStat}>
-                                                                        <div className={styles.missionStatValue}>$25K</div>
-                                                                        <div className={styles.missionStatLabel}>Minimum Investment vs $1M+ Traditional</div>
-                                                                </div>
-                                                                <div className={styles.missionStat}>
-                                                                        <div className={styles.missionStatValue}>Days</div>
-                                                                        <div className={styles.missionStatLabel}>Liquidity Timeline vs 7-10 Year Lockup</div>
-                                                                </div>
-                                                                <div className={styles.missionStat}>
-                                                                        <div className={styles.missionStatValue}>24/7</div>
-                                                                        <div className={styles.missionStatLabel}>Trading vs Business Hours Only</div>
-                                                                </div>
-                                                        </div>
-                                                </div>
-                                                <div className={styles.missionVisual}>
-                                                        <div className={styles.comparisonCard}>
-                                                                <h4 className={styles.comparisonTitle}>Traditional CRE</h4>
-                                                                <ul className={styles.comparisonList}>
-                                                                        <li className={styles.comparisonItemNegative}>$1M+ minimum investment</li>
-                                                                        <li className={styles.comparisonItemNegative}>7-10 year lockup periods</li>
-                                                                        <li className={styles.comparisonItemNegative}>Limited to local markets</li>
-                                                                        <li className={styles.comparisonItemNegative}>Complex paperwork</li>
-                                                                </ul>
-                                                        </div>
-                                                        <div className={styles.comparisonCard}>
-                                                                <h4 className={styles.comparisonTitle}>Commertize</h4>
-                                                                <ul className={styles.comparisonList}>
-                                                                        <li className={styles.comparisonItemPositive}>$25K minimum investment</li>
-                                                                        <li className={styles.comparisonItemPositive}>Liquid secondary market</li>
-                                                                        <li className={styles.comparisonItemPositive}>Global property access</li>
-                                                                        <li className={styles.comparisonItemPositive}>Streamlined digital process</li>
-                                                                </ul>
-                                                        </div>
-                                                </div>
-                                        </div>
-                                </div>
-                        </div>
-
                         {/* How It Works Section */}
                         <div className={styles.howItWorksSection}>
                                 <div className={styles.container}>
