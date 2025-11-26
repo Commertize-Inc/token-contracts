@@ -11,14 +11,12 @@ import {
   ArrowRight,
   DollarSign,
   Building2,
-  Users,
   Globe,
   Wallet,
   PiggyBank,
   LineChart,
   Target,
-  CheckCircle,
-  Clock
+  CheckCircle
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import ChatGPTWidget from "@/components/ChatGPTWidget";
@@ -62,7 +60,7 @@ const defiProducts = [
 const securityFeatures = [
   {
     title: "Audited Smart Contracts",
-    description: "All contracts will be audited by leading security firms before launch.",
+    description: "All contracts audited by leading security firms.",
     icon: Shield
   },
   {
@@ -87,13 +85,6 @@ const howItWorks = [
   { step: "2", title: "Deposit Assets", desc: "Stake property tokens or stablecoins" },
   { step: "3", title: "Earn Yield", desc: "Receive rewards from protocol fees" },
   { step: "4", title: "Withdraw Anytime", desc: "Access your funds when you need them" }
-];
-
-const upcomingFeatures = [
-  { label: "Total Value Locked", icon: Lock },
-  { label: "Active Investors", icon: Users },
-  { label: "Average APY", icon: LineChart },
-  { label: "Properties Tokenized", icon: Building2 },
 ];
 
 export default function Nexus() {
@@ -130,15 +121,9 @@ export default function Nexus() {
                   />
                 </motion.div>
               </div>
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <span className="inline-block px-4 py-1.5 bg-[#D4A024]/10 text-[#D4A024] text-sm font-medium rounded-full border border-[#D4A024]/30">
-                  DeFi Protocol
-                </span>
-                <span className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-amber-100 text-amber-700 text-sm font-medium rounded-full border border-amber-300">
-                  <Clock className="w-3.5 h-3.5" />
-                  Coming Soon
-                </span>
-              </div>
+              <span className="inline-block mb-4 px-4 py-1.5 bg-[#D4A024]/10 text-[#D4A024] text-sm font-medium rounded-full border border-[#D4A024]/30">
+                DeFi Protocol
+              </span>
               <p className="text-xl text-gray-600 mb-4 font-light">
                 The Liquidity Engine for Tokenized Real Estate
               </p>
@@ -147,40 +132,38 @@ export default function Nexus() {
                 and earn yield on tokenized commercial real estate assets.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
-                <Link 
-                  href="/marketplace"
+                <button 
                   className="inline-flex items-center px-6 py-3 bg-[#D4A024] hover:bg-[#B8860B] text-white font-light rounded-xl transition-colors"
                 >
-                  Explore Marketplace
+                  Launch App
                   <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
+                </button>
                 <button 
                   className="inline-flex items-center px-6 py-3 border-2 border-[#D4A024] text-[#D4A024] hover:bg-[#D4A024]/10 font-light rounded-xl transition-colors"
                 >
-                  Join Waitlist
+                  View Documentation
                 </button>
               </div>
             </motion.div>
           </div>
         </section>
 
-        {/* Coming Soon Stats Section */}
+        {/* APY Stats Section */}
         <section className="py-12 border-y border-[#D4A024]/20 bg-white/50">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {upcomingFeatures.map((item, index) => (
-                <motion.div
-                  key={item.label}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="bg-white/80 backdrop-blur-sm border border-[#D4A024]/30 rounded-2xl p-6 text-center shadow-sm"
-                >
-                  <item.icon className="w-8 h-8 text-[#D4A024] mx-auto mb-3" />
-                  <div className="text-2xl font-light mb-1 text-gray-400">--</div>
-                  <div className="text-sm text-gray-500">{item.label}</div>
-                </motion.div>
-              ))}
+            <div className="flex justify-center">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-gradient-to-br from-[#D4A024]/10 to-[#B8860B]/10 border-2 border-[#D4A024] rounded-2xl p-8 text-center shadow-sm max-w-md w-full"
+              >
+                <LineChart className="w-12 h-12 text-[#D4A024] mx-auto mb-4" />
+                <div className="text-sm text-gray-500 uppercase tracking-wide mb-2">Protocol APY</div>
+                <div className="text-5xl font-light text-[#D4A024] mb-2" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                  --
+                </div>
+                <div className="text-sm text-gray-500">Variable rate based on protocol activity</div>
+              </motion.div>
             </div>
           </div>
         </section>
@@ -275,12 +258,6 @@ export default function Nexus() {
                 animate={{ opacity: 1, y: 0 }}
                 className="max-w-5xl mx-auto"
               >
-                <div className="text-center mb-8">
-                  <span className="inline-flex items-center gap-2 px-4 py-2 bg-amber-100 text-amber-700 text-sm font-medium rounded-full border border-amber-300">
-                    <Clock className="w-4 h-4" />
-                    All products launching soon
-                  </span>
-                </div>
                 <div className="grid md:grid-cols-2 gap-6">
                   {defiProducts.map((product, index) => (
                     <motion.div
@@ -288,13 +265,8 @@ export default function Nexus() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      className={`bg-gradient-to-br ${product.color} border-2 border-[#D4A024]/30 rounded-2xl p-6 transition-all duration-300 relative overflow-hidden`}
+                      className={`bg-gradient-to-br ${product.color} border-2 border-[#D4A024]/30 hover:border-[#D4A024] rounded-2xl p-6 transition-all duration-300`}
                     >
-                      <div className="absolute top-4 right-4">
-                        <span className="px-3 py-1 bg-gray-100 text-gray-500 text-xs font-medium rounded-full">
-                          Coming Soon
-                        </span>
-                      </div>
                       <div className="flex items-center space-x-3 mb-4">
                         <div className="w-12 h-12 bg-[#D4A024]/20 rounded-full flex items-center justify-center">
                           <product.icon className="w-6 h-6 text-[#D4A024]" />
@@ -310,11 +282,8 @@ export default function Nexus() {
                           </div>
                         ))}
                       </div>
-                      <button 
-                        disabled
-                        className="w-full py-3 bg-gray-300 text-gray-500 font-light rounded-xl cursor-not-allowed"
-                      >
-                        Coming Soon
+                      <button className="w-full py-3 bg-[#D4A024] hover:bg-[#B8860B] text-white font-light rounded-xl transition-colors">
+                        Enter {product.title}
                       </button>
                     </motion.div>
                   ))}
@@ -333,8 +302,8 @@ export default function Nexus() {
                   <Shield className="w-16 h-16 text-[#D4A024] mx-auto mb-4" />
                   <h2 className="text-2xl font-light mb-4 text-gray-900" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Security First</h2>
                   <p className="text-gray-600 max-w-2xl mx-auto font-light">
-                    Nexus will operate via audited smart contracts with built-in risk parameters 
-                    and collateralization ratios to ensure platform integrity. Your assets will be 
+                    Nexus operates via audited smart contracts with built-in risk parameters 
+                    and collateralization ratios to ensure platform integrity. Your assets are 
                     protected by multiple layers of security.
                   </p>
                 </div>
@@ -362,37 +331,6 @@ export default function Nexus() {
                 </div>
               </motion.div>
             )}
-          </div>
-        </section>
-
-        {/* CTA Section */}
-        <section className="py-20 bg-gradient-to-br from-[#D4A024]/10 to-[#B8860B]/10">
-          <div className="container mx-auto px-4 text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <h2 className="text-3xl md:text-4xl font-light mb-4 text-gray-900" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                Be the First to Access Nexus
-              </h2>
-              <p className="text-gray-600 mb-8 max-w-2xl mx-auto font-light">
-                Join our waitlist to get early access when Nexus launches and start earning yield on your tokenized real estate holdings.
-              </p>
-              <div className="flex flex-wrap justify-center gap-4">
-                <button 
-                  className="inline-flex items-center px-6 py-3 bg-[#D4A024] hover:bg-[#B8860B] text-white font-light rounded-xl transition-colors"
-                >
-                  Join Waitlist
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </button>
-                <Link 
-                  href="/marketplace"
-                  className="inline-flex items-center px-6 py-3 border-2 border-[#D4A024] text-[#D4A024] hover:bg-[#D4A024]/10 font-light rounded-xl transition-colors"
-                >
-                  View Properties
-                </Link>
-              </div>
-            </motion.div>
           </div>
         </section>
 
