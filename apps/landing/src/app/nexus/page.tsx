@@ -6,38 +6,28 @@ import Link from "next/link";
 import Image from "next/image";
 import {
   Shield,
-  Coins,
   Zap,
   Lock,
   ArrowRight,
   DollarSign,
   Building2,
   Users,
-  Percent,
   Globe,
   Wallet,
   PiggyBank,
   LineChart,
   Target,
-  CheckCircle
+  CheckCircle,
+  Clock
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import ChatGPTWidget from "@/components/ChatGPTWidget";
-
-const nexusStats = [
-  { label: "Total Value Locked", value: "$12.4M", change: "+8.2%", icon: Lock },
-  { label: "Active Investors", value: "2,847", change: "+156", icon: Users },
-  { label: "Average APY", value: "12.8%", change: "+0.4%", icon: Percent },
-  { label: "Properties Tokenized", value: "24", change: "+3", icon: Building2 },
-];
 
 const defiProducts = [
   {
     id: "staking",
     title: "CRE Staking",
     description: "Stake your tokenized real estate assets to earn passive yield from rental income and appreciation.",
-    apy: "8-15%",
-    tvl: "$4.2M",
     icon: PiggyBank,
     features: ["Daily rewards", "No lock-up periods", "Auto-compound"],
     color: "from-[#D4A024]/20 to-[#B8860B]/20"
@@ -46,18 +36,14 @@ const defiProducts = [
     id: "lending",
     title: "Property-Backed Lending",
     description: "Borrow against your tokenized property holdings with competitive rates and flexible terms.",
-    apy: "4-8%",
-    tvl: "$3.8M",
     icon: DollarSign,
-    features: ["Up to 70% LTV", "Instant liquidity", "No credit checks"],
+    features: ["Flexible LTV ratios", "Instant liquidity", "No credit checks"],
     color: "from-blue-500/20 to-blue-600/20"
   },
   {
     id: "farming",
     title: "Yield Farming",
     description: "Provide liquidity to CRE-USDC pools and earn enhanced yields plus CTZ governance tokens.",
-    apy: "15-25%",
-    tvl: "$2.1M",
     icon: Zap,
     features: ["Dual rewards", "LP incentives", "CTZ airdrops"],
     color: "from-green-500/20 to-green-600/20"
@@ -66,8 +52,6 @@ const defiProducts = [
     id: "vaults",
     title: "Smart Vaults",
     description: "Automated yield optimization strategies across multiple property pools for maximum returns.",
-    apy: "10-18%",
-    tvl: "$2.3M",
     icon: Target,
     features: ["Auto-rebalancing", "Risk-adjusted", "Gas optimized"],
     color: "from-purple-500/20 to-purple-600/20"
@@ -77,12 +61,12 @@ const defiProducts = [
 const securityFeatures = [
   {
     title: "Audited Smart Contracts",
-    description: "All contracts audited by leading security firms including CertiK and OpenZeppelin.",
+    description: "All contracts will be audited by leading security firms before launch.",
     icon: Shield
   },
   {
     title: "Multi-Sig Treasury",
-    description: "Protocol funds secured by 4-of-7 multi-signature wallet with timelocked transactions.",
+    description: "Protocol funds secured by multi-signature wallet with timelocked transactions.",
     icon: Lock
   },
   {
@@ -92,39 +76,8 @@ const securityFeatures = [
   },
   {
     title: "Insurance Coverage",
-    description: "Smart contract coverage through Nexus Mutual and property insurance through traditional carriers.",
+    description: "Smart contract coverage and property insurance through trusted carriers.",
     icon: CheckCircle
-  }
-];
-
-const pools = [
-  {
-    name: "CRE-USDC",
-    tvl: "$2.4M",
-    apy: "14.2%",
-    volume24h: "$182K",
-    type: "Liquidity Pool"
-  },
-  {
-    name: "The Axis Vault",
-    tvl: "$1.8M",
-    apy: "11.8%",
-    volume24h: "$94K",
-    type: "Property Vault"
-  },
-  {
-    name: "Multi-Property Index",
-    tvl: "$3.2M",
-    apy: "9.6%",
-    volume24h: "$156K",
-    type: "Index Fund"
-  },
-  {
-    name: "CREUSD Stability",
-    tvl: "$5.0M",
-    apy: "6.2%",
-    volume24h: "$412K",
-    type: "Stablecoin Pool"
   }
 ];
 
@@ -133,6 +86,13 @@ const howItWorks = [
   { step: "2", title: "Deposit Assets", desc: "Stake property tokens or stablecoins" },
   { step: "3", title: "Earn Yield", desc: "Receive rewards from protocol fees" },
   { step: "4", title: "Withdraw Anytime", desc: "Access your funds when you need them" }
+];
+
+const upcomingFeatures = [
+  { label: "Total Value Locked", icon: Lock },
+  { label: "Active Investors", icon: Users },
+  { label: "Average APY", icon: LineChart },
+  { label: "Properties Tokenized", icon: Building2 },
 ];
 
 export default function Nexus() {
@@ -169,9 +129,15 @@ export default function Nexus() {
                   />
                 </motion.div>
               </div>
-              <span className="inline-block mb-4 px-4 py-1.5 bg-[#D4A024]/10 text-[#D4A024] text-sm font-medium rounded-full border border-[#D4A024]/30">
-                DeFi Protocol
-              </span>
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <span className="inline-block px-4 py-1.5 bg-[#D4A024]/10 text-[#D4A024] text-sm font-medium rounded-full border border-[#D4A024]/30">
+                  DeFi Protocol
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-amber-100 text-amber-700 text-sm font-medium rounded-full border border-amber-300">
+                  <Clock className="w-3.5 h-3.5" />
+                  Coming Soon
+                </span>
+              </div>
               <p className="text-xl text-gray-600 mb-4 font-light">
                 The Liquidity Engine for Tokenized Real Estate
               </p>
@@ -184,37 +150,34 @@ export default function Nexus() {
                   href="/marketplace"
                   className="inline-flex items-center px-6 py-3 bg-[#D4A024] hover:bg-[#B8860B] text-white font-light rounded-xl transition-colors"
                 >
-                  Launch App
+                  Explore Marketplace
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
                 <button 
                   className="inline-flex items-center px-6 py-3 border-2 border-[#D4A024] text-[#D4A024] hover:bg-[#D4A024]/10 font-light rounded-xl transition-colors"
                 >
-                  View Documentation
+                  Join Waitlist
                 </button>
               </div>
             </motion.div>
           </div>
         </section>
 
-        {/* Stats Section */}
+        {/* Coming Soon Stats Section */}
         <section className="py-12 border-y border-[#D4A024]/20 bg-white/50">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {nexusStats.map((stat, index) => (
+              {upcomingFeatures.map((item, index) => (
                 <motion.div
-                  key={stat.label}
+                  key={item.label}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                   className="bg-white/80 backdrop-blur-sm border border-[#D4A024]/30 rounded-2xl p-6 text-center shadow-sm"
                 >
-                  <stat.icon className="w-8 h-8 text-[#D4A024] mx-auto mb-3" />
-                  <div className="text-3xl font-light mb-1 text-gray-900">{stat.value}</div>
-                  <div className="text-sm text-gray-500 mb-2">{stat.label}</div>
-                  <span className="inline-block px-2 py-0.5 text-xs font-medium text-green-600 bg-green-100 rounded-full">
-                    {stat.change}
-                  </span>
+                  <item.icon className="w-8 h-8 text-[#D4A024] mx-auto mb-3" />
+                  <div className="text-2xl font-light mb-1 text-gray-400">--</div>
+                  <div className="text-sm text-gray-500">{item.label}</div>
                 </motion.div>
               ))}
             </div>
@@ -226,7 +189,7 @@ export default function Nexus() {
           <div className="container mx-auto px-4">
             <div className="flex justify-center mb-12">
               <div className="inline-flex bg-white rounded-xl p-1 shadow-sm border border-gray-200">
-                {["overview", "products", "pools", "security"].map((tab) => (
+                {["overview", "products", "security"].map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
@@ -309,107 +272,51 @@ export default function Nexus() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto"
+                className="max-w-5xl mx-auto"
               >
-                {defiProducts.map((product, index) => (
-                  <motion.div
-                    key={product.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className={`bg-gradient-to-br ${product.color} border-2 border-[#D4A024]/30 hover:border-[#D4A024] rounded-2xl p-6 transition-all duration-300`}
-                  >
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center space-x-3">
+                <div className="text-center mb-8">
+                  <span className="inline-flex items-center gap-2 px-4 py-2 bg-amber-100 text-amber-700 text-sm font-medium rounded-full border border-amber-300">
+                    <Clock className="w-4 h-4" />
+                    All products launching soon
+                  </span>
+                </div>
+                <div className="grid md:grid-cols-2 gap-6">
+                  {defiProducts.map((product, index) => (
+                    <motion.div
+                      key={product.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className={`bg-gradient-to-br ${product.color} border-2 border-[#D4A024]/30 rounded-2xl p-6 transition-all duration-300 relative overflow-hidden`}
+                    >
+                      <div className="absolute top-4 right-4">
+                        <span className="px-3 py-1 bg-gray-100 text-gray-500 text-xs font-medium rounded-full">
+                          Coming Soon
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-3 mb-4">
                         <div className="w-12 h-12 bg-[#D4A024]/20 rounded-full flex items-center justify-center">
                           <product.icon className="w-6 h-6 text-[#D4A024]" />
                         </div>
                         <h3 className="text-xl font-light text-gray-900">{product.title}</h3>
                       </div>
-                      <span className="px-3 py-1 bg-[#D4A024] text-white text-sm font-medium rounded-full">
-                        {product.apy} APY
-                      </span>
-                    </div>
-                    <p className="text-gray-600 mb-4 font-light">{product.description}</p>
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="text-sm text-gray-500">TVL</span>
-                      <span className="font-medium text-gray-900">{product.tvl}</span>
-                    </div>
-                    <div className="space-y-2 mb-4">
-                      {product.features.map((feature) => (
-                        <div key={feature} className="flex items-center text-sm text-gray-700">
-                          <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
-                          {feature}
-                        </div>
-                      ))}
-                    </div>
-                    <button className="w-full py-3 bg-[#D4A024] hover:bg-[#B8860B] text-white font-light rounded-xl transition-colors">
-                      Enter {product.title}
-                    </button>
-                  </motion.div>
-                ))}
-              </motion.div>
-            )}
-
-            {/* Pools Tab */}
-            {activeTab === "pools" && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="max-w-4xl mx-auto"
-              >
-                <div className="bg-white border-2 border-[#D4A024] rounded-2xl overflow-hidden shadow-sm">
-                  <div className="flex items-center justify-between p-6 border-b border-[#D4A024]/20">
-                    <h3 className="text-xl font-light text-gray-900" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Active Pools</h3>
-                    <span className="px-3 py-1 border border-[#D4A024] text-[#D4A024] text-sm font-medium rounded-full">
-                      Live
-                    </span>
-                  </div>
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="border-b border-[#D4A024]/20 bg-gray-50">
-                          <th className="text-left py-4 px-6 font-medium text-gray-700">Pool</th>
-                          <th className="text-left py-4 px-6 font-medium text-gray-700">Type</th>
-                          <th className="text-right py-4 px-6 font-medium text-gray-700">TVL</th>
-                          <th className="text-right py-4 px-6 font-medium text-gray-700">APY</th>
-                          <th className="text-right py-4 px-6 font-medium text-gray-700">24h Volume</th>
-                          <th className="text-right py-4 px-6 font-medium text-gray-700">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {pools.map((pool, index) => (
-                          <motion.tr
-                            key={pool.name}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: index * 0.1 }}
-                            className="border-b border-[#D4A024]/10 hover:bg-[#D4A024]/5 transition-colors"
-                          >
-                            <td className="py-4 px-6">
-                              <div className="flex items-center space-x-3">
-                                <div className="w-8 h-8 bg-[#D4A024]/20 rounded-full flex items-center justify-center">
-                                  <Coins className="w-4 h-4 text-[#D4A024]" />
-                                </div>
-                                <span className="font-medium text-gray-900">{pool.name}</span>
-                              </div>
-                            </td>
-                            <td className="py-4 px-6">
-                              <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">{pool.type}</span>
-                            </td>
-                            <td className="py-4 px-6 text-right font-medium text-gray-900">{pool.tvl}</td>
-                            <td className="py-4 px-6 text-right text-green-600 font-medium">{pool.apy}</td>
-                            <td className="py-4 px-6 text-right text-gray-500">{pool.volume24h}</td>
-                            <td className="py-4 px-6 text-right">
-                              <button className="px-4 py-2 border border-[#D4A024] text-[#D4A024] text-sm font-light rounded-lg hover:bg-[#D4A024]/10 transition-colors">
-                                Deposit
-                              </button>
-                            </td>
-                          </motion.tr>
+                      <p className="text-gray-600 mb-4 font-light">{product.description}</p>
+                      <div className="space-y-2 mb-4">
+                        {product.features.map((feature) => (
+                          <div key={feature} className="flex items-center text-sm text-gray-700">
+                            <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
+                            {feature}
+                          </div>
                         ))}
-                      </tbody>
-                    </table>
-                  </div>
+                      </div>
+                      <button 
+                        disabled
+                        className="w-full py-3 bg-gray-300 text-gray-500 font-light rounded-xl cursor-not-allowed"
+                      >
+                        Coming Soon
+                      </button>
+                    </motion.div>
+                  ))}
                 </div>
               </motion.div>
             )}
@@ -425,8 +332,8 @@ export default function Nexus() {
                   <Shield className="w-16 h-16 text-[#D4A024] mx-auto mb-4" />
                   <h2 className="text-2xl font-light mb-4 text-gray-900" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Security First</h2>
                   <p className="text-gray-600 max-w-2xl mx-auto font-light">
-                    Nexus operates via audited smart contracts with built-in risk parameters 
-                    and collateralization ratios to ensure platform integrity. Your assets are 
+                    Nexus will operate via audited smart contracts with built-in risk parameters 
+                    and collateralization ratios to ensure platform integrity. Your assets will be 
                     protected by multiple layers of security.
                   </p>
                 </div>
@@ -465,24 +372,24 @@ export default function Nexus() {
               animate={{ opacity: 1, y: 0 }}
             >
               <h2 className="text-3xl md:text-4xl font-light mb-4 text-gray-900" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                Ready to Unlock Your Property's Potential?
+                Be the First to Access Nexus
               </h2>
               <p className="text-gray-600 mb-8 max-w-2xl mx-auto font-light">
-                Join thousands of investors earning passive yield on their tokenized real estate holdings.
+                Join our waitlist to get early access when Nexus launches and start earning yield on your tokenized real estate holdings.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
-                <Link 
-                  href="/marketplace"
+                <button 
                   className="inline-flex items-center px-6 py-3 bg-[#D4A024] hover:bg-[#B8860B] text-white font-light rounded-xl transition-colors"
                 >
-                  Start Earning
+                  Join Waitlist
                   <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-                <button 
+                </button>
+                <Link 
+                  href="/marketplace"
                   className="inline-flex items-center px-6 py-3 border-2 border-[#D4A024] text-[#D4A024] hover:bg-[#D4A024]/10 font-light rounded-xl transition-colors"
                 >
-                  Learn More
-                </button>
+                  View Properties
+                </Link>
               </div>
             </motion.div>
           </div>
