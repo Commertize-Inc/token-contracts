@@ -611,9 +611,9 @@ const AboutUs = () => {
                                 <div className="absolute inset-0 bg-white/30" />
                         </div>
 
-                        <div className="absolute inset-0 flex items-center justify-center z-10 px-6 md:px-8">
+                        <div className="absolute inset-0 flex items-center justify-start z-10 px-6 md:px-8 lg:pl-24">
                                 <motion.div 
-                                        className="max-w-3xl text-center"
+                                        className="max-w-2xl text-left"
                                         initial={{ opacity: 0, y: 40 }}
                                         whileInView={{ opacity: 1, y: 0 }}
                                         viewport={{ once: true, amount: 0.2 }}
