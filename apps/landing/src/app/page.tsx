@@ -321,9 +321,9 @@ const Hero = () => (
                                         backgroundSize: 'cover'
                                 }}
                                 initial={{ scale: 1 }}
-                                animate={{ scale: [1.0, 1.25] }}
+                                animate={{ scale: [1.0, 1.5] }}
                                 transition={{
-                                        duration: 12,
+                                        duration: 15,
                                         repeat: Infinity,
                                         ease: "easeInOut",
                                         repeatType: "reverse"
