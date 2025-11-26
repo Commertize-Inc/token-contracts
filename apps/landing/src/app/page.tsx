@@ -1975,38 +1975,120 @@ export default function Home() {
                                 </div>
                         </div >
 
-                        {/* FAQ Section */}
-                        < div className={styles.faqSection} >
-                                <div className={styles.container}>
-                                        <SectionHeading subtitle="Common Questions" title="Frequently Asked Questions" />
-                                        <div className={styles.faqGrid}>
-                                                <div className={styles.faqItem}>
-                                                        <h4 className={styles.faqQuestion}>Is Commertize regulated?</h4>
-                                                        <p className={styles.faqAnswer}>Yes, we operate under Reg D 506(c) and use ERC-3643 compliant security tokens. Our platform adheres to SEC regulations and we maintain SOC 2 Type II certification.</p>
+                        {/* Enhanced FAQ Section */}
+                        <section className="py-24 bg-gradient-to-b from-white to-gray-50">
+                                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                                        <motion.div
+                                                initial={{ opacity: 0, y: 30 }}
+                                                whileInView={{ opacity: 1, y: 0 }}
+                                                viewport={{ once: true }}
+                                                transition={{ duration: 0.8 }}
+                                                className="text-center mb-16"
+                                        >
+                                                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#D4A024]/20 to-yellow-500/20 rounded-full mb-6 border-2 border-[#D4A024]">
+                                                        <Search className="w-8 h-8 text-[#D4A024]" />
                                                 </div>
-                                                <div className={styles.faqItem}>
-                                                        <h4 className={styles.faqQuestion}>Who can invest on Commertize?</h4>
-                                                        <p className={styles.faqAnswer}>Only accredited investors can participate. This includes individuals with $200K+ annual income ($300K joint) or $1M+ net worth excluding primary residence.</p>
-                                                </div>
-                                                <div className={styles.faqItem}>
-                                                        <h4 className={styles.faqQuestion}>What is the minimum investment?</h4>
-                                                        <p className={styles.faqAnswer}>Minimum investment varies by property, typically ranging from $25,000 to $100,000. This is significantly lower than traditional CRE investments which often require $1M+.</p>
-                                                </div>
-                                                <div className={styles.faqItem}>
-                                                        <h4 className={styles.faqQuestion}>Can I sell my tokens?</h4>
-                                                        <p className={styles.faqAnswer}>Yes, you can trade your security tokens on our regulated secondary market. Some properties may have initial lock-up periods ranging from 90 days to 1 year.</p>
-                                                </div>
-                                                <div className={styles.faqItem}>
-                                                        <h4 className={styles.faqQuestion}>How are distributions paid?</h4>
-                                                        <p className={styles.faqAnswer}>Quarterly distributions are paid directly via ACH to your bank account or as stablecoins (USDC) to your connected wallet.</p>
-                                                </div>
-                                                <div className={styles.faqItem}>
-                                                        <h4 className={styles.faqQuestion}>What fees does Commertize charge?</h4>
-                                                        <p className={styles.faqAnswer}>We charge a 1% annual management fee. There are no transaction fees for primary purchases. Secondary market trades incur a 0.5% platform fee.</p>
-                                                </div>
+                                                <h2 className="text-4xl md:text-5xl font-logo font-light text-gray-900 mb-6">
+                                                        Frequently Asked <span className="text-[#D4A024]">Questions</span>
+                                                </h2>
+                                                <p className="text-lg text-gray-600 font-light max-w-3xl mx-auto">
+                                                        Everything you need to know about tokenized commercial real estate investing
+                                                </p>
+                                        </motion.div>
+
+                                        <div className="max-w-4xl mx-auto space-y-6">
+                                                {[
+                                                        {
+                                                                category: "About Commertize",
+                                                                icon: Building,
+                                                                items: [
+                                                                        { q: "What is Commertize?", a: "Commertize is a digital platform that tokenizes commercial real estate (CRE), enabling fractional ownership and global investor access through blockchain technology." },
+                                                                        { q: "How does Commertize differ from traditional CRE investment?", a: "We remove high investment minimums, speed up capital access for property owners, and provide blockchain-secured transparency — all while keeping investments accessible to accredited investors worldwide." },
+                                                                        { q: "What types of properties does Commertize work with?", a: "We focus on premium and full-spectrum commercial real estate, including multifamily, office, retail, industrial, hospitality, and mixed-use properties." }
+                                                                ]
+                                                        },
+                                                        {
+                                                                category: "For Investors",
+                                                                icon: TrendingUp,
+                                                                items: [
+                                                                        { q: "Who can invest through Commertize?", a: "Currently, investments are open to accredited investors, in compliance with U.S. securities regulations." },
+                                                                        { q: "What is fractional ownership?", a: "Fractional ownership allows you to purchase a share of a property rather than the entire asset, giving you access to premium real estate at a lower entry cost." },
+                                                                        { q: "What is the minimum investment amount?", a: "The minimum investment on Commertize is $1,000, making premium commercial real estate accessible to a much broader range of investors compared to traditional CRE deals that typically require $100,000+." },
+                                                                        { q: "Can I sell my tokens?", a: "Yes — depending on regulatory guidelines and platform availability, tokens can be sold on secondary marketplaces or back to eligible buyers through Commertize's exchange network." }
+                                                                ]
+                                                        },
+                                                        {
+                                                                category: "Fees & Costs",
+                                                                icon: DollarSign,
+                                                                items: [
+                                                                        { q: "What fees do investors pay?", a: "Investor fee structure: (1) Investment Fee - 0% on primary market purchases, (2) Management Fee - 0.5-1% annually (property-specific), (3) Secondary Market - 2% transaction fee on sales, (4) Withdrawal Fee - 1% on USD withdrawals. All fees are clearly disclosed before investment." },
+                                                                        { q: "Are there any hidden fees?", a: "No hidden fees. All costs are disclosed upfront in the Private Placement Memorandum (PPM) for each property." }
+                                                                ]
+                                                        },
+                                                        {
+                                                                category: "Technology & Security",
+                                                                icon: Shield,
+                                                                items: [
+                                                                        { q: "How does blockchain improve security?", a: "Blockchain creates an immutable record of ownership and transactions, ensuring transparency and reducing fraud risk." },
+                                                                        { q: "What role does AI play in Commertize?", a: "Our AI-driven tools provide property analytics, investment insights, and predictive performance models to help investors make informed decisions." }
+                                                                ]
+                                                        },
+                                                        {
+                                                                category: "Compliance & Regulation",
+                                                                icon: ShieldCheck,
+                                                                items: [
+                                                                        { q: "Is tokenized real estate legal?", a: "Yes — Commertize operates under existing securities and real estate regulations, using compliant structures such as Reg D 506(c) offerings for accredited investors." },
+                                                                        { q: "Do I need to be U.S.-based to invest?", a: "No — international accredited investors are welcome, subject to their local regulations." }
+                                                                ]
+                                                        }
+                                                ].map((section, sectionIndex) => (
+                                                        <motion.div
+                                                                key={section.category}
+                                                                initial={{ opacity: 0, y: 30 }}
+                                                                whileInView={{ opacity: 1, y: 0 }}
+                                                                viewport={{ once: true }}
+                                                                transition={{ delay: sectionIndex * 0.1 }}
+                                                        >
+                                                                <div className="bg-white rounded-2xl border border-[#D4A024]/30 shadow-lg overflow-hidden">
+                                                                        <div className="bg-gradient-to-r from-gray-900 to-gray-800 px-6 py-4 flex items-center gap-3">
+                                                                                <div className="w-10 h-10 bg-[#D4A024]/20 rounded-lg flex items-center justify-center">
+                                                                                        <section.icon className="w-5 h-5 text-[#D4A024]" />
+                                                                                </div>
+                                                                                <h3 className="text-lg font-medium text-white">{section.category}</h3>
+                                                                        </div>
+                                                                        <div className="divide-y divide-gray-100">
+                                                                                {section.items.map((item, itemIndex) => (
+                                                                                        <details key={itemIndex} className="group">
+                                                                                                <summary className="flex items-center justify-between px-6 py-4 cursor-pointer hover:bg-gray-50 transition-colors">
+                                                                                                        <span className="text-gray-900 font-medium pr-4">{item.q}</span>
+                                                                                                        <ChevronDown className="w-5 h-5 text-[#D4A024] transition-transform group-open:rotate-180 flex-shrink-0" />
+                                                                                                </summary>
+                                                                                                <div className="px-6 pb-4 text-gray-600 font-light leading-relaxed">
+                                                                                                        {item.a}
+                                                                                                </div>
+                                                                                        </details>
+                                                                                ))}
+                                                                        </div>
+                                                                </div>
+                                                        </motion.div>
+                                                ))}
                                         </div>
+
+                                        <motion.div
+                                                initial={{ opacity: 0, y: 20 }}
+                                                whileInView={{ opacity: 1, y: 0 }}
+                                                viewport={{ once: true }}
+                                                transition={{ delay: 0.5 }}
+                                                className="mt-12 text-center"
+                                        >
+                                                <p className="text-gray-600 font-light mb-4">Still have questions?</p>
+                                                <a href="mailto:support@commertize.com" className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#D4A024] to-yellow-500 text-white rounded-full font-medium hover:shadow-lg transition-all">
+                                                        Contact Support
+                                                        <ArrowRight className="w-4 h-4" />
+                                                </a>
+                                        </motion.div>
                                 </div>
-                        </div >
+                        </section>
 
                         {/* Premium Footer */}
                         < footer className={styles.footer} id="contact" >

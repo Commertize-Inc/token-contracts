@@ -1,0 +1,323 @@
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { motion } from "framer-motion";
+import { 
+  HelpCircle, Shield, TrendingUp, Building, DollarSign, 
+  RefreshCw, MapPin, Zap, Coins, Calculator, FileText, AlertTriangle 
+} from "lucide-react";
+
+const faqSections = [
+  {
+    category: "About Commertize",
+    icon: HelpCircle,
+    items: [
+      {
+        question: "What is Commertize?",
+        answer: "Commertize is a digital platform that tokenizes commercial real estate (CRE), enabling fractional ownership and global investor access through blockchain technology."
+      },
+      {
+        question: "How does Commertize differ from traditional CRE investment?",
+        answer: "We remove high investment minimums, speed up capital access for property owners, and provide blockchain-secured transparency — all while keeping investments accessible to accredited investors worldwide."
+      },
+      {
+        question: "What types of properties does Commertize work with?",
+        answer: "We focus on premium and full-spectrum commercial real estate, including multifamily, office, retail, industrial, hospitality, and mixed-use properties."
+      }
+    ]
+  },
+  {
+    category: "For Investors",
+    icon: TrendingUp,
+    items: [
+      {
+        question: "Who can invest through Commertize?",
+        answer: "Currently, investments are open to accredited investors, in compliance with U.S. securities regulations."
+      },
+      {
+        question: "What is fractional ownership?",
+        answer: "Fractional ownership allows you to purchase a share of a property rather than the entire asset, giving you access to premium real estate at a lower entry cost."
+      },
+      {
+        question: "How are investments secured?",
+        answer: "Each tokenized asset is tied to a legal structure with blockchain-recorded ownership, backed by transparent property documentation and audits."
+      },
+      {
+        question: "How do I receive returns on my investment?",
+        answer: "Returns depend on the specific property's income structure (e.g., rental income, profit share, capital appreciation) and are distributed in accordance with the offering terms."
+      },
+      {
+        question: "Can I sell my tokens?",
+        answer: "Yes — depending on regulatory guidelines and platform availability, tokens can be sold on secondary marketplaces or back to eligible buyers through Commertize's exchange network."
+      }
+    ]
+  },
+  {
+    category: "For Property Owners & Developers",
+    icon: Building,
+    items: [
+      {
+        question: "How can I tokenize my property with Commertize?",
+        answer: "Submit your property through our onboarding process, where we review eligibility, legal documentation, and market potential. Approved properties go through our tokenization process and are listed on our marketplace."
+      },
+      {
+        question: "What are the benefits of tokenizing my property?",
+        answer: "Faster capital raising, access to a global investor base, potential liquidity through secondary markets, and no need to take on restrictive debt."
+      },
+      {
+        question: "Is my property eligible for tokenization?",
+        answer: "We evaluate properties based on location, asset class, income potential, and legal clarity of ownership."
+      }
+    ]
+  },
+  {
+    category: "Fees & Costs",
+    icon: Calculator,
+    items: [
+      {
+        question: "What fees do investors pay?",
+        answer: "Investor fee structure: (1) Investment Fee - 0% on primary market purchases, (2) Management Fee - 0.5-1% annually (property-specific, disclosed in offering), (3) Secondary Market - 2% transaction fee on sales, (4) Withdrawal Fee - 1% on USD withdrawals. All fees are clearly disclosed before investment."
+      },
+      {
+        question: "Are there any hidden fees or charges?",
+        answer: "No hidden fees. All costs are disclosed upfront in the Private Placement Memorandum (PPM) for each property. Standard fees include property management fees, legal/compliance fees, platform fees, and blockchain transaction fees."
+      }
+    ]
+  },
+  {
+    category: "Technology & Security",
+    icon: Shield,
+    items: [
+      {
+        question: "What blockchain does Commertize use?",
+        answer: "We use a secure, scalable blockchain that supports smart contracts, fractional ownership, and compliance features."
+      },
+      {
+        question: "How does blockchain improve security and transparency?",
+        answer: "Blockchain creates an immutable record of ownership and transactions, ensuring transparency and reducing fraud risk."
+      },
+      {
+        question: "What role does AI play in Commertize?",
+        answer: "Our AI-driven tools provide property analytics, investment insights, and predictive performance models to help investors make informed decisions."
+      }
+    ]
+  },
+  {
+    category: "Compliance & Regulation",
+    icon: MapPin,
+    items: [
+      {
+        question: "Is tokenized real estate legal?",
+        answer: "Yes — Commertize operates under existing securities and real estate regulations, using compliant structures such as Reg D 506(c) offerings for accredited investors."
+      },
+      {
+        question: "Do I need to be U.S.-based to invest?",
+        answer: "No — international accredited investors are welcome, subject to their local regulations."
+      },
+      {
+        question: "What investor protections are in place?",
+        answer: "All tokenized offerings are backed by legal contracts, due diligence reports, and secure escrow processes for funds."
+      }
+    ]
+  },
+  {
+    category: "Tax & Reporting",
+    icon: FileText,
+    items: [
+      {
+        question: "How are tokenized real estate investments taxed?",
+        answer: "Tokenized properties are taxed like traditional real estate partnerships with pass-through structure. Income, deductions, and gains pass through to you (reported on K-1). Consult a qualified tax professional for your specific situation."
+      },
+      {
+        question: "What tax documents will I receive?",
+        answer: "Annual tax reporting includes Schedule K-1 (issued by March 15th), 1099-DIV for cash distributions, 1099-B for token sales, and year-end statements. All documents available via your dashboard."
+      }
+    ]
+  },
+  {
+    category: "Risk & Due Diligence",
+    icon: AlertTriangle,
+    items: [
+      {
+        question: "What are the risks of investing in tokenized real estate?",
+        answer: "All real estate investments carry risk including market risk, liquidity risk, regulatory risk, sponsor risk, technology risk, and concentration risk. All risks are disclosed in the PPM before investment."
+      },
+      {
+        question: "How does Commertize perform due diligence on properties?",
+        answer: "Our 7-pillar due diligence process includes property inspection, environmental assessment, title review, financial analysis, market analysis, legal review, and sponsor background checks. All reports available to investors before investment."
+      }
+    ]
+  },
+  {
+    category: "Getting Started",
+    icon: DollarSign,
+    items: [
+      {
+        question: "How do I create an account?",
+        answer: "Click \"Join Now\" on Commertize.com, complete the onboarding process, verify accreditation, and access our property marketplace."
+      },
+      {
+        question: "What is the minimum investment amount?",
+        answer: "The minimum investment on Commertize is $1,000, making premium commercial real estate accessible to a much broader range of investors compared to traditional CRE deals that typically require $100,000+."
+      },
+      {
+        question: "How do I contact Commertize for support?",
+        answer: "Email our team at support@commertize.com or use the live chat on our website for quick assistance."
+      }
+    ]
+  },
+  {
+    category: "Nexus — DeFi Protocol",
+    icon: RefreshCw,
+    items: [
+      {
+        question: "What is Nexus?",
+        answer: "Nexus is Commertize's decentralized finance protocol — a liquidity engine enabling investors to borrow, lend, and earn yield from tokenized real estate (RWA) assets."
+      },
+      {
+        question: "How does Nexus benefit investors?",
+        answer: "Nexus provides instant liquidity to investors who hold tokenized CRE assets, without needing to sell them. It bridges traditional property value with DeFi lending pools."
+      },
+      {
+        question: "Is Nexus secure?",
+        answer: "Yes. Nexus operates via audited smart contracts with built-in risk parameters and collateralization ratios to ensure platform integrity."
+      },
+      {
+        question: "Can Nexus integrate external assets or stablecoins?",
+        answer: "Absolutely. Nexus supports multiple stablecoins and real-world asset pools, including CREUSD, Commertize's own real estate-backed digital dollar."
+      }
+    ]
+  },
+  {
+    category: "OmniGrid — Green Energy Infrastructure",
+    icon: Zap,
+    items: [
+      {
+        question: "What is OmniGrid?",
+        answer: "OmniGrid is Commertize's sustainability framework — tokenizing data centers, solar farms, and green energy infrastructure. It connects carbon-neutral real estate projects to digital finance."
+      },
+      {
+        question: "How does OmniGrid support sustainability?",
+        answer: "By embedding carbon tracking, renewable energy metrics, and ESG scoring directly into asset smart contracts, ensuring every investment aligns with environmental goals."
+      },
+      {
+        question: "Can investors participate in green infrastructure projects?",
+        answer: "Yes. OmniGrid allows fractional investment in tokenized energy assets, giving investors direct access to renewable infrastructure returns."
+      }
+    ]
+  },
+  {
+    category: "CREUSD — Real Estate-Backed Digital Dollar",
+    icon: Coins,
+    items: [
+      {
+        question: "What is CREUSD?",
+        answer: "CREUSD is a stable, real estate-backed digital currency designed by Commertize to maintain a 1:1 value with the U.S. dollar, collateralized by high-quality commercial real estate."
+      },
+      {
+        question: "How is CREUSD different from other stablecoins?",
+        answer: "Unlike algorithmic or fiat-backed stablecoins, CREUSD is backed by real, income-generating CRE assets, combining stability with tangible value."
+      },
+      {
+        question: "How can I use CREUSD?",
+        answer: "You can use CREUSD for transactions within Commertize (e.g., buying tokenized assets, lending on Nexus) or in supported DeFi platforms."
+      }
+    ]
+  }
+];
+
+const FAQ = () => {
+  return (
+    <div className="min-h-screen w-full bg-gradient-to-br from-background via-background to-muted/20 py-12">
+      <div className="container mx-auto px-4">
+        {/* Hero Section */}
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-16"
+        >
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
+            className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 rounded-full mb-6 border-2 border-[#D4A024]"
+          >
+            <HelpCircle className="w-8 h-8 text-yellow-600" />
+          </motion.div>
+          <h1 className="text-5xl md:text-6xl font-light mb-6 bg-gradient-to-r from-yellow-600 to-yellow-500 bg-clip-text text-transparent">
+            Frequently Asked Questions
+          </h1>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="text-xl text-muted-foreground max-w-3xl mx-auto"
+          >
+            Everything you need to know about tokenized commercial real estate investing
+          </motion.p>
+        </motion.div>
+
+        {/* FAQ Sections */}
+        <div className="max-w-4xl mx-auto space-y-8">
+          {faqSections.map((section, sectionIndex) => (
+            <motion.div
+              key={sectionIndex}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8 + sectionIndex * 0.1 }}
+            >
+              <Card className="bg-card/50 backdrop-blur-sm border-2 border-[#D4A024] shadow-2xl">
+                <CardContent className="p-8">
+                  {/* Section Header */}
+                  <div className="flex items-center space-x-4 mb-6 pb-4 border-b-2 border-[#D4A024]/30">
+                    <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 rounded-full flex items-center justify-center border-2 border-[#D4A024]/50">
+                      <section.icon className="w-6 h-6 text-yellow-600" />
+                    </div>
+                    <h2 className="text-2xl font-light text-foreground">
+                      {section.category}
+                    </h2>
+                  </div>
+
+                  {/* Questions Accordion */}
+                  <Accordion type="single" collapsible className="space-y-4">
+                    {section.items.map((item, itemIndex) => (
+                      <motion.div
+                        key={itemIndex}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 1 + sectionIndex * 0.1 + itemIndex * 0.05 }}
+                      >
+                        <AccordionItem 
+                          value={`section-${sectionIndex}-item-${itemIndex}`}
+                          className="border-2 border-[#D4A024]/40 bg-gradient-to-r from-muted/20 to-muted/5 rounded-lg overflow-hidden shadow-sm hover:shadow-md hover:border-[#D4A024] transition-all duration-300"
+                        >
+                          <AccordionTrigger className="font-light px-6 py-4 hover:no-underline group">
+                            <span className="text-left text-base leading-relaxed">
+                              {item.question}
+                            </span>
+                          </AccordionTrigger>
+                          <AccordionContent className="px-6 pb-6 border-t-2 border-[#D4A024]/20">
+                            <p className="text-muted-foreground leading-relaxed pt-4">
+                              {item.answer}
+                            </p>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </motion.div>
+                    ))}
+                  </Accordion>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default FAQ;
