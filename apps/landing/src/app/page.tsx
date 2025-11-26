@@ -482,7 +482,7 @@ const AboutUs = () => {
                                         transition={{ duration: 1, ease: "easeOut" }}
                                 >
                                         <motion.h2 
-                                                className="text-3xl md:text-4xl font-logo font-light text-center mb-10 text-gray-800 drop-shadow-[0_2px_4px_rgba(255,255,255,0.5)]"
+                                                className="text-3xl md:text-4xl font-logo font-light text-center mb-10 text-black"
                                                 initial={{ opacity: 0, y: 30 }}
                                                 whileInView={{ opacity: 1, y: 0 }}
                                                 viewport={{ once: true, amount: 0.5 }}
@@ -493,7 +493,7 @@ const AboutUs = () => {
                                         
                                         <div className="prose max-w-none text-center space-y-6">
                                                 <motion.p 
-                                                        className="text-base md:text-lg font-logo font-light text-gray-700 leading-relaxed"
+                                                        className="text-base md:text-lg font-logo font-light text-black leading-relaxed"
                                                         initial={{ opacity: 0, y: 20 }}
                                                         whileInView={{ opacity: 1, y: 0 }}
                                                         viewport={{ once: true, amount: 0.3 }}
@@ -502,7 +502,7 @@ const AboutUs = () => {
                                                         {companyName} is building the next-generation platform and ecosystem for commercial real estate and infrastructure, merging the power of AI, blockchain, tokenization, and decentralized finance (DeFi) into one intelligent network.
                                                 </motion.p>
                                                 <motion.p 
-                                                        className="text-base md:text-lg font-logo font-light text-gray-700 leading-relaxed"
+                                                        className="text-base md:text-lg font-logo font-light text-black leading-relaxed"
                                                         initial={{ opacity: 0, y: 20 }}
                                                         whileInView={{ opacity: 1, y: 0 }}
                                                         viewport={{ once: true, amount: 0.3 }}
@@ -511,7 +511,7 @@ const AboutUs = () => {
                                                         Our mission is to create the digital foundation that connects real-world assets to global capital markets—enhancing liquidity, transparency, and access across the commercial real estate landscape.
                                                 </motion.p>
                                                 <motion.p 
-                                                        className="text-base md:text-lg font-logo font-light text-gray-700 leading-relaxed"
+                                                        className="text-base md:text-lg font-logo font-light text-black leading-relaxed"
                                                         initial={{ opacity: 0, y: 20 }}
                                                         whileInView={{ opacity: 1, y: 0 }}
                                                         viewport={{ once: true, amount: 0.3 }}
@@ -520,7 +520,7 @@ const AboutUs = () => {
                                                         Through AI-driven analytics, blockchain-enabled trust, and a compliant financial infrastructure, {companyName} empowers investors and property owners to own, trade, and build the next era of real estate finance.
                                                 </motion.p>
                                                 <motion.p 
-                                                        className="text-base md:text-lg font-logo font-light text-gray-700 leading-relaxed"
+                                                        className="text-base md:text-lg font-logo font-light text-black leading-relaxed"
                                                         initial={{ opacity: 0, y: 20 }}
                                                         whileInView={{ opacity: 1, y: 0 }}
                                                         viewport={{ once: true, amount: 0.3 }}
@@ -557,7 +557,7 @@ const AboutUs = () => {
                                                         className="cursor-pointer group flex-shrink-0"
                                                         style={{ minWidth: "500px", textAlign: "center" }}
                                                 >
-                                                        <span className="text-xl md:text-2xl font-logo font-light text-gray-600">
+                                                        <span className="text-xl md:text-2xl font-logo font-light text-black/80">
                                                                 {phrase}
                                                         </span>
                                                 </motion.div>
