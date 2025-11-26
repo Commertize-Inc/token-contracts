@@ -147,7 +147,7 @@
 }
 
 .moving-pulse {
-  animation: movePulse 4s linear infinite;
+  animation: movePulse 8s linear infinite;
 }
 
 /* Smooth scrolling animation for analytics */
