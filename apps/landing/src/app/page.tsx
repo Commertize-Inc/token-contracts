@@ -468,21 +468,21 @@ const AboutUs = () => {
                                                 src="/assets/vision-bg.jpg"
                                                 alt="" 
                                                 className="w-full h-full object-cover"
-                                                style={{ objectPosition: 'center center' }}
+                                                style={{ objectPosition: 'left center' }}
                                         />
                                 </motion.div>
                         </div>
 
-                        <div className="absolute inset-0 flex items-center justify-center z-10">
+                        <div className="absolute inset-0 flex items-center justify-end z-10">
                                 <motion.div 
-                                        className="max-w-4xl w-full text-center px-8 md:px-16"
-                                        initial={{ opacity: 0, y: 40 }}
-                                        whileInView={{ opacity: 1, y: 0 }}
+                                        className="w-[50%] md:w-[45%] lg:w-[42%] text-right pr-8 md:pr-12 lg:pr-16 pl-4"
+                                        initial={{ opacity: 0, x: 60 }}
+                                        whileInView={{ opacity: 1, x: 0 }}
                                         viewport={{ once: true, amount: 0.2 }}
                                         transition={{ duration: 1, ease: "easeOut" }}
                                 >
                                         <motion.h2 
-                                                className="text-3xl md:text-4xl lg:text-5xl font-logo font-light mb-10 text-gray-900"
+                                                className="text-2xl md:text-3xl lg:text-4xl font-logo font-light mb-8 text-gray-900"
                                                 initial={{ opacity: 0, y: 30 }}
                                                 whileInView={{ opacity: 1, y: 0 }}
                                                 viewport={{ once: true, amount: 0.5 }}
@@ -491,9 +491,9 @@ const AboutUs = () => {
                                                 The {companyName} Vision
                                         </motion.h2>
                                         
-                                        <div className="space-y-6 md:space-y-8">
+                                        <div className="space-y-5 md:space-y-6">
                                                 <motion.p 
-                                                        className="text-base md:text-lg font-logo font-light text-gray-700 leading-relaxed"
+                                                        className="text-sm md:text-base font-logo font-light text-gray-700 leading-relaxed"
                                                         initial={{ opacity: 0, y: 20 }}
                                                         whileInView={{ opacity: 1, y: 0 }}
                                                         viewport={{ once: true, amount: 0.3 }}
@@ -502,7 +502,7 @@ const AboutUs = () => {
                                                         {companyName} is building the next-generation platform and ecosystem for commercial real estate and infrastructure, merging the power of AI, blockchain, tokenization, and decentralized finance (DeFi) into one intelligent network.
                                                 </motion.p>
                                                 <motion.p 
-                                                        className="text-base md:text-lg font-logo font-light text-gray-700 leading-relaxed"
+                                                        className="text-sm md:text-base font-logo font-light text-gray-700 leading-relaxed"
                                                         initial={{ opacity: 0, y: 20 }}
                                                         whileInView={{ opacity: 1, y: 0 }}
                                                         viewport={{ once: true, amount: 0.3 }}
@@ -511,7 +511,7 @@ const AboutUs = () => {
                                                         Our mission is to create the digital foundation that connects real-world assets to global capital markets—enhancing liquidity, transparency, and access across the commercial real estate landscape.
                                                 </motion.p>
                                                 <motion.p 
-                                                        className="text-base md:text-lg font-logo font-light text-gray-700 leading-relaxed"
+                                                        className="text-sm md:text-base font-logo font-light text-gray-700 leading-relaxed"
                                                         initial={{ opacity: 0, y: 20 }}
                                                         whileInView={{ opacity: 1, y: 0 }}
                                                         viewport={{ once: true, amount: 0.3 }}
@@ -520,7 +520,7 @@ const AboutUs = () => {
                                                         Through AI-driven analytics, blockchain-enabled trust, and a compliant financial infrastructure, {companyName} empowers investors and property owners to own, trade, and build the next era of real estate finance.
                                                 </motion.p>
                                                 <motion.p 
-                                                        className="text-base md:text-lg font-logo font-light text-gray-700 leading-relaxed"
+                                                        className="text-sm md:text-base font-logo font-light text-gray-700 leading-relaxed"
                                                         initial={{ opacity: 0, y: 20 }}
                                                         whileInView={{ opacity: 1, y: 0 }}
                                                         viewport={{ once: true, amount: 0.3 }}
