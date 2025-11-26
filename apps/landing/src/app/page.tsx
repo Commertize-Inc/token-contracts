@@ -1930,50 +1930,6 @@ export default function Home() {
                                 </div>
                         </section>
 
-                        {/* Asset Classes Section */}
-                        <div className={styles.assetClassesSection}>
-                                <div className={styles.container}>
-                                        <SectionHeading subtitle="Investment Opportunities" title="Diversified Asset Classes" />
-                                        <div className={styles.assetGrid}>
-                                                <div className={styles.assetCard}>
-                                                        <div className={styles.assetIcon}>🏢</div>
-                                                        <h4 className={styles.assetTitle}>Commercial Office</h4>
-                                                        <p className={styles.assetDesc}>Class A office buildings in prime urban locations with stable, long-term tenants.</p>
-                                                        <div className={styles.assetMetric}>Avg. APY: 10-12%</div>
-                                                </div>
-                                                <div className={styles.assetCard}>
-                                                        <div className={styles.assetIcon}>🏘️</div>
-                                                        <h4 className={styles.assetTitle}>Multi-Family</h4>
-                                                        <p className={styles.assetDesc}>Apartment complexes and residential communities with strong occupancy rates.</p>
-                                                        <div className={styles.assetMetric}>Avg. APY: 8-11%</div>
-                                                </div>
-                                                <div className={styles.assetCard}>
-                                                        <div className={styles.assetIcon}>🏭</div>
-                                                        <h4 className={styles.assetTitle}>Industrial</h4>
-                                                        <p className={styles.assetDesc}>Warehouses, distribution centers, and last-mile delivery facilities.</p>
-                                                        <div className={styles.assetMetric}>Avg. APY: 11-14%</div>
-                                                </div>
-                                                <div className={styles.assetCard}>
-                                                        <div className={styles.assetIcon}>🛒</div>
-                                                        <h4 className={styles.assetTitle}>Retail</h4>
-                                                        <p className={styles.assetDesc}>Shopping centers and standalone retail properties in high-traffic areas.</p>
-                                                        <div className={styles.assetMetric}>Avg. APY: 9-13%</div>
-                                                </div>
-                                                <div className={styles.assetCard}>
-                                                        <div className={styles.assetIcon}>💾</div>
-                                                        <h4 className={styles.assetTitle}>Data Centers</h4>
-                                                        <p className={styles.assetDesc}>Mission-critical infrastructure supporting cloud computing and AI workloads.</p>
-                                                        <div className={styles.assetMetric}>Avg. APY: 12-15%</div>
-                                                </div>
-                                                <div className={styles.assetCard}>
-                                                        <div className={styles.assetIcon}>❄️</div>
-                                                        <h4 className={styles.assetTitle}>Cold Storage</h4>
-                                                        <p className={styles.assetDesc}>Temperature-controlled facilities for food and pharmaceutical logistics.</p>
-                                                        <div className={styles.assetMetric}>Avg. APY: 10-13%</div>
-                                                </div>
-                                        </div>
-                                </div>
-                        </div >
 
                         {/* Enhanced FAQ Section */}
                         <section className="py-24 bg-gradient-to-b from-white to-gray-50">
