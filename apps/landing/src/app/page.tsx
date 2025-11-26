@@ -2097,7 +2097,7 @@ export default function Home() {
                                                 {/* Column 1: Logo & Social */}
                                                 <div>
                                                         <div className="mb-4">
-                                                                <Logo className="h-8 w-auto" theme="dark" />
+                                                                <img src="/assets/logo.png" alt="Commertize" className="h-8 w-auto" />
                                                         </div>
                                                         <p className="text-sm mb-6">
                                                                 Commercial Real Estate, Revolutionized.<br />
