@@ -730,18 +730,30 @@
 }
 
 .bentoCard {
-  border-radius: 2rem;
+  border-radius: 0.75rem;
   padding: 2.5rem;
   position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.bentoCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1);
 }
 
 .bentoLarge {
   grid-column: span 1;
   background-color: #F5F5F7;
+  border-color: #e2e8f0;
+}
+
+.bentoLarge:hover {
+  border-color: #D4A024;
 }
 
 @media (min-width: 768px) {
@@ -753,11 +765,21 @@
 .bentoDark {
   background-color: #0f172a;
   color: white;
+  border-color: #1e293b;
+}
+
+.bentoDark:hover {
+  border-color: #D4A024;
+  box-shadow: 0 15px 30px -5px rgba(212, 160, 36, 0.15);
 }
 
 .bentoGold {
-  background-color: #FDF8EA;
-  border: 1px solid rgba(197, 155, 38, 0.2);
+  background: linear-gradient(to bottom right, rgba(212, 160, 36, 0.1), rgba(212, 160, 36, 0.05));
+  border: 2px solid #D4A024;
+}
+
+.bentoGold:hover {
+  box-shadow: 0 15px 30px -5px rgba(212, 160, 36, 0.25);
 }
 
 .bentoIconBox {
@@ -848,20 +870,36 @@
 
 .missionStat {
   text-align: center;
+  background: white;
+  border: 2px solid #D4A024;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.missionStat:first-child {
+  background: linear-gradient(to bottom right, rgba(212, 160, 36, 0.1), rgba(212, 160, 36, 0.05));
+}
+
+.missionStat:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(212, 160, 36, 0.2);
 }
 
 .missionStatValue {
   font-size: 2.5rem;
-  font-weight: 700;
+  font-weight: 300;
   color: var(--color-primary);
   margin-bottom: 0.5rem;
-  font-family: var(--font-mono);
+  font-family: var(--font-logo);
 }
 
 .missionStatLabel {
   font-size: 0.875rem;
   color: #64748b;
   line-height: 1.4;
+  font-weight: 300;
 }
 
 .missionVisual {
@@ -872,10 +910,20 @@
 
 .comparisonCard {
   background: white;
-  border-radius: 1rem;
+  border-radius: 0.75rem;
   padding: 2rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e2e8f0;
+  border: 2px solid #D4A024;
+  transition: all 0.3s ease;
+}
+
+.comparisonCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(212, 160, 36, 0.2);
+}
+
+.comparisonCard:last-child {
+  background: linear-gradient(to bottom right, rgba(212, 160, 36, 0.08), rgba(212, 160, 36, 0.02));
 }
 
 .comparisonTitle {
@@ -1241,43 +1289,61 @@
 
 .assetCard {
   background: white;
-  border-radius: 1.5rem;
-  padding: 2.5rem;
-  border: 1px solid #e2e8f0;
-  transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  border: 2px solid #D4A024;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .assetCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 15px 30px -5px rgba(212, 160, 36, 0.2);
+  border-color: #D4A024;
+}
+
+.assetCard:first-child {
+  background: linear-gradient(to bottom right, rgba(212, 160, 36, 0.08), rgba(212, 160, 36, 0.02));
 }
 
 .assetIcon {
-  font-size: 3rem;
-  margin-bottom: 1.5rem;
+  font-size: 2.5rem;
+  margin-bottom: 1.25rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to bottom right, rgba(212, 160, 36, 0.15), rgba(212, 160, 36, 0.05));
+  border-radius: 0.75rem;
+  border: 1px solid rgba(212, 160, 36, 0.3);
 }
 
 .assetTitle {
-  font-size: 1.375rem;
-  font-weight: 700;
+  font-size: 1.25rem;
+  font-weight: 300;
   color: #0f172a;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
+  font-family: var(--font-logo);
 }
 
 .assetDesc {
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   color: #64748b;
   line-height: 1.6;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
+  font-weight: 300;
 }
 
 .assetMetric {
   font-size: 0.875rem;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--color-primary);
-  font-family: var(--font-mono);
-  padding-top: 1rem;
-  border-top: 1px solid #e2e8f0;
+  font-family: var(--font-logo);
+  padding: 0.75rem 1rem;
+  background: linear-gradient(to right, rgba(212, 160, 36, 0.1), rgba(212, 160, 36, 0.05));
+  border-radius: 0.5rem;
+  text-align: center;
 }
 
 /* --- FAQ Section --- */
