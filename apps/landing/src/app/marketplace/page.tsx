@@ -188,7 +188,7 @@ export default function Marketplace() {
     const timer = setTimeout(() => {
       setIsLoading(false);
       setUserName("Investor");
-    }, 1500);
+    }, 800);
     return () => clearTimeout(timer);
   }, []);
 
