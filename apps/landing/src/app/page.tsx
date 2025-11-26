@@ -788,7 +788,7 @@ const CommertizeCollection = () => (
                                                 <div className="p-5">
                                                         <div className="flex items-start justify-between gap-2 mb-3">
                                                                 <h3 className="text-lg font-logo font-light text-gray-900 leading-tight">{property.title}</h3>
-                                                                <span className="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-light rounded-[0.75rem] whitespace-nowrap border border-gray-200">{property.type}</span>
+                                                                <span className="px-3 py-1 bg-white text-[#92710A] text-xs font-medium rounded-[0.75rem] whitespace-nowrap border-2 border-[#D4A024]">{property.type}</span>
                                                         </div>
                                                         <div className="flex items-center gap-1 text-sm text-gray-500 mb-4">
                                                                 <MapPin size={14} className="text-[#D4A024]" />
