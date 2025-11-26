@@ -22,6 +22,7 @@ import {
 import Link from "next/link";
 import { PROPERTY_STATUS } from "@/lib/propertyStatus";
 import ChatGPTWidget from "@/components/ChatGPTWidget";
+import Navbar from "@/components/Navbar";
 
 interface Property {
   id: string;
@@ -186,8 +187,10 @@ export default function Marketplace() {
   const hasActiveFilters = status !== "all" || propertyType !== "all" || propertyClass !== "all" || riskLevel !== "all" || searchQuery.trim() !== "";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-amber-50/20">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-amber-50/20 pt-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Hero Section */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -538,10 +541,11 @@ export default function Marketplace() {
             </div>
           </div>
         </motion.div>
+        </div>
       </div>
 
       {/* RUNE.CTZ Chatbot */}
       <ChatGPTWidget />
-    </div>
+    </>
   );
 }
