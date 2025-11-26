@@ -1732,7 +1732,6 @@ export default function Home() {
                         <TokenizationInfo />
                         <SubmitProperty />
                         <LatestNews />
-                        <BentoFeatures />
 
                         {/* Mission Section */}
                         <div className={styles.missionSection}>
