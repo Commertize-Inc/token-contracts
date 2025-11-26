@@ -482,7 +482,7 @@ const AboutUs = () => {
                                         transition={{ duration: 1, ease: "easeOut" }}
                                 >
                                         <motion.h2 
-                                                className="text-2xl md:text-3xl lg:text-4xl font-logo font-light mb-6 text-gray-900"
+                                                className="text-2xl md:text-3xl lg:text-4xl font-logo font-light mb-10 text-gray-900"
                                                 initial={{ opacity: 0, y: 30 }}
                                                 whileInView={{ opacity: 1, y: 0 }}
                                                 viewport={{ once: true, amount: 0.5 }}
@@ -491,7 +491,7 @@ const AboutUs = () => {
                                                 The {companyName} Vision
                                         </motion.h2>
                                         
-                                        <div className="space-y-4 md:space-y-5">
+                                        <div className="space-y-8 md:space-y-10">
                                                 <motion.p 
                                                         className="text-sm md:text-base font-logo font-light text-gray-700 leading-relaxed"
                                                         initial={{ opacity: 0, y: 20 }}
