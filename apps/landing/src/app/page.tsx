@@ -740,7 +740,7 @@ const WhyCommertize = () => {
         ];
 
         const commertizeItems = [
-                "$25K minimum investment",
+                "$1K minimum investment",
                 "Liquid secondary market",
                 "Global property access",
                 "Streamlined digital process"
