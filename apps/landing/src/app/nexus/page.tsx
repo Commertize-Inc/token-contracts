@@ -216,7 +216,7 @@ export default function Nexus() {
                   <h2 className="text-2xl font-light mb-4 text-gray-900" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>What is Nexus?</h2>
                   <p className="text-gray-600 mb-6 leading-relaxed font-light">
                     Nexus is Commertize's decentralized finance protocol — a liquidity engine enabling 
-                    investors to borrow, lend, and earn yield from tokenized real estate (RWA) assets. 
+                    investors to borrow, lend, and earn yield from tokenized commercial real estate assets. 
                     Built on Ethereum, Nexus bridges traditional property value with DeFi lending pools, 
                     providing instant liquidity without selling your assets.
                   </p>
