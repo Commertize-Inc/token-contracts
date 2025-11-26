@@ -137,37 +137,17 @@
   }
 }
 
-/* Moving pulse animation */
-@keyframes movingPulse {
-  0% {
-    top: -6px;
-    left: -6px;
-    opacity: 1;
-  }
-  25% {
-    top: -6px;
-    left: calc(100% - 6px);
-    opacity: 0.8;
-  }
-  50% {
-    top: calc(100% - 6px);
-    left: calc(100% - 6px);
-    opacity: 0.6;
-  }
-  75% {
-    top: calc(100% - 6px);
-    left: -6px;
-    opacity: 0.8;
-  }
-  100% {
-    top: -6px;
-    left: -6px;
-    opacity: 1;
-  }
+/* Moving pulse around chat border */
+@keyframes movePulse {
+  0% { top: 0; left: 50%; }
+  25% { top: 50%; left: 100%; }
+  50% { top: 100%; left: 50%; }
+  75% { top: 50%; left: 0; }
+  100% { top: 0; left: 50%; }
 }
 
 .moving-pulse {
-  animation: movingPulse 6s linear infinite;
+  animation: movePulse 4s linear infinite;
 }
 
 /* Smooth scrolling animation for analytics */

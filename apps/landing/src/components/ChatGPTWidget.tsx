@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, X, Brain, RefreshCw } from "lucide-react";
+import { Send, X, Brain, RefreshCw, Copy, ThumbsUp, ThumbsDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useMutation } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
@@ -12,57 +13,75 @@ interface Message {
   content: string;
   role: "user" | "assistant";
   timestamp: Date;
+  reactions?: { helpful?: boolean; unhelpful?: boolean };
   suggestedActions?: string[];
-}
-
-interface ChatSession {
-  id: string;
-  title: string;
-  messages: Message[];
-  lastActive: Date;
 }
 
 export default function ChatGPTWidget() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
+  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
+  const [showPopupMessage, setShowPopupMessage] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
-  const [currentSession, setCurrentSession] = useState<ChatSession>({
-    id: "default",
-    title: "New Chat",
-    messages: [
-      {
-        id: "1",
-        content: "Welcome to Commertize! I'm RUNE.CTZ — your guide to tokenized commercial real estate.\n\nI can help you understand investment opportunities, market trends, and how tokenization works.\n\nWhat would you like to explore?",
-        role: "assistant",
-        timestamp: new Date(),
-        suggestedActions: [
-          "Investment opportunities",
-          "How tokenization works", 
-          "Regulatory framework",
-          "CRE market trends"
-        ]
-      },
-    ],
-    lastActive: new Date()
-  });
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: "1",
+      content: "Welcome to Commertize! I'm RUNE.CTZ — your guide to tokenized commercial real estate.\n\nI can help you understand investment opportunities, market trends, and how tokenization works.\n\nWhat would you like to explore?",
+      role: "assistant",
+      timestamp: new Date(),
+      suggestedActions: [
+        "Investment opportunities",
+        "How tokenization works", 
+        "Regulatory framework",
+        "CRE market trends"
+      ]
+    },
+  ]);
   const [inputMessage, setInputMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { toast } = useToast();
 
+  const popupMessages = [
+    "I'm RUNE.CTZ 👋 Want today's CRE market highlights?",
+    "Ask me about cap rates, tokenization, or new deals.",
+    "Curious if you qualify to invest? I can check in seconds.",
+    "Need a quick 30-second property breakdown? Just ask."
+  ];
+
   useEffect(() => {
     setHasMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (!isOpen && hasMounted) {
+      const showTimer = setTimeout(() => {
+        setShowPopupMessage(true);
+      }, 3000);
+
+      const hideTimer = setTimeout(() => {
+        setShowPopupMessage(false);
+      }, 8000);
+
+      const rotateTimer = setInterval(() => {
+        setCurrentMessageIndex(prev => (prev + 1) % popupMessages.length);
+      }, 10000);
+
+      return () => {
+        clearTimeout(showTimer);
+        clearTimeout(hideTimer);
+        clearInterval(rotateTimer);
+      };
+    }
+  }, [isOpen, hasMounted, popupMessages.length]);
 
   const sendMessageMutation = useMutation({
     mutationFn: async (message: string) => {
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          message,
-          context: currentSession.messages.slice(-5)
-        }),
+        body: JSON.stringify({ message, context: messages.slice(-5) }),
       });
       if (!response.ok) throw new Error("Failed to send message");
       return response.json();
@@ -77,11 +96,7 @@ export default function ChatGPTWidget() {
         timestamp: new Date(),
         suggestedActions: data.suggestedActions || []
       };
-      setCurrentSession(prev => ({
-        ...prev,
-        messages: [...prev.messages, assistantMessage],
-        lastActive: new Date()
-      }));
+      setMessages(prev => [...prev, assistantMessage]);
     },
     onError: () => {
       setIsTyping(false);
@@ -95,55 +110,45 @@ export default function ChatGPTWidget() {
 
   const handleSendMessage = () => {
     if (!inputMessage.trim()) return;
+
     const userMessage: Message = {
       id: Date.now().toString(),
       content: inputMessage,
       role: "user",
       timestamp: new Date(),
     };
-    setCurrentSession(prev => ({
-      ...prev,
-      messages: [...prev.messages, userMessage],
-      lastActive: new Date()
-    }));
+
+    setMessages(prev => [...prev, userMessage]);
     sendMessageMutation.mutate(inputMessage);
     setInputMessage("");
   };
 
   const handleSuggestedAction = (action: string) => {
     setInputMessage(action);
-    setTimeout(() => {
-      const userMessage: Message = {
-        id: Date.now().toString(),
-        content: action,
-        role: "user",
-        timestamp: new Date(),
-      };
-      setCurrentSession(prev => ({
-        ...prev,
-        messages: [...prev.messages, userMessage],
-        lastActive: new Date()
-      }));
-      sendMessageMutation.mutate(action);
-      setInputMessage("");
-    }, 100);
+    setTimeout(() => handleSendMessage(), 100);
+  };
+
+  const handleCopyMessage = (content: string) => {
+    navigator.clipboard.writeText(content);
+    toast({ title: "Copied!", description: "Message copied to clipboard" });
+  };
+
+  const handleReaction = (messageId: string, reaction: 'helpful' | 'unhelpful') => {
+    setMessages(prev => prev.map(msg => 
+      msg.id === messageId 
+        ? { ...msg, reactions: { ...msg.reactions, [reaction]: !msg.reactions?.[reaction] } }
+        : msg
+    ));
   };
 
   const startNewChat = () => {
-    setCurrentSession({
-      id: Date.now().toString(),
-      title: "New Chat",
-      messages: [
-        {
-          id: "1",
-          content: "Welcome back! I'm ready to help you explore investment opportunities.\n\nWhat would you like to know?",
-          role: "assistant",
-          timestamp: new Date(),
-          suggestedActions: ["I want to invest", "How does it work?", "Market trends"]
-        },
-      ],
-      lastActive: new Date()
-    });
+    setMessages([{
+      id: "1",
+      content: "Welcome back! I'm ready to help you explore Commertize's real estate investment opportunities.\n\nExplore:\n• Tokenized commercial real estate\n• Commertize Nexus DeFi\n• OmniGrid green energy investments\n\nPowered by Commertize Intelligence – RUNE.CTZ.",
+      role: "assistant",
+      timestamp: new Date(),
+      suggestedActions: ["I want to invest", "Nexus DeFi", "OmniGrid projects", "How does it work?"]
+    }]);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -154,12 +159,19 @@ export default function ChatGPTWidget() {
   };
 
   useEffect(() => {
-    if (currentSession.messages.length > 1) {
+    if (messages.length > 1) {
       setTimeout(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
       }, 100);
     }
-  }, [currentSession.messages]);
+  }, [messages]);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.style.height = 'auto';
+      inputRef.current.style.height = Math.min(inputRef.current.scrollHeight, 120) + 'px';
+    }
+  }, [inputMessage]);
 
   if (!hasMounted) return null;
 
@@ -175,13 +187,18 @@ export default function ChatGPTWidget() {
             className="fixed bottom-4 right-4 sm:right-6 z-[60]"
           >
             <div 
-              className="w-80 sm:w-96 max-w-[calc(100vw-2rem)] shadow-sm rounded-2xl h-[650px] max-h-[calc(100vh-6rem)] overflow-hidden relative"
+              className={`w-80 sm:w-96 max-w-[calc(100vw-2rem)] shadow-sm rounded-2xl ${isMinimized ? 'h-16' : 'h-[650px] max-h-[calc(100vh-6rem)]'} transition-all duration-300 overflow-hidden relative`}
               style={{ 
                 border: '6px solid #D4A024',
                 boxShadow: '0 0 8px rgba(212, 160, 23, 0.4)',
                 backgroundColor: 'white'
               }}
             >
+              <div 
+                className="moving-pulse absolute w-3 h-3 bg-[#D4A024] rounded-full z-50 pointer-events-none" 
+                style={{ filter: 'drop-shadow(0 0 2px #D4A024)', boxShadow: '0 0 2px #D4A024' }} 
+              />
+
               <div className="flex flex-row items-center justify-between p-3 bg-gradient-to-r from-white to-gray-100 text-[#D4A024] rounded-t-2xl">
                 <div className="flex items-center gap-3">
                   <motion.div
@@ -189,15 +206,27 @@ export default function ChatGPTWidget() {
                     transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                     className="relative"
                   >
-                    <img 
-                      src="/assets/rune-ctz.png" 
-                      alt="RUNE.CTZ" 
-                      className="w-12 h-12 rounded-full object-cover border-2 border-[#D4A024]"
-                    />
+                    <div className="w-12 h-12 rounded-full relative">
+                      <img 
+                        src="/assets/rune-ctz.png" 
+                        alt="RUNE.CTZ" 
+                        className="w-full h-full rounded-full object-cover"
+                        style={{ objectPosition: 'center 8%', transform: 'scale(1.02)' }}
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          const fallback = target.nextElementSibling as HTMLElement;
+                          if (fallback) fallback.classList.remove('hidden');
+                        }}
+                      />
+                      <div className="w-full h-full bg-[#D4A024]/20 rounded-full flex items-center justify-center backdrop-blur-sm hidden absolute inset-0">
+                        <Brain className="w-4 h-4 text-[#D4A024]" />
+                      </div>
+                    </div>
                     <motion.div
                       animate={{ scale: [1, 1.2, 1], opacity: [1, 0.7, 1] }}
                       transition={{ duration: 2, repeat: Infinity }}
-                      className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 rounded-full border-2 border-white"
+                      className="absolute top-1 right-1 w-2 h-2 bg-emerald-400 rounded-full shadow-sm"
                     />
                   </motion.div>
                   <div>
@@ -214,128 +243,203 @@ export default function ChatGPTWidget() {
                 </div>
               </div>
               
-              <div className="flex flex-col" style={{ height: 'calc(100% - 70px)' }}>
-                <div className="p-4 overflow-y-auto bg-white" style={{ height: '380px' }}>
-                  <div className="space-y-4">
-                    {currentSession.messages.map((message, index) => (
-                      <motion.div
-                        key={message.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                        className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
-                      >
-                        <div className={`max-w-[85%] ${message.role === "user" ? "order-2" : ""}`}>
-                          <div
-                            className={`rounded-2xl p-4 text-sm leading-relaxed ${
-                              message.role === "user"
-                                ? "bg-[#D4A024] text-white ml-8 shadow-sm border-2 border-[#D4A024]"
-                                : "bg-white border-2 border-[#D4A024] shadow-sm mr-8 text-black"
-                            }`}
-                          >
-                            <div className="whitespace-pre-wrap font-sans font-light">{message.content}</div>
-                            <div className={`text-xs mt-3 font-sans font-light ${
-                              message.role === "user" ? "text-white/80" : "text-black/80"
-                            }`}>
-                              {message.role === "assistant" ? "RUNE.CTZ • " : ""}
-                              {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              {!isMinimized && (
+                <div className="flex flex-col" style={{ height: 'calc(100% - 70px)' }}>
+                  <div className="p-4 overflow-y-auto messages-container gold-scrollbar bg-white" style={{ height: '380px' }}>
+                    <div className="space-y-4">
+                      {messages.map((message, index) => (
+                        <motion.div
+                          key={message.id}
+                          data-message-id={message.id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                          className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
+                        >
+                          <div className={`max-w-[85%] ${message.role === "user" ? "order-2" : ""}`}>
+                            <div
+                              className={`rounded-2xl p-4 text-sm leading-relaxed relative ${
+                                message.role === "user"
+                                  ? "bg-gradient-to-br from-[#D4A024] to-[#D4A024] text-white ml-4 sm:ml-8 shadow-sm border-2 border-[#D4A024]"
+                                  : "bg-white border-2 border-[#D4A024] shadow-sm mr-4 sm:mr-8 text-black"
+                              }`}
+                            >
+                              <div className={`whitespace-pre-wrap font-sans ${
+                                message.role === "user" ? "font-light text-white" : "font-light text-black"
+                              }`}>
+                                {message.content}
+                              </div>
+                              
+                              <div className={`text-xs mt-3 font-sans font-light ${
+                                message.role === "user" ? "text-white/80" : "text-black/80"
+                              }`}>
+                                {message.role === "assistant" ? "RUNE.CTZ • " : ""}
+                                {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              </div>
                             </div>
-                          </div>
 
-                          {message.role === "assistant" && message.suggestedActions && message.suggestedActions.length > 0 && (
-                            <div className="mt-2 flex flex-wrap gap-2">
-                              {message.suggestedActions.map((action, idx) => (
-                                <Badge
-                                  key={idx}
-                                  variant="outline"
-                                  className="cursor-pointer hover:bg-[#D4A024] hover:text-white bg-[#D4A024]/10 border-[#D4A024] text-[#D4A024] text-xs transition-colors"
-                                  onClick={() => handleSuggestedAction(action)}
-                                >
-                                  {action}
-                                </Badge>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </motion.div>
-                    ))}
-                    
-                    {isTyping && (
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
-                        <div className="bg-white border-2 border-[#D4A024] rounded-2xl p-4 mr-8 shadow-sm">
-                          <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 bg-[#D4A024] rounded-full animate-bounce"></div>
-                            <div className="w-2 h-2 bg-[#D4A024] rounded-full animate-bounce" style={{ animationDelay: "0.1s" }}></div>
-                            <div className="w-2 h-2 bg-[#D4A024] rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
-                            <span className="text-xs text-gray-500 ml-2">RUNE.CTZ is thinking...</span>
+                            {message.role === "assistant" && (
+                              <div className="flex items-center gap-2 mt-2 px-2">
+                                <Button variant="ghost" size="sm" onClick={() => handleCopyMessage(message.content)} className="h-6 text-xs text-gray-500 hover:text-gray-700">
+                                  <Copy className="w-3 h-3 mr-1" /> Copy
+                                </Button>
+                                <Button variant="ghost" size="sm" onClick={() => handleReaction(message.id, 'helpful')} className={`h-6 text-xs ${message.reactions?.helpful ? 'text-green-500' : 'text-gray-500'}`}>
+                                  <ThumbsUp className="w-3 h-3" />
+                                </Button>
+                                <Button variant="ghost" size="sm" onClick={() => handleReaction(message.id, 'unhelpful')} className={`h-6 text-xs ${message.reactions?.unhelpful ? 'text-red-500' : 'text-gray-500'}`}>
+                                  <ThumbsDown className="w-3 h-3" />
+                                </Button>
+                              </div>
+                            )}
+
+                            {message.role === "assistant" && message.suggestedActions && message.suggestedActions.length > 0 && (
+                              <div className="mt-2 flex flex-wrap gap-2">
+                                {message.suggestedActions.map((action, idx) => (
+                                  <Badge
+                                    key={idx}
+                                    variant="outline"
+                                    className="cursor-pointer hover:bg-[#D4A024] hover:text-white bg-[#D4A024]/10 border-[#D4A024] text-[#D4A024] text-xs transition-colors"
+                                    onClick={() => handleSuggestedAction(action)}
+                                  >
+                                    {action}
+                                  </Badge>
+                                ))}
+                              </div>
+                            )}
                           </div>
-                        </div>
-                      </motion.div>
-                    )}
-                    <div ref={messagesEndRef} />
-                  </div>
-                </div>
-                
-                <div className="border-t border-[#D4A024]/30 bg-white flex-shrink-0 p-3 mt-2">
-                  <div className="flex gap-2 items-start">
-                    <textarea
-                      ref={inputRef}
-                      value={inputMessage}
-                      onChange={(e) => setInputMessage(e.target.value)}
-                      onKeyDown={handleKeyPress}
-                      placeholder="Ask me anything..."
-                      disabled={sendMessageMutation.isPending}
-                      rows={2}
-                      className="flex-1 min-h-[48px] max-h-[120px] border-2 border-[#D4A024] focus:border-[#D4A024] bg-white text-sm font-light rounded-lg px-3 py-2 text-black placeholder:text-black/50 resize-none outline-none"
-                    />
-                    
-                    <div className="flex gap-2">
-                      <div
-                        onClick={() => inputMessage.trim() && !sendMessageMutation.isPending && handleSendMessage()}
-                        className="cursor-pointer bg-[#D4A024] hover:bg-[#a67c00] text-white px-2 py-2 rounded-lg flex items-center justify-center gap-1 shadow-sm min-w-[45px]"
-                      >
-                        <Send className="h-4 w-4" />
-                        <span className="text-sm">Send</span>
-                      </div>
+                        </motion.div>
+                      ))}
                       
-                      <div 
-                        onClick={startNewChat}
-                        className="cursor-pointer bg-[#D4A024] hover:bg-[#a67c00] text-white px-2 py-2 rounded-lg flex items-center justify-center gap-1 shadow-sm min-w-[45px]"
-                      >
-                        <RefreshCw className="h-4 w-4" />
-                        <span className="text-sm">New</span>
+                      {isTyping && (
+                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex justify-start">
+                          <div className="bg-white/60 backdrop-blur-md border border-white/40 rounded-2xl p-4 mr-8 shadow-sm">
+                            <div className="flex items-center gap-2">
+                              <div className="w-2 h-2 bg-[#D4A024] rounded-full animate-bounce"></div>
+                              <div className="w-2 h-2 bg-[#D4A024] rounded-full animate-bounce" style={{ animationDelay: "0.1s" }}></div>
+                              <div className="w-2 h-2 bg-[#D4A024] rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
+                              <span className="text-xs text-gray-500 ml-2 font-sans font-light">RUNE.CTZ is thinking...</span>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                      <div ref={messagesEndRef} />
+                    </div>
+                  </div>
+                  
+                  <div className="border-t border-[#D4A024]/30 bg-white flex-shrink-0 p-3 mt-2">
+                    <div className="flex gap-2 items-start">
+                      <textarea
+                        ref={inputRef}
+                        value={inputMessage}
+                        onChange={(e) => setInputMessage(e.target.value)}
+                        onKeyDown={handleKeyPress}
+                        placeholder="Curious about tokenization? Start typing…"
+                        disabled={sendMessageMutation.isPending}
+                        rows={2}
+                        className="flex-1 min-h-[48px] max-h-[120px] border-2 border-[#D4A024] focus:border-[#D4A024] focus:ring-1 focus:ring-[#D4A024]/20 bg-white text-sm font-light rounded-lg px-3 py-2 text-black placeholder:text-black/50 resize-none outline-none"
+                      />
+                      
+                      <div className="flex gap-2">
+                        <div
+                          onClick={() => inputMessage.trim() && !sendMessageMutation.isPending && handleSendMessage()}
+                          className="cursor-pointer bg-[#D4A024] hover:bg-[#a67c00] text-white px-2 py-2 rounded-lg flex items-center justify-center gap-1 shadow-sm transition-all duration-200 hover:scale-105 min-w-[45px]"
+                        >
+                          {sendMessageMutation.isPending ? (
+                            <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}>
+                              <RefreshCw className="h-4 w-4" />
+                            </motion.div>
+                          ) : (
+                            <Send className="h-4 w-4" />
+                          )}
+                          <span className="text-sm">Send</span>
+                        </div>
+                        
+                        <div 
+                          onClick={startNewChat}
+                          className="cursor-pointer bg-[#D4A024] hover:bg-[#a67c00] text-white px-2 py-2 rounded-lg flex items-center justify-center gap-1 shadow-sm transition-all duration-200 hover:scale-105 min-w-[45px]"
+                        >
+                          <RefreshCw className="h-4 w-4" />
+                          <span className="text-sm">New</span>
+                        </div>
                       </div>
                     </div>
                   </div>
+
+                  <div className="bg-gradient-to-r from-white to-gray-100 border-t border-[#D4A024]/20 p-3 flex-shrink-0 rounded-b-2xl">
+                    <div className="flex items-center justify-center gap-2 text-sm">
+                      <div className="w-2 h-2 bg-[#D4A024] rounded-full animate-pulse shadow-sm"></div>
+                      <span className="font-sans font-bold text-[#D4A024]">Powered by Commertize Intelligence™</span>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <motion.button
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 w-16 h-16 rounded-full shadow-lg flex items-center justify-center z-50 transition-colors overflow-hidden"
-        style={{ 
-          border: '3px solid #D4A024',
-          boxShadow: '0 0 12px rgba(212, 160, 23, 0.5)',
-          backgroundColor: isOpen ? '#D4A024' : 'transparent',
-          padding: 0
-        }}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        {isOpen ? (
-          <X className="w-6 h-6 text-white" />
-        ) : (
-          <img 
-            src="/assets/rune-ctz.png" 
-            alt="RUNE.CTZ" 
-            className="w-full h-full object-cover rounded-full"
-          />
-        )}
-      </motion.button>
+      {!isOpen && (
+        <motion.button
+          onClick={() => setIsOpen(true)}
+          className="fixed bottom-4 right-4 sm:right-6 z-[60] transition-all duration-300 flex items-center justify-center group hover:scale-110 cursor-pointer"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3, delay: 0.5 }}
+        >
+          <motion.div
+            animate={{ y: [0, -2, 0], scale: [1, 1.02, 1] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="relative"
+          >
+            <div className="w-16 h-16 rounded-full bg-gradient-to-r from-[#D4A024] via-[#D4A024] to-[#D4A024] p-1 border-2 border-[#D4A024] shadow-sm relative">
+              <div className="w-full h-full rounded-full bg-white p-0.5 relative">
+                <img 
+                  src="/assets/rune-ctz.png" 
+                  alt="RUNE.CTZ" 
+                  className="w-full h-full rounded-full object-cover"
+                  style={{ objectPosition: 'center 8%' }}
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    const fallback = target.nextElementSibling as HTMLElement;
+                    if (fallback) fallback.classList.remove('hidden');
+                  }}
+                />
+                <div className="w-full h-full bg-[#D4A024]/20 rounded-full flex items-center justify-center backdrop-blur-sm hidden absolute inset-0">
+                  <Brain className="w-4 h-4 text-[#D4A024]" />
+                </div>
+              </div>
+              <div className="absolute inset-0 rounded-full border-2 border-[#D4A024] shadow-sm ring-1 ring-[#D4A024] ring-opacity-50"></div>
+            </div>
+            
+            <motion.div
+              animate={{ scale: [1, 1.2, 1], opacity: [1, 0.7, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="absolute top-1 right-1 w-2 h-2 bg-emerald-400 rounded-full shadow-sm"
+            />
+          </motion.div>
+          
+          <AnimatePresence>
+            {showPopupMessage && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.8, y: 10 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="absolute -top-16 -left-40 bg-white border-2 border-[#D4A024] text-black text-sm px-3 py-2 rounded-lg shadow-sm pointer-events-none max-w-[240px] z-[70] font-sans font-light leading-relaxed"
+              >
+                {popupMessages[currentMessageIndex]}
+                <div className="absolute top-full right-6">
+                  <div className="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-transparent border-t-[#D4A024]"></div>
+                  <div className="absolute -top-[4px] left-[1px] w-0 h-0 border-l-[4px] border-r-[4px] border-t-[4px] border-transparent border-t-white"></div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.button>
+      )}
     </>
   );
 }
