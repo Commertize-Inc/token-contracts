@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './PropertyCard.module.css';
-import { MapPin, Star, TrendingUp, Calendar, Building2, Percent } from 'lucide-react';
+import { MapPin, Star, TrendingUp, Calendar, Building2, Percent, Sparkles } from 'lucide-react';
 
 export interface PropertyData {
   id: string;
