@@ -182,7 +182,7 @@ const MOCK_PROPERTIES = [
                 funded: 0, 
                 units: 36,
                 comingSoon: true,
-                image: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600&h=400&fit=crop'
+                image: '/assets/national-hotel-hilton.jpg'
         },
 ];
 
