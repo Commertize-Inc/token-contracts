@@ -266,8 +266,8 @@ export default function ChatGPTWidget() {
                                 {message.suggestedActions.map((action, idx) => (
                                   <Badge
                                     key={idx}
-                                    variant="outline"
-                                    className="cursor-pointer hover:bg-[#D4A024] hover:text-white bg-[#D4A024]/10 border-[#D4A024] text-[#D4A024] text-xs transition-colors"
+                                    variant="default"
+                                    className="cursor-pointer bg-[#D4A024] hover:bg-[#B8881C] text-white border-[#D4A024] text-xs transition-colors"
                                     onClick={() => handleSuggestedAction(action)}
                                   >
                                     {action}
