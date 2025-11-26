@@ -1223,7 +1223,18 @@ const SubmitProperty = () => {
 };
 
 // --- Latest News Section ---
-const sampleArticles = [
+interface NewsArticle {
+        id: string;
+        slug: string;
+        title: string;
+        summary: string;
+        category: string;
+        imageUrl?: string;
+        readTime: number;
+        publishedAt: string;
+}
+
+const fallbackArticles: NewsArticle[] = [
         {
                 id: "1",
                 title: "Tokenization Revolutionizes Commercial Real Estate",
@@ -1256,12 +1267,46 @@ const sampleArticles = [
         },
 ];
 
+const formatNewsDate = (dateString: string) => {
+        try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) return dateString;
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        } catch {
+                return dateString;
+        }
+};
+
 const LatestNews = () => {
+        const [articles, setArticles] = useState<NewsArticle[]>(fallbackArticles);
+
+        useEffect(() => {
+                async function fetchNews() {
+                        try {
+                                const response = await fetch('/api/news?limit=3');
+                                if (response.ok) {
+                                        const result = await response.json();
+                                        if (result.data && result.data.length > 0) {
+                                                setArticles(result.data.slice(0, 3));
+                                        }
+                                }
+                        } catch (error) {
+                                console.error('Failed to fetch news:', error);
+                        }
+                }
+                fetchNews();
+        }, []);
+
         const getCategoryColor = (category: string) => {
                 const colors: Record<string, string> = {
                         'Tokenization': 'bg-purple-100 text-purple-700',
                         'Markets': 'bg-yellow-100 text-yellow-700',
                         'Technology': 'bg-indigo-100 text-indigo-700',
+                        'Regulation': 'bg-red-100 text-red-700',
+                        'DeFi': 'bg-cyan-100 text-cyan-700',
+                        'RWA': 'bg-green-100 text-green-700',
+                        'Crypto': 'bg-orange-100 text-orange-700',
+                        'Infrastructure': 'bg-teal-100 text-teal-700',
                 };
                 return colors[category] || 'bg-gray-100 text-gray-700';
         };
@@ -1300,7 +1345,7 @@ const LatestNews = () => {
                                         </div>
 
                                         <div className="grid md:grid-cols-3 gap-8">
-                                                {sampleArticles.map((article, index) => (
+                                                {articles.map((article, index) => (
                                                         <motion.article
                                                                 key={article.id}
                                                                 className="w-full"
@@ -1339,7 +1384,7 @@ const LatestNews = () => {
                                                                                                 <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
                                                                                                         <div className="flex items-center gap-1">
                                                                                                                 <Calendar size={12} />
-                                                                                                                <span>{article.publishedAt}</span>
+                                                                                                                <span>{formatNewsDate(article.publishedAt)}</span>
                                                                                                         </div>
                                                                                                         <div className="flex items-center gap-1">
                                                                                                                 <Clock size={12} />
