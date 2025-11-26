@@ -499,7 +499,7 @@ const AboutUs = () => {
                                                         viewport={{ once: true, amount: 0.3 }}
                                                         transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
                                                 >
-                                                        {companyName} merges AI, blockchain, and tokenization to connect commercial real estate with global capital markets.
+                                                        {companyName} is building the platform that connects commercial real estate to global capital markets. By merging AI, blockchain, and tokenization with compliant financial infrastructure, we're enhancing liquidity, transparency, and access across the real estate landscape.
                                                 </motion.p>
                                                 <motion.p 
                                                         className="text-sm md:text-base font-logo font-light text-gray-700 leading-relaxed"
@@ -508,7 +508,7 @@ const AboutUs = () => {
                                                         viewport={{ once: true, amount: 0.3 }}
                                                         transition={{ duration: 0.8, delay: 0.45, ease: "easeOut" }}
                                                 >
-                                                        We empower investors and property owners to own, trade, and build the next era of real estate finance—making real assets as dynamic and borderless as digital ones.
+                                                        From office buildings and multifamily properties to data centers and solar farms, we empower investors and property owners to own, trade, and build the next era of real estate finance—making real assets as dynamic and borderless as digital ones.
                                                 </motion.p>
                                         </div>
                                 </motion.div>
