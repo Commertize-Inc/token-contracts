@@ -955,119 +955,110 @@ const SubmitProperty = () => {
                                                 Your Property, Our Global Marketplace
                                         </h3>
                                         
-                                        <div className="mb-8">
-                                                <div className="relative h-[500px] md:h-[600px] w-full flex items-center justify-center overflow-hidden bg-gray-50 rounded-2xl border border-gray-200">
-                                                        <motion.svg 
-                                                                className="absolute inset-0 w-full h-full" 
-                                                                style={{ zIndex: 0 }}
-                                                                animate={{ rotate: 360 }}
-                                                                transition={{ duration: 90, repeat: Infinity, ease: "linear" }}
-                                                        >
-                                                                {propertyTypes.map((_, index) => {
-                                                                        const angle = (index / propertyTypes.length) * 360 - 90;
-                                                                        const radiusPercent = 32;
-                                                                        const centerX = 50;
-                                                                        const centerY = 50;
-                                                                        const x = centerX + Math.cos(angle * Math.PI / 180) * radiusPercent;
-                                                                        const y = centerY + Math.sin(angle * Math.PI / 180) * radiusPercent;
-                                                                        return (
-                                                                                <line
-                                                                                        key={`line-center-${index}`}
-                                                                                        x1="50%"
-                                                                                        y1="50%"
-                                                                                        x2={`${x}%`}
-                                                                                        y2={`${y}%`}
-                                                                                        stroke="#D4A024"
-                                                                                        strokeWidth="1"
-                                                                                        strokeOpacity="0.3"
-                                                                                />
-                                                                        );
-                                                                })}
-                                                                {propertyTypes.map((_, index) => {
-                                                                        const angle1 = (index / propertyTypes.length) * 360 - 90;
-                                                                        const angle2 = ((index + 1) / propertyTypes.length) * 360 - 90;
-                                                                        const radiusPercent = 32;
-                                                                        const x1 = 50 + Math.cos(angle1 * Math.PI / 180) * radiusPercent;
-                                                                        const y1 = 50 + Math.sin(angle1 * Math.PI / 180) * radiusPercent;
-                                                                        const x2 = 50 + Math.cos(angle2 * Math.PI / 180) * radiusPercent;
-                                                                        const y2 = 50 + Math.sin(angle2 * Math.PI / 180) * radiusPercent;
-                                                                        return (
-                                                                                <line
-                                                                                        key={`line-connect-${index}`}
-                                                                                        x1={`${x1}%`}
-                                                                                        y1={`${y1}%`}
-                                                                                        x2={`${x2}%`}
-                                                                                        y2={`${y2}%`}
-                                                                                        stroke="#D4A024"
-                                                                                        strokeWidth="1"
-                                                                                        strokeOpacity="0.25"
-                                                                                />
-                                                                        );
-                                                                })}
-                                                                {propertyTypes.map((_, index) => {
-                                                                        if (index % 2 === 0 && index + 3 < propertyTypes.length) {
-                                                                                const angle1 = (index / propertyTypes.length) * 360 - 90;
-                                                                                const angle2 = ((index + 3) / propertyTypes.length) * 360 - 90;
-                                                                                const radiusPercent = 32;
-                                                                                const x1 = 50 + Math.cos(angle1 * Math.PI / 180) * radiusPercent;
-                                                                                const y1 = 50 + Math.sin(angle1 * Math.PI / 180) * radiusPercent;
-                                                                                const x2 = 50 + Math.cos(angle2 * Math.PI / 180) * radiusPercent;
-                                                                                const y2 = 50 + Math.sin(angle2 * Math.PI / 180) * radiusPercent;
-                                                                                return (
-                                                                                        <line
-                                                                                                key={`line-cross-${index}`}
-                                                                                                x1={`${x1}%`}
-                                                                                                y1={`${y1}%`}
-                                                                                                x2={`${x2}%`}
-                                                                                                y2={`${y2}%`}
-                                                                                                stroke="#D4A024"
-                                                                                                strokeWidth="0.5"
-                                                                                                strokeOpacity="0.15"
-                                                                                        />
-                                                                                );
-                                                                        }
-                                                                        return null;
-                                                                })}
-                                                        </motion.svg>
-                                                        
+                                        <div className="mb-16">
+                                                <div className="relative h-[600px] w-full flex items-center justify-center overflow-hidden bg-white rounded-2xl border border-gray-200">
                                                         <motion.div
-                                                                className="relative w-[420px] h-[420px] md:w-[520px] md:h-[520px]"
+                                                                className="relative"
                                                                 animate={{ rotate: 360 }}
-                                                                transition={{ duration: 90, repeat: Infinity, ease: "linear" }}
-                                                                style={{ zIndex: 1 }}
+                                                                transition={{
+                                                                        duration: 35,
+                                                                        repeat: Infinity,
+                                                                        ease: "linear"
+                                                                }}
                                                         >
                                                                 {propertyTypes.map((type, index) => {
-                                                                        const angle = (index / propertyTypes.length) * 360 - 90;
-                                                                        const baseRadius = 180;
-                                                                        const radiusVariation = (index % 3 === 0 ? 0 : index % 3 === 1 ? 15 : -10);
-                                                                        const radius = baseRadius + radiusVariation;
+                                                                        const angle = (index / propertyTypes.length) * 360;
+                                                                        const radius = 200;
                                                                         const x = Math.cos(angle * Math.PI / 180) * radius;
                                                                         const y = Math.sin(angle * Math.PI / 180) * radius;
                                                                         
                                                                         return (
-                                                                                <motion.div
-                                                                                        key={type.id}
-                                                                                        className="absolute"
-                                                                                        style={{ 
-                                                                                                left: `calc(50% + ${x}px - 60px)`, 
-                                                                                                top: `calc(50% + ${y}px - 18px)` 
-                                                                                        }}
-                                                                                        animate={{ rotate: -360 }}
-                                                                                        transition={{ duration: 90, repeat: Infinity, ease: "linear" }}
-                                                                                >
-                                                                                        <div className="flex items-center space-x-2 bg-white border-2 border-[#D4A024] rounded-[0.75rem] px-3 py-2 shadow-sm hover:shadow-lg transition-all hover:scale-105 cursor-pointer">
-                                                                                                <div className="w-6 h-6 rounded-lg bg-[#D4A024] flex items-center justify-center">
-                                                                                                        <type.icon className="w-3.5 h-3.5 text-white" />
+                                                                                <div key={`subnet-${type.id}`}>
+                                                                                        <div
+                                                                                                className="absolute bg-[#D4A024]"
+                                                                                                style={{
+                                                                                                        left: 0,
+                                                                                                        top: 0,
+                                                                                                        width: Math.sqrt(x * x + y * y) + 'px',
+                                                                                                        height: '1px',
+                                                                                                        opacity: 0.4,
+                                                                                                        transform: `rotate(${Math.atan2(y, x) * (180 / Math.PI)}deg)`,
+                                                                                                        transformOrigin: '0 50%'
+                                                                                                }}
+                                                                                        />
+                                                                                        
+                                                                                        <motion.div
+                                                                                                className="absolute"
+                                                                                                style={{
+                                                                                                        left: x - 60,
+                                                                                                        top: y - 18
+                                                                                                }}
+                                                                                                animate={{ rotate: -360 }}
+                                                                                                transition={{
+                                                                                                        duration: 35,
+                                                                                                        repeat: Infinity,
+                                                                                                        ease: "linear"
+                                                                                                }}
+                                                                                        >
+                                                                                                <div className="flex items-center space-x-2 bg-gradient-to-br from-[#D4A024]/5 to-[#D4A024]/10 border-2 border-[#D4A024]/40 rounded-lg px-3 py-2 hover:from-[#D4A024]/10 hover:to-[#D4A024]/20 hover:border-[#D4A024]/60 transition-all duration-200 shadow-lg">
+                                                                                                        <div className="w-7 h-7 rounded-full bg-[#D4A024]/20 border border-[#D4A024]/50 flex items-center justify-center">
+                                                                                                                <type.icon className="w-4 h-4 text-[#D4A024]" />
+                                                                                                        </div>
+                                                                                                        <div>
+                                                                                                                <div className="text-xs font-semibold text-gray-800">{type.name}</div>
+                                                                                                        </div>
                                                                                                 </div>
-                                                                                                <div className="text-xs font-light text-gray-800 whitespace-nowrap">{type.name}</div>
-                                                                                        </div>
-                                                                                </motion.div>
+                                                                                        </motion.div>
+                                                                                </div>
                                                                         );
+                                                                })}
+                                                                
+                                                                {propertyTypes.map((_, index) => {
+                                                                        const connections: React.ReactNode[] = [];
+                                                                        
+                                                                        [1, 2, 3, 4].forEach(offset => {
+                                                                                const targetIndex = (index + offset) % propertyTypes.length;
+                                                                                if (index < targetIndex || (index + offset >= propertyTypes.length)) {
+                                                                                        const angle1 = (index / propertyTypes.length) * 360;
+                                                                                        const angle2 = (targetIndex / propertyTypes.length) * 360;
+                                                                                        const radius = 200;
+                                                                                        const x1 = Math.cos(angle1 * Math.PI / 180) * radius;
+                                                                                        const y1 = Math.sin(angle1 * Math.PI / 180) * radius;
+                                                                                        const x2 = Math.cos(angle2 * Math.PI / 180) * radius;
+                                                                                        const y2 = Math.sin(angle2 * Math.PI / 180) * radius;
+                                                                                        
+                                                                                        const deltaX = x2 - x1;
+                                                                                        const deltaY = y2 - y1;
+                                                                                        const length = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                                                                                        const rotation = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
+                                                                                        
+                                                                                        const opacity = offset === 1 ? 0.35 : offset === 2 ? 0.25 : offset === 3 ? 0.18 : 0.12;
+                                                                                        
+                                                                                        connections.push(
+                                                                                                <div
+                                                                                                        key={`inter-${index}-${targetIndex}-${offset}`}
+                                                                                                        className="absolute bg-[#D4A024]"
+                                                                                                        style={{
+                                                                                                                left: x1,
+                                                                                                                top: y1,
+                                                                                                                width: length + 'px',
+                                                                                                                height: '1px',
+                                                                                                                opacity: opacity,
+                                                                                                                transform: `rotate(${rotation}deg)`,
+                                                                                                                transformOrigin: '0 50%'
+                                                                                                        }}
+                                                                                                />
+                                                                                        );
+                                                                                }
+                                                                        });
+                                                                        
+                                                                        return <div key={`connections-${index}`}>{connections}</div>;
                                                                 })}
                                                         </motion.div>
                                                         
                                                         <div className="absolute flex flex-col items-center gap-1" style={{ zIndex: 2 }}>
-                                                                <img src="/assets/logo.png" alt="Commertize" className="h-8 w-auto object-contain" />
+                                                                <img src="/assets/logo.png" alt="Commertize" className="h-10 w-auto object-contain" />
+                                                                <span className="text-xs font-logo text-gray-500 tracking-widest">COMMERTIZE</span>
                                                         </div>
                                                 </div>
                                         </div>
