@@ -817,7 +817,7 @@ const CommertizeCollection = () => (
                                                         </div>
                                                         
                                                         <div className="flex items-center justify-center mb-4">
-                                                                <span className="px-4 py-1.5 border border-gray-200 text-gray-600 text-sm font-light rounded-[0.75rem]">
+                                                                <span className="px-4 py-1.5 bg-white border-2 border-[#D4A024] text-[#92710A] text-sm font-medium rounded-[0.75rem]">
                                                                         {property.units} Units
                                                                 </span>
                                                         </div>
