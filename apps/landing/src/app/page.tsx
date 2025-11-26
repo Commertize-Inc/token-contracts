@@ -732,9 +732,17 @@ const WhyCommertize = () => {
 
         return (
                 <section className="relative py-20 md:py-28 overflow-hidden">
-                        <div 
+                        <motion.div 
                                 className="absolute inset-0 bg-cover bg-center bg-no-repeat"
                                 style={{ backgroundImage: "url('/assets/why-commertize-bg.jpg')" }}
+                                initial={{ scale: 1 }}
+                                animate={{ scale: [1.0, 1.15] }}
+                                transition={{
+                                        duration: 20,
+                                        repeat: Infinity,
+                                        ease: "easeInOut",
+                                        repeatType: "reverse"
+                                }}
                         />
                         <div className="absolute inset-0 bg-white/70" />
                         <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8">
