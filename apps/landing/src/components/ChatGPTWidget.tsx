@@ -189,9 +189,11 @@ export default function ChatGPTWidget() {
                     transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                     className="relative"
                   >
-                    <div className="w-12 h-12 rounded-full bg-[#D4A024]/20 flex items-center justify-center">
-                      <Brain className="w-6 h-6 text-[#D4A024]" />
-                    </div>
+                    <img 
+                      src="/assets/rune-ctz.png" 
+                      alt="RUNE.CTZ" 
+                      className="w-12 h-12 rounded-full object-cover border-2 border-[#D4A024]"
+                    />
                     <motion.div
                       animate={{ scale: [1, 1.2, 1], opacity: [1, 0.7, 1] }}
                       transition={{ duration: 2, repeat: Infinity }}
@@ -314,11 +316,12 @@ export default function ChatGPTWidget() {
 
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-lg flex items-center justify-center z-50 transition-colors"
+        className="fixed bottom-6 right-6 w-16 h-16 rounded-full shadow-lg flex items-center justify-center z-50 transition-colors overflow-hidden"
         style={{ 
-          backgroundColor: '#D4A024',
           border: '3px solid #D4A024',
-          boxShadow: '0 0 12px rgba(212, 160, 23, 0.5)'
+          boxShadow: '0 0 12px rgba(212, 160, 23, 0.5)',
+          backgroundColor: isOpen ? '#D4A024' : 'transparent',
+          padding: 0
         }}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -326,7 +329,11 @@ export default function ChatGPTWidget() {
         {isOpen ? (
           <X className="w-6 h-6 text-white" />
         ) : (
-          <Brain className="w-6 h-6 text-white" />
+          <img 
+            src="/assets/rune-ctz.png" 
+            alt="RUNE.CTZ" 
+            className="w-full h-full object-cover rounded-full"
+          />
         )}
       </motion.button>
     </>
