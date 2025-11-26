@@ -492,6 +492,7 @@ const Hero = () => (
                                                 whileHover={{ scale: 1.02 }}
                                                 whileTap={{ scale: 0.98 }}
                                                 className="px-6 sm:px-8 py-2.5 sm:py-3 bg-white text-[#D4A024] rounded-[0.75rem] text-sm sm:text-base font-light border-2 border-[#D4A024] hover:bg-[#D4A024]/5 transition-colors"
+                                                onClick={() => document.getElementById('marketplace')?.scrollIntoView({ behavior: 'smooth' })}
                                         >
                                                 Explore Marketplace
                                         </motion.button>
@@ -806,8 +807,11 @@ const CommertizeCollection = () => (
                                                                 </span>
                                                         </div>
                                                         
-                                                        <button className="w-full py-3 bg-[#D4A024] text-white text-sm font-light rounded-[0.75rem] hover:bg-[#B8860B] transition-colors">
-                                                                View Property
+                                                        <button 
+                                                                className="w-full py-3 bg-gray-300 text-gray-600 text-sm font-light rounded-[0.75rem] cursor-not-allowed"
+                                                                disabled
+                                                        >
+                                                                Coming Soon
                                                         </button>
                                                 </div>
                                         </motion.div>
