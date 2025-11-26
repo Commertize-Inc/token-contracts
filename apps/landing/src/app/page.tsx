@@ -589,37 +589,38 @@ const AboutUs = () => {
         const companyName = "Commertize";
 
         return (
-                <section id="about" className="relative overflow-hidden min-h-[800px]">
+                <section id="about" className="relative overflow-hidden min-h-[700px] md:min-h-[800px]">
                         <div className="absolute inset-0">
                                 <motion.div
                                         className="absolute inset-0"
-                                        animate={{ scale: [1.0, 1.08] }}
+                                        animate={{ scale: [1.0, 1.05] }}
                                         transition={{
-                                                duration: 25,
+                                                duration: 30,
                                                 repeat: Infinity,
                                                 ease: "easeInOut",
                                                 repeatType: "reverse"
                                         }}
                                 >
                                         <img 
-                                                src="/assets/vision-bg.jpg"
+                                                src="/assets/vision-background.jpg"
                                                 alt="" 
                                                 className="w-full h-full object-cover"
-                                                style={{ objectPosition: 'left center' }}
+                                                style={{ objectPosition: 'center center' }}
                                         />
                                 </motion.div>
+                                <div className="absolute inset-0 bg-white/30" />
                         </div>
 
-                        <div className="absolute inset-0 flex items-start justify-end z-10 pt-24 md:pt-32">
+                        <div className="absolute inset-0 flex items-center justify-center z-10 px-6 md:px-8">
                                 <motion.div 
-                                        className="w-[50%] md:w-[45%] lg:w-[42%] text-right pr-8 md:pr-12 lg:pr-16 pl-4"
-                                        initial={{ opacity: 0, x: 60 }}
-                                        whileInView={{ opacity: 1, x: 0 }}
+                                        className="max-w-3xl text-center"
+                                        initial={{ opacity: 0, y: 40 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
                                         viewport={{ once: true, amount: 0.2 }}
                                         transition={{ duration: 1, ease: "easeOut" }}
                                 >
                                         <motion.h2 
-                                                className="text-2xl md:text-3xl lg:text-4xl font-logo font-light mb-10 text-gray-900"
+                                                className="text-3xl md:text-4xl lg:text-5xl font-logo font-light mb-8 md:mb-12 text-gray-900"
                                                 initial={{ opacity: 0, y: 30 }}
                                                 whileInView={{ opacity: 1, y: 0 }}
                                                 viewport={{ once: true, amount: 0.5 }}
@@ -628,9 +629,9 @@ const AboutUs = () => {
                                                 Our Vision
                                         </motion.h2>
                                         
-                                        <div className="space-y-8 md:space-y-10">
+                                        <div className="space-y-6 md:space-y-8">
                                                 <motion.p 
-                                                        className="text-sm md:text-base font-logo font-light text-gray-700 leading-relaxed"
+                                                        className="text-base md:text-lg font-logo font-light text-gray-800 leading-relaxed"
                                                         initial={{ opacity: 0, y: 20 }}
                                                         whileInView={{ opacity: 1, y: 0 }}
                                                         viewport={{ once: true, amount: 0.3 }}
@@ -639,7 +640,7 @@ const AboutUs = () => {
                                                         {companyName} is building the platform that connects commercial real estate to global capital markets. By merging AI, blockchain-based tokenization, and decentralized finance with compliant financial infrastructure, we're enhancing liquidity, transparency, and access across the real estate landscape.
                                                 </motion.p>
                                                 <motion.p 
-                                                        className="text-sm md:text-base font-logo font-light text-gray-700 leading-relaxed"
+                                                        className="text-base md:text-lg font-logo font-light text-gray-800 leading-relaxed"
                                                         initial={{ opacity: 0, y: 20 }}
                                                         whileInView={{ opacity: 1, y: 0 }}
                                                         viewport={{ once: true, amount: 0.3 }}
@@ -651,7 +652,7 @@ const AboutUs = () => {
                                 </motion.div>
                         </div>
 
-                        <div className="absolute bottom-0 left-0 right-0 h-20 md:h-24 flex items-center overflow-hidden">
+                        <div className="absolute bottom-0 left-0 right-0 h-20 md:h-24 flex items-center overflow-hidden bg-gradient-to-t from-white/80 to-transparent">
                                 <motion.div
                                         animate={{ x: [0, -1600] }}
                                         transition={{
@@ -676,7 +677,7 @@ const AboutUs = () => {
                                                         className="cursor-pointer group flex-shrink-0"
                                                         style={{ minWidth: "500px", textAlign: "center" }}
                                                 >
-                                                        <span className="text-xl md:text-2xl font-logo font-light text-black/80">
+                                                        <span className="text-xl md:text-2xl font-logo font-light text-gray-800">
                                                                 {phrase}
                                                         </span>
                                                 </motion.div>
