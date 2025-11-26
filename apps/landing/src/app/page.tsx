@@ -499,7 +499,7 @@ const AboutUs = () => {
                                                         viewport={{ once: true, amount: 0.3 }}
                                                         transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
                                                 >
-                                                        {companyName} is building the platform that connects commercial real estate to global capital markets. By merging AI, blockchain, and tokenization with compliant financial infrastructure, we're enhancing liquidity, transparency, and access across the real estate landscape.
+                                                        {companyName} is building the platform that connects commercial real estate to global capital markets. By merging AI, blockchain-based tokenization, and decentralized finance (DeFi) with compliant financial infrastructure, we're enhancing liquidity, transparency, and access across the real estate landscape.
                                                 </motion.p>
                                                 <motion.p 
                                                         className="text-sm md:text-base font-logo font-light text-gray-700 leading-relaxed"
