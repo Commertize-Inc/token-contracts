@@ -44,7 +44,15 @@ The project uses **pnpm workspaces** to manage a monorepo with the following str
 - **Logo**: Brand logo with theme support
 - **Navbar**: Navigation with auth integration
 
-**Design Philosophy**: Premium, trustworthy aesthetic using glassmorphism, subtle animations, and clean data presentation. The color palette centers on Commertize Gold (`#C59B26`) combined with neutral slate tones.
+**Design Philosophy**: Premium, trustworthy aesthetic using glassmorphism, subtle animations, and clean data presentation. The color palette centers on Commertize Gold (`#C59B26` / `#D4A024`) combined with neutral slate tones.
+
+**Reusable Design Patterns** (Property Details Reference):
+- **Gold Border Cards**: `border-2 border-[#D4A024] rounded-lg shadow-lg`
+- **KPI Grid**: 2x3 or 3x2 grid with primary metric highlighted (`bg-primary/10 border border-primary/30`)
+- **Area Chart Gradient**: Gold gradient fill (`#D4A024` with 0.3 to 0.0 opacity)
+- **Priority Banner**: `bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20 rounded-xl`
+- **Font Light Typography**: `font-light` for clean, premium text
+- **Hover States**: `hover:shadow-lg transition-all hover:scale-105`
 
 **Hero Section Design** (Landing Page):
 - **Centered Layout**: Minimalist design with clean white background and architectural pattern image at top
