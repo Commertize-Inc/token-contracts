@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Search, 
@@ -16,10 +16,12 @@ import {
   Percent,
   Calendar,
   ArrowUpRight,
-  X
+  X,
+  AlertTriangle
 } from "lucide-react";
 import Link from "next/link";
 import { PROPERTY_STATUS } from "@/lib/propertyStatus";
+import ChatGPTWidget from "@/components/ChatGPTWidget";
 
 interface Property {
   id: string;
@@ -144,6 +146,33 @@ const SAMPLE_PROPERTIES: Property[] = [
   }
 ];
 
+function SkeletonCard() {
+  return (
+    <div className="bg-white rounded-2xl border-2 border-gray-200 overflow-hidden animate-pulse">
+      <div className="h-48 bg-gray-200" />
+      <div className="p-5">
+        <div className="h-6 bg-gray-200 rounded w-3/4 mb-2" />
+        <div className="h-4 bg-gray-200 rounded w-1/2 mb-4" />
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          <div className="bg-gray-100 rounded-lg p-3">
+            <div className="h-3 bg-gray-200 rounded w-1/2 mb-2" />
+            <div className="h-5 bg-gray-200 rounded w-3/4" />
+          </div>
+          <div className="bg-gray-100 rounded-lg p-3">
+            <div className="h-3 bg-gray-200 rounded w-1/2 mb-2" />
+            <div className="h-5 bg-gray-200 rounded w-3/4" />
+          </div>
+        </div>
+        <div className="h-2 bg-gray-200 rounded-full mb-4" />
+        <div className="flex justify-between pt-3 border-t border-gray-100">
+          <div className="h-4 bg-gray-200 rounded w-1/4" />
+          <div className="h-8 bg-gray-200 rounded w-1/3" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Marketplace() {
   const [status, setStatus] = useState<string>("all");
   const [propertyType, setPropertyType] = useState<string>("all");
@@ -152,6 +181,16 @@ export default function Marketplace() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [sortBy, setSortBy] = useState<string>("name");
   const [showFilters, setShowFilters] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [userName, setUserName] = useState<string>("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+      setUserName("Investor");
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const filteredProperties = SAMPLE_PROPERTIES.filter((property) => {
     if (status !== "all" && property.status !== status) return false;
@@ -197,6 +236,8 @@ export default function Marketplace() {
     }).format(value);
   };
 
+  const hasActiveFilters = status !== "all" || propertyType !== "all" || propertyClass !== "all" || riskLevel !== "all" || searchQuery.trim() !== "";
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-amber-50/20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -209,7 +250,7 @@ export default function Marketplace() {
         >
           <div className="flex items-center justify-center mb-4">
             <h1 className="text-4xl md:text-5xl font-light">
-              Discover <span className="text-[#D4A024]">Tokenized Properties</span>
+              Discover <span className="bg-gradient-to-r from-[#D4A024] to-[#B8860B] bg-clip-text text-transparent">Tokenized Properties</span>
             </h1>
           </div>
           <motion.p 
@@ -232,10 +273,12 @@ export default function Marketplace() {
           <div className="bg-gradient-to-br from-[#D4A024]/5 to-[#D4A024]/10 border-2 border-[#D4A024] rounded-2xl p-6">
             <div className="flex items-center mb-4">
               <Users className="w-6 h-6 text-[#D4A024] mr-3" />
-              <h2 className="text-2xl font-light">Welcome to the Marketplace!</h2>
+              <h2 className="text-2xl font-light">
+                Welcome{userName ? `, ${userName}` : " to the Marketplace"}!
+              </h2>
             </div>
             <p className="mb-4 text-gray-700">
-              At Commertize, you're not just a member — you're part of a network shaping the future of commercial real estate. Gain priority access to exclusive investment opportunities, cutting-edge insights, and advanced tools designed to give you an edge.
+              At Commertize, you're not just a member — you're part of a network shaping the future of commercial real estate. Gain priority access to exclusive investment opportunities, cutting-edge insights, and advanced tools designed to give you an edge. Explore our curated portfolio, harness our powerful analytics, and grow your holdings with confidence.
             </p>
             <div className="grid md:grid-cols-2 gap-4 mb-4">
               <div className="flex items-center text-sm text-gray-700">
@@ -286,18 +329,22 @@ export default function Marketplace() {
               <div className="flex gap-2">
                 <button
                   onClick={() => setShowFilters(!showFilters)}
-                  className="flex items-center gap-2 px-6 py-3 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
+                  className={`flex items-center gap-2 px-6 py-3 border rounded-xl transition-colors ${
+                    showFilters ? "bg-[#D4A024] text-white border-[#D4A024]" : "border-gray-200 hover:bg-gray-50"
+                  }`}
                 >
                   <Filter className="w-4 h-4" />
                   Filters
                 </button>
-                <button
-                  onClick={clearAllFilters}
-                  className="flex items-center gap-2 px-6 py-3 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
-                >
-                  <X className="w-4 h-4" />
-                  Clear
-                </button>
+                {hasActiveFilters && (
+                  <button
+                    onClick={clearAllFilters}
+                    className="flex items-center gap-2 px-6 py-3 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                    Clear All
+                  </button>
+                )}
               </div>
             </div>
 
@@ -376,128 +423,178 @@ export default function Marketplace() {
           </div>
         </motion.div>
 
-        {/* Results Count */}
-        <div className="mb-6">
+        {/* Results Summary */}
+        <div className="mb-6 flex items-center justify-between">
           <p className="text-gray-600">
-            Showing <span className="font-medium text-[#D4A024]">{filteredProperties.length}</span> properties
+            Showing <span className="font-medium text-[#D4A024]">{isLoading ? "..." : filteredProperties.length}</span> properties
+            {searchQuery && (
+              <span className="ml-2">
+                for "<span className="font-medium">{searchQuery}</span>"
+              </span>
+            )}
           </p>
+          {hasActiveFilters && (
+            <p className="text-sm text-gray-500">
+              Filters applied
+            </p>
+          )}
         </div>
 
-        {/* Property Cards Grid */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {filteredProperties.map((property, index) => (
-            <motion.div
-              key={property.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 * index }}
-            >
-              <div className="bg-white rounded-2xl border-2 border-[#D4A024]/30 overflow-hidden shadow-lg hover:shadow-xl hover:border-[#D4A024] transition-all group">
-                {/* Image */}
-                <div className="relative h-48 overflow-hidden">
-                  <img 
-                    src={property.imageUrl} 
-                    alt={property.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute top-3 left-3">
-                    <span className={`px-3 py-1 text-xs font-medium rounded-full ${
-                      property.status === "Live" ? "bg-green-500 text-white" :
-                      property.status === "Coming Soon" ? "bg-[#D4A024] text-white" :
-                      property.status === "Fully Funded" ? "bg-blue-500 text-white" :
-                      "bg-gray-500 text-white"
-                    }`}>
-                      {property.status}
-                    </span>
-                  </div>
-                  <div className="absolute top-3 right-3">
-                    <span className="px-3 py-1 text-xs font-medium rounded-full bg-white/90 text-gray-700">
-                      {property.type}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="p-5">
-                  <h3 className="text-xl font-medium text-gray-900 mb-2">{property.name}</h3>
-                  <div className="flex items-center text-gray-500 text-sm mb-4">
-                    <MapPin className="w-4 h-4 mr-1 text-[#D4A024]" />
-                    {property.location}
-                  </div>
-
-                  {/* Metrics */}
-                  <div className="grid grid-cols-2 gap-3 mb-4">
-                    <div className="bg-gray-50 rounded-lg p-3">
-                      <div className="flex items-center text-xs text-gray-500 mb-1">
-                        <Percent className="w-3 h-3 mr-1" />
-                        Target IRR
+        {/* Loading State */}
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => (
+              <SkeletonCard key={i} />
+            ))}
+          </div>
+        ) : (
+          <>
+            {/* Property Cards Grid */}
+            {filteredProperties.length > 0 ? (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              >
+                {filteredProperties.map((property, index) => (
+                  <motion.div
+                    key={property.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 * index }}
+                  >
+                    <div className="bg-white rounded-2xl border-2 border-[#D4A024]/30 overflow-hidden shadow-lg hover:shadow-xl hover:border-[#D4A024] transition-all group">
+                      {/* Image */}
+                      <div className="relative h-48 overflow-hidden">
+                        <img 
+                          src={property.imageUrl} 
+                          alt={property.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                        <div className="absolute top-3 left-3">
+                          <span className={`px-3 py-1 text-xs font-medium rounded-full ${
+                            property.status === "Live" ? "bg-green-500 text-white" :
+                            property.status === "Coming Soon" ? "bg-[#D4A024] text-white" :
+                            property.status === "Fully Funded" ? "bg-blue-500 text-white" :
+                            "bg-gray-500 text-white"
+                          }`}>
+                            {property.status}
+                          </span>
+                        </div>
+                        <div className="absolute top-3 right-3">
+                          <span className="px-3 py-1 text-xs font-medium rounded-full bg-white/90 text-gray-700">
+                            {property.type}
+                          </span>
+                        </div>
                       </div>
-                      <div className="text-lg font-medium text-[#D4A024]">{property.targetedIRR}%</div>
-                    </div>
-                    <div className="bg-gray-50 rounded-lg p-3">
-                      <div className="flex items-center text-xs text-gray-500 mb-1">
-                        <DollarSign className="w-3 h-3 mr-1" />
-                        Min. Investment
+
+                      {/* Content */}
+                      <div className="p-5">
+                        <h3 className="text-xl font-medium text-gray-900 mb-2">{property.name}</h3>
+                        <div className="flex items-center text-gray-500 text-sm mb-4">
+                          <MapPin className="w-4 h-4 mr-1 text-[#D4A024]" />
+                          {property.location}
+                        </div>
+
+                        {/* Metrics */}
+                        <div className="grid grid-cols-2 gap-3 mb-4">
+                          <div className="bg-gray-50 rounded-lg p-3">
+                            <div className="flex items-center text-xs text-gray-500 mb-1">
+                              <Percent className="w-3 h-3 mr-1" />
+                              Target IRR
+                            </div>
+                            <div className="text-lg font-medium text-[#D4A024]">{property.targetedIRR}%</div>
+                          </div>
+                          <div className="bg-gray-50 rounded-lg p-3">
+                            <div className="flex items-center text-xs text-gray-500 mb-1">
+                              <DollarSign className="w-3 h-3 mr-1" />
+                              Min. Investment
+                            </div>
+                            <div className="text-lg font-medium text-gray-900">{formatCurrency(property.minInvestment)}</div>
+                          </div>
+                        </div>
+
+                        {/* Progress Bar */}
+                        <div className="mb-4">
+                          <div className="flex justify-between text-xs text-gray-500 mb-1">
+                            <span>Funded</span>
+                            <span>{Math.round((property.tokensSold / property.totalTokens) * 100)}%</span>
+                          </div>
+                          <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                            <div 
+                              className="h-full bg-gradient-to-r from-[#D4A024] to-yellow-500 rounded-full transition-all"
+                              style={{ width: `${(property.tokensSold / property.totalTokens) * 100}%` }}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Footer */}
+                        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                          <div className="text-sm text-gray-500">
+                            <Calendar className="w-4 h-4 inline mr-1" />
+                            {property.holdPeriod} yr hold
+                          </div>
+                          <button className="flex items-center gap-1 px-4 py-2 bg-[#D4A024] text-white text-sm font-medium rounded-lg hover:bg-[#D4A024]/90 transition-colors">
+                            View Details
+                            <ArrowUpRight className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
-                      <div className="text-lg font-medium text-gray-900">{formatCurrency(property.minInvestment)}</div>
                     </div>
-                  </div>
-
-                  {/* Progress Bar */}
-                  <div className="mb-4">
-                    <div className="flex justify-between text-xs text-gray-500 mb-1">
-                      <span>Funded</span>
-                      <span>{Math.round((property.tokensSold / property.totalTokens) * 100)}%</span>
-                    </div>
-                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-gradient-to-r from-[#D4A024] to-yellow-500 rounded-full transition-all"
-                        style={{ width: `${(property.tokensSold / property.totalTokens) * 100}%` }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Footer */}
-                  <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                    <div className="text-sm text-gray-500">
-                      <Calendar className="w-4 h-4 inline mr-1" />
-                      {property.holdPeriod} yr hold
-                    </div>
-                    <button className="flex items-center gap-1 px-4 py-2 bg-[#D4A024] text-white text-sm font-medium rounded-lg hover:bg-[#D4A024]/90 transition-colors">
-                      View Details
-                      <ArrowUpRight className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* Empty State */}
-        {filteredProperties.length === 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-16"
-          >
-            <Building2 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-medium text-gray-700 mb-2">No properties found</h3>
-            <p className="text-gray-500 mb-4">Try adjusting your filters or search query</p>
-            <button 
-              onClick={clearAllFilters}
-              className="px-6 py-2 bg-[#D4A024] text-white rounded-lg hover:bg-[#D4A024]/90 transition-colors"
-            >
-              Clear All Filters
-            </button>
-          </motion.div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            ) : (
+              /* Empty State */
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center py-16 bg-white rounded-2xl border-2 border-gray-200"
+              >
+                <Building2 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-xl font-medium text-gray-700 mb-2">No Properties Found</h3>
+                <p className="text-gray-500 mb-6 max-w-md mx-auto">
+                  We couldn't find any properties matching your criteria. Try adjusting your filters or search query.
+                </p>
+                <button 
+                  onClick={clearAllFilters}
+                  className="px-6 py-3 bg-[#D4A024] text-white rounded-xl hover:bg-[#D4A024]/90 transition-colors"
+                >
+                  Clear All Filters
+                </button>
+              </motion.div>
+            )}
+          </>
         )}
+
+        {/* Disclaimer Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          className="mt-12"
+        >
+          <div className="bg-gradient-to-r from-[#D4A024]/10 via-[#D4A024]/5 to-[#D4A024]/10 border border-[#D4A024]/30 rounded-2xl p-6">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 bg-[#D4A024]/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                <AlertTriangle className="w-5 h-5 text-[#D4A024]" />
+              </div>
+              <div>
+                <h4 className="font-medium text-gray-900 mb-2">Investment Notice</h4>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  All investments involve risk, including the potential loss of principal. Past performance does not guarantee future results. 
+                  Projected returns are estimates based on current market conditions and may vary. Securities offered through Commertize are 
+                  subject to regulatory requirements under Regulation D (506(b)/506(c)). Please review all offering documents carefully before investing.
+                </p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
       </div>
+
+      {/* RUNE.CTZ Chatbot */}
+      <ChatGPTWidget />
     </div>
   );
 }
