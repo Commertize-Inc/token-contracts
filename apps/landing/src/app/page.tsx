@@ -473,7 +473,7 @@ const AboutUs = () => {
                                 </motion.div>
                         </div>
 
-                        <div className="absolute inset-0 flex items-center justify-end z-10">
+                        <div className="absolute inset-0 flex items-start justify-end z-10 pt-24 md:pt-32">
                                 <motion.div 
                                         className="w-[50%] md:w-[45%] lg:w-[42%] text-right pr-8 md:pr-12 lg:pr-16 pl-4"
                                         initial={{ opacity: 0, x: 60 }}
