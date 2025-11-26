@@ -488,7 +488,7 @@ const AboutUs = () => {
                                                 viewport={{ once: true, amount: 0.5 }}
                                                 transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
                                         >
-                                                The {companyName} Vision
+                                                Our Vision
                                         </motion.h2>
                                         
                                         <div className="space-y-8 md:space-y-10">
