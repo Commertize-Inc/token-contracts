@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import ChatGPTWidget from "@/components/ChatGPTWidget";
+import Footer from "@/components/Footer";
 
 const defiProducts = [
   {
@@ -394,6 +395,9 @@ export default function Nexus() {
             </motion.div>
           </div>
         </section>
+
+        {/* Footer */}
+        <Footer />
 
         {/* RUNE.CTZ Chatbot */}
         <ChatGPTWidget />

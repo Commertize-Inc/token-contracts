@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Clock, Calendar, ChevronRight, Menu, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Logo } from '@commertize/ui';
+import Footer from '@/components/Footer';
 
 interface NewsArticle {
   id: string;
@@ -316,11 +317,7 @@ export default function NewsPage() {
         </div>
       </main>
 
-      <footer className="py-8 border-t border-gray-100">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-500 text-sm font-light">
-          &copy; {new Date().getFullYear()} Commertize. All rights reserved.
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

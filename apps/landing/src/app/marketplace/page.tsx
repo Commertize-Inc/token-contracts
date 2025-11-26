@@ -23,6 +23,7 @@ import Link from "next/link";
 import { PROPERTY_STATUS } from "@/lib/propertyStatus";
 import ChatGPTWidget from "@/components/ChatGPTWidget";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 interface Property {
   id: string;
@@ -548,6 +549,9 @@ export default function Marketplace() {
         </motion.div>
         </div>
       </div>
+
+      {/* Footer */}
+      <Footer />
 
       {/* RUNE.CTZ Chatbot */}
       <ChatGPTWidget />

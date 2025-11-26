@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { ArrowLeft, Clock, Calendar, Share2, Loader2, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import Footer from '@/components/Footer';
 
 interface NewsArticle {
   id: string;
@@ -241,6 +242,8 @@ export default function NewsArticlePage() {
           </article>
         </motion.div>
       </div>
+
+      <Footer />
     </div>
   );
 }
