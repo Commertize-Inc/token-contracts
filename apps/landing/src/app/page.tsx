@@ -1518,37 +1518,37 @@ const LatestNews = () => {
                                                                 viewport={{ once: true }}
                                                         >
                                                                 <Link href={`/news/${article.slug}`}>
-                                                                        <div className="bg-white rounded-2xl border-2 border-[#D4A024] hover:shadow-lg overflow-hidden transition-all duration-300 h-full flex flex-col">
-                                                                                <div className="relative h-48 overflow-hidden flex-shrink-0">
+                                                                        <div className="bg-white rounded-xl border border-[#D4A024] hover:shadow-lg overflow-hidden transition-all duration-300 h-full flex flex-col">
+                                                                                <div className="relative h-44 overflow-hidden flex-shrink-0">
                                                                                         <img
                                                                                                 src={article.imageUrl || 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&h=500&fit=crop'}
                                                                                                 alt={article.title}
                                                                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                                                                         />
                                                                                         <div className="absolute top-3 left-3">
-                                                                                                <span className={`px-2.5 py-1 rounded-full text-xs font-light text-white ${getCategoryColor(article.category)}`}>
+                                                                                                <span className={`px-3 py-1 rounded-full text-xs font-normal text-white ${getCategoryColor(article.category)}`}>
                                                                                                         {article.category}
                                                                                                 </span>
                                                                                         </div>
                                                                                 </div>
 
-                                                                                <div className="p-4 flex-grow flex flex-col bg-white">
-                                                                                        <h3 className="text-sm font-light text-gray-900 mb-2 line-clamp-2 leading-snug group-hover:text-[#D4A024] transition-colors">
+                                                                                <div className="p-5 flex-grow flex flex-col bg-white">
+                                                                                        <h3 className="text-base font-normal text-gray-900 mb-2 line-clamp-2 leading-tight">
                                                                                                 {article.title}
                                                                                         </h3>
                                                                                         
-                                                                                        <p className="text-gray-500 text-xs font-light mb-3 line-clamp-3 flex-grow leading-relaxed">
+                                                                                        <p className="text-gray-500 text-sm font-light mb-4 line-clamp-3 flex-grow leading-relaxed">
                                                                                                 {article.summary}
                                                                                         </p>
 
-                                                                                        <div className="flex items-center justify-between text-gray-400 text-xs font-light">
-                                                                                                <div className="flex items-center gap-1">
-                                                                                                        <Calendar size={11} />
+                                                                                        <div className="flex items-center gap-4 text-[#D4A024] text-xs">
+                                                                                                <div className="flex items-center gap-1.5">
+                                                                                                        <Calendar size={12} />
                                                                                                         <span>{formatNewsDate(article.publishedAt)}</span>
                                                                                                 </div>
-                                                                                                <div className="flex items-center gap-1">
-                                                                                                        <Clock size={11} />
-                                                                                                        <span>{article.readTime} min</span>
+                                                                                                <div className="flex items-center gap-1.5">
+                                                                                                        <Clock size={12} />
+                                                                                                        <span>{article.readTime} min read</span>
                                                                                                 </div>
                                                                                         </div>
                                                                                 </div>
