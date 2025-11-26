@@ -1056,9 +1056,8 @@ const SubmitProperty = () => {
                                                                 })}
                                                         </motion.div>
                                                         
-                                                        <div className="absolute flex flex-col items-center gap-1" style={{ zIndex: 2 }}>
-                                                                <img src="/assets/logo.png" alt="Commertize" className="h-10 w-auto object-contain" />
-                                                                <span className="text-xs font-logo text-gray-500 tracking-widest">COMMERTIZE</span>
+                                                        <div className="absolute flex items-center justify-center" style={{ zIndex: 2 }}>
+                                                                <img src="/assets/logo.png" alt="Commertize" className="h-6 w-auto object-contain" />
                                                         </div>
                                                 </div>
                                         </div>
