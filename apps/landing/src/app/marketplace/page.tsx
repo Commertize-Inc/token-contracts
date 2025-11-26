@@ -44,105 +44,54 @@ interface Property {
 const SAMPLE_PROPERTIES: Property[] = [
   {
     id: "1",
-    name: "The Axis",
-    location: "Miami, FL",
-    imageUrl: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&h=400&fit=crop",
-    propertyValue: 45000000,
+    name: "DoubleTree Hilton Head Inn",
+    location: "36 S Forest Beach Dr, Hilton Head Island, SC",
+    imageUrl: "/assets/doubletree-hilton-head.jpg",
+    propertyValue: 15000000,
     minInvestment: 1000,
-    targetedIRR: 18.5,
-    capRate: 7.2,
-    status: "Live",
-    type: "Office",
+    targetedIRR: 14.5,
+    capRate: 7.8,
+    status: "Coming Soon",
+    type: "Hotel",
     propertyClass: "Class A",
     riskFactor: "moderate",
     holdPeriod: 5,
-    tokensSold: 32000,
-    totalTokens: 45000
+    tokensSold: 0,
+    totalTokens: 150000
   },
   {
     id: "2",
-    name: "Gateway Medical Plaza",
-    location: "Austin, TX",
-    imageUrl: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=400&fit=crop",
-    propertyValue: 24500000,
+    name: "Boardwalk Suites Lafayette",
+    location: "1605 N University Ave Lafayette, LA",
+    imageUrl: "/assets/boardwalk-suites-lafayette.jpg",
+    propertyValue: 12000000,
     minInvestment: 1000,
-    targetedIRR: 14.5,
-    capRate: 6.8,
-    status: "Live",
-    type: "Office",
+    targetedIRR: 13.8,
+    capRate: 7.2,
+    status: "Coming Soon",
+    type: "Hotel",
     propertyClass: "Class A",
-    riskFactor: "low",
+    riskFactor: "moderate",
     holdPeriod: 5,
-    tokensSold: 147000,
-    totalTokens: 245000
+    tokensSold: 0,
+    totalTokens: 120000
   },
   {
     id: "3",
-    name: "Riverside Industrial Park",
-    location: "Phoenix, AZ",
-    imageUrl: "https://images.unsplash.com/photo-1565793298595-6a879b1d9492?w=600&h=400&fit=crop",
-    propertyValue: 18750000,
+    name: "National Hotel under conversion to Hilton",
+    location: "2 Water St Jackson, CA",
+    imageUrl: "/assets/national-hotel-hilton.jpg",
+    propertyValue: 8000000,
     minInvestment: 1000,
-    targetedIRR: 16.2,
-    capRate: 7.5,
-    status: "Live",
-    type: "Industrial",
+    targetedIRR: 15.2,
+    capRate: 8.1,
+    status: "Coming Soon",
+    type: "Hotel",
     propertyClass: "Class B",
     riskFactor: "moderate",
-    holdPeriod: 7,
-    tokensSold: 125000,
-    totalTokens: 250000
-  },
-  {
-    id: "4",
-    name: "Metro Retail Center",
-    location: "Denver, CO",
-    imageUrl: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&h=400&fit=crop",
-    propertyValue: 32000000,
-    minInvestment: 1000,
-    targetedIRR: 12.8,
-    capRate: 6.2,
-    status: "Coming Soon",
-    type: "Retail",
-    propertyClass: "Class A",
-    riskFactor: "low",
     holdPeriod: 5,
     tokensSold: 0,
-    totalTokens: 320000
-  },
-  {
-    id: "5",
-    name: "Sunset Apartments",
-    location: "San Diego, CA",
-    imageUrl: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&h=400&fit=crop",
-    propertyValue: 28500000,
-    minInvestment: 1000,
-    targetedIRR: 13.5,
-    capRate: 5.8,
-    status: "Fully Funded",
-    type: "Apartments",
-    propertyClass: "Class A",
-    riskFactor: "low",
-    holdPeriod: 7,
-    tokensSold: 285000,
-    totalTokens: 285000
-  },
-  {
-    id: "6",
-    name: "Harbor View Hotel",
-    location: "Seattle, WA",
-    imageUrl: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=400&fit=crop",
-    propertyValue: 52000000,
-    minInvestment: 1000,
-    targetedIRR: 15.8,
-    capRate: 6.5,
-    status: "Live",
-    type: "Hospitality",
-    propertyClass: "Class A",
-    riskFactor: "moderate",
-    holdPeriod: 10,
-    tokensSold: 280000,
-    totalTokens: 520000
+    totalTokens: 80000
   }
 ];
 
@@ -207,8 +156,6 @@ export default function Marketplace() {
     }
     return true;
   }).sort((a, b) => {
-    if (a.name === "The Axis") return -1;
-    if (b.name === "The Axis") return 1;
     switch (sortBy) {
       case "name": return a.name.localeCompare(b.name);
       case "price": return a.minInvestment - b.minInvestment;
@@ -443,7 +390,7 @@ export default function Marketplace() {
         {/* Loading State */}
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, i) => (
+            {[...Array(3)].map((_, i) => (
               <SkeletonCard key={i} />
             ))}
           </div>
