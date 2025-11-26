@@ -2050,11 +2050,11 @@ export default function Home() {
                                                                 transition={{ delay: sectionIndex * 0.1 }}
                                                         >
                                                                 <div className="bg-white rounded-2xl border border-[#D4A024]/30 shadow-lg overflow-hidden">
-                                                                        <div className="bg-gradient-to-r from-gray-900 to-gray-800 px-6 py-4 flex items-center gap-3">
-                                                                                <div className="w-10 h-10 bg-[#D4A024]/20 rounded-lg flex items-center justify-center">
+                                                                        <div className="bg-white px-6 py-4 flex items-center gap-3 border-b border-[#D4A024]/20">
+                                                                                <div className="w-10 h-10 bg-[#D4A024]/10 rounded-lg flex items-center justify-center">
                                                                                         <section.icon className="w-5 h-5 text-[#D4A024]" />
                                                                                 </div>
-                                                                                <h3 className="text-lg font-medium text-white">{section.category}</h3>
+                                                                                <h3 className="text-lg font-medium text-[#D4A024]">{section.category}</h3>
                                                                         </div>
                                                                         <div className="divide-y divide-gray-100">
                                                                                 {section.items.map((item, itemIndex) => (
