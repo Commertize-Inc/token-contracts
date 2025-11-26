@@ -319,6 +319,7 @@ const Hero = () => (
                                         backgroundPosition: 'center center',
                                         backgroundSize: 'cover'
                                 }}
+                                initial={{ scale: 1 }}
                                 animate={{ scale: [1.0, 1.25] }}
                                 transition={{
                                         duration: 12,

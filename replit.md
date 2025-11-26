@@ -129,6 +129,33 @@ User {
 
 **Design Choice**: Plaid IDV provides institutional-grade identity verification required for financial services compliance, with minimal user friction through their pre-built Link UI.
 
+### AI Assistant (RUNE.CTZ)
+
+**Provider**: OpenAI (GPT-4o)
+
+**Purpose**: RUNE.CTZ is an AI-powered assistant that helps users understand tokenized real estate investments, platform features, and the investment process.
+
+**Implementation**:
+- Backend: `/api/chat` route with Privy authentication and rate limiting
+- Frontend: `ChatWidget` component integrated into dashboard layout
+- Model: GPT-4o with custom system prompt for real estate investment context
+
+**Security Features**:
+- Privy session verification required for all chat requests
+- Per-user rate limiting (10 requests per 60 seconds)
+- Input validation with strict message length limits (2000 chars)
+- Context history validation (last 5 messages, validated roles)
+- Server-side only OpenAI API key access
+
+**Chat Flow**:
+1. User clicks chat icon in dashboard (bottom-right corner)
+2. User sends message, frontend calls `/api/chat` with auth cookie
+3. Backend validates session, checks rate limit, processes message
+4. Response returned with suggested follow-up actions
+5. Chat history maintained in client state (last 5 messages)
+
+**Design Choice**: The AI assistant is placed in the authenticated dashboard (not landing page) to ensure proper rate limiting per user identity and to provide personalized assistance to verified investors.
+
 ### Environment Variable Management
 
 **Development Strategy**: Root-level `.env.development` file (tracked in git) provides centralized configuration for all apps during local development.
@@ -206,6 +233,9 @@ User {
 **KYC Integration**:
 - `plaid@^39.1.0`: Plaid API client
 - `react-plaid-link@^4.1.1`: Plaid Link component
+
+**AI Chat**:
+- `openai@^4.102.0`: OpenAI API client for RUNE.CTZ assistant
 
 **UI & Styling**:
 - `tailwindcss@^3.4.17`: Utility-first CSS
