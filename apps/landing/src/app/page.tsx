@@ -33,7 +33,12 @@ import {
         Clock,
         ArrowRight,
         MapPin,
-        Cookie
+        Cookie,
+        Link2,
+        BarChart3,
+        Sparkles,
+        ArrowLeftRight,
+        Users
 } from 'lucide-react';
 import Link from 'next/link';
 import styles from './page.module.css';
@@ -697,6 +702,92 @@ const AboutUs = () => {
                                                 </motion.div>
                                         ))}
                                 </motion.div>
+                        </div>
+                </section>
+        );
+};
+
+// --- Why Commertize Section ---
+const WhyCommertize = () => {
+        const features = [
+                {
+                        icon: Link2,
+                        title: "Blockchain Transparency",
+                        description: "Every transaction is recorded on-chain, ensuring immutable ownership records and complete transparency. AI-powered insights provide real-time valuation and risk assessment.",
+                        highlight: "On-Chain Verified"
+                },
+                {
+                        icon: ArrowLeftRight,
+                        title: "Secondary Market Liquidity",
+                        description: "Exit your positions when you want. Trade fractional shares instantly on our regulated secondary market.",
+                        highlight: "Trade Anytime"
+                },
+                {
+                        icon: Users,
+                        title: "Fractional Ownership",
+                        description: "Access institutional-grade deals with lower minimums. Build a diversified portfolio across asset classes and geographies.",
+                        highlight: "Lower Minimums"
+                }
+        ];
+
+        return (
+                <section className="py-20 md:py-28 bg-gradient-to-b from-white via-stone-50/50 to-white">
+                        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                                <motion.div
+                                        initial={{ opacity: 0, y: 30 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        viewport={{ once: true, margin: "-100px" }}
+                                        transition={{ duration: 0.8, ease: "easeOut" }}
+                                        className="text-center mb-16"
+                                >
+                                        <h2 className="text-3xl md:text-4xl lg:text-5xl font-logo font-light text-gray-900 mb-4">
+                                                Why <span className="text-[#D4A024]">Commertize</span>
+                                        </h2>
+                                        <p className="text-base md:text-lg font-logo font-light text-gray-600 max-w-2xl mx-auto">
+                                                The future of real estate investing, powered by blockchain technology and institutional expertise.
+                                        </p>
+                                </motion.div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+                                        {features.map((feature, index) => (
+                                                <motion.div
+                                                        key={feature.title}
+                                                        initial={{ opacity: 0, y: 40 }}
+                                                        whileInView={{ opacity: 1, y: 0 }}
+                                                        viewport={{ once: true, margin: "-50px" }}
+                                                        transition={{ duration: 0.6, delay: index * 0.15, ease: "easeOut" }}
+                                                        whileHover={{ y: -8, transition: { duration: 0.3 } }}
+                                                        className="relative group"
+                                                >
+                                                        <div className="bg-white rounded-2xl p-8 h-full border border-gray-100 shadow-sm hover:shadow-xl hover:border-[#D4A024]/30 transition-all duration-300">
+                                                                <div className="absolute top-0 right-0 -mt-2 -mr-2">
+                                                                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#D4A024]/10 text-[#D4A024] border border-[#D4A024]/20">
+                                                                                {feature.highlight}
+                                                                        </span>
+                                                                </div>
+                                                                
+                                                                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#D4A024]/10 to-[#D4A024]/5 flex items-center justify-center mb-6 group-hover:from-[#D4A024]/20 group-hover:to-[#D4A024]/10 transition-all duration-300">
+                                                                        <feature.icon className="w-7 h-7 text-[#D4A024]" />
+                                                                </div>
+                                                                
+                                                                <h3 className="text-xl font-logo font-medium text-gray-900 mb-4">
+                                                                        {feature.title}
+                                                                </h3>
+                                                                
+                                                                <p className="text-gray-600 font-logo font-light leading-relaxed">
+                                                                        {feature.description}
+                                                                </p>
+
+                                                                <div className="mt-6 pt-6 border-t border-gray-100">
+                                                                        <div className="flex items-center text-[#D4A024] font-logo text-sm font-medium group-hover:translate-x-2 transition-transform duration-300">
+                                                                                Learn more
+                                                                                <ArrowRight className="w-4 h-4 ml-2" />
+                                                                        </div>
+                                                                </div>
+                                                        </div>
+                                                </motion.div>
+                                        ))}
+                                </div>
                         </div>
                 </section>
         );
@@ -1623,6 +1714,7 @@ export default function Home() {
                         <Navbar />
                         <Hero />
                         <AboutUs />
+                        <WhyCommertize />
                         <CommertizeCollection />
                         <TokenizationInfo />
                         <SubmitProperty />
