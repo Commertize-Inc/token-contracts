@@ -470,7 +470,7 @@ const AboutUs = () => {
                                                 className="w-full h-full object-cover"
                                         />
                                 </motion.div>
-                                <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50"></div>
+                                <div className="absolute inset-0 bg-gradient-to-b from-black/15 via-black/10 to-black/20"></div>
                         </div>
 
                         <div className="container relative z-10 px-4 py-20 md:py-28">
@@ -482,7 +482,7 @@ const AboutUs = () => {
                                         transition={{ duration: 1, ease: "easeOut" }}
                                 >
                                         <motion.h2 
-                                                className="text-3xl md:text-4xl font-logo font-light text-center mb-10 text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.9)]"
+                                                className="text-3xl md:text-4xl font-logo font-light text-center mb-10 text-gray-800 drop-shadow-[0_2px_4px_rgba(255,255,255,0.5)]"
                                                 initial={{ opacity: 0, y: 30 }}
                                                 whileInView={{ opacity: 1, y: 0 }}
                                                 viewport={{ once: true, amount: 0.5 }}
@@ -493,7 +493,7 @@ const AboutUs = () => {
                                         
                                         <div className="prose max-w-none text-center space-y-6">
                                                 <motion.p 
-                                                        className="text-base md:text-lg font-logo font-light text-white/95 leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
+                                                        className="text-base md:text-lg font-logo font-light text-gray-700 leading-relaxed"
                                                         initial={{ opacity: 0, y: 20 }}
                                                         whileInView={{ opacity: 1, y: 0 }}
                                                         viewport={{ once: true, amount: 0.3 }}
@@ -502,7 +502,7 @@ const AboutUs = () => {
                                                         {companyName} is building the next-generation platform and ecosystem for commercial real estate and infrastructure, merging the power of AI, blockchain, tokenization, and decentralized finance (DeFi) into one intelligent network.
                                                 </motion.p>
                                                 <motion.p 
-                                                        className="text-base md:text-lg font-logo font-light text-white/95 leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
+                                                        className="text-base md:text-lg font-logo font-light text-gray-700 leading-relaxed"
                                                         initial={{ opacity: 0, y: 20 }}
                                                         whileInView={{ opacity: 1, y: 0 }}
                                                         viewport={{ once: true, amount: 0.3 }}
@@ -511,7 +511,7 @@ const AboutUs = () => {
                                                         Our mission is to create the digital foundation that connects real-world assets to global capital markets—enhancing liquidity, transparency, and access across the commercial real estate landscape.
                                                 </motion.p>
                                                 <motion.p 
-                                                        className="text-base md:text-lg font-logo font-light text-white/95 leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
+                                                        className="text-base md:text-lg font-logo font-light text-gray-700 leading-relaxed"
                                                         initial={{ opacity: 0, y: 20 }}
                                                         whileInView={{ opacity: 1, y: 0 }}
                                                         viewport={{ once: true, amount: 0.3 }}
@@ -520,7 +520,7 @@ const AboutUs = () => {
                                                         Through AI-driven analytics, blockchain-enabled trust, and a compliant financial infrastructure, {companyName} empowers investors and property owners to own, trade, and build the next era of real estate finance.
                                                 </motion.p>
                                                 <motion.p 
-                                                        className="text-base md:text-lg font-logo font-light text-white/95 leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
+                                                        className="text-base md:text-lg font-logo font-light text-gray-700 leading-relaxed"
                                                         initial={{ opacity: 0, y: 20 }}
                                                         whileInView={{ opacity: 1, y: 0 }}
                                                         viewport={{ once: true, amount: 0.3 }}
@@ -557,7 +557,7 @@ const AboutUs = () => {
                                                         className="cursor-pointer group flex-shrink-0"
                                                         style={{ minWidth: "500px", textAlign: "center" }}
                                                 >
-                                                        <span className="text-xl md:text-2xl font-logo font-light text-white/90 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+                                                        <span className="text-xl md:text-2xl font-logo font-light text-gray-600">
                                                                 {phrase}
                                                         </span>
                                                 </motion.div>
