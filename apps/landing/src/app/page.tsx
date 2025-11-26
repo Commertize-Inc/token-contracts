@@ -468,7 +468,7 @@ const AboutUs = () => {
                                                 src="/assets/vision-bg.jpg"
                                                 alt="" 
                                                 className="w-full h-full object-cover"
-                                                style={{ objectPosition: 'center top' }}
+                                                style={{ objectPosition: 'center center' }}
                                         />
                                 </motion.div>
                         </div>
