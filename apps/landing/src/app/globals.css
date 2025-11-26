@@ -137,13 +137,13 @@
   }
 }
 
-/* Moving pulse around chat border */
+/* Moving pulse around chat border - traces edges clockwise */
 @keyframes movePulse {
-  0% { top: 0; left: 50%; }
-  25% { top: 50%; left: 100%; }
-  50% { top: 100%; left: 50%; }
-  75% { top: 50%; left: 0; }
-  100% { top: 0; left: 50%; }
+  0% { top: -6px; left: -6px; }
+  25% { top: -6px; left: calc(100% - 6px); }
+  50% { top: calc(100% - 6px); left: calc(100% - 6px); }
+  75% { top: calc(100% - 6px); left: -6px; }
+  100% { top: -6px; left: -6px; }
 }
 
 .moving-pulse {
