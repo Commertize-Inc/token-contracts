@@ -20,8 +20,6 @@ interface Message {
 export default function ChatGPTWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
-  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
-  const [showPopupMessage, setShowPopupMessage] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -43,38 +41,9 @@ export default function ChatGPTWidget() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { toast } = useToast();
 
-  const popupMessages = [
-    "I'm RUNE.CTZ 👋 Want today's CRE market highlights?",
-    "Ask me about cap rates, tokenization, or new deals.",
-    "Curious if you qualify to invest? I can check in seconds.",
-    "Need a quick 30-second property breakdown? Just ask."
-  ];
-
   useEffect(() => {
     setHasMounted(true);
   }, []);
-
-  useEffect(() => {
-    if (!isOpen && hasMounted) {
-      const showTimer = setTimeout(() => {
-        setShowPopupMessage(true);
-      }, 3000);
-
-      const hideTimer = setTimeout(() => {
-        setShowPopupMessage(false);
-      }, 8000);
-
-      const rotateTimer = setInterval(() => {
-        setCurrentMessageIndex(prev => (prev + 1) % popupMessages.length);
-      }, 10000);
-
-      return () => {
-        clearTimeout(showTimer);
-        clearTimeout(hideTimer);
-        clearInterval(rotateTimer);
-      };
-    }
-  }, [isOpen, hasMounted, popupMessages.length]);
 
   const sendMessageMutation = useMutation({
     mutationFn: async (message: string) => {
@@ -420,24 +389,6 @@ export default function ChatGPTWidget() {
               className="absolute top-1 right-1 w-2 h-2 bg-emerald-400 rounded-full shadow-sm"
             />
           </motion.div>
-          
-          <AnimatePresence>
-            {showPopupMessage && (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.8, y: 10 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="absolute -top-16 -left-40 bg-white border-2 border-[#D4A024] text-black text-sm px-3 py-2 rounded-lg shadow-sm pointer-events-none max-w-[240px] z-[70] font-sans font-light leading-relaxed"
-              >
-                {popupMessages[currentMessageIndex]}
-                <div className="absolute top-full right-6">
-                  <div className="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-transparent border-t-[#D4A024]"></div>
-                  <div className="absolute -top-[4px] left-[1px] w-0 h-0 border-l-[4px] border-r-[4px] border-t-[4px] border-transparent border-t-white"></div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </motion.button>
       )}
     </>
