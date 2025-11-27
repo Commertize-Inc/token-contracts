@@ -8,7 +8,6 @@ import {
   Shield,
   Zap,
   Lock,
-  ArrowRight,
   DollarSign,
   Building2,
   Globe,
@@ -127,23 +126,10 @@ export default function Nexus() {
               <p className="text-xl text-gray-600 mb-4 font-light">
                 The Liquidity Engine for Tokenized Real Estate
               </p>
-              <p className="text-lg text-gray-500 max-w-2xl mx-auto mb-8 font-light">
+              <p className="text-lg text-gray-500 max-w-2xl mx-auto font-light">
                 Unlock instant liquidity from your property investments. Stake, lend, borrow, 
                 and earn yield on tokenized commercial real estate assets.
               </p>
-              <div className="flex flex-wrap justify-center gap-4">
-                <button 
-                  className="inline-flex items-center px-6 py-3 bg-[#D4A024] hover:bg-[#B8860B] text-white font-light rounded-xl transition-colors"
-                >
-                  Launch App
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </button>
-                <button 
-                  className="inline-flex items-center px-6 py-3 border-2 border-[#D4A024] text-[#D4A024] hover:bg-[#D4A024]/10 font-light rounded-xl transition-colors"
-                >
-                  View Documentation
-                </button>
-              </div>
             </motion.div>
           </div>
         </section>
