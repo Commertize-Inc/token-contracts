@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import {
@@ -14,7 +13,8 @@ import {
   PiggyBank,
   LineChart,
   Target,
-  CheckCircle
+  CheckCircle,
+  ArrowDown
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import ChatGPTWidget from "@/components/ChatGPTWidget";
@@ -81,281 +81,205 @@ const howItWorks = [
   { step: "4", title: "Withdraw Anytime", desc: "Access your funds when you need them" }
 ];
 
-const keyFeatures = [
-  {
-    icon: Wallet,
-    title: "Instant Liquidity",
-    description: "Access funds without selling your property tokens"
-  },
-  {
-    icon: LineChart,
-    title: "Passive Yield",
-    description: "Earn from rental income and DeFi rewards"
-  },
-  {
-    icon: Globe,
-    title: "24/7 Markets",
-    description: "Trade and stake anytime, anywhere"
-  }
-];
+const SectionTitle = ({ label, title }: { label: string; title: string }) => (
+  <div className="text-center mb-12">
+    <span className="inline-block px-4 py-1.5 bg-[#D4A024]/10 text-[#D4A024] text-xs font-bold uppercase tracking-widest rounded-full mb-4">
+      {label}
+    </span>
+    <h2 className="text-3xl md:text-4xl font-light text-gray-900" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+      {title}
+    </h2>
+  </div>
+);
 
 export default function Nexus() {
-  const [activeTab, setActiveTab] = useState("overview");
-
   return (
     <>
       <Navbar />
       <div className="min-h-screen bg-white pt-16">
-        {/* Hero Section */}
-        <section className="relative overflow-hidden py-20 md:py-28 bg-gradient-to-b from-gray-50 to-white">
-          <div className="container mx-auto px-4 relative z-10">
+        
+        {/* ==================== HERO SECTION ==================== */}
+        <section className="py-16 md:py-24 border-b-2 border-gray-100">
+          <div className="container mx-auto px-4">
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="text-center max-w-4xl mx-auto"
+              className="text-center max-w-3xl mx-auto"
             >
-              <div className="flex items-center justify-center mb-8">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.6 }}
-                >
-                  <Image
-                    src="/assets/nexus-logo.png"
-                    alt="Nexus"
-                    width={400}
-                    height={81}
-                    className="max-w-[300px] md:max-w-[400px]"
-                    style={{ width: 'auto', height: 'auto' }}
-                    priority
-                  />
-                </motion.div>
-              </div>
-              <span className="inline-block mb-6 px-5 py-2 bg-[#D4A024] text-white text-sm font-semibold rounded-full uppercase tracking-wider">
+              <Image
+                src="/assets/nexus-logo.png"
+                alt="Nexus"
+                width={400}
+                height={81}
+                className="max-w-[280px] md:max-w-[350px] mx-auto mb-8"
+                style={{ width: 'auto', height: 'auto' }}
+                priority
+              />
+              <span className="inline-block px-4 py-2 bg-[#D4A024] text-white text-sm font-bold uppercase tracking-wider rounded-full mb-6">
                 DeFi Protocol
               </span>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-light text-gray-900 mb-6" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                The Liquidity Engine for<br />
-                <span className="text-[#D4A024]">Tokenized Real Estate</span>
+              <h1 className="text-2xl md:text-3xl font-light text-gray-900 mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                The Liquidity Engine for <span className="text-[#D4A024]">Tokenized Real Estate</span>
               </h1>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto font-light leading-relaxed">
-                Unlock instant liquidity from your property investments. Stake, lend, borrow, 
-                and earn yield on tokenized commercial real estate assets.
+              <p className="text-gray-600 text-lg max-w-xl mx-auto">
+                Stake, lend, borrow, and earn yield on tokenized commercial real estate assets.
               </p>
+              <div className="mt-8">
+                <ArrowDown className="w-6 h-6 text-[#D4A024] mx-auto animate-bounce" />
+              </div>
             </motion.div>
           </div>
         </section>
 
-        {/* APY Stats Section */}
-        <section className="py-16 bg-[#D4A024]/5 border-y-2 border-[#D4A024]/20">
+        {/* ==================== APY SECTION ==================== */}
+        <section className="py-16 bg-[#D4A024]/5 border-b-2 border-gray-100">
           <div className="container mx-auto px-4">
-            <div className="flex justify-center">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white border-2 border-[#D4A024] rounded-3xl p-10 text-center shadow-xl max-w-lg w-full"
-              >
-                <div className="w-20 h-20 bg-[#D4A024]/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <LineChart className="w-10 h-10 text-[#D4A024]" />
-                </div>
-                <div className="text-sm text-gray-500 uppercase tracking-widest mb-3 font-semibold">Protocol APY</div>
-                <div className="text-6xl md:text-7xl font-light text-[#D4A024] mb-3" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+            <div className="max-w-md mx-auto text-center">
+              <div className="bg-white rounded-2xl p-8 border-2 border-[#D4A024] shadow-lg">
+                <LineChart className="w-12 h-12 text-[#D4A024] mx-auto mb-4" />
+                <div className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-2">Protocol APY</div>
+                <div className="text-5xl md:text-6xl font-light text-[#D4A024]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                   --
                 </div>
-                <div className="text-gray-500">Variable rate based on protocol activity</div>
-              </motion.div>
+                <div className="text-sm text-gray-500 mt-2">Variable rate</div>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Key Features Section */}
-        <section className="py-20 bg-white">
+        {/* ==================== WHAT IS NEXUS ==================== */}
+        <section id="about" className="py-16 border-b-2 border-gray-100">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-14">
-              <h2 className="text-3xl md:text-4xl font-light text-gray-900 mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                Why <span className="text-[#D4A024]">Nexus</span>?
-              </h2>
-              <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-                The first DeFi protocol purpose-built for tokenized commercial real estate
-              </p>
-            </div>
-            <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-              {keyFeatures.map((feature, index) => (
-                <motion.div
-                  key={feature.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="bg-gray-50 border-2 border-gray-200 hover:border-[#D4A024] rounded-2xl p-8 text-center transition-all duration-300"
-                >
-                  <div className="w-16 h-16 bg-[#D4A024]/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                    <feature.icon className="w-8 h-8 text-[#D4A024]" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
-                  <p className="text-gray-600">{feature.description}</p>
-                </motion.div>
-              ))}
+            <div className="max-w-3xl mx-auto">
+              <SectionTitle label="About" title="What is Nexus?" />
+              <div className="bg-gray-50 rounded-2xl p-8 border border-gray-200">
+                <p className="text-gray-700 text-lg leading-relaxed text-center">
+                  Nexus is Commertize's decentralized finance protocol — a liquidity engine enabling 
+                  investors to borrow, lend, and earn yield from tokenized commercial real estate assets. 
+                  Built on Ethereum, Nexus bridges traditional property value with DeFi lending pools, 
+                  providing instant liquidity without selling your assets.
+                </p>
+              </div>
+              
+              {/* Key Benefits */}
+              <div className="grid md:grid-cols-3 gap-6 mt-10">
+                <div className="text-center p-6">
+                  <Wallet className="w-10 h-10 text-[#D4A024] mx-auto mb-3" />
+                  <h3 className="font-semibold text-gray-900 mb-2">Instant Liquidity</h3>
+                  <p className="text-sm text-gray-600">Access funds without selling</p>
+                </div>
+                <div className="text-center p-6">
+                  <LineChart className="w-10 h-10 text-[#D4A024] mx-auto mb-3" />
+                  <h3 className="font-semibold text-gray-900 mb-2">Passive Yield</h3>
+                  <p className="text-sm text-gray-600">Earn from rental income & DeFi</p>
+                </div>
+                <div className="text-center p-6">
+                  <Globe className="w-10 h-10 text-[#D4A024] mx-auto mb-3" />
+                  <h3 className="font-semibold text-gray-900 mb-2">24/7 Markets</h3>
+                  <p className="text-sm text-gray-600">Trade anytime, anywhere</p>
+                </div>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Tab Navigation */}
-        <section className="py-20 bg-gray-50">
+        {/* ==================== HOW IT WORKS ==================== */}
+        <section id="how-it-works" className="py-16 bg-gray-50 border-b-2 border-gray-100">
           <div className="container mx-auto px-4">
-            <div className="flex justify-center mb-14">
-              <div className="inline-flex bg-white rounded-2xl p-1.5 shadow-lg border-2 border-gray-200">
-                {["overview", "products", "security"].map((tab) => (
-                  <button
-                    key={tab}
-                    onClick={() => setActiveTab(tab)}
-                    className={`px-8 py-3.5 text-sm font-semibold rounded-xl transition-all capitalize ${
-                      activeTab === tab 
-                        ? "bg-[#D4A024] text-white shadow-lg" 
-                        : "text-gray-600 hover:text-[#D4A024]"
-                    }`}
+            <div className="max-w-4xl mx-auto">
+              <SectionTitle label="Process" title="How It Works" />
+              <div className="grid md:grid-cols-4 gap-4">
+                {howItWorks.map((item, index) => (
+                  <motion.div
+                    key={item.step}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
+                    className="bg-white rounded-xl p-6 text-center border border-gray-200"
                   >
-                    {tab}
-                  </button>
+                    <div className="w-10 h-10 bg-[#D4A024] text-white rounded-full flex items-center justify-center mx-auto mb-4 text-lg font-bold">
+                      {item.step}
+                    </div>
+                    <h4 className="font-semibold text-gray-900 mb-2">{item.title}</h4>
+                    <p className="text-sm text-gray-600">{item.desc}</p>
+                  </motion.div>
                 ))}
               </div>
             </div>
+          </div>
+        </section>
 
-            {/* Overview Tab */}
-            {activeTab === "overview" && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="max-w-5xl mx-auto"
-              >
-                <div className="bg-white border-2 border-[#D4A024] rounded-3xl p-10 mb-16 shadow-lg">
-                  <h2 className="text-3xl font-light mb-6 text-gray-900" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                    What is <span className="text-[#D4A024]">Nexus</span>?
-                  </h2>
-                  <p className="text-gray-600 mb-8 leading-relaxed text-lg">
-                    Nexus is Commertize's decentralized finance protocol — a liquidity engine enabling 
-                    investors to borrow, lend, and earn yield from tokenized commercial real estate assets. 
-                    Built on Ethereum, Nexus bridges traditional property value with DeFi lending pools, 
-                    providing instant liquidity without selling your assets.
-                  </p>
-                </div>
-
-                {/* How It Works */}
-                <div className="text-center mb-10">
-                  <h3 className="text-3xl font-light text-gray-900" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                    How <span className="text-[#D4A024]">Nexus</span> Works
-                  </h3>
-                </div>
-                <div className="grid md:grid-cols-4 gap-6">
-                  {howItWorks.map((item, index) => (
-                    <motion.div
-                      key={item.step}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className="bg-white border-2 border-gray-200 hover:border-[#D4A024] rounded-2xl p-8 text-center transition-all duration-300 shadow-md"
-                    >
-                      <div className="w-14 h-14 bg-[#D4A024] text-white rounded-full flex items-center justify-center mx-auto mb-5 text-2xl font-light">
-                        {item.step}
+        {/* ==================== PRODUCTS ==================== */}
+        <section id="products" className="py-16 border-b-2 border-gray-100">
+          <div className="container mx-auto px-4">
+            <div className="max-w-5xl mx-auto">
+              <SectionTitle label="Earn" title="DeFi Products" />
+              <div className="grid md:grid-cols-2 gap-6">
+                {defiProducts.map((product, index) => (
+                  <motion.div
+                    key={product.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
+                    className="bg-white rounded-xl p-6 border-2 border-gray-200 hover:border-[#D4A024] transition-colors"
+                  >
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="w-12 h-12 bg-[#D4A024]/10 rounded-xl flex items-center justify-center">
+                        <product.icon className="w-6 h-6 text-[#D4A024]" />
                       </div>
-                      <h4 className="font-semibold mb-3 text-gray-900 text-lg">{item.title}</h4>
-                      <p className="text-gray-600">{item.desc}</p>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-
-            {/* Products Tab */}
-            {activeTab === "products" && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="max-w-6xl mx-auto"
-              >
-                <div className="text-center mb-12">
-                  <h2 className="text-3xl font-light text-gray-900 mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                    DeFi <span className="text-[#D4A024]">Products</span>
-                  </h2>
-                  <p className="text-gray-600 text-lg">Earn yield on your tokenized real estate in multiple ways</p>
-                </div>
-                <div className="grid md:grid-cols-2 gap-8">
-                  {defiProducts.map((product, index) => (
-                    <motion.div
-                      key={product.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className="bg-white border-2 border-gray-200 hover:border-[#D4A024] rounded-3xl p-8 transition-all duration-300 shadow-lg"
-                    >
-                      <div className="flex items-center space-x-4 mb-6">
-                        <div className="w-14 h-14 bg-[#D4A024]/10 rounded-2xl flex items-center justify-center">
-                          <product.icon className="w-7 h-7 text-[#D4A024]" />
+                      <h3 className="text-xl font-semibold text-gray-900">{product.title}</h3>
+                    </div>
+                    <p className="text-gray-600 mb-4">{product.description}</p>
+                    <div className="space-y-2">
+                      {product.features.map((feature) => (
+                        <div key={feature} className="flex items-center text-sm text-gray-700">
+                          <CheckCircle className="w-4 h-4 text-[#D4A024] mr-2 flex-shrink-0" />
+                          {feature}
                         </div>
-                        <h3 className="text-2xl font-light text-gray-900">{product.title}</h3>
-                      </div>
-                      <p className="text-gray-600 mb-6 leading-relaxed">{product.description}</p>
-                      <div className="space-y-3 mb-6">
-                        {product.features.map((feature) => (
-                          <div key={feature} className="flex items-center text-gray-700">
-                            <CheckCircle className="w-5 h-5 text-[#D4A024] mr-3" />
-                            {feature}
-                          </div>
-                        ))}
-                      </div>
-                      <button className="w-full py-4 bg-[#D4A024] hover:bg-[#B8860B] text-white font-semibold rounded-xl transition-colors text-lg">
-                        Enter {product.title}
-                      </button>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-            )}
+                      ))}
+                    </div>
+                    <button className="w-full mt-6 py-3 bg-[#D4A024] hover:bg-[#B8860B] text-white font-semibold rounded-lg transition-colors">
+                      Enter {product.title}
+                    </button>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
 
-            {/* Security Tab */}
-            {activeTab === "security" && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="max-w-5xl mx-auto"
-              >
-                <div className="bg-white border-2 border-[#D4A024] rounded-3xl p-10 mb-12 text-center shadow-lg">
-                  <div className="w-24 h-24 bg-[#D4A024]/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <Shield className="w-12 h-12 text-[#D4A024]" />
-                  </div>
-                  <h2 className="text-3xl font-light mb-6 text-gray-900" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                    Security <span className="text-[#D4A024]">First</span>
-                  </h2>
-                  <p className="text-gray-600 max-w-2xl mx-auto text-lg leading-relaxed">
-                    Nexus operates via audited smart contracts with built-in risk parameters 
-                    and collateralization ratios to ensure platform integrity. Your assets are 
-                    protected by multiple layers of security.
-                  </p>
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-8">
-                  {securityFeatures.map((feature, index) => (
-                    <motion.div
-                      key={feature.title}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className="bg-white border-2 border-gray-200 hover:border-[#D4A024] rounded-2xl p-8 transition-all duration-300 shadow-md"
-                    >
-                      <div className="flex items-start space-x-5">
-                        <div className="w-14 h-14 bg-[#D4A024]/10 rounded-2xl flex items-center justify-center flex-shrink-0">
-                          <feature.icon className="w-7 h-7 text-[#D4A024]" />
-                        </div>
-                        <div>
-                          <h4 className="font-semibold mb-3 text-gray-900 text-xl">{feature.title}</h4>
-                          <p className="text-gray-600 leading-relaxed">{feature.description}</p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-            )}
+        {/* ==================== SECURITY ==================== */}
+        <section id="security" className="py-16 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto">
+              <SectionTitle label="Trust" title="Security First" />
+              <p className="text-center text-gray-600 max-w-2xl mx-auto mb-10">
+                Your assets are protected by multiple layers of security including audited smart contracts 
+                and collateralization ratios.
+              </p>
+              <div className="grid md:grid-cols-2 gap-6">
+                {securityFeatures.map((feature, index) => (
+                  <motion.div
+                    key={feature.title}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
+                    className="bg-white rounded-xl p-6 border border-gray-200 flex items-start gap-4"
+                  >
+                    <div className="w-12 h-12 bg-[#D4A024]/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <feature.icon className="w-6 h-6 text-[#D4A024]" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-1">{feature.title}</h4>
+                      <p className="text-sm text-gray-600">{feature.description}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 
