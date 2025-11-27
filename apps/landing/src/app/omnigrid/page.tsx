@@ -145,25 +145,18 @@ export default function OmniGrid() {
                   className="mx-auto w-full max-w-2xl h-auto"
                 />
               </div>
-              <p className="text-xl md:text-2xl font-light text-white mb-6">
+              <p className="text-xl md:text-2xl font-light text-white mb-8">
                 The Infrastructure Intelligence Layer
               </p>
-              <p className="text-lg font-light text-white/80 max-w-2xl mx-auto mb-12 leading-relaxed">
+              <p className="text-lg font-light text-white/90 max-w-3xl mx-auto mb-12 leading-relaxed">
                 Mapping and tokenizing the world's critical infrastructure — from energy and resources to data and sustainability.
               </p>
               <button
                 onClick={scrollToOverview}
-                className="bg-[#D4A024] hover:bg-[#B8860B] text-white font-semibold text-lg px-10 py-4 rounded-full transition-colors"
+                className="bg-white hover:bg-white/90 text-black font-light text-lg px-8 py-4 rounded-lg transition-colors"
               >
                 Learn More
               </button>
-              <motion.div 
-                className="mt-16"
-                animate={{ y: [0, 10, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                <ArrowDown className="w-8 h-8 text-[#D4A024] mx-auto" />
-              </motion.div>
             </motion.div>
           </div>
         </section>
