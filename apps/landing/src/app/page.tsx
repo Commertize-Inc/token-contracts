@@ -248,7 +248,7 @@ const Navbar = () => {
                                                 <button className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light">Mission</button>
                                                 <Link href="/marketplace" className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light">Marketplace</Link>
                                                 <Link href="/nexus" className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light">Nexus</Link>
-                                                <Link href="/omnigrid" className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light">OmniGrid</Link>
+                                                <a href="/omnigrid" className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light">OmniGrid</a>
 
                                                 <div
                                                         className="relative"
@@ -321,7 +321,7 @@ const Navbar = () => {
                                                 <a href="#" className="block py-3 text-gray-700 border-b border-gray-100" onClick={() => setIsOpen(false)}>Mission</a>
                                                 <Link href="/marketplace" className="block py-3 text-gray-700 border-b border-gray-100" onClick={() => setIsOpen(false)}>Marketplace</Link>
                                                 <Link href="/nexus" className="block py-3 text-gray-700 border-b border-gray-100" onClick={() => setIsOpen(false)}>Nexus</Link>
-                                                <Link href="/omnigrid" className="block py-3 text-gray-700 border-b border-gray-100" onClick={() => setIsOpen(false)}>OmniGrid</Link>
+                                                <a href="/omnigrid" className="block py-3 text-gray-700 border-b border-gray-100" onClick={() => setIsOpen(false)}>OmniGrid</a>
                                                 <div className="py-2">
                                                         <div className="text-xs text-gray-500 uppercase tracking-wider mb-2">Intelligence</div>
                                                         <a href="#" className="block py-2 pl-4 text-gray-600 text-sm" onClick={() => setIsOpen(false)}>Market Analytics</a>
