@@ -27,7 +27,6 @@ const defiProducts = [
     description: "Stake your tokenized real estate assets to earn passive yield from rental income and appreciation.",
     icon: PiggyBank,
     features: ["Daily rewards", "No lock-up periods", "Auto-compound"],
-    color: "from-[#D4A024]/20 to-[#B8860B]/20"
   },
   {
     id: "lending",
@@ -35,7 +34,6 @@ const defiProducts = [
     description: "Borrow against your tokenized property holdings with competitive rates and flexible terms.",
     icon: DollarSign,
     features: ["Flexible LTV ratios", "Instant liquidity", "No credit checks"],
-    color: "from-blue-500/20 to-blue-600/20"
   },
   {
     id: "farming",
@@ -43,7 +41,6 @@ const defiProducts = [
     description: "Provide liquidity to CRE-USDC pools and earn enhanced yields plus CTZ governance tokens.",
     icon: Zap,
     features: ["Dual rewards", "LP incentives", "CTZ airdrops"],
-    color: "from-green-500/20 to-green-600/20"
   },
   {
     id: "vaults",
@@ -51,7 +48,6 @@ const defiProducts = [
     description: "Automated yield optimization strategies across multiple property pools for maximum returns.",
     icon: Target,
     features: ["Auto-rebalancing", "Risk-adjusted", "Gas optimized"],
-    color: "from-purple-500/20 to-purple-600/20"
   }
 ];
 
@@ -109,11 +105,9 @@ export default function Nexus() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 pt-16">
+      <div className="min-h-screen bg-white pt-16">
         {/* Hero Section */}
-        <section className="relative overflow-hidden py-24 md:py-32">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#D4A024]/20 via-transparent to-transparent" />
-          <div className="absolute inset-0 bg-[url('/assets/grid.svg')] opacity-10" />
+        <section className="relative overflow-hidden py-20 md:py-28 bg-gradient-to-b from-gray-50 to-white">
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -121,19 +115,18 @@ export default function Nexus() {
               transition={{ duration: 0.8 }}
               className="text-center max-w-4xl mx-auto"
             >
-              <div className="flex items-center justify-center mb-10">
+              <div className="flex items-center justify-center mb-8">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.6 }}
-                  className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20"
                 >
                   <Image
                     src="/assets/nexus-logo.png"
                     alt="Nexus"
                     width={400}
                     height={81}
-                    className="max-w-[280px] md:max-w-[360px] invert"
+                    className="max-w-[300px] md:max-w-[400px]"
                     style={{ width: 'auto', height: 'auto' }}
                     priority
                   />
@@ -142,11 +135,11 @@ export default function Nexus() {
               <span className="inline-block mb-6 px-5 py-2 bg-[#D4A024] text-white text-sm font-semibold rounded-full uppercase tracking-wider">
                 DeFi Protocol
               </span>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-white mb-6" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-light text-gray-900 mb-6" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                 The Liquidity Engine for<br />
                 <span className="text-[#D4A024]">Tokenized Real Estate</span>
               </h1>
-              <p className="text-xl text-gray-300 max-w-2xl mx-auto font-light leading-relaxed">
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto font-light leading-relaxed">
                 Unlock instant liquidity from your property investments. Stake, lend, borrow, 
                 and earn yield on tokenized commercial real estate assets.
               </p>
@@ -155,35 +148,35 @@ export default function Nexus() {
         </section>
 
         {/* APY Stats Section */}
-        <section className="py-16 bg-black/30 border-y border-[#D4A024]/30">
+        <section className="py-16 bg-[#D4A024]/5 border-y-2 border-[#D4A024]/20">
           <div className="container mx-auto px-4">
             <div className="flex justify-center">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-gradient-to-br from-[#D4A024]/20 to-[#B8860B]/10 border-2 border-[#D4A024] rounded-3xl p-10 text-center shadow-2xl shadow-[#D4A024]/20 max-w-lg w-full"
+                className="bg-white border-2 border-[#D4A024] rounded-3xl p-10 text-center shadow-xl max-w-lg w-full"
               >
-                <div className="w-20 h-20 bg-[#D4A024]/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <div className="w-20 h-20 bg-[#D4A024]/10 rounded-full flex items-center justify-center mx-auto mb-6">
                   <LineChart className="w-10 h-10 text-[#D4A024]" />
                 </div>
-                <div className="text-sm text-gray-400 uppercase tracking-widest mb-3 font-medium">Protocol APY</div>
+                <div className="text-sm text-gray-500 uppercase tracking-widest mb-3 font-semibold">Protocol APY</div>
                 <div className="text-6xl md:text-7xl font-light text-[#D4A024] mb-3" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                   --
                 </div>
-                <div className="text-gray-400">Variable rate based on protocol activity</div>
+                <div className="text-gray-500">Variable rate based on protocol activity</div>
               </motion.div>
             </div>
           </div>
         </section>
 
         {/* Key Features Section */}
-        <section className="py-20 bg-gray-900/50">
+        <section className="py-20 bg-white">
           <div className="container mx-auto px-4">
             <div className="text-center mb-14">
-              <h2 className="text-3xl md:text-4xl font-light text-white mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              <h2 className="text-3xl md:text-4xl font-light text-gray-900 mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                 Why <span className="text-[#D4A024]">Nexus</span>?
               </h2>
-              <p className="text-gray-400 max-w-2xl mx-auto">
+              <p className="text-gray-600 max-w-2xl mx-auto text-lg">
                 The first DeFi protocol purpose-built for tokenized commercial real estate
               </p>
             </div>
@@ -194,13 +187,13 @@ export default function Nexus() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 hover:border-[#D4A024]/50 rounded-2xl p-8 text-center transition-all duration-300"
+                  className="bg-gray-50 border-2 border-gray-200 hover:border-[#D4A024] rounded-2xl p-8 text-center transition-all duration-300"
                 >
-                  <div className="w-16 h-16 bg-[#D4A024]/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <div className="w-16 h-16 bg-[#D4A024]/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
                     <feature.icon className="w-8 h-8 text-[#D4A024]" />
                   </div>
-                  <h3 className="text-xl font-medium text-white mb-3">{feature.title}</h3>
-                  <p className="text-gray-400">{feature.description}</p>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
+                  <p className="text-gray-600">{feature.description}</p>
                 </motion.div>
               ))}
             </div>
@@ -208,18 +201,18 @@ export default function Nexus() {
         </section>
 
         {/* Tab Navigation */}
-        <section className="py-20 bg-gray-900">
+        <section className="py-20 bg-gray-50">
           <div className="container mx-auto px-4">
             <div className="flex justify-center mb-14">
-              <div className="inline-flex bg-gray-800 rounded-2xl p-1.5 shadow-lg border border-gray-700">
+              <div className="inline-flex bg-white rounded-2xl p-1.5 shadow-lg border-2 border-gray-200">
                 {["overview", "products", "security"].map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`px-8 py-3.5 text-sm font-medium rounded-xl transition-all capitalize ${
+                    className={`px-8 py-3.5 text-sm font-semibold rounded-xl transition-all capitalize ${
                       activeTab === tab 
                         ? "bg-[#D4A024] text-white shadow-lg" 
-                        : "text-gray-400 hover:text-white"
+                        : "text-gray-600 hover:text-[#D4A024]"
                     }`}
                   >
                     {tab}
@@ -235,11 +228,11 @@ export default function Nexus() {
                 animate={{ opacity: 1, y: 0 }}
                 className="max-w-5xl mx-auto"
               >
-                <div className="bg-gradient-to-br from-gray-800 to-gray-800/50 border-2 border-[#D4A024] rounded-3xl p-10 mb-16">
-                  <h2 className="text-3xl font-light mb-6 text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                <div className="bg-white border-2 border-[#D4A024] rounded-3xl p-10 mb-16 shadow-lg">
+                  <h2 className="text-3xl font-light mb-6 text-gray-900" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                     What is <span className="text-[#D4A024]">Nexus</span>?
                   </h2>
-                  <p className="text-gray-300 mb-8 leading-relaxed text-lg">
+                  <p className="text-gray-600 mb-8 leading-relaxed text-lg">
                     Nexus is Commertize's decentralized finance protocol — a liquidity engine enabling 
                     investors to borrow, lend, and earn yield from tokenized commercial real estate assets. 
                     Built on Ethereum, Nexus bridges traditional property value with DeFi lending pools, 
@@ -249,7 +242,7 @@ export default function Nexus() {
 
                 {/* How It Works */}
                 <div className="text-center mb-10">
-                  <h3 className="text-3xl font-light text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                  <h3 className="text-3xl font-light text-gray-900" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                     How <span className="text-[#D4A024]">Nexus</span> Works
                   </h3>
                 </div>
@@ -260,13 +253,13 @@ export default function Nexus() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      className="bg-gray-800/50 border border-gray-700 hover:border-[#D4A024]/50 rounded-2xl p-8 text-center transition-all duration-300"
+                      className="bg-white border-2 border-gray-200 hover:border-[#D4A024] rounded-2xl p-8 text-center transition-all duration-300 shadow-md"
                     >
                       <div className="w-14 h-14 bg-[#D4A024] text-white rounded-full flex items-center justify-center mx-auto mb-5 text-2xl font-light">
                         {item.step}
                       </div>
-                      <h4 className="font-medium mb-3 text-white text-lg">{item.title}</h4>
-                      <p className="text-gray-400">{item.desc}</p>
+                      <h4 className="font-semibold mb-3 text-gray-900 text-lg">{item.title}</h4>
+                      <p className="text-gray-600">{item.desc}</p>
                     </motion.div>
                   ))}
                 </div>
@@ -281,10 +274,10 @@ export default function Nexus() {
                 className="max-w-6xl mx-auto"
               >
                 <div className="text-center mb-12">
-                  <h2 className="text-3xl font-light text-white mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                  <h2 className="text-3xl font-light text-gray-900 mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                     DeFi <span className="text-[#D4A024]">Products</span>
                   </h2>
-                  <p className="text-gray-400">Earn yield on your tokenized real estate in multiple ways</p>
+                  <p className="text-gray-600 text-lg">Earn yield on your tokenized real estate in multiple ways</p>
                 </div>
                 <div className="grid md:grid-cols-2 gap-8">
                   {defiProducts.map((product, index) => (
@@ -293,24 +286,24 @@ export default function Nexus() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      className="bg-gray-800/70 border-2 border-gray-700 hover:border-[#D4A024] rounded-3xl p-8 transition-all duration-300"
+                      className="bg-white border-2 border-gray-200 hover:border-[#D4A024] rounded-3xl p-8 transition-all duration-300 shadow-lg"
                     >
                       <div className="flex items-center space-x-4 mb-6">
-                        <div className="w-14 h-14 bg-[#D4A024]/20 rounded-2xl flex items-center justify-center">
+                        <div className="w-14 h-14 bg-[#D4A024]/10 rounded-2xl flex items-center justify-center">
                           <product.icon className="w-7 h-7 text-[#D4A024]" />
                         </div>
-                        <h3 className="text-2xl font-light text-white">{product.title}</h3>
+                        <h3 className="text-2xl font-light text-gray-900">{product.title}</h3>
                       </div>
-                      <p className="text-gray-400 mb-6 leading-relaxed">{product.description}</p>
+                      <p className="text-gray-600 mb-6 leading-relaxed">{product.description}</p>
                       <div className="space-y-3 mb-6">
                         {product.features.map((feature) => (
-                          <div key={feature} className="flex items-center text-gray-300">
+                          <div key={feature} className="flex items-center text-gray-700">
                             <CheckCircle className="w-5 h-5 text-[#D4A024] mr-3" />
                             {feature}
                           </div>
                         ))}
                       </div>
-                      <button className="w-full py-4 bg-[#D4A024] hover:bg-[#B8860B] text-white font-medium rounded-xl transition-colors text-lg">
+                      <button className="w-full py-4 bg-[#D4A024] hover:bg-[#B8860B] text-white font-semibold rounded-xl transition-colors text-lg">
                         Enter {product.title}
                       </button>
                     </motion.div>
@@ -326,14 +319,14 @@ export default function Nexus() {
                 animate={{ opacity: 1, y: 0 }}
                 className="max-w-5xl mx-auto"
               >
-                <div className="bg-gradient-to-br from-gray-800 to-gray-800/50 border-2 border-[#D4A024] rounded-3xl p-10 mb-12 text-center">
-                  <div className="w-24 h-24 bg-[#D4A024]/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <div className="bg-white border-2 border-[#D4A024] rounded-3xl p-10 mb-12 text-center shadow-lg">
+                  <div className="w-24 h-24 bg-[#D4A024]/10 rounded-full flex items-center justify-center mx-auto mb-6">
                     <Shield className="w-12 h-12 text-[#D4A024]" />
                   </div>
-                  <h2 className="text-3xl font-light mb-6 text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                  <h2 className="text-3xl font-light mb-6 text-gray-900" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                     Security <span className="text-[#D4A024]">First</span>
                   </h2>
-                  <p className="text-gray-300 max-w-2xl mx-auto text-lg leading-relaxed">
+                  <p className="text-gray-600 max-w-2xl mx-auto text-lg leading-relaxed">
                     Nexus operates via audited smart contracts with built-in risk parameters 
                     and collateralization ratios to ensure platform integrity. Your assets are 
                     protected by multiple layers of security.
@@ -347,15 +340,15 @@ export default function Nexus() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      className="bg-gray-800/50 border border-gray-700 hover:border-[#D4A024]/50 rounded-2xl p-8 transition-all duration-300"
+                      className="bg-white border-2 border-gray-200 hover:border-[#D4A024] rounded-2xl p-8 transition-all duration-300 shadow-md"
                     >
                       <div className="flex items-start space-x-5">
-                        <div className="w-14 h-14 bg-[#D4A024]/20 rounded-2xl flex items-center justify-center flex-shrink-0">
+                        <div className="w-14 h-14 bg-[#D4A024]/10 rounded-2xl flex items-center justify-center flex-shrink-0">
                           <feature.icon className="w-7 h-7 text-[#D4A024]" />
                         </div>
                         <div>
-                          <h4 className="font-medium mb-3 text-white text-xl">{feature.title}</h4>
-                          <p className="text-gray-400 leading-relaxed">{feature.description}</p>
+                          <h4 className="font-semibold mb-3 text-gray-900 text-xl">{feature.title}</h4>
+                          <p className="text-gray-600 leading-relaxed">{feature.description}</p>
                         </div>
                       </div>
                     </motion.div>
