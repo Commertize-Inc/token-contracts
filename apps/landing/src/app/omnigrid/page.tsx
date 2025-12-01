@@ -166,7 +166,7 @@ export default function OmniGrid() {
         </section>
 
         {/* Overview Section */}
-        <section id="overview" className="py-24 bg-white/80 backdrop-blur-sm relative z-10">
+        <section id="overview" className="py-24 bg-white/95 relative z-10">
           <div className="container mx-auto px-4 max-w-5xl">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -191,7 +191,7 @@ export default function OmniGrid() {
         </section>
 
         {/* 8 Infrastructure Pillars */}
-        <section className="py-24 bg-white/60 backdrop-blur-sm relative z-10">
+        <section className="py-24 bg-white/90 relative z-10">
           <div className="container mx-auto px-4 max-w-7xl">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -220,7 +220,7 @@ export default function OmniGrid() {
                   transition={{ duration: 0.5, delay: index * 0.08 }}
                   viewport={{ once: true }}
                   whileHover={{ scale: 1.02, y: -5 }}
-                  className="bg-white/95 backdrop-blur-md border-2 border-[#D4A024]/50 hover:border-[#D4A024] rounded-2xl p-6 transition-all duration-300 shadow-xl"
+                  className="bg-white border-2 border-[#D4A024]/50 hover:border-[#D4A024] rounded-2xl p-6 transition-all duration-300 shadow-xl"
                 >
                   <div className="flex flex-col h-full">
                     <div className="w-14 h-14 bg-[#D4A024]/10 rounded-full flex items-center justify-center mb-4">
@@ -243,8 +243,8 @@ export default function OmniGrid() {
           </div>
         </section>
 
-        {/* Vision Statement - Glassmorphism Card */}
-        <section className="py-24 bg-white/80 backdrop-blur-sm relative overflow-hidden z-10">
+        {/* Vision Statement */}
+        <section className="py-24 bg-white/95 relative overflow-hidden z-10">
           <div className="absolute inset-0 opacity-5">
             <div
               className="absolute inset-0"
@@ -265,7 +265,7 @@ export default function OmniGrid() {
               <span className="inline-block px-4 py-1.5 bg-[#D4A024]/10 text-[#D4A024] text-xs font-bold uppercase tracking-widest rounded-full mb-8">
                 Vision
               </span>
-              <div className="bg-white backdrop-blur-lg border-2 border-[#D4A024] rounded-3xl p-10 md:p-14 shadow-xl">
+              <div className="bg-white border-2 border-[#D4A024] rounded-3xl p-10 md:p-14 shadow-xl">
                 <p className="text-xl md:text-2xl font-light leading-relaxed text-gray-700">
                   OmniGrid represents Commertize's commitment to building the{" "}
                   <span className="text-[#D4A024] font-medium">physical backbone</span> of tomorrow's tokenized economy — integrating{" "}
@@ -279,7 +279,7 @@ export default function OmniGrid() {
         </section>
 
         {/* Current Status */}
-        <section className="py-24 bg-white/60 backdrop-blur-sm relative z-10">
+        <section className="py-24 bg-white/90 relative z-10">
           <div className="container mx-auto px-4 max-w-5xl">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
