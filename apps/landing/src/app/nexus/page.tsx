@@ -99,8 +99,16 @@ export default function Nexus() {
       <div className="min-h-screen bg-white pt-16">
         
         {/* ==================== HERO SECTION ==================== */}
-        <section className="py-16 md:py-24 border-b-2 border-gray-100">
-          <div className="container mx-auto px-4">
+        <section className="relative py-24 md:py-32 overflow-hidden">
+          {/* Background Image */}
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: "url('/assets/nexus-bg.jpg')" }}
+          />
+          {/* Overlay for readability */}
+          <div className="absolute inset-0 bg-white/70" />
+          
+          <div className="container mx-auto px-4 relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
