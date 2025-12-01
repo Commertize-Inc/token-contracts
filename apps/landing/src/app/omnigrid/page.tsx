@@ -111,7 +111,7 @@ export default function OmniGrid() {
           <div 
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{ 
-              backgroundImage: 'url(/assets/omnigrid-bg.png?v=2)'
+              backgroundImage: 'url(/assets/omnigrid-bg.png?v=3)'
             }}
           />
         </div>
