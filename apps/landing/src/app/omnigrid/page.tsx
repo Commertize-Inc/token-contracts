@@ -106,14 +106,16 @@ export default function OmniGrid() {
     <>
       <Navbar />
       <div className="relative w-full min-h-screen flex flex-col">
-        {/* Infrastructure Background Image */}
-        <div className="fixed inset-0 z-0 bg-gradient-to-b from-white via-gray-50/80 to-gray-100/60">
+        {/* Infrastructure Background Image - Full Page */}
+        <div className="fixed inset-0 z-0">
           <div 
-            className="absolute inset-x-0 bottom-0 h-[32vh] bg-contain bg-bottom bg-no-repeat opacity-90"
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{ 
               backgroundImage: 'url(/assets/omnigrid-bg-v2.png?v=1)'
             }}
           />
+          {/* Subtle overlay to help text readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-white/40 to-transparent" />
         </div>
 
         {/* Hero Section */}
@@ -123,6 +125,7 @@ export default function OmniGrid() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
+              className="backdrop-blur-sm bg-white/60 rounded-3xl p-8 md:p-12 shadow-xl border border-white/50"
             >
               <div className="mb-6">
                 <img 
@@ -136,12 +139,12 @@ export default function OmniGrid() {
               <p className="text-xl md:text-2xl font-medium text-[#D4A024] mb-6">
                 The Infrastructure Intelligence Layer
               </p>
-              <p className="text-lg font-light text-gray-600 max-w-3xl mx-auto mb-12 leading-relaxed">
+              <p className="text-lg font-light text-gray-700 max-w-3xl mx-auto mb-12 leading-relaxed">
                 Mapping and tokenizing the world's critical infrastructure — from energy and resources to data and sustainability.
               </p>
               <button
                 onClick={scrollToOverview}
-                className="bg-white hover:bg-[#D4A024]/10 text-gray-800 hover:text-[#D4A024] font-light text-lg px-8 py-4 rounded-lg transition-all duration-300 border border-[#D4A024]/30 hover:border-[#D4A024] shadow-sm"
+                className="bg-white hover:bg-[#D4A024] text-gray-800 hover:text-white font-light text-lg px-8 py-4 rounded-lg transition-all duration-300 border border-[#D4A024]/30 hover:border-[#D4A024] shadow-md"
               >
                 Learn More
               </button>
