@@ -138,7 +138,7 @@ export default function OmniGrid() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="rounded-3xl p-8 md:p-12 shadow-2xl border border-white/80 bg-white/90"
+              className="rounded-3xl p-8 md:p-12"
             >
               <div className="mb-6">
                 <img 
@@ -166,7 +166,7 @@ export default function OmniGrid() {
         </section>
 
         {/* Overview Section */}
-        <section id="overview" className="py-24 bg-white/95 relative z-10">
+        <section id="overview" className="py-24 relative z-10">
           <div className="container mx-auto px-4 max-w-5xl">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -191,7 +191,7 @@ export default function OmniGrid() {
         </section>
 
         {/* 8 Infrastructure Pillars */}
-        <section className="py-24 bg-white/90 relative z-10">
+        <section className="py-24 relative z-10">
           <div className="container mx-auto px-4 max-w-7xl">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -244,7 +244,7 @@ export default function OmniGrid() {
         </section>
 
         {/* Vision Statement */}
-        <section className="py-24 bg-white/95 relative overflow-hidden z-10">
+        <section className="py-24 relative overflow-hidden z-10">
           <div className="absolute inset-0 opacity-5">
             <div
               className="absolute inset-0"
@@ -279,7 +279,7 @@ export default function OmniGrid() {
         </section>
 
         {/* Current Status */}
-        <section className="py-24 bg-white/90 relative z-10">
+        <section className="py-24 relative z-10">
           <div className="container mx-auto px-4 max-w-5xl">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
