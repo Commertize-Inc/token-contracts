@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Plus_Jakarta_Sans, Space_Mono, Space_Grotesk, Comfortaa } from "next/font/google";
+import { Playfair_Display, Plus_Jakarta_Sans, Space_Mono, Space_Grotesk, Orbitron } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "@/components/QueryProvider";
 import { ToastProvider } from "@/hooks/use-toast";
@@ -34,12 +34,12 @@ const spaceGrotesk = Space_Grotesk({
   variable: "--font-grotesk",
 });
 
-// 5. Configure Comfortaa (Rounded Geometric Sans - for OmniGrid logo)
-const comfortaa = Comfortaa({
+// 5. Configure Orbitron (Geometric Sans - for OmniGrid logo)
+const orbitron = Orbitron({
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
-  variable: "--font-comfortaa",
+  variable: "--font-orbitron",
 });
 
 export const metadata: Metadata = {
@@ -57,7 +57,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${playfair.variable} ${jakarta.variable} ${spaceMono.variable} ${spaceGrotesk.variable} ${comfortaa.variable}`}>
+    <html lang="en" className={`${playfair.variable} ${jakarta.variable} ${spaceMono.variable} ${spaceGrotesk.variable} ${orbitron.variable}`}>
       <body>
         <QueryProvider>
           <ToastProvider>
