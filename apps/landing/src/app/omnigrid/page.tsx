@@ -124,16 +124,17 @@ export default function OmniGrid() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <h1 
-                className="text-6xl md:text-8xl text-white tracking-[0.15em] mb-6"
-                style={{ 
-                  fontFamily: 'var(--font-comfortaa), sans-serif',
-                  fontWeight: 300,
-                  textShadow: '0 2px 20px rgba(0,0,0,0.1)'
-                }}
-              >
-                OMNIGRID
-              </h1>
+              <div className="mb-6">
+                <Image 
+                  src="/assets/omnigrid-logo.png" 
+                  alt="OMNIGRID" 
+                  width={700}
+                  height={180}
+                  className="mx-auto"
+                  style={{ mixBlendMode: 'normal' }}
+                  priority
+                />
+              </div>
               <p className="text-xl md:text-2xl font-light text-gray-600 mb-6">
                 The Infrastructure Intelligence Layer
               </p>
