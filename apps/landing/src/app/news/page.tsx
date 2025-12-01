@@ -22,19 +22,8 @@ interface NewsArticle {
   updatedAt: string;
 }
 
-const getCategoryColor = (category: string) => {
-  const colors: Record<string, string> = {
-    'CRE': 'bg-[#D4A024]',
-    'Tokenization': 'bg-purple-500',
-    'Markets': 'bg-yellow-500',
-    'Technology': 'bg-blue-500',
-    'Regulation': 'bg-red-500',
-    'DeFi': 'bg-cyan-500',
-    'RWA': 'bg-green-500',
-    'Crypto': 'bg-orange-500',
-    'Infrastructure': 'bg-teal-500',
-  };
-  return colors[category] || 'bg-gray-500';
+const getCategoryColor = () => {
+  return 'bg-[#D4A024]';
 };
 
 const formatDate = (dateString: string) => {
@@ -285,7 +274,7 @@ export default function NewsPage() {
                         }}
                       />
                       <div className="absolute top-3 left-3">
-                        <span className={`px-3 py-1 rounded-full text-xs font-normal text-white ${getCategoryColor(article.category)}`}>
+                        <span className={`px-3 py-1 rounded-full text-xs font-normal text-white ${getCategoryColor()}`}>
                           {article.category}
                         </span>
                       </div>
