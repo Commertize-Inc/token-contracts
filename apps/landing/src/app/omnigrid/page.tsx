@@ -142,17 +142,17 @@ export default function OmniGrid() {
             >
               <div className="mb-6">
                 <img 
-                  src="/assets/omnigrid-logo-v6.png?v=1701468700" 
+                  src="/assets/omnigrid-logo-white.png?v=1" 
                   alt="OMNIGRID" 
                   width={700}
                   height={180}
-                  className="mx-auto w-auto h-auto max-w-full"
+                  className="mx-auto w-auto h-auto max-w-full drop-shadow-lg"
                 />
               </div>
               <p className="text-xl md:text-2xl font-medium text-[#D4A024] mb-6">
                 The Infrastructure Intelligence Layer
               </p>
-              <p className="text-lg font-light text-gray-700 max-w-3xl mx-auto mb-12 leading-relaxed">
+              <p className="text-lg font-light text-white max-w-3xl mx-auto mb-12 leading-relaxed drop-shadow-md">
                 Mapping and tokenizing the world's critical infrastructure — from energy and resources to data and sustainability.
               </p>
               <button
@@ -178,11 +178,11 @@ export default function OmniGrid() {
               <span className="inline-block px-4 py-1.5 bg-[#D4A024]/10 text-[#D4A024] text-xs font-bold uppercase tracking-widest rounded-full mb-6">
                 About
               </span>
-              <h2 className="text-4xl md:text-5xl font-light mb-8 text-gray-800" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              <h2 className="text-4xl md:text-5xl font-light mb-8 text-white drop-shadow-md" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                 Physical <span className="text-[#D4A024]">Meets</span> Digital
               </h2>
               <div className="max-w-3xl mx-auto">
-                <p className="text-xl font-light text-gray-600 leading-relaxed">
+                <p className="text-xl font-light text-white leading-relaxed drop-shadow-md">
                   OmniGrid is Commertize's infrastructure and development division — connecting the physical and digital economies through sustainable, tokenization-ready assets across the globe.
                 </p>
               </div>
@@ -203,10 +203,10 @@ export default function OmniGrid() {
               <span className="inline-block px-4 py-1.5 bg-[#D4A024]/20 text-[#D4A024] text-xs font-bold uppercase tracking-widest rounded-full mb-6">
                 Pillars
               </span>
-              <h2 className="text-4xl md:text-5xl font-light mb-4 text-gray-800" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              <h2 className="text-4xl md:text-5xl font-light mb-4 text-white drop-shadow-md" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                 Eight Pillars of <span className="text-[#D4A024]">Global Infrastructure</span>
               </h2>
-              <p className="text-lg text-gray-600 max-w-3xl mx-auto mt-4">
+              <p className="text-lg text-white max-w-3xl mx-auto mt-4 drop-shadow-md">
                 From earth's resources to digital networks — a comprehensive infrastructure intelligence layer
               </p>
             </motion.div>
@@ -265,8 +265,8 @@ export default function OmniGrid() {
               <span className="inline-block px-4 py-1.5 bg-[#D4A024]/10 text-[#D4A024] text-xs font-bold uppercase tracking-widest rounded-full mb-8">
                 Vision
               </span>
-              <div className="bg-white border-2 border-[#D4A024] rounded-3xl p-10 md:p-14 shadow-xl">
-                <p className="text-xl md:text-2xl font-light leading-relaxed text-gray-700">
+              <div className="border-2 border-[#D4A024] rounded-3xl p-10 md:p-14 bg-black/30">
+                <p className="text-xl md:text-2xl font-light leading-relaxed text-white drop-shadow-md">
                   OmniGrid represents Commertize's commitment to building the{" "}
                   <span className="text-[#D4A024] font-medium">physical backbone</span> of tomorrow's tokenized economy — integrating{" "}
                   <span className="text-[#D4A024] font-medium">sustainability</span>,{" "}
@@ -291,7 +291,7 @@ export default function OmniGrid() {
                 <span className="inline-block px-4 py-1.5 bg-[#D4A024]/10 text-[#D4A024] text-xs font-bold uppercase tracking-widest rounded-full mb-6">
                   Status
                 </span>
-                <h2 className="text-3xl md:text-4xl font-light text-gray-800" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                <h2 className="text-3xl md:text-4xl font-light text-white drop-shadow-md" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                   Current <span className="text-[#D4A024]">Progress</span>
                 </h2>
               </div>
@@ -314,7 +314,7 @@ export default function OmniGrid() {
                 ))}
               </div>
               
-              <p className="text-center text-gray-500 font-light italic">
+              <p className="text-center text-white/80 font-light italic drop-shadow-md">
                 Further details will be announced through official releases.
               </p>
             </motion.div>
@@ -322,7 +322,7 @@ export default function OmniGrid() {
         </section>
 
         {/* Footer */}
-        <div className="relative z-10 bg-white">
+        <div className="relative z-10">
           <Footer />
         </div>
 
