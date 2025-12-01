@@ -109,7 +109,7 @@ export default function OmniGrid() {
         {/* Infrastructure Background Image */}
         <div className="fixed inset-0 z-0 bg-white">
           <div 
-            className="absolute inset-x-0 bottom-0 h-[50vh] bg-contain bg-bottom bg-no-repeat"
+            className="absolute inset-x-0 bottom-0 h-[40vh] bg-contain bg-bottom bg-no-repeat"
             style={{ 
               backgroundImage: 'url(/assets/omnigrid-bg.png?v=3)'
             }}
