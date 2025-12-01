@@ -126,7 +126,7 @@ export default function OmniGrid() {
             >
               <div className="mb-6">
                 <img 
-                  src="/assets/omnigrid-logo-v5.png?v=1701468600" 
+                  src="/assets/omnigrid-logo-v6.png?v=1701468700" 
                   alt="OMNIGRID" 
                   width={700}
                   height={180}
