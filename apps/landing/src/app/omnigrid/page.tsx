@@ -139,14 +139,36 @@ export default function OmniGrid() {
               transition={{ duration: 0.8 }}
             >
               <div className="flex justify-center mb-6">
-                <Image
-                  src="/assets/omnigrid-logo.png"
-                  alt="OMNIGRID"
-                  width={750}
-                  height={190}
-                  className="w-auto h-auto max-w-full mix-blend-screen"
-                  priority
-                />
+                <div className="relative">
+                  {/* Decorative lines above letters */}
+                  <div className="absolute -top-4 left-0 right-0 flex justify-center">
+                    <svg width="700" height="30" viewBox="0 0 700 30" className="max-w-full">
+                      {/* Lines connecting to letters - O M N I G R I D */}
+                      <line x1="45" y1="28" x2="45" y2="10" stroke="white" strokeWidth="1.5" />
+                      <line x1="45" y1="10" x2="120" y2="10" stroke="white" strokeWidth="1.5" />
+                      <line x1="120" y1="10" x2="120" y2="28" stroke="white" strokeWidth="1.5" />
+                      
+                      <line x1="200" y1="28" x2="200" y2="5" stroke="white" strokeWidth="1.5" />
+                      <line x1="200" y1="5" x2="320" y2="5" stroke="white" strokeWidth="1.5" />
+                      <line x1="320" y1="5" x2="320" y2="28" stroke="white" strokeWidth="1.5" />
+                      
+                      <line x1="420" y1="28" x2="420" y2="12" stroke="white" strokeWidth="1.5" />
+                      <line x1="420" y1="12" x2="540" y2="12" stroke="white" strokeWidth="1.5" />
+                      <line x1="540" y1="12" x2="540" y2="28" stroke="white" strokeWidth="1.5" />
+                      
+                      <line x1="620" y1="28" x2="620" y2="8" stroke="white" strokeWidth="1.5" />
+                      <line x1="620" y1="8" x2="660" y2="8" stroke="white" strokeWidth="1.5" />
+                      <line x1="660" y1="8" x2="660" y2="28" stroke="white" strokeWidth="1.5" />
+                    </svg>
+                  </div>
+                  {/* Main logo text */}
+                  <h1 
+                    className="text-6xl md:text-8xl font-extralight text-white tracking-[0.3em] pt-4"
+                    style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                  >
+                    OMNIGRID
+                  </h1>
+                </div>
               </div>
               <div className="w-24 h-1 bg-[#D4A024] mx-auto mb-8" />
               <p className="text-xl md:text-2xl font-light text-white mb-8">
