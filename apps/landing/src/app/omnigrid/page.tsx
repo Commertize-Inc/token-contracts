@@ -107,8 +107,8 @@ export default function OmniGrid() {
     <>
       <Navbar />
       <div className="relative w-full min-h-screen flex flex-col">
-        {/* Infrastructure Background Image - Full Page with Motion */}
-        <div className="fixed inset-0 z-0 overflow-hidden">
+        {/* Infrastructure Background Image - Hero Only with Motion */}
+        <div className="absolute top-0 left-0 right-0 h-screen z-0 overflow-hidden">
           <motion.div 
             className="absolute bg-cover bg-center bg-no-repeat"
             style={{ 
@@ -166,7 +166,7 @@ export default function OmniGrid() {
         </section>
 
         {/* Overview Section */}
-        <section id="overview" className="py-24 relative z-10">
+        <section id="overview" className="py-24 relative z-10 bg-white">
           <div className="container mx-auto px-4 max-w-5xl">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -178,11 +178,11 @@ export default function OmniGrid() {
               <span className="inline-block px-4 py-1.5 bg-[#D4A024]/10 text-[#D4A024] text-xs font-bold uppercase tracking-widest rounded-full mb-6">
                 About
               </span>
-              <h2 className="text-4xl md:text-5xl font-light mb-8 text-white drop-shadow-md" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              <h2 className="text-4xl md:text-5xl font-light mb-8 text-gray-800" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                 Physical <span className="text-[#D4A024]">Meets</span> Digital
               </h2>
               <div className="max-w-3xl mx-auto">
-                <p className="text-xl font-light text-white leading-relaxed drop-shadow-md">
+                <p className="text-xl font-light text-gray-600 leading-relaxed">
                   OmniGrid is Commertize's infrastructure and development division — connecting the physical and digital economies through sustainable, tokenization-ready assets across the globe.
                 </p>
               </div>
@@ -191,7 +191,7 @@ export default function OmniGrid() {
         </section>
 
         {/* 8 Infrastructure Pillars */}
-        <section className="py-24 relative z-10">
+        <section className="py-24 relative z-10 bg-gray-50">
           <div className="container mx-auto px-4 max-w-7xl">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -203,10 +203,10 @@ export default function OmniGrid() {
               <span className="inline-block px-4 py-1.5 bg-[#D4A024]/20 text-[#D4A024] text-xs font-bold uppercase tracking-widest rounded-full mb-6">
                 Pillars
               </span>
-              <h2 className="text-4xl md:text-5xl font-light mb-4 text-white drop-shadow-md" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              <h2 className="text-4xl md:text-5xl font-light mb-4 text-gray-800" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                 Eight Pillars of <span className="text-[#D4A024]">Global Infrastructure</span>
               </h2>
-              <p className="text-lg text-white max-w-3xl mx-auto mt-4 drop-shadow-md">
+              <p className="text-lg text-gray-600 max-w-3xl mx-auto mt-4">
                 From earth's resources to digital networks — a comprehensive infrastructure intelligence layer
               </p>
             </motion.div>
@@ -244,7 +244,7 @@ export default function OmniGrid() {
         </section>
 
         {/* Vision Statement */}
-        <section className="py-24 relative overflow-hidden z-10">
+        <section className="py-24 relative overflow-hidden z-10 bg-white">
           <div className="absolute inset-0 opacity-5">
             <div
               className="absolute inset-0"
@@ -265,8 +265,8 @@ export default function OmniGrid() {
               <span className="inline-block px-4 py-1.5 bg-[#D4A024]/10 text-[#D4A024] text-xs font-bold uppercase tracking-widest rounded-full mb-8">
                 Vision
               </span>
-              <div className="border-2 border-[#D4A024] rounded-3xl p-10 md:p-14 bg-black/30">
-                <p className="text-xl md:text-2xl font-light leading-relaxed text-white drop-shadow-md">
+              <div className="border-2 border-[#D4A024] rounded-3xl p-10 md:p-14 bg-white shadow-xl">
+                <p className="text-xl md:text-2xl font-light leading-relaxed text-gray-700">
                   OmniGrid represents Commertize's commitment to building the{" "}
                   <span className="text-[#D4A024] font-medium">physical backbone</span> of tomorrow's tokenized economy — integrating{" "}
                   <span className="text-[#D4A024] font-medium">sustainability</span>,{" "}
@@ -279,7 +279,7 @@ export default function OmniGrid() {
         </section>
 
         {/* Current Status */}
-        <section className="py-24 relative z-10">
+        <section className="py-24 relative z-10 bg-gray-50">
           <div className="container mx-auto px-4 max-w-5xl">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -291,7 +291,7 @@ export default function OmniGrid() {
                 <span className="inline-block px-4 py-1.5 bg-[#D4A024]/10 text-[#D4A024] text-xs font-bold uppercase tracking-widest rounded-full mb-6">
                   Status
                 </span>
-                <h2 className="text-3xl md:text-4xl font-light text-white drop-shadow-md" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                <h2 className="text-3xl md:text-4xl font-light text-gray-800" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                   Current <span className="text-[#D4A024]">Progress</span>
                 </h2>
               </div>
@@ -314,7 +314,7 @@ export default function OmniGrid() {
                 ))}
               </div>
               
-              <p className="text-center text-white/80 font-light italic drop-shadow-md">
+              <p className="text-center text-gray-500 font-light italic">
                 Further details will be announced through official releases.
               </p>
             </motion.div>
