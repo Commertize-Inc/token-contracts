@@ -107,11 +107,11 @@ export default function OmniGrid() {
       <Navbar />
       <div className="relative w-full min-h-screen flex flex-col">
         {/* Infrastructure Background Image */}
-        <div className="fixed inset-0 z-0 bg-white">
+        <div className="fixed inset-0 z-0 bg-gradient-to-b from-white via-gray-50/80 to-gray-100/60">
           <div 
-            className="absolute inset-x-0 bottom-0 h-[40vh] bg-contain bg-bottom bg-no-repeat"
+            className="absolute inset-x-0 bottom-0 h-[32vh] bg-contain bg-bottom bg-no-repeat opacity-90"
             style={{ 
-              backgroundImage: 'url(/assets/omnigrid-bg.png?v=3)'
+              backgroundImage: 'url(/assets/omnigrid-bg-v2.png?v=1)'
             }}
           />
         </div>
@@ -133,15 +133,15 @@ export default function OmniGrid() {
                   className="mx-auto w-auto h-auto max-w-full"
                 />
               </div>
-              <p className="text-xl md:text-2xl font-light text-gray-600 mb-6">
+              <p className="text-xl md:text-2xl font-medium text-[#D4A024] mb-6">
                 The Infrastructure Intelligence Layer
               </p>
-              <p className="text-lg font-light text-gray-500 max-w-3xl mx-auto mb-12 leading-relaxed">
+              <p className="text-lg font-light text-gray-600 max-w-3xl mx-auto mb-12 leading-relaxed">
                 Mapping and tokenizing the world's critical infrastructure — from energy and resources to data and sustainability.
               </p>
               <button
                 onClick={scrollToOverview}
-                className="bg-white hover:bg-gray-50 text-gray-800 font-light text-lg px-8 py-4 rounded-lg transition-colors border border-gray-200 shadow-sm"
+                className="bg-white hover:bg-[#D4A024]/10 text-gray-800 hover:text-[#D4A024] font-light text-lg px-8 py-4 rounded-lg transition-all duration-300 border border-[#D4A024]/30 hover:border-[#D4A024] shadow-sm"
               >
                 Learn More
               </button>
