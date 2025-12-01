@@ -111,14 +111,7 @@ export default function OmniGrid() {
           <div 
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{ 
-              backgroundImage: 'url(/assets/omnigrid-bg.png)'
-            }}
-          />
-          {/* Light overlay for readability */}
-          <div 
-            className="absolute inset-0"
-            style={{ 
-              background: 'linear-gradient(135deg, rgba(245,240,232,0.75) 0%, rgba(232,223,208,0.7) 30%, rgba(212,196,168,0.65) 60%, rgba(201,184,150,0.7) 100%)'
+              backgroundImage: 'url(/assets/omnigrid-bg.png?v=2)'
             }}
           />
         </div>
