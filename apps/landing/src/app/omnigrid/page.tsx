@@ -139,7 +139,7 @@ export default function OmniGrid() {
               transition={{ duration: 0.8 }}
             >
               <h1 
-                className="text-6xl md:text-8xl font-light text-white tracking-widest mb-6"
+                className="text-6xl md:text-8xl font-light text-white tracking-widest mb-6 italic"
                 style={{ fontFamily: 'Space Grotesk, sans-serif' }}
               >
                 OMNIGRID
