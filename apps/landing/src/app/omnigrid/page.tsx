@@ -123,12 +123,26 @@ export default function OmniGrid() {
     <>
       <Navbar />
       <div className="relative w-full min-h-screen flex flex-col">
-        {/* Infrastructure Background Image - Full Page */}
-        <div className="fixed inset-0 z-0">
-          <div 
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        {/* Infrastructure Background Image - Full Page with Motion */}
+        <div className="fixed inset-0 z-0 overflow-hidden">
+          <motion.div 
+            className="absolute bg-cover bg-center bg-no-repeat"
             style={{ 
-              backgroundImage: 'url(/assets/omnigrid-bg-v2.png?v=2)'
+              backgroundImage: 'url(/assets/omnigrid-bg-v2.png?v=2)',
+              inset: '-5%',
+              width: '110%',
+              height: '110%'
+            }}
+            animate={{
+              x: [0, 15, -10, 5, 0],
+              y: [0, -10, 5, -5, 0],
+              scale: [1, 1.02, 1.01, 1.015, 1]
+            }}
+            transition={{
+              duration: 20,
+              ease: "easeInOut",
+              repeat: Infinity,
+              repeatType: "reverse"
             }}
           />
           {/* Subtle overlay that fades on scroll */}
