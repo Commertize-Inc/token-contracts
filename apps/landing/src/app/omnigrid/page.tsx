@@ -112,7 +112,7 @@ export default function OmniGrid() {
           <motion.div 
             className="absolute bg-cover bg-center bg-no-repeat"
             style={{ 
-              backgroundImage: 'url(/assets/omnigrid-bg-v2.png?v=3)',
+              backgroundImage: 'url(/assets/omnigrid-bg-v3.png?v=1)',
               inset: '-5%',
               width: '110%',
               height: '110%'
