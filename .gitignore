@@ -42,3 +42,6 @@ next-env.d.ts
 **/temp
 apps/dashboard/lib/db/migrations/*.ts
 !apps/dashboard/lib/db/migrations/.gitkeep
+
+# replit
+attached_assets
