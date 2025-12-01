@@ -125,11 +125,11 @@ export default function OmniGrid() {
               transition={{ duration: 0.8 }}
             >
               <h1 
-                className="text-6xl md:text-8xl text-white tracking-[0.08em] mb-6"
+                className="text-6xl md:text-8xl text-gray-600 tracking-[0.08em] mb-6"
                 style={{ 
-                  fontFamily: 'var(--font-orbitron), sans-serif',
-                  fontWeight: 400,
-                  textShadow: '0 2px 20px rgba(0,0,0,0.1)'
+                  fontFamily: 'var(--font-comfortaa), var(--font-space-grotesk), sans-serif',
+                  fontWeight: 300,
+                  letterSpacing: '0.15em'
                 }}
               >
                 OMNIGRID
