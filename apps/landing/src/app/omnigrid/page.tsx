@@ -106,12 +106,19 @@ export default function OmniGrid() {
     <>
       <Navbar />
       <div className="relative w-full min-h-screen flex flex-col">
-        {/* Light Gradient Background */}
+        {/* Infrastructure Background Image */}
         <div className="fixed inset-0 z-0">
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{ 
+              backgroundImage: 'url(/assets/omnigrid-bg.png)'
+            }}
+          />
+          {/* Light overlay for readability */}
           <div 
             className="absolute inset-0"
             style={{ 
-              background: 'linear-gradient(135deg, #f5f0e8 0%, #e8dfd0 30%, #d4c4a8 60%, #c9b896 100%)'
+              background: 'linear-gradient(135deg, rgba(245,240,232,0.75) 0%, rgba(232,223,208,0.7) 30%, rgba(212,196,168,0.65) 60%, rgba(201,184,150,0.7) 100%)'
             }}
           />
         </div>
