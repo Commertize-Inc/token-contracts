@@ -103,7 +103,7 @@ export default function Nexus() {
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{ backgroundImage: "url('/assets/nexus-bg.jpg')" }}
           />
-          <div className="absolute inset-0 bg-black/40" />
+          <div className="absolute inset-0 bg-white/30" />
         </div>
         
         {/* ==================== HERO SECTION ==================== */}
@@ -144,7 +144,7 @@ export default function Nexus() {
 
         {/* ==================== APY SECTION ==================== */}
         <section className="relative py-16 z-10">
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+          <div className="absolute inset-0 bg-white/60 backdrop-blur-sm" />
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-md mx-auto text-center">
               <div className="bg-white/95 backdrop-blur-md rounded-2xl p-8 border-2 border-[#D4A024] shadow-lg">
@@ -198,10 +198,10 @@ export default function Nexus() {
 
         {/* ==================== HOW IT WORKS ==================== */}
         <section id="how-it-works" className="relative py-16 z-10">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+          <div className="absolute inset-0 bg-white/70 backdrop-blur-sm" />
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-4xl mx-auto">
-              <SectionTitle label="Process" title="How It Works" light />
+              <SectionTitle label="Process" title="How It Works" />
               <div className="grid md:grid-cols-4 gap-4">
                 {howItWorks.map((item, index) => (
                   <motion.div
@@ -210,7 +210,7 @@ export default function Nexus() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1 }}
-                    className="bg-white/95 backdrop-blur-md rounded-xl p-6 text-center border border-white/20 shadow-lg"
+                    className="bg-white/95 backdrop-blur-md rounded-xl p-6 text-center border border-gray-200 shadow-lg"
                   >
                     <div className="w-10 h-10 bg-[#D4A024] text-white rounded-full flex items-center justify-center mx-auto mb-4 text-lg font-bold">
                       {item.step}
@@ -267,11 +267,11 @@ export default function Nexus() {
 
         {/* ==================== SECURITY ==================== */}
         <section id="security" className="relative py-16 z-10">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+          <div className="absolute inset-0 bg-white/70 backdrop-blur-sm" />
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-4xl mx-auto">
-              <SectionTitle label="Trust" title="Security First" light />
-              <p className="text-center text-white/80 max-w-2xl mx-auto mb-10">
+              <SectionTitle label="Trust" title="Security First" />
+              <p className="text-center text-gray-600 max-w-2xl mx-auto mb-10">
                 Your assets are protected by multiple layers of security including audited smart contracts 
                 and collateralization ratios.
               </p>
@@ -283,7 +283,7 @@ export default function Nexus() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1 }}
-                    className="bg-white/95 backdrop-blur-md rounded-xl p-6 border border-white/20 flex items-start gap-4 shadow-lg"
+                    className="bg-white/95 backdrop-blur-md rounded-xl p-6 border border-gray-200 flex items-start gap-4 shadow-lg"
                   >
                     <div className="w-12 h-12 bg-[#D4A024]/10 rounded-xl flex items-center justify-center flex-shrink-0">
                       <feature.icon className="w-6 h-6 text-[#D4A024]" />
