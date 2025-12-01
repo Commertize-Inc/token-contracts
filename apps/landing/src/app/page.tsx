@@ -1251,8 +1251,8 @@ const propertyTypes = [
 ];
 
 const paymentMethods = [
-        { name: "USD", icon: DollarSign, description: "Traditional payments", currencies: ["USD"] },
-        { name: "Stablecoins", icon: Coins, description: "Digital currency", currencies: ["USDC", "USDT"] },
+        { name: "USD", icon: DollarSign, description: "Traditional payments", currencies: [] },
+        { name: "Stablecoins", icon: Coins, description: "Digital currency", currencies: ["CREUSD", "USDC", "USDT"] },
 ];
 
 const SubmitProperty = () => {
@@ -1379,6 +1379,52 @@ const SubmitProperty = () => {
                                                         </div>
                                                 </div>
                                         </div>
+                                </div>
+
+                                {/* Accepted Payment Methods */}
+                                <div className="py-16 border-t border-gray-100">
+                                        <div className="flex items-center justify-center gap-2 mb-10">
+                                                <div className="w-5 h-5 rounded-full border-2 border-[#D4A024] flex items-center justify-center">
+                                                        <div className="w-2 h-2 rounded-full bg-[#D4A024]" />
+                                                </div>
+                                                <h3 className="text-xl md:text-2xl font-light text-gray-900">
+                                                        Accepted Payment Methods
+                                                </h3>
+                                        </div>
+                                        
+                                        <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
+                                                {paymentMethods.map((method) => (
+                                                        <div key={method.name} className="flex flex-col items-center text-center">
+                                                                <div className="w-16 h-16 rounded-full bg-[#FDF6E3] border-2 border-[#D4A024]/30 flex items-center justify-center mb-4">
+                                                                        <method.icon className="w-7 h-7 text-[#D4A024]" />
+                                                                </div>
+                                                                <h4 className="text-lg font-medium text-gray-900 mb-1">{method.name}</h4>
+                                                                <p className="text-sm text-gray-500 mb-3">{method.description}</p>
+                                                                {method.currencies.length > 0 && (
+                                                                        <div className="flex flex-wrap gap-2 justify-center">
+                                                                                {method.currencies.map((currency) => (
+                                                                                        <span 
+                                                                                                key={currency}
+                                                                                                className="px-3 py-1 text-xs font-medium text-[#D4A024] bg-[#FDF6E3] border border-[#D4A024]/30 rounded-full"
+                                                                                        >
+                                                                                                {currency}
+                                                                                        </span>
+                                                                                ))}
+                                                                        </div>
+                                                                )}
+                                                        </div>
+                                                ))}
+                                        </div>
+                                </div>
+
+                                {/* Submit Property CTA */}
+                                <div className="py-16 border-t border-gray-100 text-center">
+                                        <p className="text-gray-600 text-lg md:text-xl font-light max-w-3xl mx-auto mb-8 leading-relaxed">
+                                                Take advantage of Commertize's global reach—submit your property today and discover new opportunities for growth and success.
+                                        </p>
+                                        <button className="inline-flex items-center justify-center px-8 py-4 bg-[#D4A024] text-white text-base font-medium rounded-lg hover:bg-[#B8881C] transition-colors shadow-lg hover:shadow-xl">
+                                                Submit Your Property
+                                        </button>
                                 </div>
                         </div>
                 </section>
