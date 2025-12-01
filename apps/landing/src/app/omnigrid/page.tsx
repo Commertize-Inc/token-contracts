@@ -107,9 +107,9 @@ export default function OmniGrid() {
       <Navbar />
       <div className="relative w-full min-h-screen flex flex-col">
         {/* Infrastructure Background Image */}
-        <div className="fixed inset-0 z-0">
+        <div className="fixed inset-0 z-0 bg-white">
           <div 
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            className="absolute inset-x-0 bottom-0 h-[50vh] bg-contain bg-bottom bg-no-repeat"
             style={{ 
               backgroundImage: 'url(/assets/omnigrid-bg.png?v=3)'
             }}
