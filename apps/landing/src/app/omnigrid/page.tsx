@@ -144,7 +144,7 @@ export default function OmniGrid() {
                   alt="OMNIGRID"
                   width={750}
                   height={190}
-                  className="w-auto h-auto max-w-full"
+                  className="w-auto h-auto max-w-full mix-blend-screen"
                   priority
                 />
               </div>
