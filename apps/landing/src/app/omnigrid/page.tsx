@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useState, useEffect } from "react";
 import {
   Sun,
   Server,
@@ -95,12 +96,28 @@ const currentStatus = [
 ];
 
 export default function OmniGrid() {
+  const [scrollY, setScrollY] = useState(0);
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const scrollToOverview = () => {
     const element = document.getElementById('overview');
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  // Calculate overlay opacity based on scroll (fades out as you scroll)
+  const overlayOpacity = Math.max(0, 1 - scrollY / 400);
+  const cardBlur = Math.max(0, 8 - scrollY / 50);
+  const cardBgOpacity = Math.max(0.1, 0.6 - scrollY / 600);
 
   return (
     <>
@@ -114,8 +131,11 @@ export default function OmniGrid() {
               backgroundImage: 'url(/assets/omnigrid-bg-v2.png?v=2)'
             }}
           />
-          {/* Subtle overlay to help text readability */}
-          <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-white/30 to-transparent" />
+          {/* Subtle overlay that fades on scroll */}
+          <div 
+            className="absolute inset-0 bg-gradient-to-b from-white/60 via-white/30 to-transparent transition-opacity duration-300"
+            style={{ opacity: overlayOpacity }}
+          />
         </div>
 
         {/* Hero Section */}
@@ -125,7 +145,11 @@ export default function OmniGrid() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="backdrop-blur-sm bg-white/60 rounded-3xl p-8 md:p-12 shadow-xl border border-white/50"
+              className="rounded-3xl p-8 md:p-12 shadow-xl border border-white/50 transition-all duration-300"
+              style={{ 
+                backdropFilter: `blur(${cardBlur}px)`,
+                backgroundColor: `rgba(255, 255, 255, ${cardBgOpacity})`
+              }}
             >
               <div className="mb-6">
                 <img 
