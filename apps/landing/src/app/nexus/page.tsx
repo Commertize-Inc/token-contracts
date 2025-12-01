@@ -81,12 +81,12 @@ const howItWorks = [
   { step: "4", title: "Withdraw Anytime", desc: "Access your funds when you need them" }
 ];
 
-const SectionTitle = ({ label, title }: { label: string; title: string }) => (
+const SectionTitle = ({ label, title, light = false }: { label: string; title: string; light?: boolean }) => (
   <div className="text-center mb-12">
-    <span className="inline-block px-4 py-1.5 bg-[#D4A024]/10 text-[#D4A024] text-xs font-bold uppercase tracking-widest rounded-full mb-4">
+    <span className={`inline-block px-4 py-1.5 ${light ? 'bg-[#D4A024]/20' : 'bg-[#D4A024]/10'} text-[#D4A024] text-xs font-bold uppercase tracking-widest rounded-full mb-4`}>
       {label}
     </span>
-    <h2 className="text-3xl md:text-4xl font-light text-gray-900" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+    <h2 className={`text-3xl md:text-4xl font-light ${light ? 'text-white' : 'text-gray-900'}`} style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
       {title}
     </h2>
   </div>
@@ -96,17 +96,20 @@ export default function Nexus() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-white pt-16">
-        
-        {/* ==================== HERO SECTION ==================== */}
-        <section className="relative py-24 md:py-32 overflow-hidden">
-          {/* Background Image */}
+      <div className="relative min-h-screen pt-16">
+        {/* Fixed Full-Page Background */}
+        <div className="fixed inset-0 z-0">
           <div 
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{ backgroundImage: "url('/assets/nexus-bg.jpg')" }}
           />
-          {/* Overlay for readability */}
-          <div className="absolute inset-0 bg-white/70" />
+          <div className="absolute inset-0 bg-black/40" />
+        </div>
+        
+        {/* ==================== HERO SECTION ==================== */}
+        <section className="relative py-24 md:py-32 overflow-hidden z-10">
+          {/* Lighter overlay for hero */}
+          <div className="absolute inset-0 bg-white/50" />
           
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
@@ -140,10 +143,11 @@ export default function Nexus() {
         </section>
 
         {/* ==================== APY SECTION ==================== */}
-        <section className="py-16 bg-[#D4A024]/5 border-b-2 border-gray-100">
-          <div className="container mx-auto px-4">
+        <section className="relative py-16 z-10">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+          <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-md mx-auto text-center">
-              <div className="bg-white rounded-2xl p-8 border-2 border-[#D4A024] shadow-lg">
+              <div className="bg-white/95 backdrop-blur-md rounded-2xl p-8 border-2 border-[#D4A024] shadow-lg">
                 <LineChart className="w-12 h-12 text-[#D4A024] mx-auto mb-4" />
                 <div className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-2">Protocol APY</div>
                 <div className="text-5xl md:text-6xl font-light text-[#D4A024]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
@@ -156,11 +160,12 @@ export default function Nexus() {
         </section>
 
         {/* ==================== WHAT IS NEXUS ==================== */}
-        <section id="about" className="py-16 border-b-2 border-gray-100">
-          <div className="container mx-auto px-4">
+        <section id="about" className="relative py-16 z-10">
+          <div className="absolute inset-0 bg-white/80 backdrop-blur-sm" />
+          <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-3xl mx-auto">
               <SectionTitle label="About" title="What is Nexus?" />
-              <div className="bg-gray-50 rounded-2xl p-8 border border-gray-200">
+              <div className="bg-white/90 backdrop-blur-md rounded-2xl p-8 border border-gray-200 shadow-lg">
                 <p className="text-gray-700 text-lg leading-relaxed text-center">
                   Nexus is Commertize's decentralized finance protocol — a liquidity engine enabling 
                   investors to borrow, lend, and earn yield from tokenized commercial real estate assets. 
@@ -192,10 +197,11 @@ export default function Nexus() {
         </section>
 
         {/* ==================== HOW IT WORKS ==================== */}
-        <section id="how-it-works" className="py-16 bg-gray-50 border-b-2 border-gray-100">
-          <div className="container mx-auto px-4">
+        <section id="how-it-works" className="relative py-16 z-10">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+          <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-4xl mx-auto">
-              <SectionTitle label="Process" title="How It Works" />
+              <SectionTitle label="Process" title="How It Works" light />
               <div className="grid md:grid-cols-4 gap-4">
                 {howItWorks.map((item, index) => (
                   <motion.div
@@ -204,7 +210,7 @@ export default function Nexus() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1 }}
-                    className="bg-white rounded-xl p-6 text-center border border-gray-200"
+                    className="bg-white/95 backdrop-blur-md rounded-xl p-6 text-center border border-white/20 shadow-lg"
                   >
                     <div className="w-10 h-10 bg-[#D4A024] text-white rounded-full flex items-center justify-center mx-auto mb-4 text-lg font-bold">
                       {item.step}
@@ -219,8 +225,9 @@ export default function Nexus() {
         </section>
 
         {/* ==================== PRODUCTS ==================== */}
-        <section id="products" className="py-16 border-b-2 border-gray-100">
-          <div className="container mx-auto px-4">
+        <section id="products" className="relative py-16 z-10">
+          <div className="absolute inset-0 bg-white/80 backdrop-blur-sm" />
+          <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-5xl mx-auto">
               <SectionTitle label="Earn" title="DeFi Products" />
               <div className="grid md:grid-cols-2 gap-6">
@@ -231,7 +238,7 @@ export default function Nexus() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1 }}
-                    className="bg-white rounded-xl p-6 border-2 border-gray-200 hover:border-[#D4A024] transition-colors"
+                    className="bg-white/95 backdrop-blur-md rounded-xl p-6 border-2 border-gray-200 hover:border-[#D4A024] transition-colors shadow-lg"
                   >
                     <div className="flex items-center gap-4 mb-4">
                       <div className="w-12 h-12 bg-[#D4A024]/10 rounded-xl flex items-center justify-center">
@@ -259,11 +266,12 @@ export default function Nexus() {
         </section>
 
         {/* ==================== SECURITY ==================== */}
-        <section id="security" className="py-16 bg-gray-50">
-          <div className="container mx-auto px-4">
+        <section id="security" className="relative py-16 z-10">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+          <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-4xl mx-auto">
-              <SectionTitle label="Trust" title="Security First" />
-              <p className="text-center text-gray-600 max-w-2xl mx-auto mb-10">
+              <SectionTitle label="Trust" title="Security First" light />
+              <p className="text-center text-white/80 max-w-2xl mx-auto mb-10">
                 Your assets are protected by multiple layers of security including audited smart contracts 
                 and collateralization ratios.
               </p>
@@ -275,7 +283,7 @@ export default function Nexus() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1 }}
-                    className="bg-white rounded-xl p-6 border border-gray-200 flex items-start gap-4"
+                    className="bg-white/95 backdrop-blur-md rounded-xl p-6 border border-white/20 flex items-start gap-4 shadow-lg"
                   >
                     <div className="w-12 h-12 bg-[#D4A024]/10 rounded-xl flex items-center justify-center flex-shrink-0">
                       <feature.icon className="w-6 h-6 text-[#D4A024]" />
@@ -292,7 +300,9 @@ export default function Nexus() {
         </section>
 
         {/* Footer */}
-        <Footer />
+        <div className="relative z-10 bg-white">
+          <Footer />
+        </div>
 
         {/* RUNE.CTZ Chatbot */}
         <ChatGPTWidget />
