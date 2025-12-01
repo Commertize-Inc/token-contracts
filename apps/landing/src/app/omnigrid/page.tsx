@@ -111,11 +111,11 @@ export default function OmniGrid() {
           <div 
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{ 
-              backgroundImage: 'url(/assets/omnigrid-bg-v2.png?v=1)'
+              backgroundImage: 'url(/assets/omnigrid-bg-v2.png?v=2)'
             }}
           />
           {/* Subtle overlay to help text readability */}
-          <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-white/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-white/30 to-transparent" />
         </div>
 
         {/* Hero Section */}
