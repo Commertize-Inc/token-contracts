@@ -125,13 +125,12 @@ export default function OmniGrid() {
               transition={{ duration: 0.8 }}
             >
               <div className="mb-6">
-                <Image 
-                  src="/assets/omnigrid-hero.png" 
+                <img 
+                  src="/assets/omnigrid-logo-v2.png?v=1701468300" 
                   alt="OMNIGRID" 
                   width={700}
                   height={180}
                   className="mx-auto w-auto h-auto max-w-full rounded-lg"
-                  priority
                 />
               </div>
               <p className="text-xl md:text-2xl font-light text-gray-600 mb-6">
