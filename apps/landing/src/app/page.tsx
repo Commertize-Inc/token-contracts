@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useIsMounted } from '@commertize/utils/hooks';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
 	Building,
@@ -195,35 +196,35 @@ const MOCK_PROPERTIES = [
 ];
 
 const MOCK_STATS = [
-        { label: 'Assets Tokenized', value: '$1.2B' },
-        { label: 'Target APY', value: '11.4%' },
-        { label: 'Global Investors', value: '14,000+' },
+	{ label: 'Assets Tokenized', value: '$1.2B' },
+	{ label: 'Target APY', value: '11.4%' },
+	{ label: 'Global Investors', value: '14,000+' },
 ];
 
 // --- Specialized UI Components ---
 
 interface SectionHeadingProps {
-        subtitle: string;
-        title: string;
-        align?: 'center' | 'left';
+	subtitle: string;
+	title: string;
+	align?: 'center' | 'left';
 }
 
 const SectionHeading = ({ subtitle, title, align = 'center' }: SectionHeadingProps) => (
-        <div className={`${styles.sectionHeading} ${align === 'center' ? styles.sectionHeadingCenter : styles.sectionHeadingLeft}`}>
-                <div className={styles.subtitle}>{subtitle}</div>
-                <h2 className={styles.title}>{title}</h2>
-        </div>
+	<div className={`${styles.sectionHeading} ${align === 'center' ? styles.sectionHeadingCenter : styles.sectionHeadingLeft}`}>
+		<div className={styles.subtitle}>{subtitle}</div>
+		<h2 className={styles.title}>{title}</h2>
+	</div>
 );
 
 // --- Sections ---
 
 const Navbar = () => {
-        const [isOpen, setIsOpen] = useState(false);
-        const [scrolled, setScrolled] = useState(false);
-        const [intelligenceOpen, setIntelligenceOpen] = useState(false);
-        const [companyOpen, setCompanyOpen] = useState(false);
-        const intelligenceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-        const companyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+	const [isOpen, setIsOpen] = useState(false);
+	const [scrolled, setScrolled] = useState(false);
+	const [intelligenceOpen, setIntelligenceOpen] = useState(false);
+	const [companyOpen, setCompanyOpen] = useState(false);
+	const intelligenceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+	const companyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
 	useEffect(() => {
 		const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -563,46 +564,46 @@ const Marketplace = () => (
 );
 
 const BentoFeatures = () => (
-        <div className={styles.bentoSection}>
-                <div className={styles.container}>
-                        <SectionHeading subtitle="Why Commertize" title="Institutional grade infrastructure." />
+	<div className={styles.bentoSection}>
+		<div className={styles.container}>
+			<SectionHeading subtitle="Why Commertize" title="Institutional grade infrastructure." />
 
-                        <div className={styles.bentoGrid}>
-                                {/* Large Feature */}
-                                <div className={`${styles.bentoCard} ${styles.bentoLarge}`}>
-                                        <div style={{ position: 'absolute', top: 0, right: 0, padding: '2.5rem', opacity: 0.1 }}>
-                                                <ShieldCheck size={200} />
-                                        </div>
-                                        <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                                                <div>
-                                                        <div className={styles.bentoIconBox}><ShieldCheck size={24} color="#C59B26" /></div>
-                                                        <h3 className={styles.bentoTitle}>Blockchain Transparency</h3>
-                                                        <p className={styles.bentoText}>Every transaction is recorded on-chain, ensuring immutable ownership records and complete transparency. AI-powered insights provide real-time valuation and risk assessment.</p>
-                                                </div>
-                                                <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'center' }}>
-                                                        <button className={styles.complianceBtn}>View Compliance Docs</button>
-                                                </div>
-                                        </div>
-                                </div>
+			<div className={styles.bentoGrid}>
+				{/* Large Feature */}
+				<div className={`${styles.bentoCard} ${styles.bentoLarge}`}>
+					<div style={{ position: 'absolute', top: 0, right: 0, padding: '2.5rem', opacity: 0.1 }}>
+						<ShieldCheck size={200} />
+					</div>
+					<div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+						<div>
+							<div className={styles.bentoIconBox}><ShieldCheck size={24} color="#C59B26" /></div>
+							<h3 className={styles.bentoTitle}>Blockchain Transparency</h3>
+							<p className={styles.bentoText}>Every transaction is recorded on-chain, ensuring immutable ownership records and complete transparency. AI-powered insights provide real-time valuation and risk assessment.</p>
+						</div>
+						<div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'center' }}>
+							<button className={styles.complianceBtn}>View Compliance Docs</button>
+						</div>
+					</div>
+				</div>
 
-                                {/* Vertical Stack */}
-                                <div style={{ display: 'grid', gridTemplateRows: 'repeat(2, 1fr)', gap: '1.5rem' }}>
-                                        <div className={`${styles.bentoCard} ${styles.bentoDark}`}>
-                                                <div style={{ position: 'relative', zIndex: 10 }}>
-                                                        <TrendingUp style={{ marginBottom: '1rem', color: '#C59B26' }} size={32} />
-                                                        <h3 className={styles.bentoTitle}>Secondary Market Liquidity</h3>
-                                                        <p className={styles.bentoText}>Exit your positions when you want. Trade fractional shares instantly on our regulated secondary market.</p>
-                                                </div>
-                                        </div>
-                                        <div className={`${styles.bentoCard} ${styles.bentoGold}`}>
-                                                <PieChart style={{ marginBottom: '1rem', color: '#C59B26' }} size={32} />
-                                                <h3 className={styles.bentoTitle}>Fractional Ownership</h3>
-                                                <p className={styles.bentoText}>Access institutional-grade deals with lower minimums. Build a diversified portfolio across asset classes and geographies.</p>
-                                        </div>
-                                </div>
-                        </div>
-                </div>
-        </div>
+				{/* Vertical Stack */}
+				<div style={{ display: 'grid', gridTemplateRows: 'repeat(2, 1fr)', gap: '1.5rem' }}>
+					<div className={`${styles.bentoCard} ${styles.bentoDark}`}>
+						<div style={{ position: 'relative', zIndex: 10 }}>
+							<TrendingUp style={{ marginBottom: '1rem', color: '#C59B26' }} size={32} />
+							<h3 className={styles.bentoTitle}>Secondary Market Liquidity</h3>
+							<p className={styles.bentoText}>Exit your positions when you want. Trade fractional shares instantly on our regulated secondary market.</p>
+						</div>
+					</div>
+					<div className={`${styles.bentoCard} ${styles.bentoGold}`}>
+						<PieChart style={{ marginBottom: '1rem', color: '#C59B26' }} size={32} />
+						<h3 className={styles.bentoTitle}>Fractional Ownership</h3>
+						<p className={styles.bentoText}>Access institutional-grade deals with lower minimums. Build a diversified portfolio across asset classes and geographies.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 );
 
 // --- About Us / Vision Section ---
@@ -1256,6 +1257,8 @@ const paymentMethods = [
 ];
 
 const SubmitProperty = () => {
+	const isMounted = useIsMounted();
+
 	return (
 		<section className="py-20 bg-white">
 			<div className="container max-w-6xl mx-auto px-4">
@@ -1284,94 +1287,98 @@ const SubmitProperty = () => {
 									ease: "linear"
 								}}
 							>
-								{propertyTypes.map((type, index) => {
-									const angle = (index / propertyTypes.length) * 360;
-									const radius = 200;
-									const x = Math.cos(angle * Math.PI / 180) * radius;
-									const y = Math.sin(angle * Math.PI / 180) * radius;
-
-									return (
-										<div key={`subnet-${type.id}`}>
-											<div
-												className="absolute bg-[#D4A024]"
-												style={{
-													left: 0,
-													top: 0,
-													width: Math.sqrt(x * x + y * y) + 'px',
-													height: '1px',
-													opacity: 0.4,
-													transform: `rotate(${Math.atan2(y, x) * (180 / Math.PI)}deg)`,
-													transformOrigin: '0 50%'
-												}}
-											/>
-
-											<motion.div
-												className="absolute"
-												style={{
-													left: x - 60,
-													top: y - 18
-												}}
-												animate={{ rotate: -360 }}
-												transition={{
-													duration: 35,
-													repeat: Infinity,
-													ease: "linear"
-												}}
-											>
-												<div className="flex items-center space-x-2 bg-gradient-to-br from-[#D4A024]/5 to-[#D4A024]/10 border-2 border-[#D4A024]/40 rounded-lg px-3 py-2 hover:from-[#D4A024]/10 hover:to-[#D4A024]/20 hover:border-[#D4A024]/60 transition-all duration-200 shadow-lg">
-													<div className="w-7 h-7 rounded-full bg-[#D4A024]/20 border border-[#D4A024]/50 flex items-center justify-center">
-														<type.icon className="w-4 h-4 text-[#D4A024]" />
-													</div>
-													<div>
-														<div className="text-xs font-semibold text-gray-800">{type.name}</div>
-													</div>
-												</div>
-											</motion.div>
-										</div>
-									);
-								})}
-
-								{propertyTypes.map((_, index) => {
-									const connections: React.ReactNode[] = [];
-
-									[1, 2, 3, 4].forEach(offset => {
-										const targetIndex = (index + offset) % propertyTypes.length;
-										if (index < targetIndex || (index + offset >= propertyTypes.length)) {
-											const angle1 = (index / propertyTypes.length) * 360;
-											const angle2 = (targetIndex / propertyTypes.length) * 360;
+								{isMounted && (
+									<>
+										{propertyTypes.map((type, index) => {
+											const angle = (index / propertyTypes.length) * 360;
 											const radius = 200;
-											const x1 = Math.cos(angle1 * Math.PI / 180) * radius;
-											const y1 = Math.sin(angle1 * Math.PI / 180) * radius;
-											const x2 = Math.cos(angle2 * Math.PI / 180) * radius;
-											const y2 = Math.sin(angle2 * Math.PI / 180) * radius;
+											const x = Math.cos(angle * Math.PI / 180) * radius;
+											const y = Math.sin(angle * Math.PI / 180) * radius;
 
-											const deltaX = x2 - x1;
-											const deltaY = y2 - y1;
-											const length = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-											const rotation = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
+											return (
+												<div key={`subnet-${type.id}`}>
+													<div
+														className="absolute bg-[#D4A024]"
+														style={{
+															left: 0,
+															top: 0,
+															width: Math.sqrt(x * x + y * y) + 'px',
+															height: '1px',
+															opacity: 0.4,
+															transform: `rotate(${Math.atan2(y, x) * (180 / Math.PI)}deg)`,
+															transformOrigin: '0 50%'
+														}}
+													/>
 
-											const opacity = offset === 1 ? 0.35 : offset === 2 ? 0.25 : offset === 3 ? 0.18 : 0.12;
-
-											connections.push(
-												<div
-													key={`inter-${index}-${targetIndex}-${offset}`}
-													className="absolute bg-[#D4A024]"
-													style={{
-														left: x1,
-														top: y1,
-														width: length + 'px',
-														height: '1px',
-														opacity: opacity,
-														transform: `rotate(${rotation}deg)`,
-														transformOrigin: '0 50%'
-													}}
-												/>
+													<motion.div
+														className="absolute"
+														style={{
+															left: x - 60,
+															top: y - 18
+														}}
+														animate={{ rotate: -360 }}
+														transition={{
+															duration: 35,
+															repeat: Infinity,
+															ease: "linear"
+														}}
+													>
+														<div className="flex items-center space-x-2 bg-gradient-to-br from-[#D4A024]/5 to-[#D4A024]/10 border-2 border-[#D4A024]/40 rounded-lg px-3 py-2 hover:from-[#D4A024]/10 hover:to-[#D4A024]/20 hover:border-[#D4A024]/60 transition-all duration-200 shadow-lg">
+															<div className="w-7 h-7 rounded-full bg-[#D4A024]/20 border border-[#D4A024]/50 flex items-center justify-center">
+																<type.icon className="w-4 h-4 text-[#D4A024]" />
+															</div>
+															<div>
+																<div className="text-xs font-semibold text-gray-800">{type.name}</div>
+															</div>
+														</div>
+													</motion.div>
+												</div>
 											);
-										}
-									});
+										})}
 
-									return <div key={`connections-${index}`}>{connections}</div>;
-								})}
+										{propertyTypes.map((_, index) => {
+											const connections: React.ReactNode[] = [];
+
+											[1, 2, 3, 4].forEach(offset => {
+												const targetIndex = (index + offset) % propertyTypes.length;
+												if (index < targetIndex || (index + offset >= propertyTypes.length)) {
+													const angle1 = (index / propertyTypes.length) * 360;
+													const angle2 = (targetIndex / propertyTypes.length) * 360;
+													const radius = 200;
+													const x1 = Math.cos(angle1 * Math.PI / 180) * radius;
+													const y1 = Math.sin(angle1 * Math.PI / 180) * radius;
+													const x2 = Math.cos(angle2 * Math.PI / 180) * radius;
+													const y2 = Math.sin(angle2 * Math.PI / 180) * radius;
+
+													const deltaX = x2 - x1;
+													const deltaY = y2 - y1;
+													const length = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+													const rotation = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
+
+													const opacity = offset === 1 ? 0.35 : offset === 2 ? 0.25 : offset === 3 ? 0.18 : 0.12;
+
+													connections.push(
+														<div
+															key={`inter-${index}-${targetIndex}-${offset}`}
+															className="absolute bg-[#D4A024]"
+															style={{
+																left: x1,
+																top: y1,
+																width: length + 'px',
+																height: '1px',
+																opacity: opacity,
+																transform: `rotate(${rotation}deg)`,
+																transformOrigin: '0 50%'
+															}}
+														/>
+													);
+												}
+											});
+
+											return <div key={`connections-${index}`}>{connections}</div>;
+										})}
+									</>
+								)}
 							</motion.div>
 
 							<div className="absolute flex items-center justify-center" style={{ zIndex: 2 }}>
@@ -1622,127 +1629,127 @@ const LatestNews = () => {
 // --- Portal (Dashboard) Logic ---
 
 interface SidebarItemProps {
-        icon: React.ComponentType<{ size?: number }>;
-        label: string;
-        active: boolean;
-        onClick: () => void;
+	icon: React.ComponentType<{ size?: number }>;
+	label: string;
+	active: boolean;
+	onClick: () => void;
 }
 
 const SidebarItem = ({ icon: Icon, label, active, onClick }: SidebarItemProps) => (
-        <button
-                onClick={onClick}
-                className={`${styles.sidebarItem} ${active ? styles.sidebarItemActive : styles.sidebarItemInactive}`}
-        >
-                <Icon size={20} />
-                {label}
-        </button>
+	<button
+		onClick={onClick}
+		className={`${styles.sidebarItem} ${active ? styles.sidebarItemActive : styles.sidebarItemInactive}`}
+	>
+		<Icon size={20} />
+		{label}
+	</button>
 );
 
 interface PortalProps {
-        onLogout: () => void;
+	onLogout: () => void;
 }
 
 const Portal = ({ onLogout }: PortalProps) => {
-        const [activeTab, setActiveTab] = useState('overview');
+	const [activeTab, setActiveTab] = useState('overview');
 
-        return (
-                <div className={styles.portalContainer}>
-                        {/* Dark Mode Sidebar */}
-                        <div className={styles.sidebar}>
-                                <div style={{ padding: '2rem' }}>
-                                        <Logo className="text-white" theme="light" />
-                                </div>
+	return (
+		<div className={styles.portalContainer}>
+			{/* Dark Mode Sidebar */}
+			<div className={styles.sidebar}>
+				<div style={{ padding: '2rem' }}>
+					<Logo className="text-white" theme="light" />
+				</div>
 
-                                <div style={{ flex: 1, paddingRight: '1rem' }}>
-                                        <div className={styles.sidebarSectionTitle}>Main</div>
-                                        <SidebarItem icon={LayoutDashboard} label="Overview" active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />
-                                        <SidebarItem icon={Building} label="Marketplace" active={activeTab === 'market'} onClick={() => setActiveTab('market')} />
-                                        <SidebarItem icon={PieChart} label="Portfolio" active={activeTab === 'portfolio'} onClick={() => setActiveTab('portfolio')} />
-                                        <SidebarItem icon={Activity} label="Secondary Market" active={activeTab === 'secondary'} onClick={() => setActiveTab('secondary')} />
+				<div style={{ flex: 1, paddingRight: '1rem' }}>
+					<div className={styles.sidebarSectionTitle}>Main</div>
+					<SidebarItem icon={LayoutDashboard} label="Overview" active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />
+					<SidebarItem icon={Building} label="Marketplace" active={activeTab === 'market'} onClick={() => setActiveTab('market')} />
+					<SidebarItem icon={PieChart} label="Portfolio" active={activeTab === 'portfolio'} onClick={() => setActiveTab('portfolio')} />
+					<SidebarItem icon={Activity} label="Secondary Market" active={activeTab === 'secondary'} onClick={() => setActiveTab('secondary')} />
 
-                                        <div className={styles.sidebarSectionTitle} style={{ paddingTop: '1.5rem' }}>Account</div>
-                                        <SidebarItem icon={FileText} label="Documents" active={activeTab === 'docs'} onClick={() => setActiveTab('docs')} />
-                                        <SidebarItem icon={Settings} label="Settings" active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} />
-                                </div>
+					<div className={styles.sidebarSectionTitle} style={{ paddingTop: '1.5rem' }}>Account</div>
+					<SidebarItem icon={FileText} label="Documents" active={activeTab === 'docs'} onClick={() => setActiveTab('docs')} />
+					<SidebarItem icon={Settings} label="Settings" active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} />
+				</div>
 
-                                <div style={{ padding: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-                                        <button onClick={onLogout} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', color: '#94a3b8', fontSize: '0.875rem', fontWeight: '500' }}>
-                                                <LogOut size={16} /> Sign Out
-                                        </button>
-                                </div>
-                        </div>
+				<div style={{ padding: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+					<button onClick={onLogout} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', color: '#94a3b8', fontSize: '0.875rem', fontWeight: '500' }}>
+						<LogOut size={16} /> Sign Out
+					</button>
+				</div>
+			</div>
 
-                        {/* Content Area */}
-                        <div className={styles.portalContent}>
-                                {/* Top Bar */}
-                                <header className={styles.portalHeader}>
-                                        <div className={styles.searchBar}>
-                                                <Search className="text-slate-400" size={20} color="#94a3b8" />
-                                                <input
-                                                        type="text"
-                                                        placeholder="Search properties, sponsors, or documents..."
-                                                        className={styles.searchInput}
-                                                />
-                                        </div>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                                                <button style={{ position: 'relative', padding: '0.5rem', color: '#94a3b8' }}>
-                                                        <Bell size={20} />
-                                                        <span style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', width: '0.5rem', height: '0.5rem', backgroundColor: '#ef4444', borderRadius: '9999px', border: '1px solid white' }}></span>
-                                                </button>
-                                                <div style={{ height: '2rem', width: '1px', backgroundColor: '#e2e8f0' }}></div>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                                        <div style={{ textAlign: 'right' }} className={styles.userInfoDesktop}>
-                                                                <div style={{ fontSize: '0.875rem', fontWeight: '700', color: '#0f172a' }}>James Anderson</div>
-                                                                <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Accredited Investor</div>
-                                                        </div>
-                                                        <div style={{ width: '2.5rem', height: '2.5rem', backgroundColor: '#C59B26', color: 'white', borderRadius: '9999px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '1.125rem', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>J</div>
-                                                </div>
-                                        </div>
-                                </header>
+			{/* Content Area */}
+			<div className={styles.portalContent}>
+				{/* Top Bar */}
+				<header className={styles.portalHeader}>
+					<div className={styles.searchBar}>
+						<Search className="text-slate-400" size={20} color="#94a3b8" />
+						<input
+							type="text"
+							placeholder="Search properties, sponsors, or documents..."
+							className={styles.searchInput}
+						/>
+					</div>
+					<div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+						<button style={{ position: 'relative', padding: '0.5rem', color: '#94a3b8' }}>
+							<Bell size={20} />
+							<span style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', width: '0.5rem', height: '0.5rem', backgroundColor: '#ef4444', borderRadius: '9999px', border: '1px solid white' }}></span>
+						</button>
+						<div style={{ height: '2rem', width: '1px', backgroundColor: '#e2e8f0' }}></div>
+						<div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+							<div style={{ textAlign: 'right' }} className={styles.userInfoDesktop}>
+								<div style={{ fontSize: '0.875rem', fontWeight: '700', color: '#0f172a' }}>James Anderson</div>
+								<div style={{ fontSize: '0.75rem', color: '#64748b' }}>Accredited Investor</div>
+							</div>
+							<div style={{ width: '2.5rem', height: '2.5rem', backgroundColor: '#C59B26', color: 'white', borderRadius: '9999px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '1.125rem', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>J</div>
+						</div>
+					</div>
+				</header>
 
-                                {/* Scrollable Dashboard Content */}
-                                <main className={styles.portalMain}>
-                                        {activeTab === 'overview' && (
-                                                <div style={{ maxWidth: '72rem', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                                                        {/* Financial Header */}
-                                                        <div className={styles.flexBetween} style={{ alignItems: 'flex-end' }}>
-                                                                <div>
-                                                                        <h1 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#0f172a', marginBottom: '0.25rem' }}>Portfolio Performance</h1>
-                                                                        <p style={{ color: '#64748b' }}>Last updated: Today, 09:41 AM</p>
-                                                                </div>
-                                                                <div style={{ display: 'flex', gap: '0.75rem' }}>
-                                                                        <Button variant="outlined" style={{ backgroundColor: 'white', borderColor: '#e2e8f0', color: '#475569' }}>Download Report</Button>
-                                                                        <Button>Add Capital</Button>
-                                                                </div>
-                                                        </div>
+				{/* Scrollable Dashboard Content */}
+				<main className={styles.portalMain}>
+					{activeTab === 'overview' && (
+						<div style={{ maxWidth: '72rem', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+							{/* Financial Header */}
+							<div className={styles.flexBetween} style={{ alignItems: 'flex-end' }}>
+								<div>
+									<h1 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#0f172a', marginBottom: '0.25rem' }}>Portfolio Performance</h1>
+									<p style={{ color: '#64748b' }}>Last updated: Today, 09:41 AM</p>
+								</div>
+								<div style={{ display: 'flex', gap: '0.75rem' }}>
+									<Button variant="outlined" style={{ backgroundColor: 'white', borderColor: '#e2e8f0', color: '#475569' }}>Download Report</Button>
+									<Button>Add Capital</Button>
+								</div>
+							</div>
 
-                                                        {/* Cards Row */}
-                                                        <div className={styles.dashboardGrid}>
-                                                                <div className={styles.statCard}>
-                                                                        <div className={styles.statCardHeader}>
-                                                                                <div className={`${styles.statIcon} ${styles.statIconGreen}`}><DollarSign size={20} /></div>
-                                                                                <span className={`${styles.statBadge} ${styles.statBadgeGreen}`}>+12.4%</span>
-                                                                        </div>
-                                                                        <div className={styles.statLabel}>Total Net Equity</div>
-                                                                        <div className={styles.statValue}>$1,245,000.00</div>
-                                                                </div>
-                                                                <div className={styles.statCard}>
-                                                                        <div className={styles.statCardHeader}>
-                                                                                <div className={`${styles.statIcon} ${styles.statIconBlue}`}><Building size={20} /></div>
-                                                                                <span className={`${styles.statBadge} ${styles.statBadgeGray}`}>4 Active</span>
-                                                                        </div>
-                                                                        <div className={styles.statLabel}>Properties Owned</div>
-                                                                        <div className={styles.statValue}>12,450 <span style={{ fontSize: '0.875rem', color: '#94a3b8', fontWeight: '400' }}>Shares</span></div>
-                                                                </div>
-                                                                <div className={styles.statCard}>
-                                                                        <div className={styles.statCardHeader}>
-                                                                                <div className={`${styles.statIcon} ${styles.statIconPurple}`}><Wallet size={20} /></div>
-                                                                                <span className={`${styles.statBadge} ${styles.statBadgeGray}`}>Pending</span>
-                                                                        </div>
-                                                                        <div className={styles.statLabel}>Uninvested Cash</div>
-                                                                        <div className={styles.statValue}>$45,000.00</div>
-                                                                </div>
-                                                        </div>
+							{/* Cards Row */}
+							<div className={styles.dashboardGrid}>
+								<div className={styles.statCard}>
+									<div className={styles.statCardHeader}>
+										<div className={`${styles.statIcon} ${styles.statIconGreen}`}><DollarSign size={20} /></div>
+										<span className={`${styles.statBadge} ${styles.statBadgeGreen}`}>+12.4%</span>
+									</div>
+									<div className={styles.statLabel}>Total Net Equity</div>
+									<div className={styles.statValue}>$1,245,000.00</div>
+								</div>
+								<div className={styles.statCard}>
+									<div className={styles.statCardHeader}>
+										<div className={`${styles.statIcon} ${styles.statIconBlue}`}><Building size={20} /></div>
+										<span className={`${styles.statBadge} ${styles.statBadgeGray}`}>4 Active</span>
+									</div>
+									<div className={styles.statLabel}>Properties Owned</div>
+									<div className={styles.statValue}>12,450 <span style={{ fontSize: '0.875rem', color: '#94a3b8', fontWeight: '400' }}>Shares</span></div>
+								</div>
+								<div className={styles.statCard}>
+									<div className={styles.statCardHeader}>
+										<div className={`${styles.statIcon} ${styles.statIconPurple}`}><Wallet size={20} /></div>
+										<span className={`${styles.statBadge} ${styles.statBadgeGray}`}>Pending</span>
+									</div>
+									<div className={styles.statLabel}>Uninvested Cash</div>
+									<div className={styles.statValue}>$45,000.00</div>
+								</div>
+							</div>
 
 							{/* Active Listings Table Section */}
 							<div className={styles.tableContainer}>
@@ -1807,17 +1814,17 @@ const Portal = ({ onLogout }: PortalProps) => {
 // --- Main App Controller ---
 
 export default function Home() {
-        const [view, setView] = useState('landing');
-        const [activeTab, setActiveTab] = useState('investors'); // For How It Works tabs
+	const [view, setView] = useState('landing');
+	const [activeTab, setActiveTab] = useState('investors'); // For How It Works tabs
 
-        const handleLogout = () => {
-                setView('landing');
-                window.scrollTo(0, 0);
-        };
+	const handleLogout = () => {
+		setView('landing');
+		window.scrollTo(0, 0);
+	};
 
-        if (view.includes('portal')) {
-                return <Portal onLogout={handleLogout} />;
-        }
+	if (view.includes('portal')) {
+		return <Portal onLogout={handleLogout} />;
+	}
 
 	return (
 		<div style={{ minHeight: '100vh', fontFamily: 'var(--font-sans)', backgroundColor: '#FAFAF9', color: '#0f172a' }}>
