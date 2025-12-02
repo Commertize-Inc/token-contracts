@@ -103,7 +103,9 @@ Focus on current trends, market insights, and actionable information for investo
 	} catch (error) {
 		console.error('Error generating news articles:', error);
 		return NextResponse.json(
-			{ error: 'Failed to generate news articles' },
+			// { error: 'Failed to generate news articles' },
+			// DEBUG: Surface error to the landing page
+			{ error: `Failed to generate news articles: ${error}` },
 			{ status: 500 }
 		);
 	}
