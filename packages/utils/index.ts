@@ -13,8 +13,8 @@ import { existsSync } from "fs";
 export function getMonorepoRoot(fromPath: string = __dirname): string {
 	let currentPath = path.resolve(fromPath);
 
-	// Go up max 2 levels to find the monorepo root
-	for (let i = 0; i < 2; i++) {
+	// Go up max levels to find the monorepo root
+	for (let i = 0; i < 5; i++) {
 		const workspaceFile = path.join(currentPath, 'pnpm-workspace.yaml');
 		if (existsSync(workspaceFile)) {
 			return currentPath;
