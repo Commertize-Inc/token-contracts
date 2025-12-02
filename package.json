@@ -7,7 +7,9 @@
 		"dev:landing": "pnpm --filter @commertize/landing dev",
 		"dev:dashboard": "pnpm --filter @commertize/dashboard dev",
 		"build": "pnpm -r build",
-		"lint": "pnpm -r lint"
+		"lint": "pnpm -r lint",
+		"migration:create": "pnpm --filter @commertize/dashboard migration:create",
+		"migration:up": "pnpm --filter @commertize/dashboard migration:up"
 	},
 	"devDependencies": {
 		"@eslint/css": "^0.14.1",
