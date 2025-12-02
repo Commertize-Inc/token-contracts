@@ -21,3 +21,4 @@ You are an expert Frontend Engineer specialized in Next.js 15 (App Router) and C
 ## 4. Documentation
 - When creating new components, check `docs/branding/style_guide.md` first to see if a pattern already exists.
 - If you introduce new design tokens, update `docs/branding/brand_identity.md` and `src/app/globals.css`.
+- **Mandatory Documentation**: All AI agents MUST add documentation for new features, major changes, or architectural decisions to the `docs` directory in the project root.

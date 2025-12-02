@@ -30,8 +30,9 @@ Commertize is a monorepo built with Next.js 16, featuring a public landing page 
 # Install dependencies
 pnpm install
 
-# Set up environment variables (see Configuration section)
-cp apps/dashboard/.env.example apps/dashboard/.env
+# Set up environment variables (cascading configuration)
+cp .env.example .env
+# Edit .env with your configuration
 
 # Run database migrations
 cd apps/dashboard && pnpm mikro-orm migration:up && cd ../..
@@ -46,21 +47,57 @@ Visit:
 
 ## Configuration
 
-### Dashboard Environment Variables
+### Environment Variables (Cascading Setup)
 
-Create `apps/dashboard/.env`:
+Commertize uses a **cascading environment variable system**:
+1. **Root `.env`** - Shared configuration for all apps
+2. **App-specific `.env`** (optional) - Override specific values per app
+
+#### Quick Setup
+
+```bash
+# 1. Copy root template
+cp .env.example .env
+
+# 2. Edit with your values
+nano .env
+
+# 3. (Optional) Create app-specific overrides
+cd apps/dashboard
+cp .env.example .env
+# Edit with dashboard-specific values
+```
+
+#### Root `.env` (Shared)
+
+```env
+# Database
+DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require
+
+# API Keys (shared)
+OPENAI_API_KEY=sk-your-key-here
+
+# App URLs
+DASHBOARD_URL=http://localhost:3001
+LANDING_URL=http://localhost:3000
+```
+
+#### `apps/dashboard/.env` (Optional Overrides)
 
 ```env
 # Privy Authentication
 NEXT_PUBLIC_PRIVY_APP_ID=your_privy_app_id
-NEXT_PUBLIC_PRIVY_CLIENT_ID=your_privy_client_id
 PRIVY_APP_SECRET=your_privy_app_secret
 
-# Database
-DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require
+# Plaid Integration
+PLAID_CLIENT_ID=your_plaid_client_id
+PLAID_SECRET=your_plaid_secret
 ```
 
-See [ENV_SETUP.md](ENV_SETUP.md) for detailed configuration instructions.
+**📚 Detailed Documentation:**
+- [Quick Reference](ENV_QUICK_REFERENCE.md) - Common scenarios and troubleshooting
+- [Complete Guide](ENV_SETUP.md) - Full documentation with examples
+- [Implementation Summary](ENV_IMPLEMENTATION_SUMMARY.md) - What was implemented and how it works
 
 ## Project Structure
 
