@@ -13,7 +13,8 @@ import { existsSync } from "fs";
 export function getMonorepoRoot(fromPath: string = __dirname): string {
 	let currentPath = path.resolve(fromPath);
 
-	while (currentPath !== path.dirname(currentPath)) {
+	// Go up max 2 levels to find the monorepo root
+	for (let i = 0; i < 2; i++) {
 		const workspaceFile = path.join(currentPath, 'pnpm-workspace.yaml');
 		if (existsSync(workspaceFile)) {
 			return currentPath;
@@ -21,22 +22,49 @@ export function getMonorepoRoot(fromPath: string = __dirname): string {
 		currentPath = path.dirname(currentPath);
 	}
 
-	// Fallback: if workspace file not found, go up two levels from packages/utils
-	// This handles the case where the function is called from packages/utils itself
-	return path.join(fromPath, '..', '..');
+	// Fallback: if workspace file not found, assume we are in the monorepo root
+	return fromPath;
 }
 
 /**
- * Loads environment variables from the monorepo root with interpolation support.
- * This function should be called early in the application lifecycle (e.g., in next.config.ts).
+ * Loads environment variables with a cascading strategy:
+ * 1. Loads from monorepo root .env (base configuration)
+ * 2. Optionally overrides with app-specific .env (if it exists)
  *
- * @param fromPath - The path from which to resolve the monorepo root (defaults to __dirname)
- * @returns The parsed environment variables
+ * This allows you to:
+ * - Keep shared configuration in the root .env
+ * - Override specific variables per app by creating apps/[app-name]/.env
+ *
+ * Both files support variable interpolation via dotenv-expand.
+ *
+ * @param fromPath - The path from which to resolve paths (typically __dirname from next.config.ts)
+ * @returns The parsed environment variables from the final merged configuration
+ *
+ * @example
+ * // In apps/dashboard/next.config.ts
+ * loadEnv(__dirname); // Loads root .env, then apps/dashboard/.env if it exists
  */
 export function loadEnv(fromPath: string = __dirname): dotenv.DotenvConfigOutput {
 	const monorepoRoot = getMonorepoRoot(fromPath);
-	const envPath = path.join(monorepoRoot, '.env');
-	const myEnv = dotenv.config({ path: envPath });
-	dotenvExpand.expand(myEnv);
-	return myEnv;
+
+	// 1. Load root .env file (base configuration)
+	const rootEnvPath = path.join(monorepoRoot, '.env');
+	const rootEnv = dotenv.config({ path: rootEnvPath });
+	dotenvExpand.expand(rootEnv);
+
+	// 2. Check for app-specific .env override
+	// fromPath is typically the app directory (e.g., apps/dashboard)
+	const appEnvPath = path.join(fromPath, '.env');
+
+	if (existsSync(appEnvPath)) {
+		// Load app-specific .env, which will override root values
+		const appEnv = dotenv.config({ path: appEnvPath });
+		dotenvExpand.expand(appEnv);
+
+		// Return the app-specific config (which has overridden process.env)
+		return appEnv;
+	}
+
+	// Return root config if no app-specific override exists
+	return rootEnv;
 }
