@@ -56,7 +56,7 @@ export function loadEnv(fromPath: string = __dirname): dotenv.DotenvConfigOutput
 	// fromPath is typically the app directory (e.g., apps/dashboard)
 	const appEnvPath = path.join(fromPath, '.env');
 
-	if (existsSync(appEnvPath)) {
+	if (process.env.NODE_ENV == 'production' && existsSync(appEnvPath)) {
 		// Load app-specific .env, which will override root values
 		const appEnv = dotenv.config({ path: appEnvPath });
 		dotenvExpand.expand(appEnv);

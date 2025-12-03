@@ -6,11 +6,11 @@ export class NewsArticle {
   @PrimaryKey()
   id: string = v4();
 
-  @Property()
+  @Property({ type: 'string' })
   @Index()
   slug!: string;
 
-  @Property()
+  @Property({ type: 'string' })
   title!: string;
 
   @Property({ type: 'text' })
@@ -19,27 +19,27 @@ export class NewsArticle {
   @Property({ type: 'text', nullable: true })
   content?: string;
 
-  @Property()
+  @Property({ type: 'string' })
   category!: string;
 
-  @Property({ nullable: true })
+  @Property({ type: 'string', nullable: true })
   imageUrl?: string;
 
-  @Property({ default: 5 })
+  @Property({ type: 'number', default: 5 })
   readTime: number = 5;
 
-  @Property()
+  @Property({ type: 'string' })
   publishedAt!: string;
 
-  @Property({ default: false })
+  @Property({ type: 'boolean', default: false })
   isGenerated: boolean = false;
 
-  @Property({ default: true })
+  @Property({ type: 'boolean', default: true })
   isPublished: boolean = true;
 
-  @Property()
+  @Property({ type: 'date' })
   createdAt: Date = new Date();
 
-  @Property({ onUpdate: () => new Date() })
+  @Property({ type: 'date', onUpdate: () => new Date() })
   updatedAt: Date = new Date();
 }

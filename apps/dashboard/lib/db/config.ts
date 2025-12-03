@@ -4,12 +4,14 @@ import { loadEnv } from "@commertize/utils";
 import "reflect-metadata";
 import { User } from "./entities/User";
 import { NewsArticle } from "./entities/NewsArticle";
+import { PlaidItem } from "./entities/PlaidItem";
+import { BankAccount } from "./entities/BankAccount";
 
 // Load environment variables with interpolation support
 loadEnv(__dirname);
 
 const config: Options<PostgreSqlDriver> = {
-        entities: [User, NewsArticle],
+        entities: [User, NewsArticle, PlaidItem, BankAccount],
         driver: PostgreSqlDriver,
         connect: true,
 

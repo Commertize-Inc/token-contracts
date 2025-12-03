@@ -5,8 +5,13 @@ import { plaidClient } from "@/lib/plaid/client";
 
 /**
  * Create a Plaid link token
+ * Supports both Identity Verification (KYC) and Auth (bank linking)
+ *
  * @param request - The request object
- * @returns The response object
+ * Query params:
+ * - flow: 'idv' (identity verification) or 'auth' (bank linking)
+ *
+ * @returns The response object with link_token
  */
 export async function POST(request: NextRequest) {
 	try {
@@ -21,22 +26,45 @@ export async function POST(request: NextRequest) {
 		const claims = await privyClient.verifyAuthToken(privyToken);
 		const privyId = claims.userId;
 
-		const requestPayload = {
+		// Get flow type from query params or request body
+		const { searchParams } = new URL(request.url);
+		const body = await request.json().catch(() => ({}));
+		const flow = searchParams.get('flow') || body.flow || 'idv';
+
+		// Base payload
+		const basePayload = {
 			user: { client_user_id: privyId },
 			client_name: `Commertize-${process.env.NODE_ENV}`,
-			products: [Products.IdentityVerification],
-			identity_verification: {
-				template_id: process.env.PLAID_IDENTITY_VERIFICATION_TEMPLATE_ID || '',
-			},
 			country_codes: [CountryCode.Us],
 			language: 'en',
 		};
 
+		// Configure products based on flow type
+		let requestPayload;
+		if (flow === 'auth') {
+			// Bank account linking flow
+			requestPayload = {
+				...basePayload,
+				products: [Products.Auth],
+				webhook: process.env.PLAID_WEBHOOK_URL,
+			};
+		} else {
+			// Identity verification (KYC) flow
+			requestPayload = {
+				...basePayload,
+				products: [Products.IdentityVerification],
+				identity_verification: {
+					template_id: process.env.PLAID_IDENTITY_VERIFICATION_TEMPLATE_ID || '',
+				},
+			};
+		}
+
 		console.log('[Link Token Create] Request payload:', {
-			...requestPayload,
+			flow,
+			products: requestPayload.products,
 			user: { client_user_id: privyId },
-			hasTemplateId: !!process.env.PLAID_IDENTITY_VERIFICATION_TEMPLATE_ID,
-			templateIdLength: process.env.PLAID_IDENTITY_VERIFICATION_TEMPLATE_ID?.length || 0,
+			hasTemplateId: flow === 'idv' ? !!process.env.PLAID_IDENTITY_VERIFICATION_TEMPLATE_ID : undefined,
+			hasWebhook: flow === 'auth' ? !!process.env.PLAID_WEBHOOK_URL : undefined,
 		});
 
 		const response = await plaidClient.linkTokenCreate(requestPayload);
