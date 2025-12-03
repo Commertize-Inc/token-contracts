@@ -1,0 +1,14 @@
+{
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"extends": "./tsconfig.base.json",
+	"compilerOptions": {
+		// Package/Library specific settings
+		"lib": ["ES2020", "DOM", "DOM.Iterable"],
+		"jsx": "react-jsx",
+
+		// Generate declaration files for type checking
+		"declaration": true,
+		"declarationMap": true
+	},
+	"include": ["./**/*.ts", "./**/*.tsx"]
+}

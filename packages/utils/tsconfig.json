@@ -1,17 +1,9 @@
 {
+	"extends": "../../tsconfig.base.json",
 	"compilerOptions": {
-		"target": "ES2020",
-		"lib": ["ES2020"],
-		"module": "ESNext",
-		"moduleResolution": "bundler",
+		// Generate declaration files for published package
 		"declaration": true,
-		"declarationMap": true,
-		"esModuleInterop": true,
-		"forceConsistentCasingInFileNames": true,
-		"strict": true,
-		"skipLibCheck": true,
-		"resolveJsonModule": true
+		"declarationMap": true
 	},
-	"include": ["./**/*.ts"],
-	"exclude": ["node_modules", "dist"]
+	"include": ["./**/*.ts"]
 }
