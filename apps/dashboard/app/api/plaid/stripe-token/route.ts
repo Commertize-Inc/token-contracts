@@ -97,7 +97,10 @@ export async function POST(request: NextRequest) {
 		const plaidItem = account.plaidItem;
 
 		// Get decrypted access token
-		const accessToken = plaidItem.getDecryptedAccessToken();
+		const accessToken = plaidItem?.getDecryptedAccessToken();
+		if (!accessToken) {
+			throw new Error("Unable to load Plaid accessToken");
+		}
 
 		// Create processor token via Plaid
 		const processorTokenRequest: ProcessorTokenCreateRequest = {
