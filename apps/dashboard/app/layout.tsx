@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
-import { Providers } from "./providers";
+import ClientProviders from "./ClientProviders";
 import ChatWidget from "@/components/ChatWidget";
 
 export const metadata: Metadata = {
@@ -25,10 +25,10 @@ export default function RootLayout({
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<body>
-				<Providers>
+				<ClientProviders>
 					{children}
 					<ChatWidget />
-				</Providers>
+				</ClientProviders>
 				<Script
 					id="suppress-warnings"
 					strategy="beforeInteractive"
