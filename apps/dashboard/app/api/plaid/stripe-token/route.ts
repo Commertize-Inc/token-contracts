@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ProcessorTokenCreateRequest } from "plaid";
 import { privyClient } from "@/lib/privy/client";
-import { plaidClient } from "@/lib/plaid/client";
+import { getPlaidClient } from "@/lib/plaid/client";
 import { getEM } from "@/lib/db/orm";
 import { User } from "@/lib/db/entities/User";
 import { BankAccount } from "@/lib/db/entities/BankAccount";
@@ -106,6 +106,7 @@ export async function POST(request: NextRequest) {
 			processor: "stripe" as any, // Stripe not in enum yet, but supported by API
 		};
 
+		const plaidClient = getPlaidClient();
 		const response = await plaidClient.processorTokenCreate(
 			processorTokenRequest
 		);

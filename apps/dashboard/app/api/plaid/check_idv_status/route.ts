@@ -2,7 +2,7 @@ import { User } from "@/lib/db/entities/User";
 import { getEM } from "@/lib/db/orm";
 import { NextRequest, NextResponse } from "next/server";
 import { privyClient } from "@/lib/privy/client";
-import { plaidClient } from "@/lib/plaid/client";
+import { getPlaidClient } from "@/lib/plaid/client";
 
 export async function POST(request: NextRequest) {
 	try {
@@ -42,6 +42,8 @@ export async function POST(request: NextRequest) {
 			...listRequest,
 			hasTemplateId: !!listRequest.template_id,
 		});
+
+		const plaidClient = getPlaidClient();
 
 		if (link_session_id) {
 			// Note: Plaid node SDK might not have a direct "get by link session id" for IDV

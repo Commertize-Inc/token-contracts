@@ -30,7 +30,7 @@
 
 // Client exports
 export {
-	plaidClient,
+	getPlaidClient,
 	createPlaidClient,
 	getPlaidBasePath,
 	getPlaidEnv,

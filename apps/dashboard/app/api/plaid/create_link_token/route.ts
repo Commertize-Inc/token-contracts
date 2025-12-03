@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CountryCode, Products } from "plaid";
 import { privyClient } from "@/lib/privy/client";
-import { plaidClient } from "@/lib/plaid/client";
+import { getPlaidClient } from "@/lib/plaid/client";
 
 /**
  * Create a Plaid link token
@@ -68,6 +68,7 @@ export async function POST(request: NextRequest) {
 			hasWebhook: flow === "auth" ? !!process.env.PLAID_WEBHOOK_URL : undefined,
 		});
 
+		const plaidClient = getPlaidClient();
 		const response = await plaidClient.linkTokenCreate(requestPayload);
 
 		console.log("[Link Token Create] Success:", {

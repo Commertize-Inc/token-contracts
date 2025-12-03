@@ -1,7 +1,6 @@
 import { Entity, PrimaryKey, Property, ManyToOne } from "@mikro-orm/core";
 import { v4 } from "uuid";
 import { User } from "./User";
-import { PlaidItem } from "./PlaidItem";
 
 /**
  * BankAccount entity for storing individual bank accounts
@@ -17,8 +16,8 @@ export class BankAccount {
 	@ManyToOne(() => User)
 	user!: User;
 
-	@ManyToOne(() => PlaidItem)
-	plaidItem!: PlaidItem;
+	@ManyToOne("PlaidItem")
+	plaidItem: any;
 
 	// Computed property: Institution name from PlaidItem relation
 	// Always ensure plaidItem is populated when querying BankAccount

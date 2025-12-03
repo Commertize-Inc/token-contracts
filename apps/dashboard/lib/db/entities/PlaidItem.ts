@@ -8,7 +8,6 @@ import {
 } from "@mikro-orm/core";
 import { v4 } from "uuid";
 import { User } from "./User";
-import { BankAccount } from "./BankAccount";
 import { encrypt, decrypt } from "../../security/encryption";
 
 /**
@@ -50,8 +49,8 @@ export class PlaidItem {
 	errorMessage?: string; // Store last error message for debugging
 
 	// Relationships
-	@OneToMany(() => BankAccount, "plaidItem")
-	accounts = new Collection<BankAccount>(this);
+	@OneToMany("BankAccount", "plaidItem")
+	accounts = new Collection<any>(this);
 
 	@Property({ type: "date" })
 	createdAt: Date = new Date();

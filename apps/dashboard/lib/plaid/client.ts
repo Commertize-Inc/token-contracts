@@ -56,6 +56,19 @@ export const createPlaidClient = () => {
 };
 
 /**
- * Singleton Plaid client instance
+ * Singleton Plaid client instance (lazy initialization)
  */
-export const plaidClient = createPlaidClient();
+let plaidClientInstance: PlaidApi | null = null;
+
+/**
+ * Get the Plaid client instance (creates on first call)
+ *
+ * This uses lazy initialization to avoid module-level side effects
+ * that can cause issues during Next.js build phase.
+ */
+export const getPlaidClient = (): PlaidApi => {
+	if (!plaidClientInstance) {
+		plaidClientInstance = createPlaidClient();
+	}
+	return plaidClientInstance;
+};
