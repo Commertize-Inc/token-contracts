@@ -112,15 +112,15 @@ export default function OmniGrid() {
           <motion.div 
             className="absolute bg-cover bg-center bg-no-repeat"
             style={{ 
-              backgroundImage: 'url(/assets/omnigrid-bg-v3.png?v=1)',
-              inset: '-5%',
-              width: '110%',
-              height: '110%'
+              backgroundImage: 'url(/assets/omnigrid-bg-v5.png?v=1)',
+              inset: '-2%',
+              width: '104%',
+              height: '104%'
             }}
             animate={{
-              x: [0, 15, -10, 5, 0],
-              y: [0, -10, 5, -5, 0],
-              scale: [1, 1.02, 1.01, 1.015, 1]
+              x: [0, 8, -5, 3, 0],
+              y: [0, -5, 3, -3, 0],
+              scale: [1, 1.01, 1.005, 1.008, 1]
             }}
             transition={{
               duration: 20,
@@ -142,25 +142,19 @@ export default function OmniGrid() {
             >
               <div className="mb-6">
                 <img 
-                  src="/assets/omnigrid-logo-white.png?v=1" 
+                  src="/assets/omnigrid-logo-v6.png?v=1" 
                   alt="OMNIGRID" 
                   width={700}
                   height={180}
-                  className="mx-auto w-auto h-auto max-w-full drop-shadow-lg"
+                  className="mx-auto w-auto h-auto max-w-full"
                 />
               </div>
-              <p className="text-xl md:text-2xl font-medium text-[#D4A024] mb-6">
-                The Infrastructure Intelligence Layer
+              <p className="text-xl md:text-2xl font-medium text-[#B8860B] mb-6">
+                Sustainable Infrastructure, Digitally Owned
               </p>
-              <p className="text-lg font-light text-white max-w-3xl mx-auto mb-12 leading-relaxed drop-shadow-md">
-                Mapping and tokenizing the world's critical infrastructure — from energy and resources to data and sustainability.
+              <p className="text-lg font-normal text-gray-800 max-w-3xl mx-auto leading-relaxed">
+                Solar. Data Centers. Clean Energy. OmniGrid tokenizes the physical assets driving global innovation.
               </p>
-              <button
-                onClick={scrollToOverview}
-                className="bg-white hover:bg-[#D4A024] text-gray-800 hover:text-white font-light text-lg px-8 py-4 rounded-lg transition-all duration-300 border border-[#D4A024]/30 hover:border-[#D4A024] shadow-md"
-              >
-                Learn More
-              </button>
             </motion.div>
           </div>
         </section>

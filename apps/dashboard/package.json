@@ -6,9 +6,7 @@
                 "dev": "next dev -H 0.0.0.0 -p 3001",
                 "build": "next build",
                 "start": "next start -H 0.0.0.0 -p 3001",
-                "lint": "next lint",
-                "migration:create": "npx mikro-orm migration:create",
-                "migration:up": "npx mikro-orm migration:up"
+                "lint": "next lint"
         },
         "dependencies": {
                 "@commertize/ui": "workspace:*",

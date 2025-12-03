@@ -214,7 +214,7 @@ export default function ChatGPTWidget() {
               
               {!isMinimized && (
                 <div className="flex flex-col" style={{ height: 'calc(100% - 70px)' }}>
-                  <div className="p-4 overflow-y-auto messages-container gold-scrollbar bg-white" style={{ height: '380px' }}>
+                  <div className="p-4 overflow-y-auto messages-container gold-scrollbar bg-white" style={{ height: '420px' }}>
                     <div className="space-y-4">
                       {messages.map((message, index) => (
                         <motion.div
@@ -262,19 +262,19 @@ export default function ChatGPTWidget() {
                             )}
 
                             {message.role === "assistant" && message.suggestedActions && message.suggestedActions.length > 0 && (
-                              <div className="mt-2 flex flex-wrap gap-2">
+                              <div className="mt-3 grid grid-cols-2 gap-2">
                                 {message.suggestedActions.map((action, idx) => (
-                                  <Badge
+                                  <div
                                     key={idx}
-                                    variant="default"
-                                    className="cursor-pointer bg-[#D4A024] hover:bg-[#B8881C] text-white border-[#D4A024] text-xs transition-colors"
+                                    className="cursor-pointer bg-white hover:bg-[#D4A024] hover:text-white text-[#D4A024] border border-[#D4A024] text-xs py-2 px-3 rounded-lg transition-all duration-200 font-light text-center"
                                     onClick={() => handleSuggestedAction(action)}
                                   >
                                     {action}
-                                  </Badge>
+                                  </div>
                                 ))}
                               </div>
                             )}
+
                           </div>
                         </motion.div>
                       ))}

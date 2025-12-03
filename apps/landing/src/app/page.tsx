@@ -1,48 +1,49 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useIsMounted } from '@commertize/utils/hooks';
+import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-	Building,
-	Building2,
-	Wallet,
-	LayoutDashboard,
-	PieChart,
-	FileText,
-	Settings,
-	LogOut,
-	TrendingUp,
-	ShieldCheck,
-	ChevronRight,
-	ChevronDown,
-	Menu,
-	X,
-	Bell,
-	Search,
-	Filter,
-	DollarSign,
-	Activity,
-	Coins,
-	Shield,
-	Warehouse,
-	Home as HomeIcon,
-	Layers,
-	Sun,
-	Wind,
-	Calendar,
-	Clock,
-	ArrowRight,
-	MapPin,
-	Cookie,
-	Link2,
-	BarChart3,
-	Sparkles,
-	ArrowLeftRight,
-	Users,
-	Check,
-	XCircle,
-	Globe
+        Building,
+        Building2,
+        Wallet,
+        LayoutDashboard,
+        PieChart,
+        FileText,
+        Settings,
+        LogOut,
+        TrendingUp,
+        ShieldCheck,
+        ChevronRight,
+        ChevronDown,
+        Menu,
+        X,
+        Bell,
+        Search,
+        Filter,
+        DollarSign,
+        Activity,
+        Coins,
+        Shield,
+        Warehouse,
+        Home as HomeIcon,
+        Layers,
+        Sun,
+        Wind,
+        Calendar,
+        Clock,
+        ArrowRight,
+        MapPin,
+        Cookie,
+        Link2,
+        BarChart3,
+        Sparkles,
+        ArrowLeftRight,
+        Users,
+        Check,
+        XCircle,
+        Globe,
+        HelpCircle
 } from 'lucide-react';
 import Link from 'next/link';
 import styles from './page.module.css';
@@ -219,23 +220,20 @@ const SectionHeading = ({ subtitle, title, align = 'center' }: SectionHeadingPro
 // --- Sections ---
 
 const Navbar = () => {
-	const [isOpen, setIsOpen] = useState(false);
-	const [scrolled, setScrolled] = useState(false);
-	const [intelligenceOpen, setIntelligenceOpen] = useState(false);
-	const [companyOpen, setCompanyOpen] = useState(false);
-	const intelligenceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-	const companyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+        const [isOpen, setIsOpen] = useState(false);
+        const [scrolled, setScrolled] = useState(false);
+        const [companyOpen, setCompanyOpen] = useState(false);
+        const companyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-	useEffect(() => {
-		const handleScroll = () => setScrolled(window.scrollY > 50);
-		handleScroll();
-		window.addEventListener('scroll', handleScroll);
-		return () => {
-			window.removeEventListener('scroll', handleScroll);
-			if (intelligenceTimeoutRef.current) clearTimeout(intelligenceTimeoutRef.current);
-			if (companyTimeoutRef.current) clearTimeout(companyTimeoutRef.current);
-		};
-	}, []);
+        useEffect(() => {
+                const handleScroll = () => setScrolled(window.scrollY > 50);
+                handleScroll();
+                window.addEventListener('scroll', handleScroll);
+                return () => {
+                        window.removeEventListener('scroll', handleScroll);
+                        if (companyTimeoutRef.current) clearTimeout(companyTimeoutRef.current);
+                };
+        }, []);
 
 	return (
 		<nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-md shadow-sm' : 'bg-white/80 backdrop-blur-sm'}`}>
@@ -245,111 +243,97 @@ const Navbar = () => {
 						<Logo src="/assets/logo.png" width={240} height={75} />
 					</Link>
 
-					<div className="hidden md:flex items-center gap-6 lg:gap-8">
-						<button className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light">Mission</button>
-						<Link href="/marketplace" className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light">Marketplace</Link>
-						<Link href="/nexus" className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light">Nexus</Link>
-						<a href="/omnigrid" className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light">OmniGrid</a>
+                                        <div className="hidden md:flex items-center gap-6 lg:gap-8">
+                                                <a href="#about" className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light">Mission</a>
+                                                <Link href="/marketplace" className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light">Marketplace</Link>
+                                                <Link href="/nexus" className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light">Nexus</Link>
+                                                <a href="/omnigrid" className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light">OmniGrid</a>
 
-						<div
-							className="relative"
-							onMouseEnter={() => {
-								if (intelligenceTimeoutRef.current) clearTimeout(intelligenceTimeoutRef.current);
-								setIntelligenceOpen(true);
-							}}
-							onMouseLeave={() => {
-								intelligenceTimeoutRef.current = setTimeout(() => setIntelligenceOpen(false), 150);
-							}}
-						>
-							<button className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light flex items-center gap-1">
-								Intelligence
-								<ChevronRight size={12} className={`transition-transform ${intelligenceOpen ? 'rotate-90' : ''}`} />
-							</button>
-							{intelligenceOpen && (
-								<div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-2">
-									<a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4A024]">Market Analytics</a>
-									<a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4A024]">AI Insights</a>
-									<a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4A024]">Reports</a>
-								</div>
-							)}
-						</div>
+                                                <div
+                                                        className="relative"
+                                                        onMouseEnter={() => {
+                                                                if (companyTimeoutRef.current) clearTimeout(companyTimeoutRef.current);
+                                                                setCompanyOpen(true);
+                                                        }}
+                                                        onMouseLeave={() => {
+                                                                companyTimeoutRef.current = setTimeout(() => setCompanyOpen(false), 150);
+                                                        }}
+                                                >
+                                                        <button className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light flex items-center gap-1">
+                                                                Company
+                                                                <ChevronRight size={12} className={`transition-transform ${companyOpen ? 'rotate-90' : ''}`} />
+                                                        </button>
+                                                        {companyOpen && (
+                                                                <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-2">
+                                                                        <Link href="/team" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4A024]">Team</Link>
+                                                                        <a href="/market-analytics" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4A024]">Market Analytics</a>
+                                                                        <Link href="/news" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4A024]">News</Link>
+                                                                        <a href="#contact" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4A024]">Contact</a>
+                                                                        <a href="/faq" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4A024]">FAQ</a>
+                                                                </div>
+                                                        )}
+                                                </div>
+                                        </div>
 
-						<div
-							className="relative"
-							onMouseEnter={() => {
-								if (companyTimeoutRef.current) clearTimeout(companyTimeoutRef.current);
-								setCompanyOpen(true);
-							}}
-							onMouseLeave={() => {
-								companyTimeoutRef.current = setTimeout(() => setCompanyOpen(false), 150);
-							}}
-						>
-							<button className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light flex items-center gap-1">
-								Company
-								<ChevronRight size={12} className={`transition-transform ${companyOpen ? 'rotate-90' : ''}`} />
-							</button>
-							{companyOpen && (
-								<div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-2">
-									<a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4A024]">About Us</a>
-									<a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4A024]">Contact</a>
-									<a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4A024]">Careers</a>
-									<a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4A024]">Press</a>
-								</div>
-							)}
-						</div>
-					</div>
+                                        <div className="hidden md:flex items-center gap-4">
+                                                <a
+                                                        href="/waitlist"
+                                                        className="inline-flex items-center justify-center px-5 py-2 border border-[#D4A024] text-[#D4A024] text-sm font-light rounded-lg hover:bg-[#D4A024] hover:text-white transition-colors"
+                                                >
+                                                        Join Waitlist
+                                                </a>
+                                                <a
+                                                        href={process.env.NEXT_PUBLIC_DASHBOARD_URL || "http://localhost:3001"}
+                                                        className="inline-flex items-center justify-center px-5 py-2 bg-[#D4A024] text-white text-sm font-light rounded-lg hover:bg-[#B8881C] transition-colors"
+                                                >
+                                                        Sign In
+                                                </a>
+                                        </div>
 
-					<div className="hidden md:block">
-						<a
-							href={process.env.NEXT_PUBLIC_DASHBOARD_URL || "http://localhost:3001"}
-							className="inline-flex items-center justify-center px-5 py-2 bg-[#D4A024] text-white text-sm font-light rounded-lg hover:bg-[#B8881C] transition-colors"
-						>
-							Sign In
-						</a>
-					</div>
+                                        <div className="md:hidden">
+                                                <button onClick={() => setIsOpen(!isOpen)} className="text-[#D4A024] p-2">
+                                                        {isOpen ? <X size={24} /> : <Menu size={24} />}
+                                                </button>
+                                        </div>
+                                </div>
+                        </div>
 
-					<div className="md:hidden">
-						<button onClick={() => setIsOpen(!isOpen)} className="text-gray-700 p-2">
-							{isOpen ? <X size={24} /> : <Menu size={24} />}
-						</button>
-					</div>
-				</div>
-			</div>
-
-			{isOpen && (
-				<div className="md:hidden fixed inset-0 top-16 bg-black/50" onClick={() => setIsOpen(false)}>
-					<div className="bg-white p-4 shadow-lg" onClick={(e) => e.stopPropagation()}>
-						<a href="#" className="block py-3 text-gray-700 border-b border-gray-100" onClick={() => setIsOpen(false)}>Mission</a>
-						<Link href="/marketplace" className="block py-3 text-gray-700 border-b border-gray-100" onClick={() => setIsOpen(false)}>Marketplace</Link>
-						<Link href="/nexus" className="block py-3 text-gray-700 border-b border-gray-100" onClick={() => setIsOpen(false)}>Nexus</Link>
-						<a href="/omnigrid" className="block py-3 text-gray-700 border-b border-gray-100" onClick={() => setIsOpen(false)}>OmniGrid</a>
-						<div className="py-2">
-							<div className="text-xs text-gray-500 uppercase tracking-wider mb-2">Intelligence</div>
-							<a href="#" className="block py-2 pl-4 text-gray-600 text-sm" onClick={() => setIsOpen(false)}>Market Analytics</a>
-							<a href="#" className="block py-2 pl-4 text-gray-600 text-sm" onClick={() => setIsOpen(false)}>AI Insights</a>
-							<a href="#" className="block py-2 pl-4 text-gray-600 text-sm" onClick={() => setIsOpen(false)}>Reports</a>
-						</div>
-						<div className="py-2 border-t border-gray-100">
-							<div className="text-xs text-gray-500 uppercase tracking-wider mb-2">Company</div>
-							<a href="#" className="block py-2 pl-4 text-gray-600 text-sm" onClick={() => setIsOpen(false)}>About Us</a>
-							<a href="#" className="block py-2 pl-4 text-gray-600 text-sm" onClick={() => setIsOpen(false)}>Contact</a>
-							<a href="#" className="block py-2 pl-4 text-gray-600 text-sm" onClick={() => setIsOpen(false)}>Careers</a>
-							<a href="#" className="block py-2 pl-4 text-gray-600 text-sm" onClick={() => setIsOpen(false)}>Press</a>
-						</div>
-						<div className="pt-4 border-t border-gray-100">
-							<a
+                        {isOpen && (
+                                <div className="md:hidden fixed inset-0 top-16 bg-black/50" onClick={() => setIsOpen(false)}>
+                                        <div className="bg-white p-4 shadow-lg" onClick={(e) => e.stopPropagation()}>
+                                                <a href="#about" className="block py-3 text-gray-700 border-b border-gray-100" onClick={() => setIsOpen(false)}>Mission</a>
+                                                <Link href="/marketplace" className="block py-3 text-gray-700 border-b border-gray-100" onClick={() => setIsOpen(false)}>Marketplace</Link>
+                                                <Link href="/nexus" className="block py-3 text-gray-700 border-b border-gray-100" onClick={() => setIsOpen(false)}>Nexus</Link>
+                                                <a href="/omnigrid" className="block py-3 text-gray-700 border-b border-gray-100" onClick={() => setIsOpen(false)}>OmniGrid</a>
+                                                <div className="py-2 border-t border-gray-100">
+                                                        <div className="text-xs text-gray-500 uppercase tracking-wider mb-2">Company</div>
+                                                        <Link href="/team" className="block py-2 pl-4 text-gray-600 text-sm" onClick={() => setIsOpen(false)}>Team</Link>
+                                                        <a href="/market-analytics" className="block py-2 pl-4 text-gray-600 text-sm" onClick={() => setIsOpen(false)}>Market Analytics</a>
+                                                        <Link href="/news" className="block py-2 pl-4 text-gray-600 text-sm" onClick={() => setIsOpen(false)}>News</Link>
+                                                        <a href="#contact" className="block py-2 pl-4 text-gray-600 text-sm" onClick={() => setIsOpen(false)}>Contact</a>
+                                                        <a href="/faq" className="block py-2 pl-4 text-gray-600 text-sm" onClick={() => setIsOpen(false)}>FAQ</a>
+                                                </div>
+                                                <div className="pt-4 border-t border-gray-100 space-y-3">
+                                                        <a
+                                                                href="/waitlist"
+                                                                className="block w-full text-center px-5 py-3 border border-[#D4A024] text-[#D4A024] font-light rounded-lg"
+                                                                onClick={() => setIsOpen(false)}
+                                                        >
+                                                                Join Waitlist
+                                                        </a>
+                                                        <a
 								href={process.env.NEXT_PUBLIC_DASHBOARD_URL || "http://localhost:3001"}
-								className="block w-full text-center px-5 py-3 bg-[#D4A024] text-white font-light rounded-lg"
-								onClick={() => setIsOpen(false)}
-							>
-								Sign In
-							</a>
-						</div>
-					</div>
-				</div>
-			)}
-		</nav>
-	);
+                                                                className="block w-full text-center px-5 py-3 bg-[#D4A024] text-white font-light rounded-lg"
+                                                                onClick={() => setIsOpen(false)}
+                                                        >
+                                                                Sign In
+                                                        </a>
+                                                </div>
+                                        </div>
+                                </div>
+                        )}
+                </nav>
+        );
 };
 
 const FlippingText = () => {
@@ -433,32 +417,32 @@ const CookieConsent = () => {
 };
 
 const Hero = () => (
-	<section className="relative min-h-screen flex items-center overflow-hidden">
-		<div className="absolute inset-0">
-			<motion.div
-				className="absolute inset-0 bg-no-repeat"
-				style={{
-					backgroundImage: `url('/assets/hero-pattern.jpg')`,
-					imageRendering: '-webkit-optimize-contrast' as React.CSSProperties['imageRendering'],
-					WebkitBackfaceVisibility: 'hidden',
-					backfaceVisibility: 'hidden',
-					transform: 'translateZ(0)',
-					willChange: 'transform',
-					filter: 'contrast(1.0) brightness(1.0) saturate(1.0)',
-					backgroundPosition: 'center center',
-					backgroundSize: 'cover'
-				}}
-				initial={{ scale: 1.3 }}
-				animate={{ scale: [1.3, 1.7] }}
-				transition={{
-					duration: 18,
-					repeat: Infinity,
-					ease: "easeInOut",
-					repeatType: "reverse"
-				}}
-			/>
-			<div className="absolute inset-0 bg-gradient-to-b from-white/80 via-white/70 to-white/60"></div>
-		</div>
+        <section className="relative min-h-screen flex items-center overflow-hidden">
+                <div className="absolute inset-0 pointer-events-none">
+                        <motion.div
+                                className="absolute inset-0 bg-no-repeat pointer-events-none"
+                                style={{
+                                        backgroundImage: `url('/assets/hero-pattern.jpg')`,
+                                        imageRendering: '-webkit-optimize-contrast' as React.CSSProperties['imageRendering'],
+                                        WebkitBackfaceVisibility: 'hidden',
+                                        backfaceVisibility: 'hidden',
+                                        transform: 'translateZ(0)',
+                                        willChange: 'transform',
+                                        filter: 'contrast(1.0) brightness(1.0) saturate(1.0)',
+                                        backgroundPosition: 'center center',
+                                        backgroundSize: 'cover'
+                                }}
+                                initial={{ scale: 1.3 }}
+                                animate={{ scale: [1.3, 1.7] }}
+                                transition={{
+                                        duration: 18,
+                                        repeat: Infinity,
+                                        ease: "easeInOut",
+                                        repeatType: "reverse"
+                                }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-white/70 to-white/60 pointer-events-none"></div>
+                </div>
 
 		<div className="container relative z-10 px-4 pt-32 sm:pt-40 md:pt-48">
 			<div className="max-w-5xl mx-auto text-center flex flex-col items-center gap-4 sm:gap-6">
@@ -504,30 +488,27 @@ const Hero = () => (
 					</p>
 				</motion.div>
 
-				<motion.div
-					initial={{ opacity: 0, y: 20 }}
-					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.8, delay: 0.4 }}
-					className="flex gap-3 sm:gap-4 justify-center mt-4"
-				>
-					<motion.button
-						whileHover={{ scale: 1.02 }}
-						whileTap={{ scale: 0.98 }}
-						className="px-6 sm:px-8 py-2.5 sm:py-3 bg-white text-[#D4A024] rounded-[0.75rem] text-sm sm:text-base font-light border-2 border-[#D4A024] hover:bg-[#D4A024]/5 transition-colors"
-						onClick={() => document.getElementById('marketplace')?.scrollIntoView({ behavior: 'smooth' })}
-					>
-						Explore Marketplace
-					</motion.button>
-					<motion.button
-						whileHover={{ scale: 1.02 }}
-						whileTap={{ scale: 0.98 }}
-						className="px-6 sm:px-8 py-2.5 sm:py-3 bg-[#D4A024] text-white rounded-[0.75rem] text-sm sm:text-base font-light hover:bg-[#B8881C] transition-colors"
-					>
-						Join Waitlist
-					</motion.button>
-				</motion.div>
-			</div>
-		</div>
+                                <motion.div
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.8, delay: 0.4 }}
+                                        className="flex gap-3 sm:gap-4 justify-center mt-4"
+                                >
+                                        <Link
+                                                href="/marketplace"
+                                                className="px-6 sm:px-8 py-2.5 sm:py-3 bg-white text-[#D4A024] rounded-[0.75rem] text-sm sm:text-base font-light border-2 border-[#D4A024] hover:bg-[#D4A024]/5 transition-colors hover:scale-[1.02] active:scale-[0.98]"
+                                        >
+                                                Explore Marketplace
+                                        </Link>
+                                        <Link
+                                                href="/waitlist"
+                                                className="px-6 sm:px-8 py-2.5 sm:py-3 bg-[#D4A024] text-white rounded-[0.75rem] text-sm sm:text-base font-light hover:bg-[#B8881C] transition-colors hover:scale-[1.02] active:scale-[0.98]"
+                                        >
+                                                Join Waitlist
+                                        </Link>
+                                </motion.div>
+                        </div>
+                </div>
 
 		<CookieConsent />
 	</section>
@@ -610,29 +591,29 @@ const BentoFeatures = () => (
 const AboutUs = () => {
 	const companyName = "Commertize";
 
-	return (
-		<section id="about" className="relative overflow-hidden min-h-[700px] md:min-h-[800px]">
-			<div className="absolute inset-0">
-				<motion.div
-					className="absolute inset-0"
-					initial={{ scale: 1 }}
-					animate={{ scale: [1.0, 1.2] }}
-					transition={{
-						duration: 20,
-						repeat: Infinity,
-						ease: "easeInOut",
-						repeatType: "reverse"
-					}}
-				>
-					<img
-						src="/assets/vision-background.jpg"
-						alt=""
-						className="w-full h-full object-cover"
-						style={{ objectPosition: 'center center' }}
-					/>
-				</motion.div>
-				<div className="absolute inset-0 bg-white/30" />
-			</div>
+        return (
+                <section id="about" className="relative overflow-hidden min-h-[700px] md:min-h-[800px]">
+                        <div className="absolute inset-0">
+                                <motion.div
+                                        className="absolute inset-0"
+                                        initial={{ scale: 1 }}
+                                        animate={{ scale: [1.0, 1.2] }}
+                                        transition={{
+                                                duration: 20,
+                                                repeat: Infinity,
+                                                ease: "easeInOut",
+                                                repeatType: "reverse"
+                                        }}
+                                >
+                                        <img
+                                                src="/assets/vision-background.jpg"
+                                                alt=""
+                                                className="w-full h-full object-cover"
+                                                style={{ objectPosition: 'center center' }}
+                                        />
+                                </motion.div>
+                                <div className="absolute inset-0 bg-white/60" />
+                        </div>
 
 			<div className="absolute inset-0 flex items-center justify-start z-10 px-6 md:px-8 lg:pl-24">
 				<motion.div
@@ -797,73 +778,92 @@ const WhyCommertize = () => {
 									</span>
 								</div>
 
-								<div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#D4A024]/10 to-[#D4A024]/5 flex items-center justify-center mb-6 group-hover:from-[#D4A024]/20 group-hover:to-[#D4A024]/10 transition-all duration-300">
-									<feature.icon className="w-7 h-7 text-[#D4A024]" />
-								</div>
+                                                                <div className="mt-6 pt-6 border-t border-gray-100">
+                                                                        <Link href="/faq" className="flex items-center text-[#D4A024] font-logo text-sm font-light group-hover:translate-x-2 transition-transform duration-300">
+                                                                                Learn more
+                                                                                <ArrowRight className="w-4 h-4 ml-2" />
+                                                                        </Link>
+                                                                </div>
+                                                        </div>
+                                                </motion.div>
+                                        ))}
+                                </div>
 
-								<h3 className="text-xl font-logo font-medium text-gray-900 mb-4">
-									{feature.title}
-								</h3>
+                                <div className="relative max-w-5xl mx-auto">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                                <motion.div
+                                                        initial={{ opacity: 0, x: -30 }}
+                                                        whileInView={{ opacity: 1, x: 0 }}
+                                                        viewport={{ once: true, amount: 0.3 }}
+                                                        transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+                                                        className="bg-white rounded-3xl p-8 border border-gray-200 shadow-sm relative overflow-hidden"
+                                                >
+                                                        <div className="absolute top-0 right-0 w-32 h-32 bg-gray-100 rounded-full -mr-16 -mt-16 opacity-50" />
+                                                        <div className="relative z-10">
+                                                                <div className="flex items-center gap-3 mb-6">
+                                                                        <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center">
+                                                                                <Building2 className="w-6 h-6 text-gray-500" />
+                                                                        </div>
+                                                                        <div>
+                                                                                <h3 className="text-xl font-logo font-light text-gray-900">Traditional CRE</h3>
+                                                                                <p className="text-xs text-gray-400 font-light">Legacy Approach</p>
+                                                                        </div>
+                                                                </div>
+                                                                <div className="space-y-4">
+                                                                        {traditionalItems.map((item, index) => (
+                                                                                <div key={index} className="flex items-center gap-4 p-3 bg-gray-50 rounded-xl">
+                                                                                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-red-100 flex items-center justify-center">
+                                                                                                <X size={14} className="text-red-500" />
+                                                                                        </div>
+                                                                                        <span className="text-gray-600 font-logo font-light">{item}</span>
+                                                                                </div>
+                                                                        ))}
+                                                                </div>
+                                                        </div>
+                                                </motion.div>
 
-								<p className="text-gray-600 font-logo font-light leading-relaxed">
-									{feature.description}
-								</p>
+                                                <motion.div
+                                                        initial={{ opacity: 0, x: 30 }}
+                                                        whileInView={{ opacity: 1, x: 0 }}
+                                                        viewport={{ once: true, amount: 0.3 }}
+                                                        transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
+                                                        className="bg-gradient-to-br from-[#D4A024]/5 to-[#D4A024]/10 rounded-3xl p-8 border-2 border-[#D4A024]/30 shadow-lg relative overflow-hidden"
+                                                >
+                                                        <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4A024]/10 rounded-full -mr-16 -mt-16" />
+                                                        <div className="absolute -bottom-4 -left-4 w-24 h-24 bg-[#D4A024]/5 rounded-full" />
+                                                        <div className="relative z-10">
+                                                                <div className="flex items-center gap-3 mb-6">
+                                                                        <div className="w-12 h-12 rounded-xl bg-[#D4A024]/20 flex items-center justify-center border border-[#D4A024]/30">
+                                                                                <img src="/assets/commertize-icon-gold.png" alt="" className="w-6 h-6" />
+                                                                        </div>
+                                                                        <div>
+                                                                                <h3 className="text-xl font-logo font-light text-gray-900">Commertize</h3>
+                                                                                <p className="text-xs text-[#D4A024] font-light">The Future of CRE</p>
+                                                                        </div>
+                                                                </div>
+                                                                <div className="space-y-4">
+                                                                        {commertizeItems.map((item, index) => (
+                                                                                <div key={index} className="flex items-center gap-4 p-3 bg-white/80 rounded-xl border border-[#D4A024]/10">
+                                                                                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#D4A024]/20 flex items-center justify-center">
+                                                                                                <Check size={14} className="text-[#D4A024]" />
+                                                                                        </div>
+                                                                                        <span className="text-gray-700 font-logo font-light">{item}</span>
+                                                                                </div>
+                                                                        ))}
+                                                                </div>
+                                                        </div>
+                                                </motion.div>
+                                        </div>
 
-								<div className="mt-6 pt-6 border-t border-gray-100">
-									<div className="flex items-center text-[#D4A024] font-logo text-sm font-medium group-hover:translate-x-2 transition-transform duration-300">
-										Learn more
-										<ArrowRight className="w-4 h-4 ml-2" />
-									</div>
-								</div>
-							</div>
-						</motion.div>
-					))}
-				</div>
-
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-					<motion.div
-						initial={{ opacity: 0, y: 30 }}
-						whileInView={{ opacity: 1, y: 0 }}
-						viewport={{ once: true, amount: 0.3 }}
-						transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-						className="bg-[#FDF8F0] rounded-2xl p-6 border border-[#D4A024]/20"
-					>
-						<h3 className="text-xl font-logo font-medium text-gray-900 mb-4">Traditional CRE</h3>
-						<div className="space-y-3">
-							{traditionalItems.map((item, index) => (
-								<div key={index} className="flex items-center gap-3">
-									<div className="flex-shrink-0 w-5 h-5 rounded-full bg-red-100 flex items-center justify-center">
-										<X size={12} className="text-red-500" />
-									</div>
-									<span className="text-gray-700 font-logo font-light">{item}</span>
-								</div>
-							))}
-						</div>
-					</motion.div>
-
-					<motion.div
-						initial={{ opacity: 0, y: 30 }}
-						whileInView={{ opacity: 1, y: 0 }}
-						viewport={{ once: true, amount: 0.3 }}
-						transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
-						className="bg-[#FDF8F0] rounded-2xl p-6 border border-[#D4A024]/30"
-					>
-						<h3 className="text-xl font-logo font-medium text-gray-900 mb-4">Commertize</h3>
-						<div className="space-y-3">
-							{commertizeItems.map((item, index) => (
-								<div key={index} className="flex items-center gap-3">
-									<div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center">
-										<Check size={12} className="text-green-600" />
-									</div>
-									<span className="text-gray-700 font-logo font-light">{item}</span>
-								</div>
-							))}
-						</div>
-					</motion.div>
-				</div>
-			</div>
-		</section>
-	);
+                                        <div className="hidden md:flex absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+                                                <div className="w-14 h-14 rounded-full bg-white shadow-xl border-2 border-[#D4A024]/30 flex items-center justify-center">
+                                                        <span className="text-[#D4A024] font-logo font-light text-sm">VS</span>
+                                                </div>
+                                        </div>
+                                </div>
+                        </div>
+                </section>
+        );
 };
 
 // --- Commertize Collection Section ---
@@ -1257,19 +1257,146 @@ const paymentMethods = [
 ];
 
 const SubmitProperty = () => {
-	const isMounted = useIsMounted();
+        const [isMounted, setIsMounted] = useState(false);
 
-	return (
-		<section className="py-20 bg-white">
-			<div className="container max-w-6xl mx-auto px-4">
-				<div className="text-center mb-12">
-					<h2 className="text-3xl md:text-4xl font-logo font-light text-gray-900 mb-6">
-						List Your Property on <span className="text-[#D4A024]">Commertize</span>
-					</h2>
-					<p className="text-gray-600 leading-relaxed max-w-4xl mx-auto text-base md:text-lg font-light">
-						Commertize connects your commercial property to a worldwide network of qualified investors. Whether you're an owner, developer, or asset manager, our platform makes it simple to tokenize your CRE and open it to fractional investment. Reach a broader audience, secure capital faster, and retain control — all with blockchain-powered transparency and efficiency.
-					</p>
-				</div>
+        useEffect(() => {
+                setIsMounted(true);
+        }, []);
+
+        return (
+                <section className="py-20 relative overflow-hidden">
+                        <div className="absolute inset-0">
+                                <img
+                                        src="/assets/list-property-bg.jpg"
+                                        alt=""
+                                        className="w-full h-full object-cover"
+                                />
+                                <div className="absolute inset-0 bg-white/95" />
+                        </div>
+                        <div className="container max-w-6xl mx-auto px-4 relative z-10">
+                                <div className="text-center mb-12">
+                                        <h2 className="text-3xl md:text-4xl font-logo font-light text-gray-900 mb-6">
+                                                List Your Property on <span className="text-[#D4A024]">Commertize</span>
+                                        </h2>
+                                        <p className="text-gray-600 leading-relaxed max-w-4xl mx-auto text-base md:text-lg font-light">
+                                                Commertize connects your commercial property to a worldwide network of qualified investors. Whether you're an owner, developer, or asset manager, our platform makes it simple to tokenize your CRE and open it to fractional investment. Reach a broader audience, secure capital faster, and retain control — all with blockchain-powered transparency and efficiency.
+                                        </p>
+                                </div>
+
+                                <div className="mb-12">
+                                        <h3 className="text-2xl md:text-3xl font-light font-logo mb-8 text-gray-900 text-center">
+                                                Your Property, Our Global Marketplace
+                                        </h3>
+
+                                        <div className="mb-16">
+                                                <div className="relative h-[600px] w-full flex items-center justify-center overflow-hidden">
+                                                        {isMounted && (
+                                                        <motion.div
+                                                                className="relative"
+                                                                animate={{ rotate: 360 }}
+                                                                transition={{
+                                                                        duration: 35,
+                                                                        repeat: Infinity,
+                                                                        ease: "linear"
+                                                                }}
+                                                        >
+                                                                {propertyTypes.map((type, index) => {
+                                                                        const angle = (index / propertyTypes.length) * 360;
+                                                                        const radius = 200;
+                                                                        const x = Math.cos(angle * Math.PI / 180) * radius;
+                                                                        const y = Math.sin(angle * Math.PI / 180) * radius;
+
+                                                                        return (
+                                                                                <div key={`subnet-${type.id}`}>
+                                                                                        <div
+                                                                                                className="absolute bg-[#D4A024]"
+                                                                                                style={{
+                                                                                                        left: 0,
+                                                                                                        top: 0,
+                                                                                                        width: Math.sqrt(x * x + y * y) + 'px',
+                                                                                                        height: '1px',
+                                                                                                        opacity: 0.4,
+                                                                                                        transform: `rotate(${Math.atan2(y, x) * (180 / Math.PI)}deg)`,
+                                                                                                        transformOrigin: '0 50%'
+                                                                                                }}
+                                                                                        />
+
+                                                                                        <motion.div
+                                                                                                className="absolute"
+                                                                                                style={{
+                                                                                                        left: x - 60,
+                                                                                                        top: y - 18
+                                                                                                }}
+                                                                                                animate={{ rotate: -360 }}
+                                                                                                transition={{
+                                                                                                        duration: 35,
+                                                                                                        repeat: Infinity,
+                                                                                                        ease: "linear"
+                                                                                                }}
+                                                                                        >
+                                                                                                <div className="flex items-center space-x-2 bg-gradient-to-br from-[#D4A024]/5 to-[#D4A024]/10 border-2 border-[#D4A024]/40 rounded-lg px-3 py-2 hover:from-[#D4A024]/10 hover:to-[#D4A024]/20 hover:border-[#D4A024]/60 transition-all duration-200 shadow-lg">
+                                                                                                        <div className="w-7 h-7 rounded-full bg-[#D4A024]/20 border border-[#D4A024]/50 flex items-center justify-center">
+                                                                                                                <type.icon className="w-4 h-4 text-[#D4A024]" />
+                                                                                                        </div>
+                                                                                                        <div>
+                                                                                                                <div className="text-xs font-light text-gray-800">{type.name}</div>
+                                                                                                        </div>
+                                                                                                </div>
+                                                                                        </motion.div>
+                                                                                </div>
+                                                                        );
+                                                                })}
+
+                                                                {propertyTypes.map((_, index) => {
+                                                                        const connections: React.ReactNode[] = [];
+
+                                                                        [1, 2, 3, 4].forEach(offset => {
+                                                                                const targetIndex = (index + offset) % propertyTypes.length;
+                                                                                if (index < targetIndex || (index + offset >= propertyTypes.length)) {
+                                                                                        const angle1 = (index / propertyTypes.length) * 360;
+                                                                                        const angle2 = (targetIndex / propertyTypes.length) * 360;
+                                                                                        const radius = 200;
+                                                                                        const x1 = Math.cos(angle1 * Math.PI / 180) * radius;
+                                                                                        const y1 = Math.sin(angle1 * Math.PI / 180) * radius;
+                                                                                        const x2 = Math.cos(angle2 * Math.PI / 180) * radius;
+                                                                                        const y2 = Math.sin(angle2 * Math.PI / 180) * radius;
+
+                                                                                        const deltaX = x2 - x1;
+                                                                                        const deltaY = y2 - y1;
+                                                                                        const length = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                                                                                        const rotation = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
+
+                                                                                        const opacity = offset === 1 ? 0.35 : offset === 2 ? 0.25 : offset === 3 ? 0.18 : 0.12;
+
+                                                                                        connections.push(
+                                                                                                <div
+                                                                                                        key={`inter-${index}-${targetIndex}-${offset}`}
+                                                                                                        className="absolute bg-[#D4A024]"
+                                                                                                        style={{
+                                                                                                                left: x1,
+                                                                                                                top: y1,
+                                                                                                                width: length + 'px',
+                                                                                                                height: '1px',
+                                                                                                                opacity: opacity,
+                                                                                                                transform: `rotate(${rotation}deg)`,
+                                                                                                                transformOrigin: '0 50%'
+                                                                                                        }}
+                                                                                                />
+                                                                                        );
+                                                                                }
+                                                                        });
+
+                                                                        return <div key={`connections-${index}`}>{connections}</div>;
+                                                                })}
+                                                        </motion.div>
+                                                        )}
+
+                                                        <div className="absolute flex items-center justify-center" style={{ zIndex: 2 }}>
+                                                                <img src="/assets/logo.png" alt="Commertize" className="h-6 w-auto object-contain" />
+                                                        </div>
+                                                </div>
+                                        </div>
+                                </div>
 
 				<div className="mb-12">
 					<h3 className="text-2xl md:text-3xl font-light font-logo mb-8 text-gray-900 text-center">
@@ -1287,98 +1414,94 @@ const SubmitProperty = () => {
 									ease: "linear"
 								}}
 							>
-								{isMounted && (
-									<>
-										{propertyTypes.map((type, index) => {
-											const angle = (index / propertyTypes.length) * 360;
-											const radius = 200;
-											const x = Math.cos(angle * Math.PI / 180) * radius;
-											const y = Math.sin(angle * Math.PI / 180) * radius;
+								{propertyTypes.map((type, index) => {
+									const angle = (index / propertyTypes.length) * 360;
+									const radius = 200;
+									const x = Math.cos(angle * Math.PI / 180) * radius;
+									const y = Math.sin(angle * Math.PI / 180) * radius;
 
-											return (
-												<div key={`subnet-${type.id}`}>
-													<div
-														className="absolute bg-[#D4A024]"
-														style={{
-															left: 0,
-															top: 0,
-															width: Math.sqrt(x * x + y * y) + 'px',
-															height: '1px',
-															opacity: 0.4,
-															transform: `rotate(${Math.atan2(y, x) * (180 / Math.PI)}deg)`,
-															transformOrigin: '0 50%'
-														}}
-													/>
+									return (
+										<div key={`subnet-${type.id}`}>
+											<div
+												className="absolute bg-[#D4A024]"
+												style={{
+													left: 0,
+													top: 0,
+													width: Math.sqrt(x * x + y * y) + 'px',
+													height: '1px',
+													opacity: 0.4,
+													transform: `rotate(${Math.atan2(y, x) * (180 / Math.PI)}deg)`,
+													transformOrigin: '0 50%'
+												}}
+											/>
 
-													<motion.div
-														className="absolute"
-														style={{
-															left: x - 60,
-															top: y - 18
-														}}
-														animate={{ rotate: -360 }}
-														transition={{
-															duration: 35,
-															repeat: Infinity,
-															ease: "linear"
-														}}
-													>
-														<div className="flex items-center space-x-2 bg-gradient-to-br from-[#D4A024]/5 to-[#D4A024]/10 border-2 border-[#D4A024]/40 rounded-lg px-3 py-2 hover:from-[#D4A024]/10 hover:to-[#D4A024]/20 hover:border-[#D4A024]/60 transition-all duration-200 shadow-lg">
-															<div className="w-7 h-7 rounded-full bg-[#D4A024]/20 border border-[#D4A024]/50 flex items-center justify-center">
-																<type.icon className="w-4 h-4 text-[#D4A024]" />
-															</div>
-															<div>
-																<div className="text-xs font-semibold text-gray-800">{type.name}</div>
-															</div>
-														</div>
-													</motion.div>
+											<motion.div
+												className="absolute"
+												style={{
+													left: x - 60,
+													top: y - 18
+												}}
+												animate={{ rotate: -360 }}
+												transition={{
+													duration: 35,
+													repeat: Infinity,
+													ease: "linear"
+												}}
+											>
+												<div className="flex items-center space-x-2 bg-gradient-to-br from-[#D4A024]/5 to-[#D4A024]/10 border-2 border-[#D4A024]/40 rounded-lg px-3 py-2 hover:from-[#D4A024]/10 hover:to-[#D4A024]/20 hover:border-[#D4A024]/60 transition-all duration-200 shadow-lg">
+													<div className="w-7 h-7 rounded-full bg-[#D4A024]/20 border border-[#D4A024]/50 flex items-center justify-center">
+														<type.icon className="w-4 h-4 text-[#D4A024]" />
+													</div>
+													<div>
+														<div className="text-xs font-semibold text-gray-800">{type.name}</div>
+													</div>
 												</div>
+											</motion.div>
+										</div>
+									);
+								})}
+
+								{propertyTypes.map((_, index) => {
+									const connections: React.ReactNode[] = [];
+
+									[1, 2, 3, 4].forEach(offset => {
+										const targetIndex = (index + offset) % propertyTypes.length;
+										if (index < targetIndex || (index + offset >= propertyTypes.length)) {
+											const angle1 = (index / propertyTypes.length) * 360;
+											const angle2 = (targetIndex / propertyTypes.length) * 360;
+											const radius = 200;
+											const x1 = Math.cos(angle1 * Math.PI / 180) * radius;
+											const y1 = Math.sin(angle1 * Math.PI / 180) * radius;
+											const x2 = Math.cos(angle2 * Math.PI / 180) * radius;
+											const y2 = Math.sin(angle2 * Math.PI / 180) * radius;
+
+											const deltaX = x2 - x1;
+											const deltaY = y2 - y1;
+											const length = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+											const rotation = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
+
+											const opacity = offset === 1 ? 0.35 : offset === 2 ? 0.25 : offset === 3 ? 0.18 : 0.12;
+
+											connections.push(
+												<div
+													key={`inter-${index}-${targetIndex}-${offset}`}
+													className="absolute bg-[#D4A024]"
+													style={{
+														left: x1,
+														top: y1,
+														width: length + 'px',
+														height: '1px',
+														opacity: opacity,
+														transform: `rotate(${rotation}deg)`,
+														transformOrigin: '0 50%'
+													}}
+												/>
 											);
-										})}
+										}
+									});
 
-										{propertyTypes.map((_, index) => {
-											const connections: React.ReactNode[] = [];
-
-											[1, 2, 3, 4].forEach(offset => {
-												const targetIndex = (index + offset) % propertyTypes.length;
-												if (index < targetIndex || (index + offset >= propertyTypes.length)) {
-													const angle1 = (index / propertyTypes.length) * 360;
-													const angle2 = (targetIndex / propertyTypes.length) * 360;
-													const radius = 200;
-													const x1 = Math.cos(angle1 * Math.PI / 180) * radius;
-													const y1 = Math.sin(angle1 * Math.PI / 180) * radius;
-													const x2 = Math.cos(angle2 * Math.PI / 180) * radius;
-													const y2 = Math.sin(angle2 * Math.PI / 180) * radius;
-
-													const deltaX = x2 - x1;
-													const deltaY = y2 - y1;
-													const length = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-													const rotation = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
-
-													const opacity = offset === 1 ? 0.35 : offset === 2 ? 0.25 : offset === 3 ? 0.18 : 0.12;
-
-													connections.push(
-														<div
-															key={`inter-${index}-${targetIndex}-${offset}`}
-															className="absolute bg-[#D4A024]"
-															style={{
-																left: x1,
-																top: y1,
-																width: length + 'px',
-																height: '1px',
-																opacity: opacity,
-																transform: `rotate(${rotation}deg)`,
-																transformOrigin: '0 50%'
-															}}
-														/>
-													);
-												}
-											});
-
-											return <div key={`connections-${index}`}>{connections}</div>;
-										})}
-									</>
-								)}
+									return <div key={`connections-${index}`}>{connections}</div>;
+								})}
 							</motion.div>
 
 							<div className="absolute flex items-center justify-center" style={{ zIndex: 2 }}>
@@ -1981,170 +2104,172 @@ export default function Home() {
 				</div>
 			</section>
 
+                        {/* Contact Us Section */}
+                        <section className="py-20 bg-white relative z-20" id="contact">
+                                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                                        <motion.div
+                                                initial={{ opacity: 0, y: 30 }}
+                                                whileInView={{ opacity: 1, y: 0 }}
+                                                viewport={{ once: true }}
+                                                className="max-w-4xl mx-auto"
+                                        >
+                                                <div className="text-center mb-12">
+                                                        <div className="w-14 h-14 bg-[#D4A024]/10 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-[#D4A024]/20">
+                                                                <svg className="w-7 h-7 text-[#D4A024]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                                                </svg>
+                                                        </div>
+                                                        <h2 className="text-3xl md:text-4xl font-light text-gray-900 mb-4">Contact Us</h2>
+                                                        <p className="text-gray-600 font-light max-w-xl mx-auto">
+                                                                Have questions about tokenized real estate or want to learn more about Commertize? We'd love to hear from you.
+                                                        </p>
+                                                </div>
 
-			{/* Enhanced FAQ Section */}
-			<section className="py-24 bg-gradient-to-b from-white to-gray-50">
-				<div className="container mx-auto px-4 sm:px-6 lg:px-8">
-					<motion.div
-						initial={{ opacity: 0, y: 30 }}
-						whileInView={{ opacity: 1, y: 0 }}
-						viewport={{ once: true }}
-						transition={{ duration: 0.8 }}
-						className="text-center mb-16"
-					>
-						<div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#D4A024]/20 to-yellow-500/20 rounded-full mb-6 border-2 border-[#D4A024]">
-							<Search className="w-8 h-8 text-[#D4A024]" />
-						</div>
-						<h2 className="text-4xl md:text-5xl font-logo font-light text-gray-900 mb-6">
-							Frequently Asked <span className="text-[#D4A024]">Questions</span>
-						</h2>
-						<p className="text-lg text-gray-600 font-light max-w-3xl mx-auto">
-							Everything you need to know about tokenized commercial real estate investing
-						</p>
-					</motion.div>
+                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                                                        <div className="bg-[#FDF8F3] rounded-2xl p-6 text-center border border-[#D4A024]/10">
+                                                                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+                                                                        <svg className="w-6 h-6 text-[#D4A024]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                                                        </svg>
+                                                                </div>
+                                                                <h3 className="text-gray-900 mb-2">Email</h3>
+                                                                <a href="mailto:support@commertize.com" className="text-[#D4A024] hover:text-[#B8860B] transition-colors">
+                                                                        support@commertize.com
+                                                                </a>
+                                                        </div>
 
-					<div className="max-w-4xl mx-auto space-y-6">
-						{[
-							{
-								category: "About Commertize",
-								icon: Building,
-								items: [
-									{ q: "What is Commertize?", a: "Commertize is a digital platform that tokenizes commercial real estate (CRE), enabling fractional ownership and global investor access through blockchain technology." },
-									{ q: "How does Commertize differ from traditional CRE investment?", a: "We remove high investment minimums, speed up capital access for property owners, and provide blockchain-secured transparency — all while keeping investments accessible to accredited investors worldwide." },
-									{ q: "What types of properties does Commertize work with?", a: "We focus on premium and full-spectrum commercial real estate, including multifamily, office, retail, industrial, hospitality, and mixed-use properties." }
-								]
-							},
-							{
-								category: "For Investors",
-								icon: TrendingUp,
-								items: [
-									{ q: "Who can invest through Commertize?", a: "Currently, investments are open to accredited investors, in compliance with U.S. securities regulations." },
-									{ q: "What is fractional ownership?", a: "Fractional ownership allows you to purchase a share of a property rather than the entire asset, giving you access to premium real estate at a lower entry cost." },
-									{ q: "What is the minimum investment amount?", a: "The minimum investment on Commertize is $1,000, making premium commercial real estate accessible to a much broader range of investors compared to traditional CRE deals that typically require $100,000+." },
-									{ q: "Can I sell my tokens?", a: "Yes — depending on regulatory guidelines and platform availability, tokens can be sold on secondary marketplaces or back to eligible buyers through Commertize's exchange network." }
-								]
-							},
-							{
-								category: "Fees & Costs",
-								icon: DollarSign,
-								items: [
-									{ q: "What fees do investors pay?", a: "Investor fee structure: (1) Investment Fee - 0% on primary market purchases, (2) Management Fee - 0.5-1% annually (property-specific), (3) Secondary Market - 2% transaction fee on sales, (4) Withdrawal Fee - 1% on USD withdrawals. All fees are clearly disclosed before investment." },
-									{ q: "Are there any hidden fees?", a: "No hidden fees. All costs are disclosed upfront in the Private Placement Memorandum (PPM) for each property." }
-								]
-							},
-							{
-								category: "Technology & Security",
-								icon: Shield,
-								items: [
-									{ q: "How does blockchain improve security?", a: "Blockchain creates an immutable record of ownership and transactions, ensuring transparency and reducing fraud risk." },
-									{ q: "What role does AI play in Commertize?", a: "Our AI-driven tools provide property analytics, investment insights, and predictive performance models to help investors make informed decisions." }
-								]
-							},
-							{
-								category: "Compliance & Regulation",
-								icon: ShieldCheck,
-								items: [
-									{ q: "Is tokenized real estate legal?", a: "Yes — Commertize operates under existing securities and real estate regulations, using compliant structures such as Reg D 506(c) offerings for accredited investors." },
-									{ q: "Do I need to be U.S.-based to invest?", a: "No — international accredited investors are welcome, subject to their local regulations." }
-								]
-							}
-						].map((section, sectionIndex) => (
-							<motion.div
-								key={section.category}
-								initial={{ opacity: 0, y: 30 }}
-								whileInView={{ opacity: 1, y: 0 }}
-								viewport={{ once: true }}
-								transition={{ delay: sectionIndex * 0.1 }}
-							>
-								<div className="bg-white rounded-2xl border border-[#D4A024]/30 shadow-lg overflow-hidden">
-									<div className="bg-white px-6 py-4 flex items-center gap-3 border-b border-[#D4A024]/20">
-										<div className="w-10 h-10 bg-[#D4A024]/10 rounded-lg flex items-center justify-center">
-											<section.icon className="w-5 h-5 text-[#D4A024]" />
-										</div>
-										<h3 className="text-lg font-medium text-[#D4A024]">{section.category}</h3>
-									</div>
-									<div className="divide-y divide-gray-100">
-										{section.items.map((item, itemIndex) => (
-											<details key={itemIndex} className="group">
-												<summary className="flex items-center justify-between px-6 py-4 cursor-pointer hover:bg-gray-50 transition-colors">
-													<span className="text-gray-900 font-medium pr-4">{item.q}</span>
-													<ChevronDown className="w-5 h-5 text-[#D4A024] transition-transform group-open:rotate-180 flex-shrink-0" />
-												</summary>
-												<div className="px-6 pb-4 text-gray-600 font-light leading-relaxed">
-													{item.a}
-												</div>
-											</details>
-										))}
-									</div>
-								</div>
-							</motion.div>
-						))}
-					</div>
+                                                        <div className="bg-[#FDF8F3] rounded-2xl p-6 text-center border border-[#D4A024]/10">
+                                                                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+                                                                        <svg className="w-6 h-6 text-[#D4A024]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                                        </svg>
+                                                                </div>
+                                                                <h3 className="text-gray-900 mb-2">Location</h3>
+                                                                <p className="text-gray-600 font-light">
+                                                                        Global Operations
+                                                                </p>
+                                                        </div>
 
-					<motion.div
-						initial={{ opacity: 0, y: 20 }}
-						whileInView={{ opacity: 1, y: 0 }}
-						viewport={{ once: true }}
-						transition={{ delay: 0.5 }}
-						className="mt-12 text-center"
-					>
-						<p className="text-gray-600 font-light mb-4">Still have questions?</p>
-						<a href="mailto:support@commertize.com" className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#D4A024] to-yellow-500 text-white rounded-full font-medium hover:shadow-lg transition-all">
-							Contact Support
-							<ArrowRight className="w-4 h-4" />
-						</a>
-					</motion.div>
-				</div>
-			</section>
+                                                        <div className="bg-[#FDF8F3] rounded-2xl p-6 text-center border border-[#D4A024]/10">
+                                                                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+                                                                        <svg className="w-6 h-6 text-[#D4A024]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                                        </svg>
+                                                                </div>
+                                                                <h3 className="text-gray-900 mb-2">Response Time</h3>
+                                                                <p className="text-gray-600 font-light">
+                                                                        Within 24 hours
+                                                                </p>
+                                                        </div>
+                                                </div>
 
-			{/* Enhanced Footer */}
-			<footer className="bg-white relative z-20" id="contact">
-				<div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-					<div className="grid grid-cols-1 md:grid-cols-5 gap-8">
-						{/* Column 1: Logo & Social */}
-						<div>
-							<div className="mb-4">
-								<img src="/assets/logo.png" alt="Commertize" className="h-8 w-auto" />
-							</div>
-							<p className="text-sm mb-6">
-								Commercial Real Estate, Revolutionized.<br />
-								Liquid. Transparent. Global.
-							</p>
-							<div className="mb-4">
-								<a href="mailto:support@commertize.com" className="text-sm text-[#D4A024] hover:text-[#D4A024]/80 transition-colors">
-									support@commertize.com
-								</a>
-							</div>
-							<div className="mb-6">
-								<h4 className="font-semibold mb-3 text-sm text-[#D4A024]">Social Links</h4>
-								<div className="flex flex-wrap gap-3">
-									<a href="https://linkedin.com/company/commertize" target="_blank" rel="noopener noreferrer" className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors" title="LinkedIn">
-										<svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>
-									</a>
-									<a href="https://x.com/commertize" target="_blank" rel="noopener noreferrer" className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors" title="X">
-										<svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" /></svg>
-									</a>
-									<a href="https://youtube.com/@commertize" target="_blank" rel="noopener noreferrer" className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors" title="YouTube">
-										<svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" /></svg>
-									</a>
-									<a href="https://instagram.com/commertize" target="_blank" rel="noopener noreferrer" className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors" title="Instagram">
-										<svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z" /></svg>
-									</a>
-									<a href="https://facebook.com/commertize" target="_blank" rel="noopener noreferrer" className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors" title="Facebook">
-										<svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>
-									</a>
-									<a href="https://tiktok.com/@commertize" target="_blank" rel="noopener noreferrer" className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors" title="TikTok">
-										<svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" /></svg>
-									</a>
-									<a href="https://discord.gg/commertize" target="_blank" rel="noopener noreferrer" className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors" title="Discord">
-										<svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z" /></svg>
-									</a>
-									<a href="https://t.me/commertize" target="_blank" rel="noopener noreferrer" className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors" title="Telegram">
-										<svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" /></svg>
-									</a>
-								</div>
-							</div>
-						</div>
+                                                <div className="bg-gradient-to-r from-[#D4A024]/5 to-[#E6BE8A]/5 rounded-3xl p-8 md:p-10 border border-[#D4A024]/10">
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                                                                <div>
+                                                                        <h3 className="text-2xl font-light text-gray-900 mb-3">Get in Touch</h3>
+                                                                        <p className="text-gray-600 font-light mb-6">
+                                                                                Whether you're an investor looking to explore tokenized real estate opportunities or a property sponsor interested in tokenization, our team is here to help.
+                                                                        </p>
+                                                                        <div className="flex flex-wrap gap-3">
+                                                                                <a
+                                                                                        href="mailto:support@commertize.com"
+                                                                                        className="inline-flex items-center gap-2 bg-[#D4A024] hover:bg-[#B8860B] text-white px-6 py-3 rounded-xl transition-colors"
+                                                                                >
+                                                                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                                                                        </svg>
+                                                                                        Send Email
+                                                                                </a>
+                                                                                <Link
+                                                                                        href="/waitlist"
+                                                                                        className="inline-flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-900 px-6 py-3 rounded-xl border border-gray-200 transition-colors"
+                                                                                >
+                                                                                        Join Waitlist
+                                                                                        <ArrowRight className="w-4 h-4" />
+                                                                                </Link>
+                                                                        </div>
+                                                                </div>
+                                                                <div className="flex justify-center md:justify-end">
+                                                                        <div className="w-48 h-48 bg-white rounded-2xl shadow-sm flex items-center justify-center border border-[#D4A024]/10">
+                                                                                <div className="text-center">
+                                                                                        <div className="w-16 h-16 bg-[#D4A024]/10 rounded-xl flex items-center justify-center mx-auto mb-3">
+                                                                                                <Building2 className="w-8 h-8 text-[#D4A024]" />
+                                                                                        </div>
+                                                                                        <p className="text-sm text-gray-500 font-light">Commertize</p>
+                                                                                        <p className="text-xs text-gray-400">Real Estate, Tokenized</p>
+                                                                                </div>
+                                                                        </div>
+                                                                </div>
+                                                        </div>
+                                                </div>
+                                        </motion.div>
+                                </div>
+                        </section>
+
+                        {/* Investment Notice */}
+                        <section className="py-8 bg-[#FDF8F3] border-t border-[#D4A024]/10">
+                                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                                        <div className="max-w-4xl mx-auto">
+                                                <div className="flex items-start gap-4">
+                                                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#D4A024]/10 flex items-center justify-center mt-1">
+                                                                <svg className="w-5 h-5 text-[#D4A024]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                                </svg>
+                                                        </div>
+                                                        <div>
+                                                                <h4 className="text-sm font-light text-gray-900 mb-2">Investment Notice</h4>
+                                                                <p className="text-xs text-gray-600 font-light leading-relaxed">
+                                                                        Investing in tokenized real estate involves risks, including the potential loss of principal. Past performance is not indicative of future results.
+                                                                        Commertize does not provide investment, legal, or tax advice. All investments are subject to market conditions and regulatory requirements.
+                                                                        Please consult with qualified professionals before making any investment decisions. Securities offerings, if any, are made only to accredited investors
+                                                                        in compliance with applicable securities laws.
+                                                                </p>
+                                                        </div>
+                                                </div>
+                                        </div>
+                                </div>
+                        </section>
+
+                        {/* Enhanced Footer */}
+                        <footer className="bg-white relative z-20">
+                                <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                                        <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+                                                {/* Column 1: Logo & Social */}
+                                                <div>
+                                                        <div className="mb-4">
+                                                                <img src="/assets/logo.png" alt="Commertize" className="h-8 w-auto" />
+                                                        </div>
+                                                        <p className="text-sm mb-6">
+                                                                Commercial Real Estate, Revolutionized.<br />
+                                                                Liquid. Transparent. Global.
+                                                        </p>
+                                                        <div className="mb-4">
+                                                                <a href="mailto:support@commertize.com" className="text-sm text-[#D4A024] hover:text-[#D4A024]/80 transition-colors">
+                                                                        support@commertize.com
+                                                                </a>
+                                                        </div>
+                                                        <div className="mb-6">
+                                                                <h4 className="font-semibold mb-3 text-sm text-[#D4A024]">Social Links</h4>
+                                                                <div className="flex flex-wrap gap-3">
+                                                                        <a href="https://linkedin.com/company/commertize" target="_blank" rel="noopener noreferrer" className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors" title="LinkedIn">
+                                                                                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                                                                        </a>
+                                                                        <a href="https://x.com/commertize" target="_blank" rel="noopener noreferrer" className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors" title="X">
+                                                                                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>
+                                                                        </a>
+                                                                        <a href="https://instagram.com/commertize" target="_blank" rel="noopener noreferrer" className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors" title="Instagram">
+                                                                                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/></svg>
+                                                                        </a>
+                                                                        <a href="https://discord.gg/commertize" target="_blank" rel="noopener noreferrer" className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors" title="Discord">
+                                                                                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg>
+                                                                        </a>
+                                                                        <a href="https://t.me/commertize" target="_blank" rel="noopener noreferrer" className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors" title="Telegram">
+                                                                                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                                                                        </a>
+                                                                </div>
+                                                        </div>
+                                                </div>
 
 						{/* Column 2: Quick Links */}
 						<div>

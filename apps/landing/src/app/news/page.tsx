@@ -2,10 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Clock, Calendar, ChevronRight, Menu, X } from 'lucide-react';
+import { Clock, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Logo } from '@commertize/ui';
 import Footer from '@/components/Footer';
+import Navbar from '@/components/Navbar';
 
 interface NewsArticle {
 	id: string;
@@ -131,77 +131,6 @@ const fallbackArticles: NewsArticle[] = [
 	}
 ];
 
-const Navbar = () => {
-	const [scrolled, setScrolled] = useState(false);
-	const [isOpen, setIsOpen] = useState(false);
-
-	useEffect(() => {
-		const handleScroll = () => setScrolled(window.scrollY > 50);
-		handleScroll();
-		window.addEventListener('scroll', handleScroll);
-		return () => window.removeEventListener('scroll', handleScroll);
-	}, []);
-
-	return (
-		<nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-md shadow-sm' : 'bg-white'}`}>
-			<div className="container mx-auto px-4 sm:px-6 lg:px-8">
-				<div className="flex items-center justify-between h-16">
-					<Link href="/" className="flex-shrink-0">
-						<Logo src="/assets/logo.png" width={240} height={75} />
-					</Link>
-
-					<div className="hidden md:flex items-center gap-6 lg:gap-8">
-						<Link href="/" className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light">Mission</Link>
-						<Link href="/" className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light">Marketplace</Link>
-						<Link href="/" className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light">Nexus</Link>
-						<Link href="/" className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light">OmniGrid</Link>
-						<button className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light flex items-center gap-1">
-							Intelligence
-							<ChevronRight size={12} />
-						</button>
-						<button className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light flex items-center gap-1">
-							Company
-							<ChevronRight size={12} />
-						</button>
-					</div>
-
-					<div className="hidden md:block">
-						<a
-							href={process.env.NEXT_PUBLIC_DASHBOARD_URL || "http://localhost:3001"}
-							className="inline-flex items-center justify-center px-5 py-2 bg-[#D4A024] text-white text-sm font-light rounded-lg hover:bg-[#B8881C] transition-colors"
-						>
-							Sign In
-						</a>
-					</div>
-
-					<div className="md:hidden">
-						<button onClick={() => setIsOpen(!isOpen)} className="text-gray-700 p-2">
-							{isOpen ? <X size={24} /> : <Menu size={24} />}
-						</button>
-					</div>
-				</div>
-			</div>
-
-			{isOpen && (
-				<div className="md:hidden bg-white border-t border-gray-100 p-4">
-					<Link href="/" className="block py-3 text-gray-700 border-b border-gray-100">Mission</Link>
-					<Link href="/" className="block py-3 text-gray-700 border-b border-gray-100">Marketplace</Link>
-					<Link href="/" className="block py-3 text-gray-700 border-b border-gray-100">Nexus</Link>
-					<Link href="/" className="block py-3 text-gray-700 border-b border-gray-100">OmniGrid</Link>
-					<div className="pt-4">
-						<a
-							href={process.env.NEXT_PUBLIC_DASHBOARD_URL || "http://localhost:3001"}
-							className="block w-full text-center px-5 py-3 bg-[#D4A024] text-white font-light rounded-lg"
-						>
-							Sign In
-						</a>
-					</div>
-				</div>
-			)}
-		</nav>
-	);
-};
-
 export default function NewsPage() {
 	const [articles, setArticles] = useState<NewsArticle[]>(fallbackArticles);
 	const [lastUpdated, setLastUpdated] = useState<string>('');
@@ -209,7 +138,7 @@ export default function NewsPage() {
 	useEffect(() => {
 		async function fetchArticles() {
 			try {
-				const response = await fetch('/api/news?limit=20');
+				const response = await fetch('/api/news?limit=50');
 				if (!response.ok) throw new Error('Failed to fetch articles');
 				const result = await response.json();
 				if (result.data && result.data.length > 0) {
@@ -229,27 +158,33 @@ export default function NewsPage() {
 	return (
 		<div className="min-h-screen bg-white font-logo">
 			<Navbar />
-
+			
 			<main className="pt-24 pb-16">
 				<div className="container mx-auto px-4 sm:px-6 lg:px-8">
 					<motion.div
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ duration: 0.6 }}
-						className="mb-12"
+						className="mb-8"
 					>
-						<h1 className="text-4xl md:text-5xl font-light text-[#D4A024] mb-4">
+						<div className="flex items-center gap-3 mb-2">
+							<div className="w-8 h-[1px] bg-[#D4A024]"></div>
+							<span className="text-xs tracking-[0.2em] text-[#D4A024] uppercase">Insights & Updates</span>
+						</div>
+						<h1 className="text-2xl md:text-3xl font-light text-gray-900 mb-2">
 							Latest News
 						</h1>
-						<p className="text-gray-600 font-light text-lg mb-4">
-							Insight and analysis on real estate tokenization, DeFi, and sustainable digital infrastructure.
-						</p>
-						{lastUpdated && (
-							<div className="flex items-center gap-2 text-gray-500 text-sm font-light">
-								<Calendar size={16} />
-								<span>Last updated: {lastUpdated}</span>
-							</div>
-						)}
+						<div className="flex items-center gap-4">
+							<p className="text-gray-500 font-light text-sm">
+								Real estate tokenization, DeFi, and digital infrastructure.
+							</p>
+							{lastUpdated && (
+								<div className="flex items-center gap-1.5 text-[#D4A024] text-xs font-light">
+									<Calendar size={12} />
+									<span>{lastUpdated}</span>
+								</div>
+							)}
+						</div>
 					</motion.div>
 
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
