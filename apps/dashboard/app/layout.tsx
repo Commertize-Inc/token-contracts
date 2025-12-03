@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import { Providers } from "./providers";
 import ChatWidget from "@/components/ChatWidget";
@@ -12,7 +13,27 @@ export const metadata: Metadata = {
 	},
 };
 
-const suppressWarningsScript = `
+// Force dynamic rendering to prevent SSR issues with Privy
+export const dynamic = "force-dynamic";
+export const dynamicParams = true;
+
+export default function RootLayout({
+	children,
+}: Readonly<{
+	children: React.ReactNode;
+}>) {
+	return (
+		<html lang="en" suppressHydrationWarning>
+			<body>
+				<Providers>
+					{children}
+					<ChatWidget />
+				</Providers>
+				<Script
+					id="suppress-warnings"
+					strategy="beforeInteractive"
+					dangerouslySetInnerHTML={{
+						__html: `
 (function() {
   var originalError = console.error;
   console.error = function() {
@@ -24,23 +45,9 @@ const suppressWarningsScript = `
     originalError.apply(console, arguments);
   };
 })();
-`;
-
-export default function RootLayout({
-	children,
-}: Readonly<{
-	children: React.ReactNode;
-}>) {
-	return (
-		<html lang="en" suppressHydrationWarning>
-			<head>
-				<script dangerouslySetInnerHTML={{ __html: suppressWarningsScript }} />
-			</head>
-			<body>
-				<Providers>
-					{children}
-					<ChatWidget />
-				</Providers>
+`,
+					}}
+				/>
 			</body>
 		</html>
 	);

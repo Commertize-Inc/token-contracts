@@ -9,7 +9,7 @@ import { PlaidItem } from "./PlaidItem";
  *
  * Example: Chase checking and Chase savings both reference the same PlaidItem
  */
-@Entity()
+@Entity({ tableName: "bank_account" })
 export class BankAccount {
 	@PrimaryKey()
 	id: string = v4();
@@ -17,7 +17,7 @@ export class BankAccount {
 	@ManyToOne(() => User)
 	user!: User;
 
-	@ManyToOne("PlaidItem")
+	@ManyToOne(() => PlaidItem)
 	plaidItem?: PlaidItem;
 
 	// Computed property: Institution name from PlaidItem relation

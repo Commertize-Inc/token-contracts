@@ -1,15 +1,7 @@
-import {
-	Entity,
-	PrimaryKey,
-	Property,
-	ManyToOne,
-	OneToMany,
-	Collection,
-} from "@mikro-orm/core";
+import { Entity, PrimaryKey, Property, ManyToOne } from "@mikro-orm/core";
 import { v4 } from "uuid";
 import { User } from "./User";
 import { encrypt, decrypt } from "../../security/encryption";
-import { BankAccount } from "./BankAccount";
 
 /**
  * PlaidItem entity represents a connection to a financial institution via Plaid
@@ -17,7 +9,7 @@ import { BankAccount } from "./BankAccount";
  *
  * Example: User links Chase Bank → one PlaidItem with multiple BankAccounts (checking, savings)
  */
-@Entity()
+@Entity({ tableName: "plaid_item" })
 export class PlaidItem {
 	@PrimaryKey()
 	id: string = v4();
@@ -49,9 +41,8 @@ export class PlaidItem {
 	@Property({ type: "string", nullable: true })
 	errorMessage?: string; // Store last error message for debugging
 
-	// Relationships
-	@OneToMany("BankAccount", "plaidItem")
-	accounts = new Collection<BankAccount>(this);
+	// Note: BankAccount owns the relationship via plaidItem foreign key
+	// To get accounts: em.find(BankAccount, { plaidItem: this })
 
 	@Property({ type: "date" })
 	createdAt: Date = new Date();

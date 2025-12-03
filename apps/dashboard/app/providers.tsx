@@ -2,8 +2,20 @@
 
 import { PrivyProvider } from "@privy-io/react-auth";
 import { AuthGuard } from "@/components/AuthGuard";
+import { useEffect, useState } from "react";
 
 export function Providers({ children }: { children: React.ReactNode }) {
+	const [mounted, setMounted] = useState(false);
+
+	useEffect(() => {
+		setMounted(true);
+	}, []);
+
+	// Prevent SSR issues with Privy
+	if (!mounted) {
+		return <>{children}</>;
+	}
+
 	return (
 		<PrivyProvider
 			appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ""}
