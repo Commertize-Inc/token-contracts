@@ -1,9 +1,16 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Sparkles, RefreshCw, Trash2, ArrowLeft, Check, AlertCircle } from 'lucide-react';
-import Link from 'next/link';
+import { useState } from "react";
+import { motion } from "framer-motion";
+import {
+	Sparkles,
+	RefreshCw,
+	Trash2,
+	ArrowLeft,
+	Check,
+	AlertCircle,
+} from "lucide-react";
+import Link from "next/link";
 
 interface Article {
 	id: string;
@@ -20,7 +27,10 @@ export default function AdminNewsPage() {
 	const [articles, setArticles] = useState<Article[]>([]);
 	const [isGenerating, setIsGenerating] = useState(false);
 	const [isSaving, setIsSaving] = useState(false);
-	const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+	const [message, setMessage] = useState<{
+		type: "success" | "error";
+		text: string;
+	} | null>(null);
 	const [articleCount, setArticleCount] = useState(3);
 
 	const generateArticles = async () => {
@@ -28,9 +38,9 @@ export default function AdminNewsPage() {
 		setMessage(null);
 
 		try {
-			const response = await fetch('/api/news/generate', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+			const response = await fetch("/api/news/generate", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ count: articleCount }),
 			});
 
@@ -38,12 +48,18 @@ export default function AdminNewsPage() {
 
 			if (data.success && data.articles) {
 				setArticles(data.articles);
-				setMessage({ type: 'success', text: `Generated ${data.articles.length} articles!` });
+				setMessage({
+					type: "success",
+					text: `Generated ${data.articles.length} articles!`,
+				});
 			} else {
-				setMessage({ type: 'error', text: data.error || 'Failed to generate articles' });
+				setMessage({
+					type: "error",
+					text: data.error || "Failed to generate articles",
+				});
 			}
-		} catch (error) {
-			setMessage({ type: 'error', text: 'Network error. Please try again.' });
+		} catch {
+			setMessage({ type: "error", text: "Network error. Please try again." });
 		} finally {
 			setIsGenerating(false);
 		}
@@ -54,21 +70,24 @@ export default function AdminNewsPage() {
 
 		setIsSaving(true);
 		try {
-			const response = await fetch('/api/admin/import-news', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+			const response = await fetch("/api/admin/import-news", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ articles }),
 			});
 
 			const data = await response.json();
 
 			if (data.success) {
-				setMessage({ type: 'success', text: `Saved ${data.imported} articles! (${data.skipped} skipped)` });
+				setMessage({
+					type: "success",
+					text: `Saved ${data.imported} articles! (${data.skipped} skipped)`,
+				});
 			} else {
-				setMessage({ type: 'error', text: 'Failed to save articles' });
+				setMessage({ type: "error", text: "Failed to save articles" });
 			}
-		} catch (error) {
-			setMessage({ type: 'error', text: 'Network error. Please try again.' });
+		} catch {
+			setMessage({ type: "error", text: "Network error. Please try again." });
 		} finally {
 			setIsSaving(false);
 		}
@@ -76,7 +95,7 @@ export default function AdminNewsPage() {
 
 	const clearArticles = () => {
 		setArticles([]);
-		setMessage({ type: 'success', text: 'Generated articles cleared' });
+		setMessage({ type: "success", text: "Generated articles cleared" });
 	};
 
 	return (
@@ -100,8 +119,12 @@ export default function AdminNewsPage() {
 							<Sparkles className="w-6 h-6 text-white" />
 						</div>
 						<div>
-							<h1 className="text-2xl font-logo font-light text-gray-900">AI News Generator</h1>
-							<p className="text-gray-500 font-light">Generate real estate & tokenization articles</p>
+							<h1 className="text-2xl font-logo font-light text-gray-900">
+								AI News Generator
+							</h1>
+							<p className="text-gray-500 font-light">
+								Generate real estate & tokenization articles
+							</p>
 						</div>
 					</div>
 
@@ -109,12 +132,13 @@ export default function AdminNewsPage() {
 						<motion.div
 							initial={{ opacity: 0, y: -10 }}
 							animate={{ opacity: 1, y: 0 }}
-							className={`mb-6 p-4 rounded-xl flex items-center gap-3 ${message.type === 'success'
-									? 'bg-green-50 text-green-700 border border-green-200'
-									: 'bg-red-50 text-red-700 border border-red-200'
-								}`}
+							className={`mb-6 p-4 rounded-xl flex items-center gap-3 ${
+								message.type === "success"
+									? "bg-green-50 text-green-700 border border-green-200"
+									: "bg-red-50 text-red-700 border border-red-200"
+							}`}
 						>
-							{message.type === 'success' ? (
+							{message.type === "success" ? (
 								<Check className="w-5 h-5" />
 							) : (
 								<AlertCircle className="w-5 h-5" />
@@ -125,14 +149,18 @@ export default function AdminNewsPage() {
 
 					<div className="flex flex-wrap gap-4 mb-8">
 						<div className="flex items-center gap-3">
-							<label className="text-gray-600 font-light">Number of articles:</label>
+							<label className="text-gray-600 font-light">
+								Number of articles:
+							</label>
 							<select
 								value={articleCount}
 								onChange={(e) => setArticleCount(Number(e.target.value))}
 								className="px-4 py-2 border border-gray-200 rounded-xl font-light focus:outline-none focus:border-[#D4A024]"
 							>
 								{[1, 2, 3, 4, 5, 6].map((n) => (
-									<option key={n} value={n}>{n}</option>
+									<option key={n} value={n}>
+										{n}
+									</option>
 								))}
 							</select>
 						</div>
@@ -147,7 +175,7 @@ export default function AdminNewsPage() {
 							) : (
 								<Sparkles className="w-4 h-4" />
 							)}
-							{isGenerating ? 'Generating...' : 'Generate Articles'}
+							{isGenerating ? "Generating..." : "Generate Articles"}
 						</button>
 
 						{articles.length > 0 && (
@@ -178,7 +206,9 @@ export default function AdminNewsPage() {
 
 					{articles.length > 0 && (
 						<div className="space-y-4">
-							<h2 className="text-lg font-logo font-light text-gray-700">Generated Articles</h2>
+							<h2 className="text-lg font-logo font-light text-gray-700">
+								Generated Articles
+							</h2>
 							{articles.map((article, index) => (
 								<motion.div
 									key={article.id}
@@ -222,7 +252,10 @@ export default function AdminNewsPage() {
 					{articles.length === 0 && !isGenerating && (
 						<div className="text-center py-12 text-gray-500">
 							<Sparkles className="w-12 h-12 mx-auto mb-4 opacity-30" />
-							<p className="font-light">Click "Generate Articles" to create AI-powered news content</p>
+							<p className="font-light">
+								Click &quot;Generate Articles&quot; to create AI-powered news
+								content
+							</p>
 						</div>
 					)}
 				</motion.div>

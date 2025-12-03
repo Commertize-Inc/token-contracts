@@ -20,8 +20,23 @@ export interface NavbarProps {
 	logoHref?: string;
 	logoSrc?: string;
 	showStatusIndicator?: boolean;
-	LinkComponent?: React.ComponentType<{ href: string; className?: string; children: ReactNode }>;
+	LinkComponent?: React.ComponentType<{
+		href: string;
+		className?: string;
+		children: ReactNode;
+	}>;
 }
+
+// Default link component - defined outside to avoid recreation during render
+const DefaultLink: React.FC<{
+	href: string;
+	className?: string;
+	children: ReactNode;
+}> = ({ href, className, children }) => (
+	<a href={href} className={className}>
+		{children}
+	</a>
+);
 
 const Navbar: React.FC<NavbarProps> = ({
 	user,
@@ -37,7 +52,10 @@ const Navbar: React.FC<NavbarProps> = ({
 	// Close dropdown when clicking outside
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
-			if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+			if (
+				dropdownRef.current &&
+				!dropdownRef.current.contains(event.target as Node)
+			) {
 				setIsDropdownOpen(false);
 			}
 		};
@@ -65,11 +83,7 @@ const Navbar: React.FC<NavbarProps> = ({
 	};
 
 	// Use provided LinkComponent or default to anchor tag
-	const LogoLink = LinkComponent || (({ href, className, children }) => (
-		<a href={href} className={className}>
-			{children}
-		</a>
-	));
+	const LogoLink = LinkComponent || DefaultLink;
 
 	return (
 		<nav className={styles.navbar}>
@@ -99,13 +113,12 @@ const Navbar: React.FC<NavbarProps> = ({
 										<div className={styles.userAvatar}>
 											<User className={styles.userAvatarIcon} />
 										</div>
-										<span className={styles.userName}>
-											{getUserDisplay()}
-										</span>
+										<span className={styles.userName}>{getUserDisplay()}</span>
 									</div>
 									<ChevronDown
-										className={`${styles.chevronIcon} ${isDropdownOpen ? styles.chevronIconOpen : ""
-											}`}
+										className={`${styles.chevronIcon} ${
+											isDropdownOpen ? styles.chevronIconOpen : ""
+										}`}
 									/>
 								</button>
 
@@ -125,7 +138,8 @@ const Navbar: React.FC<NavbarProps> = ({
 											<div className={styles.walletSection}>
 												<p className={styles.walletLabel}>Wallet</p>
 												<p className={styles.walletAddress}>
-													{user.wallet.address.slice(0, 6)}...{user.wallet.address.slice(-4)}
+													{user.wallet.address.slice(0, 6)}...
+													{user.wallet.address.slice(-4)}
 												</p>
 											</div>
 										)}

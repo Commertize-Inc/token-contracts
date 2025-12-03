@@ -9,10 +9,7 @@ export async function POST(request: NextRequest) {
 		const privyToken = request.cookies.get("privy-token")?.value;
 
 		if (!privyToken) {
-			return NextResponse.json(
-				{ error: "Unauthorized" },
-				{ status: 401 }
-			);
+			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 		}
 
 		const claims = await privyClient.verifyAuthToken(privyToken);
@@ -20,11 +17,12 @@ export async function POST(request: NextRequest) {
 
 		const { link_session_id } = await request.json();
 
-		console.log('[IDV Status Check] Request:', {
+		console.log("[IDV Status Check] Request:", {
 			privyId,
 			link_session_id,
 			hasTemplateId: !!process.env.PLAID_IDENTITY_VERIFICATION_TEMPLATE_ID,
-			templateIdLength: process.env.PLAID_IDENTITY_VERIFICATION_TEMPLATE_ID?.length || 0,
+			templateIdLength:
+				process.env.PLAID_IDENTITY_VERIFICATION_TEMPLATE_ID?.length || 0,
 		});
 
 		// If link_session_id is provided, we can use it to look up the verification
@@ -37,10 +35,10 @@ export async function POST(request: NextRequest) {
 
 		const listRequest = {
 			client_user_id: privyId,
-			template_id: process.env.PLAID_IDENTITY_VERIFICATION_TEMPLATE_ID || '',
+			template_id: process.env.PLAID_IDENTITY_VERIFICATION_TEMPLATE_ID || "",
 		};
 
-		console.log('[IDV Status Check] List request:', {
+		console.log("[IDV Status Check] List request:", {
 			...listRequest,
 			hasTemplateId: !!listRequest.template_id,
 		});
@@ -56,9 +54,12 @@ export async function POST(request: NextRequest) {
 			// Find the one matching the session or just the latest
 			const verifications = response.data.identity_verifications;
 			// Sort by created_at desc
-			verifications.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+			verifications.sort(
+				(a, b) =>
+					new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+			);
 
-			console.log('[IDV Status Check] Found verifications:', {
+			console.log("[IDV Status Check] Found verifications:", {
 				count: verifications.length,
 				ids: verifications.map((v: any) => v.id),
 			});
@@ -69,9 +70,12 @@ export async function POST(request: NextRequest) {
 		} else {
 			const response = await plaidClient.identityVerificationList(listRequest);
 			const verifications = response.data.identity_verifications;
-			verifications.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+			verifications.sort(
+				(a, b) =>
+					new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+			);
 
-			console.log('[IDV Status Check] Found verifications:', {
+			console.log("[IDV Status Check] Found verifications:", {
 				count: verifications.length,
 				ids: verifications.map((v: any) => v.id),
 			});
@@ -82,19 +86,27 @@ export async function POST(request: NextRequest) {
 		}
 
 		if (!verificationStatus) {
-			return NextResponse.json({ error: "Verification not found" }, { status: 404 });
+			return NextResponse.json(
+				{ error: "Verification not found" },
+				{ status: 404 }
+			);
 		}
 
 		const em = await getEM();
 		let user = await em.findOne(User, { privyId });
 
 		if (!user) {
-			user = em.create(User, { privyId, isKycd: false, createdAt: new Date(), updatedAt: new Date() });
+			user = em.create(User, {
+				privyId,
+				isKycd: false,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			});
 		}
 
 		// Check if status is 'success' or 'active' (pending)
 		// Plaid IDV statuses: 'success', 'failed', 'active'
-		if (verificationStatus.status === 'success') {
+		if (verificationStatus.status === "success") {
 			user.isKycd = true;
 			user.kycCompletedAt = new Date();
 		}
@@ -106,26 +118,32 @@ export async function POST(request: NextRequest) {
 		return NextResponse.json({
 			success: true,
 			status: verificationStatus.status,
-			step: verificationStatus.steps.documentary_verification // e.g. 'success', 'failed'
+			step: verificationStatus.steps.documentary_verification, // e.g. 'success', 'failed'
 		});
 	} catch (error: any) {
-		console.error('[IDV Status Check] Error details:', {
+		console.error("[IDV Status Check] Error details:", {
 			message: error?.message,
 			status: error?.response?.status,
 			statusText: error?.response?.statusText,
 			url: error?.config?.url,
 			method: error?.config?.method,
 			baseURL: error?.config?.baseURL,
-			headers: error?.config?.headers ? {
-				'PLAID-CLIENT-ID': error.config.headers['PLAID-CLIENT-ID'] ? '[REDACTED]' : undefined,
-				'PLAID-SECRET': error.config.headers['PLAID-SECRET'] ? '[REDACTED]' : undefined,
-			} : undefined,
+			headers: error?.config?.headers
+				? {
+						"PLAID-CLIENT-ID": error.config.headers["PLAID-CLIENT-ID"]
+							? "[REDACTED]"
+							: undefined,
+						"PLAID-SECRET": error.config.headers["PLAID-SECRET"]
+							? "[REDACTED]"
+							: undefined,
+					}
+				: undefined,
 			responseData: error?.response?.data,
 			stack: error?.stack,
 		});
 
 		// Return more specific error information in development
-		const isDevelopment = process.env.NODE_ENV === 'development';
+		const isDevelopment = process.env.NODE_ENV === "development";
 		return NextResponse.json(
 			{
 				error: "Internal server error",

@@ -8,10 +8,7 @@ export async function POST(request: NextRequest) {
 		const privyToken = request.cookies.get("privy-token")?.value;
 
 		if (!privyToken) {
-			return NextResponse.json(
-				{ error: "Unauthorized" },
-				{ status: 401 }
-			);
+			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 		}
 
 		const claims = await privyClient.verifyAuthToken(privyToken);
@@ -21,7 +18,12 @@ export async function POST(request: NextRequest) {
 		let user = await em.findOne(User, { privyId });
 
 		if (!user) {
-			user = em.create(User, { privyId, isKycd: false, createdAt: new Date(), updatedAt: new Date() });
+			user = em.create(User, {
+				privyId,
+				isKycd: false,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			});
 		}
 
 		user.isKycd = true;

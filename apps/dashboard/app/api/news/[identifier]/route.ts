@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getEM } from '@/lib/db/orm';
-import { NewsArticle } from '@/lib/db/entities/NewsArticle';
+import { NextRequest, NextResponse } from "next/server";
+import { getEM } from "@/lib/db/orm";
+import { NewsArticle } from "@/lib/db/entities/NewsArticle";
 
 export async function GET(
 	request: NextRequest,
@@ -11,25 +11,19 @@ export async function GET(
 
 		const em = await getEM();
 		const article = await em.findOne(NewsArticle, {
-			$or: [
-				{ slug: identifier },
-				{ id: identifier }
-			],
-			isPublished: true
+			$or: [{ slug: identifier }, { id: identifier }],
+			isPublished: true,
 		});
 
 		if (!article) {
-			return NextResponse.json(
-				{ error: 'Article not found' },
-				{ status: 404 }
-			);
+			return NextResponse.json({ error: "Article not found" }, { status: 404 });
 		}
 
 		return NextResponse.json({ data: article });
 	} catch (error) {
-		console.error('Error fetching article:', error);
+		console.error("Error fetching article:", error);
 		return NextResponse.json(
-			{ error: 'Failed to fetch article' },
+			{ error: "Failed to fetch article" },
 			{ status: 500 }
 		);
 	}

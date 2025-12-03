@@ -305,83 +305,83 @@ Process ACH payment with Stripe:
 ```typescript
 // app/api/investments/[id]/pay/route.ts
 
-import { NextRequest, NextResponse } from 'next/server';
-import Stripe from 'stripe';
-import { getEM } from '@/lib/db/orm';
-import { BankAccount } from '@/lib/db/entities/BankAccount';
+import { NextRequest, NextResponse } from "next/server";
+import Stripe from "stripe";
+import { getEM } from "@/lib/db/orm";
+import { BankAccount } from "@/lib/db/entities/BankAccount";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+	request: NextRequest,
+	{ params }: { params: Promise<{ id: string }> }
 ) {
-  try {
-    const { accountId, amount } = await request.json();
-    const { id: investmentId } = await params;
+	try {
+		const { accountId, amount } = await request.json();
+		const { id: investmentId } = await params;
 
-    // Get bank account
-    const em = await getEM();
-    const account = await em.findOne(BankAccount, { id: accountId });
+		// Get bank account
+		const em = await getEM();
+		const account = await em.findOne(BankAccount, { id: accountId });
 
-    if (!account || account.status !== 'active') {
-      return NextResponse.json(
-        { error: 'Invalid bank account' },
-        { status: 400 }
-      );
-    }
+		if (!account || account.status !== "active") {
+			return NextResponse.json(
+				{ error: "Invalid bank account" },
+				{ status: 400 }
+			);
+		}
 
-    // Get or create Stripe processor token
-    let processorToken = account.stripeProcessorToken;
+		// Get or create Stripe processor token
+		let processorToken = account.stripeProcessorToken;
 
-    if (!processorToken) {
-      const tokenResponse = await fetch('/api/plaid/stripe-token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ accountId }),
-      });
+		if (!processorToken) {
+			const tokenResponse = await fetch("/api/plaid/stripe-token", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ accountId }),
+			});
 
-      const tokenData = await tokenResponse.json();
-      processorToken = tokenData.processorToken;
-    }
+			const tokenData = await tokenResponse.json();
+			processorToken = tokenData.processorToken;
+		}
 
-    // Get or create Stripe customer
-    const customerId = 'cus_...';  // Get from user record
+		// Get or create Stripe customer
+		const customerId = "cus_..."; // Get from user record
 
-    // Create bank account source in Stripe
-    const bankAccountSource = await stripe.customers.createSource(customerId, {
-      source: processorToken,
-    });
+		// Create bank account source in Stripe
+		const bankAccountSource = await stripe.customers.createSource(customerId, {
+			source: processorToken,
+		});
 
-    // Create ACH debit (charge)
-    const charge = await stripe.charges.create({
-      amount: amount * 100,  // Convert dollars to cents
-      currency: 'usd',
-      customer: customerId,
-      source: bankAccountSource.id,
-      description: `Investment in property ${investmentId}`,
-      metadata: {
-        investmentId,
-        accountId,
-      },
-    });
+		// Create ACH debit (charge)
+		const charge = await stripe.charges.create({
+			amount: amount * 100, // Convert dollars to cents
+			currency: "usd",
+			customer: customerId,
+			source: bankAccountSource.id,
+			description: `Investment in property ${investmentId}`,
+			metadata: {
+				investmentId,
+				accountId,
+			},
+		});
 
-    // Store payment record in database
-    // ...
+		// Store payment record in database
+		// ...
 
-    return NextResponse.json({
-      success: true,
-      chargeId: charge.id,
-      amount: charge.amount / 100,
-      status: charge.status,
-    });
-  } catch (error: any) {
-    console.error('Payment error:', error);
-    return NextResponse.json(
-      { error: error.message || 'Payment failed' },
-      { status: 500 }
-    );
-  }
+		return NextResponse.json({
+			success: true,
+			chargeId: charge.id,
+			amount: charge.amount / 100,
+			status: charge.status,
+		});
+	} catch (error: any) {
+		console.error("Payment error:", error);
+		return NextResponse.json(
+			{ error: error.message || "Payment failed" },
+			{ status: 500 }
+		);
+	}
 }
 ```
 
@@ -504,11 +504,11 @@ Distribute dividends via ACH credit:
 ```typescript
 // app/api/dividends/distribute/route.ts
 
-import { NextRequest, NextResponse } from 'next/server';
-import Stripe from 'stripe';
-import { getEM } from '@/lib/db/orm';
-import { BankAccount } from '@/lib/db/entities/BankAccount';
-import { User } from '@/lib/db/entities/User';
+import { NextRequest, NextResponse } from "next/server";
+import Stripe from "stripe";
+import { getEM } from "@/lib/db/orm";
+import { BankAccount } from "@/lib/db/entities/BankAccount";
+import { User } from "@/lib/db/entities/User";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -516,87 +516,87 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
  * Distribute dividends to all investors
  */
 export async function POST(request: NextRequest) {
-  try {
-    const { propertyId, totalAmount, investors } = await request.json();
+	try {
+		const { propertyId, totalAmount, investors } = await request.json();
 
-    const em = await getEM();
-    const results = [];
+		const em = await getEM();
+		const results = [];
 
-    for (const investor of investors) {
-      try {
-        // Get investor's primary account
-        const account = await em.findOne(BankAccount, {
-          user: investor.userId,
-          isPrimary: true,
-          status: 'active',
-        });
+		for (const investor of investors) {
+			try {
+				// Get investor's primary account
+				const account = await em.findOne(BankAccount, {
+					user: investor.userId,
+					isPrimary: true,
+					status: "active",
+				});
 
-        if (!account) {
-          results.push({
-            userId: investor.userId,
-            success: false,
-            error: 'No active bank account',
-          });
-          continue;
-        }
+				if (!account) {
+					results.push({
+						userId: investor.userId,
+						success: false,
+						error: "No active bank account",
+					});
+					continue;
+				}
 
-        // Get Stripe processor token
-        let processorToken = account.stripeProcessorToken;
+				// Get Stripe processor token
+				let processorToken = account.stripeProcessorToken;
 
-        if (!processorToken) {
-          const tokenResponse = await fetch('/api/plaid/stripe-token', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ accountId: account.id }),
-          });
+				if (!processorToken) {
+					const tokenResponse = await fetch("/api/plaid/stripe-token", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ accountId: account.id }),
+					});
 
-          const tokenData = await tokenResponse.json();
-          processorToken = tokenData.processorToken;
-        }
+					const tokenData = await tokenResponse.json();
+					processorToken = tokenData.processorToken;
+				}
 
-        // Create bank account in Stripe
-        const customerId = investor.stripeCustomerId;  // From user record
+				// Create bank account in Stripe
+				const customerId = investor.stripeCustomerId; // From user record
 
-        const bankAccountSource = await stripe.customers.createSource(
-          customerId,
-          { source: processorToken }
-        );
+				const bankAccountSource = await stripe.customers.createSource(
+					customerId,
+					{ source: processorToken }
+				);
 
-        // Create ACH credit (payout)
-        const payout = await stripe.payouts.create({
-          amount: Math.round(investor.dividendAmount * 100),
-          currency: 'usd',
-          destination: bankAccountSource.id,
-          description: `Dividend payment for property ${propertyId}`,
-          metadata: {
-            propertyId,
-            userId: investor.userId,
-          },
-        });
+				// Create ACH credit (payout)
+				const payout = await stripe.payouts.create({
+					amount: Math.round(investor.dividendAmount * 100),
+					currency: "usd",
+					destination: bankAccountSource.id,
+					description: `Dividend payment for property ${propertyId}`,
+					metadata: {
+						propertyId,
+						userId: investor.userId,
+					},
+				});
 
-        results.push({
-          userId: investor.userId,
-          success: true,
-          payoutId: payout.id,
-          amount: investor.dividendAmount,
-        });
-      } catch (error: any) {
-        results.push({
-          userId: investor.userId,
-          success: false,
-          error: error.message,
-        });
-      }
-    }
+				results.push({
+					userId: investor.userId,
+					success: true,
+					payoutId: payout.id,
+					amount: investor.dividendAmount,
+				});
+			} catch (error: any) {
+				results.push({
+					userId: investor.userId,
+					success: false,
+					error: error.message,
+				});
+			}
+		}
 
-    return NextResponse.json({ results });
-  } catch (error: any) {
-    console.error('Dividend distribution error:', error);
-    return NextResponse.json(
-      { error: 'Dividend distribution failed' },
-      { status: 500 }
-    );
-  }
+		return NextResponse.json({ results });
+	} catch (error: any) {
+		console.error("Dividend distribution error:", error);
+		return NextResponse.json(
+			{ error: "Dividend distribution failed" },
+			{ status: 500 }
+		);
+	}
 }
 ```
 
@@ -607,9 +607,9 @@ export async function POST(request: NextRequest) {
 ```typescript
 // Test in sandbox environment
 const testCredentials = {
-  username: 'user_good',
-  password: 'pass_good',
-  institution: 'Chase',
+	username: "user_good",
+	password: "pass_good",
+	institution: "Chase",
 };
 
 // After linking, you should see accounts in database

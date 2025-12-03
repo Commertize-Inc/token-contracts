@@ -9,17 +9,22 @@
 ## 📝 How to Generate News Articles
 
 ### Step 1: Configure Article Count
+
 Select the number of articles you want to generate (1-6) from the dropdown menu.
 
 ### Step 2: Generate Articles
+
 Click the **"Generate Articles"** button. The system will:
+
 - Use OpenAI GPT-4o to create professional articles
 - Generate content about real estate tokenization topics
 - Assign random categories (Tokenization, Markets, Technology, Regulation, DeFi, Infrastructure)
 - Calculate estimated read times
 
 ### Step 3: Review Generated Content
+
 Each generated article displays:
+
 - **Category badge** (colored tag)
 - **Title** (compelling headline)
 - **Summary** (2-3 sentence overview)
@@ -28,12 +33,15 @@ Each generated article displays:
 - **Publication date**
 
 ### Step 4: Save to Database
+
 Click **"Save to Site"** to:
+
 - Import articles into the database
 - Make them available on the landing page
 - Get feedback on import statistics (imported/skipped)
 
 ### Step 5: Clear (Optional)
+
 Click **"Clear"** to remove generated articles from the preview without saving.
 
 ---
@@ -41,6 +49,7 @@ Click **"Clear"** to remove generated articles from the preview without saving.
 ## 🎯 Article Topics
 
 The AI generates articles about:
+
 - Commercial real estate tokenization trends
 - Blockchain in property investment
 - Fractional ownership opportunities
@@ -59,6 +68,7 @@ The AI generates articles about:
 ## 📊 Article Categories
 
 Generated articles are randomly assigned to these categories:
+
 - **Tokenization** - Asset tokenization and blockchain integration
 - **Markets** - Market trends and analysis
 - **Technology** - Tech innovations and platforms
@@ -71,6 +81,7 @@ Generated articles are randomly assigned to these categories:
 ## 🔧 API Endpoints
 
 ### Generate Articles
+
 ```bash
 POST /api/news/generate
 Content-Type: application/json
@@ -81,6 +92,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -90,6 +102,7 @@ Content-Type: application/json
 ```
 
 ### Import Articles
+
 ```bash
 POST /api/admin/import-news
 Content-Type: application/json
@@ -109,21 +122,24 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
-  "success": true,
-  "imported": 3,
-  "skipped": 0,
-  "total": 3
+	"success": true,
+	"imported": 3,
+	"skipped": 0,
+	"total": 3
 }
 ```
 
 ### List Articles
+
 ```bash
 GET /api/news?limit=10&published=true
 ```
 
 ### Get Single Article
+
 ```bash
 GET /api/news/[slug-or-id]
 ```
@@ -148,35 +164,38 @@ DATABASE_URL=postgresql://user:password@host:port/database
 
 Articles are stored in the `NewsArticle` entity with these fields:
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | UUID | Primary key |
-| `slug` | String | SEO-friendly URL slug (indexed) |
-| `title` | String | Article headline |
-| `summary` | Text | Brief summary |
-| `content` | Text | Full article content (optional) |
-| `category` | String | Article category |
-| `imageUrl` | String | Featured image URL (optional) |
-| `readTime` | Number | Estimated reading time in minutes |
-| `publishedAt` | String | Publication date |
-| `isGenerated` | Boolean | AI-generated flag |
-| `isPublished` | Boolean | Published status |
-| `createdAt` | Date | Creation timestamp |
-| `updatedAt` | Date | Last update timestamp |
+| Field         | Type    | Description                       |
+| ------------- | ------- | --------------------------------- |
+| `id`          | UUID    | Primary key                       |
+| `slug`        | String  | SEO-friendly URL slug (indexed)   |
+| `title`       | String  | Article headline                  |
+| `summary`     | Text    | Brief summary                     |
+| `content`     | Text    | Full article content (optional)   |
+| `category`    | String  | Article category                  |
+| `imageUrl`    | String  | Featured image URL (optional)     |
+| `readTime`    | Number  | Estimated reading time in minutes |
+| `publishedAt` | String  | Publication date                  |
+| `isGenerated` | Boolean | AI-generated flag                 |
+| `isPublished` | Boolean | Published status                  |
+| `createdAt`   | Date    | Creation timestamp                |
+| `updatedAt`   | Date    | Last update timestamp             |
 
 ---
 
 ## 🎨 UI Features
 
 ### Status Messages
+
 - **Success** (green): Articles generated/saved successfully
 - **Error** (red): Generation or save failed
 
 ### Loading States
+
 - **Generating...** - Shows spinner while AI creates articles
 - **Saving...** - Shows spinner while importing to database
 
 ### Interactive Elements
+
 - **Expandable content** - Click "View full content" to read entire article
 - **Hover effects** - Article cards highlight on hover
 - **Smooth animations** - Framer Motion animations for better UX
@@ -186,20 +205,24 @@ Articles are stored in the `NewsArticle` entity with these fields:
 ## 🔍 Troubleshooting
 
 ### "OpenAI API key not configured"
+
 - Ensure `OPENAI_API_KEY` is set in `.env`
 - Restart the development server after adding the key
 
 ### "Failed to save articles"
+
 - Check database connection (`DATABASE_URL`)
 - Ensure NewsArticle table exists (run migrations)
 - Check server logs for detailed error messages
 
 ### Articles not appearing on landing page
+
 - Verify `isPublished` is set to `true`
 - Check the landing page news component is fetching from the correct API
 - Clear cache and refresh the landing page
 
 ### Duplicate articles skipped
+
 - The system automatically skips articles with duplicate slugs
 - Slugs are generated from article titles
 - Check the import statistics to see how many were skipped
@@ -209,6 +232,7 @@ Articles are stored in the `NewsArticle` entity with these fields:
 ## 📱 Mobile Responsive
 
 The admin dashboard is fully responsive and works on:
+
 - Desktop (optimal experience)
 - Tablet (touch-friendly)
 - Mobile (compact layout)
@@ -239,6 +263,7 @@ The admin dashboard is fully responsive and works on:
 ## 📞 Support
 
 For issues or questions:
+
 1. Check the migration summary: `ADMIN_MIGRATION.md`
 2. Review API documentation above
 3. Check server logs for detailed errors

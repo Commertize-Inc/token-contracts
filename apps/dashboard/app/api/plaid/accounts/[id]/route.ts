@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { privyClient } from '@/lib/privy/client';
-import { getEM } from '@/lib/db/orm';
-import { User } from '@/lib/db/entities/User';
-import { BankAccount } from '@/lib/db/entities/BankAccount';
-import { sanitizeBankAccount, getPrimaryAccount } from '@/lib/plaid';
+import { NextRequest, NextResponse } from "next/server";
+import { privyClient } from "@/lib/privy/client";
+import { getEM } from "@/lib/db/orm";
+import { User } from "@/lib/db/entities/User";
+import { BankAccount } from "@/lib/db/entities/BankAccount";
+import { sanitizeBankAccount, getPrimaryAccount } from "@/lib/plaid";
 
 /**
  * GET: Get single bank account by ID
@@ -18,9 +18,9 @@ export async function GET(
 ) {
 	try {
 		// Verify authentication
-		const privyToken = request.cookies.get('privy-token')?.value;
+		const privyToken = request.cookies.get("privy-token")?.value;
 		if (!privyToken) {
-			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 		}
 
 		const claims = await privyClient.verifyAuthToken(privyToken);
@@ -33,32 +33,36 @@ export async function GET(
 
 		const user = await em.findOne(User, { privyId });
 		if (!user) {
-			return NextResponse.json({ error: 'User not found' }, { status: 404 });
+			return NextResponse.json({ error: "User not found" }, { status: 404 });
 		}
 
-		const account = await em.findOne(BankAccount, { id }, {
-			populate: ['plaidItem'],
-		});
+		const account = await em.findOne(
+			BankAccount,
+			{ id },
+			{
+				populate: ["plaidItem"],
+			}
+		);
 
 		if (!account) {
-			return NextResponse.json({ error: 'Account not found' }, { status: 404 });
+			return NextResponse.json({ error: "Account not found" }, { status: 404 });
 		}
 
 		// Verify ownership
 		if (account.user.id !== user.id) {
-			return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+			return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 		}
 
 		// Return sanitized data
 		return NextResponse.json({ account: sanitizeBankAccount(account) });
 	} catch (error: any) {
-		console.error('[Get Account] Error:', {
+		console.error("[Get Account] Error:", {
 			message: error?.message,
 			stack: error?.stack,
 		});
 
 		return NextResponse.json(
-			{ error: 'Failed to fetch bank account' },
+			{ error: "Failed to fetch bank account" },
 			{ status: 500 }
 		);
 	}
@@ -80,9 +84,9 @@ export async function DELETE(
 ) {
 	try {
 		// Verify authentication
-		const privyToken = request.cookies.get('privy-token')?.value;
+		const privyToken = request.cookies.get("privy-token")?.value;
 		if (!privyToken) {
-			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 		}
 
 		const claims = await privyClient.verifyAuthToken(privyToken);
@@ -95,30 +99,30 @@ export async function DELETE(
 
 		const user = await em.findOne(User, { privyId });
 		if (!user) {
-			return NextResponse.json({ error: 'User not found' }, { status: 404 });
+			return NextResponse.json({ error: "User not found" }, { status: 404 });
 		}
 
 		const account = await em.findOne(BankAccount, { id });
 
 		if (!account) {
-			return NextResponse.json({ error: 'Account not found' }, { status: 404 });
+			return NextResponse.json({ error: "Account not found" }, { status: 404 });
 		}
 
 		// Verify ownership
 		if (account.user.id !== user.id) {
-			return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+			return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 		}
 
 		const wasPrimary = account.isPrimary;
 
 		// Soft delete - set status to inactive
-		account.status = 'inactive';
+		account.status = "inactive";
 		account.isPrimary = false;
 		account.updatedAt = new Date();
 
 		await em.persistAndFlush(account);
 
-		console.log('[Delete Account] Account deactivated:', {
+		console.log("[Delete Account] Account deactivated:", {
 			accountId: id,
 			wasPrimary,
 		});
@@ -127,7 +131,7 @@ export async function DELETE(
 		if (wasPrimary) {
 			const otherAccounts = await em.find(BankAccount, {
 				user: user.id,
-				status: 'active',
+				status: "active",
 			});
 
 			if (otherAccounts.length > 0) {
@@ -136,7 +140,7 @@ export async function DELETE(
 					newPrimary.isPrimary = true;
 					await em.persistAndFlush(newPrimary);
 
-					console.log('[Delete Account] New primary assigned:', {
+					console.log("[Delete Account] New primary assigned:", {
 						accountId: newPrimary.id,
 					});
 				}
@@ -145,16 +149,16 @@ export async function DELETE(
 
 		return NextResponse.json({
 			success: true,
-			message: 'Bank account removed successfully',
+			message: "Bank account removed successfully",
 		});
 	} catch (error: any) {
-		console.error('[Delete Account] Error:', {
+		console.error("[Delete Account] Error:", {
 			message: error?.message,
 			stack: error?.stack,
 		});
 
 		return NextResponse.json(
-			{ error: 'Failed to remove bank account' },
+			{ error: "Failed to remove bank account" },
 			{ status: 500 }
 		);
 	}

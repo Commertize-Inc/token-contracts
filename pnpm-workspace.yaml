@@ -3,4 +3,4 @@ packages:
   - packages/*
 
 overrides:
-  '@coinbase/wallet-sdk@>=4.0 <4.3.0': '>=4.3.0'
+  "@coinbase/wallet-sdk@>=4.0 <4.3.0": ">=4.3.0"

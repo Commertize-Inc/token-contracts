@@ -11,26 +11,26 @@ import { BankAccount } from "./entities/BankAccount";
 loadEnv(__dirname);
 
 const config: Options<PostgreSqlDriver> = {
-        entities: [User, NewsArticle, PlaidItem, BankAccount],
-        driver: PostgreSqlDriver,
-        connect: true,
+	entities: [User, NewsArticle, PlaidItem, BankAccount],
+	driver: PostgreSqlDriver,
+	connect: true,
 
-        clientUrl: process.env.DATABASE_URL,
+	clientUrl: process.env.DATABASE_URL,
 
-        // SSL configuration for NeonDB
-        driverOptions: {
-                connection: {
-                        ssl: {
-                                rejectUnauthorized: false, // Required for NeonDB
-                        },
-                },
-        },
+	// SSL configuration for NeonDB
+	driverOptions: {
+		connection: {
+			ssl: {
+				rejectUnauthorized: false, // Required for NeonDB
+			},
+		},
+	},
 
-        debug: process.env.NODE_ENV !== "production",
-        migrations: {
-                // path: "./lib/db/migrations",
-                pathTs: "./lib/db/migrations",
-        },
+	debug: process.env.NODE_ENV !== "production",
+	migrations: {
+		// path: "./lib/db/migrations",
+		pathTs: "./lib/db/migrations",
+	},
 };
 
 export default config;

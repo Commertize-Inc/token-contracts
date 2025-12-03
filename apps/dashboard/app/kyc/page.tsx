@@ -5,7 +5,11 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import { CheckCircle, Loader2, ShieldCheck } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
-import { usePlaidLink, PlaidLinkOptions, PlaidLinkOnSuccess } from "react-plaid-link";
+import {
+	usePlaidLink,
+	PlaidLinkOptions,
+	PlaidLinkOnSuccess,
+} from "react-plaid-link";
 
 export default function KYCPage() {
 	const { user } = usePrivy();
@@ -32,35 +36,38 @@ export default function KYCPage() {
 		}
 	}, [user]);
 
-	const onSuccess = useCallback<PlaidLinkOnSuccess>(async (public_token, metadata) => {
-		setLoading(true);
-		try {
-			// For IDV, we use the link_session_id from metadata (or just call the check endpoint which looks up by user)
-			const response = await fetch("/api/plaid/check_idv_status", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ link_session_id: metadata.link_session_id }),
-			});
+	const onSuccess = useCallback<PlaidLinkOnSuccess>(
+		async (public_token, metadata) => {
+			setLoading(true);
+			try {
+				// For IDV, we use the link_session_id from metadata (or just call the check endpoint which looks up by user)
+				const response = await fetch("/api/plaid/check_idv_status", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ link_session_id: metadata.link_session_id }),
+				});
 
-			const data = await response.json();
+				const data = await response.json();
 
-			if (response.ok && data.success) {
-				setSuccess(true);
-				setTimeout(() => {
-					router.push("/");
-				}, 2000);
-			} else {
-				console.error("IDV Verification failed or pending:", data);
-				// Handle failure or pending state - for now just log
+				if (response.ok && data.success) {
+					setSuccess(true);
+					setTimeout(() => {
+						router.push("/");
+					}, 2000);
+				} else {
+					console.error("IDV Verification failed or pending:", data);
+					// Handle failure or pending state - for now just log
+				}
+			} catch (error) {
+				console.error("Error checking IDV status:", error);
+			} finally {
+				setLoading(false);
 			}
-		} catch (error) {
-			console.error("Error checking IDV status:", error);
-		} finally {
-			setLoading(false);
-		}
-	}, [router]);
+		},
+		[router]
+	);
 
 	const config: PlaidLinkOptions = {
 		token: linkToken,
@@ -103,9 +110,7 @@ export default function KYCPage() {
 					<h1 className="text-2xl font-bold text-slate-900">
 						KYC Verification Complete!
 					</h1>
-					<p className="text-slate-600">
-						Redirecting you to the dashboard...
-					</p>
+					<p className="text-slate-600">Redirecting you to the dashboard...</p>
 				</div>
 			</div>
 		);
@@ -131,9 +136,13 @@ export default function KYCPage() {
 
 					<div className="space-y-6">
 						<div className="bg-slate-50 rounded-lg p-4">
-							<h3 className="font-semibold text-slate-900 mb-2">Why is this required?</h3>
+							<h3 className="font-semibold text-slate-900 mb-2">
+								Why is this required?
+							</h3>
 							<p className="text-sm text-slate-600">
-								To comply with financial regulations and ensure the security of our platform, we require all users to complete identity verification.
+								To comply with financial regulations and ensure the security of
+								our platform, we require all users to complete identity
+								verification.
 							</p>
 						</div>
 
@@ -153,7 +162,7 @@ export default function KYCPage() {
 								)}
 							</button>
 
-							{process.env.NODE_ENV !== 'production' && (
+							{process.env.NODE_ENV !== "production" && (
 								<button
 									onClick={handleSkipKYC}
 									disabled={loading}
@@ -165,7 +174,8 @@ export default function KYCPage() {
 						</div>
 
 						<p className="text-xs text-center text-slate-500">
-							Secured by Plaid. Your data is encrypted and never stored on our servers.
+							Secured by Plaid. Your data is encrypted and never stored on our
+							servers.
 						</p>
 					</div>
 				</div>

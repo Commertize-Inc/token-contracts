@@ -34,10 +34,10 @@ export {
 	createPlaidClient,
 	getPlaidBasePath,
 	getPlaidEnv,
-} from './client';
+} from "./client";
 
 // Value exports (enums)
-export { CountryCode } from './types';
+export { CountryCode } from "./types";
 
 // Type exports
 export type {
@@ -64,10 +64,10 @@ export type {
 	AccountBase,
 	AccountType,
 	AccountSubtype,
-} from './types';
+} from "./types";
 
 // Error class export
-export { PlaidAPIError } from './types';
+export { PlaidAPIError } from "./types";
 
 // Utility exports
 export {
@@ -106,4 +106,4 @@ export {
 
 	// Data transformation
 	transformPlaidAccount,
-} from './utils';
+} from "./utils";

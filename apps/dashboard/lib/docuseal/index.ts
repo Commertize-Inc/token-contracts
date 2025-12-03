@@ -45,7 +45,7 @@ export {
 	listTemplates,
 	updateTemplate,
 	archiveTemplate,
-} from './client';
+} from "./client";
 
 // Re-export DocuSeal API types
 export type {
@@ -63,12 +63,10 @@ export type {
 	ArchiveTemplateResponse,
 	CreateTemplateFromPdfData,
 	CreateTemplateFromPdfResponse,
-} from '@docuseal/api';
+} from "@docuseal/api";
 
 // Custom types
-export type {
-	DocuSealWebhookEvent,
-} from './types';
+export type { DocuSealWebhookEvent } from "./types";
 
 // Utility functions
 export {
@@ -84,4 +82,4 @@ export {
 	formatSubmissionStatus,
 	getSubmissionProgress,
 	getSubmitterLink,
-} from './utils';
+} from "./utils";

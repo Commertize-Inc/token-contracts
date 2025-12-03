@@ -24,12 +24,14 @@ Welcome to the Commertize documentation hub.
 Location: `packages/ui/`
 
 Available Components:
+
 - **Button** - Multiple variants (primary, secondary, outlined, text)
 - **Chip** - Active/inactive state chips
 - **Logo** - Brand logo with light/dark theme support
 - **Navbar** - Reusable navigation bar with auth integration
 
 Usage:
+
 ```tsx
 import { Logo, Button, Chip, Navbar } from "@commertize/ui";
 ```
@@ -70,15 +72,18 @@ pnpm add -D -w package-name
 ### Dashboard API Endpoints
 
 #### Authentication
+
 Protected by Privy authentication middleware
 
 #### KYC Endpoints
 
 **`GET /api/kyc/status`**
+
 - Returns user's KYC verification status
 - Response: `{ isKycd: boolean, kycCompletedAt?: Date }`
 
 **`POST /api/kyc/submit`**
+
 - Submits KYC verification (demo implementation)
 - Response: `{ success: boolean }`
 
@@ -87,22 +92,26 @@ Protected by Privy authentication middleware
 ### Common Issues
 
 **Port already in use**
+
 ```bash
 lsof -ti:3000 | xargs kill -9  # Kill landing page
 lsof -ti:3001 | xargs kill -9  # Kill dashboard
 ```
 
 **Database connection errors**
+
 - Verify DATABASE_URL in `.env`
 - Ensure NeonDB instance is running
 - Check SSL mode is set to `require`
 
 **Privy authentication fails**
+
 - Verify NEXT_PUBLIC_PRIVY_APP_ID and NEXT_PUBLIC_PRIVY_CLIENT_ID
 - Check app is configured correctly in Privy dashboard
 - Ensure redirect URLs are whitelisted
 
 **Shared UI components not found**
+
 - Run `pnpm install` from root
 - Verify `transpilePackages: ["@commertize/ui"]` in next.config.ts
 - Check workspace is properly linked in pnpm-workspace.yaml

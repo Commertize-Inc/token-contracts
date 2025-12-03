@@ -5,9 +5,9 @@ import { Configuration, PlaidApi, PlaidEnvironments } from "plaid";
  */
 export const getPlaidBasePath = (env: string) => {
 	const envLower = env.toLowerCase();
-	if (envLower === 'production') {
+	if (envLower === "production") {
 		return PlaidEnvironments.production;
-	} else if (envLower === 'development') {
+	} else if (envLower === "development") {
 		return PlaidEnvironments.development;
 	}
 	return PlaidEnvironments.sandbox; // default to sandbox
@@ -17,7 +17,10 @@ export const getPlaidBasePath = (env: string) => {
  * Get the Plaid environment from environment variables
  */
 export const getPlaidEnv = () => {
-	return process.env.PLAID_ENV || (process.env.NODE_ENV === 'production' ? 'production' : 'sandbox');
+	return (
+		process.env.PLAID_ENV ||
+		(process.env.NODE_ENV === "production" ? "production" : "sandbox")
+	);
 };
 
 /**
@@ -28,7 +31,7 @@ export const createPlaidClient = () => {
 	const basePath = getPlaidBasePath(plaidEnv);
 
 	// Log configuration for debugging (without exposing secrets)
-	console.log('[Plaid Client] Configuration:', {
+	console.log("[Plaid Client] Configuration:", {
 		environment: plaidEnv,
 		basePath,
 		hasClientId: !!process.env.PLAID_CLIENT_ID,
@@ -42,9 +45,9 @@ export const createPlaidClient = () => {
 		basePath,
 		baseOptions: {
 			headers: {
-				'PLAID-CLIENT-ID': process.env.PLAID_CLIENT_ID,
-				'PLAID-SECRET': process.env.PLAID_SECRET,
-				'Plaid-Version': '2020-09-14',
+				"PLAID-CLIENT-ID": process.env.PLAID_CLIENT_ID,
+				"PLAID-SECRET": process.env.PLAID_SECRET,
+				"Plaid-Version": "2020-09-14",
 			},
 		},
 	});

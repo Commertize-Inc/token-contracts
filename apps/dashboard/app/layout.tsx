@@ -4,12 +4,12 @@ import { Providers } from "./providers";
 import ChatWidget from "@/components/ChatWidget";
 
 export const metadata: Metadata = {
-  title: "Commertize Dashboard",
-  description: "Commertize investor dashboard",
-  icons: {
-    icon: "/assets/logo.png",
-    apple: "/assets/logo.png",
-  },
+	title: "Commertize Dashboard",
+	description: "Commertize investor dashboard",
+	icons: {
+		icon: "/assets/logo.png",
+		apple: "/assets/logo.png",
+	},
 };
 
 const suppressWarningsScript = `
@@ -27,21 +27,21 @@ const suppressWarningsScript = `
 `;
 
 export default function RootLayout({
-  children,
+	children,
 }: Readonly<{
-  children: React.ReactNode;
+	children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: suppressWarningsScript }} />
-      </head>
-      <body>
-        <Providers>
-          {children}
-          <ChatWidget />
-        </Providers>
-      </body>
-    </html>
-  );
+	return (
+		<html lang="en" suppressHydrationWarning>
+			<head>
+				<script dangerouslySetInnerHTML={{ __html: suppressWarningsScript }} />
+			</head>
+			<body>
+				<Providers>
+					{children}
+					<ChatWidget />
+				</Providers>
+			</body>
+		</html>
+	);
 }

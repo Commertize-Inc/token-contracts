@@ -8,9 +8,9 @@
  * Generate with: openssl rand -hex 32
  */
 
-import crypto from 'crypto';
+import crypto from "crypto";
 
-const ALGORITHM = 'aes-256-gcm';
+const ALGORITHM = "aes-256-gcm";
 const IV_LENGTH = 16; // For AES, this is always 16 bytes
 const AUTH_TAG_LENGTH = 16;
 const SALT_LENGTH = 64;
@@ -23,28 +23,31 @@ function getEncryptionKey(): Buffer {
 	const envKey = process.env.AES_KEY;
 
 	if (!envKey) {
-		if (process.env.NODE_ENV === 'production') {
+		if (process.env.NODE_ENV === "production") {
 			throw new Error(
-				'AES_KEY environment variable is required in production. ' +
-				'Generate with: openssl rand -hex 32'
+				"AES_KEY environment variable is required in production. " +
+					"Generate with: openssl rand -hex 32"
 			);
 		}
 
 		console.warn(
-			'[Security] Using default encryption key in development. ' +
-			'Set AES_KEY environment variable for production.'
+			"[Security] Using default encryption key in development. " +
+				"Set AES_KEY environment variable for production."
 		);
 
 		// Default key for development only (32 bytes)
-		return Buffer.from('0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef', 'hex');
+		return Buffer.from(
+			"0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+			"hex"
+		);
 	}
 
-	const key = Buffer.from(envKey, 'hex');
+	const key = Buffer.from(envKey, "hex");
 
 	if (key.length !== 32) {
 		throw new Error(
-			'AES_KEY must be a 32-byte (64 character) hex string. ' +
-			'Generate with: openssl rand -hex 32'
+			"AES_KEY must be a 32-byte (64 character) hex string. " +
+				"Generate with: openssl rand -hex 32"
 		);
 	}
 
@@ -59,26 +62,22 @@ function getEncryptionKey(): Buffer {
  */
 export function encrypt(plaintext: string): string {
 	if (!plaintext) {
-		throw new Error('Cannot encrypt empty string');
+		throw new Error("Cannot encrypt empty string");
 	}
 
 	const key = getEncryptionKey();
 	const iv = crypto.randomBytes(IV_LENGTH);
 	const cipher = crypto.createCipheriv(ALGORITHM, key, iv);
 
-	let encrypted = cipher.update(plaintext, 'utf8', 'hex');
-	encrypted += cipher.final('hex');
+	let encrypted = cipher.update(plaintext, "utf8", "hex");
+	encrypted += cipher.final("hex");
 
 	const authTag = cipher.getAuthTag();
 
 	// Combine IV + auth tag + encrypted data
-	const combined = Buffer.concat([
-		iv,
-		authTag,
-		Buffer.from(encrypted, 'hex'),
-	]);
+	const combined = Buffer.concat([iv, authTag, Buffer.from(encrypted, "hex")]);
 
-	return combined.toString('base64');
+	return combined.toString("base64");
 }
 
 /**
@@ -87,11 +86,11 @@ export function encrypt(plaintext: string): string {
  */
 export function decrypt(ciphertext: string): string {
 	if (!ciphertext) {
-		throw new Error('Cannot decrypt empty string');
+		throw new Error("Cannot decrypt empty string");
 	}
 
 	const key = getEncryptionKey();
-	const combined = Buffer.from(ciphertext, 'base64');
+	const combined = Buffer.from(ciphertext, "base64");
 
 	// Extract IV, auth tag, and encrypted data
 	const iv = combined.subarray(0, IV_LENGTH);
@@ -101,8 +100,8 @@ export function decrypt(ciphertext: string): string {
 	const decipher = crypto.createDecipheriv(ALGORITHM, key, iv);
 	decipher.setAuthTag(authTag);
 
-	let decrypted = decipher.update(encrypted.toString('hex'), 'hex', 'utf8');
-	decrypted += decipher.final('utf8');
+	let decrypted = decipher.update(encrypted.toString("hex"), "hex", "utf8");
+	decrypted += decipher.final("utf8");
 
 	return decrypted;
 }
@@ -113,19 +112,19 @@ export function decrypt(ciphertext: string): string {
  */
 export function hash(value: string): string {
 	const salt = crypto.randomBytes(SALT_LENGTH);
-	const hash = crypto.pbkdf2Sync(value, salt, 100000, 64, 'sha512');
+	const hash = crypto.pbkdf2Sync(value, salt, 100000, 64, "sha512");
 
-	return salt.toString('hex') + ':' + hash.toString('hex');
+	return salt.toString("hex") + ":" + hash.toString("hex");
 }
 
 /**
  * Verify a value against a hash
  */
 export function verifyHash(value: string, hashedValue: string): boolean {
-	const [salt, originalHash] = hashedValue.split(':');
+	const [salt, originalHash] = hashedValue.split(":");
 	const hash = crypto
-		.pbkdf2Sync(value, Buffer.from(salt, 'hex'), 100000, 64, 'sha512')
-		.toString('hex');
+		.pbkdf2Sync(value, Buffer.from(salt, "hex"), 100000, 64, "sha512")
+		.toString("hex");
 
 	return hash === originalHash;
 }
@@ -141,5 +140,5 @@ export function isEncryptionConfigured(): boolean {
  * Generate a new encryption key (for setup/rotation)
  */
 export function generateEncryptionKey(): string {
-	return crypto.randomBytes(32).toString('hex');
+	return crypto.randomBytes(32).toString("hex");
 }

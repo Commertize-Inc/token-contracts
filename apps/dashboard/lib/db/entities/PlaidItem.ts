@@ -1,6 +1,14 @@
-import { Entity, PrimaryKey, Property, ManyToOne, OneToMany, Collection } from "@mikro-orm/core";
+import {
+	Entity,
+	PrimaryKey,
+	Property,
+	ManyToOne,
+	OneToMany,
+	Collection,
+} from "@mikro-orm/core";
 import { v4 } from "uuid";
 import { User } from "./User";
+import { BankAccount } from "./BankAccount";
 import { encrypt, decrypt } from "../../security/encryption";
 
 /**
@@ -18,37 +26,37 @@ export class PlaidItem {
 	user!: User;
 
 	// Plaid identifiers
-	@Property({ type: 'string', unique: true, index: true })
-	itemId!: string;  // Plaid's item_id (unique per bank connection)
+	@Property({ type: "string", unique: true, index: true })
+	itemId!: string; // Plaid's item_id (unique per bank connection)
 
-	@Property({ type: 'string' })
-	accessToken!: string;  // Stored encrypted - use setAccessToken() and getDecryptedAccessToken()
+	@Property({ type: "string" })
+	accessToken!: string; // Stored encrypted - use setAccessToken() and getDecryptedAccessToken()
 
 	// Institution metadata
-	@Property({ type: 'string' })
-	institutionId!: string;  // Plaid's institution_id
+	@Property({ type: "string" })
+	institutionId!: string; // Plaid's institution_id
 
-	@Property({ type: 'string' })
-	institutionName!: string;  // E.g., "Chase", "Bank of America"
+	@Property({ type: "string" })
+	institutionName!: string; // E.g., "Chase", "Bank of America"
 
 	// Status tracking
-	@Property({ type: 'string', default: 'active' })
-	status: string = 'active';  // 'active', 'login_required', 'error', 'inactive'
+	@Property({ type: "string", default: "active" })
+	status: string = "active"; // 'active', 'login_required', 'error', 'inactive'
 
-	@Property({ type: 'date', nullable: true })
-	lastWebhookAt?: Date;  // Last time we received a webhook for this item
+	@Property({ type: "date", nullable: true })
+	lastWebhookAt?: Date; // Last time we received a webhook for this item
 
-	@Property({ type: 'string', nullable: true })
-	errorMessage?: string;  // Store last error message for debugging
+	@Property({ type: "string", nullable: true })
+	errorMessage?: string; // Store last error message for debugging
 
 	// Relationships
-	@OneToMany('BankAccount', 'plaidItem')
-	accounts = new Collection<any>(this);
+	@OneToMany(() => BankAccount, "plaidItem")
+	accounts = new Collection<BankAccount>(this);
 
-	@Property({ type: 'date' })
+	@Property({ type: "date" })
 	createdAt: Date = new Date();
 
-	@Property({ type: 'date', onUpdate: () => new Date() })
+	@Property({ type: "date", onUpdate: () => new Date() })
 	updatedAt: Date = new Date();
 
 	// Encryption helper methods

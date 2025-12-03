@@ -1,5 +1,5 @@
-import React from 'react';
-import styles from './Chip.module.css';
+import React from "react";
+import styles from "./Chip.module.css";
 
 interface ChipProps {
 	children: React.ReactNode;
@@ -7,7 +7,9 @@ interface ChipProps {
 }
 
 const Chip: React.FC<ChipProps> = ({ children, active }) => (
-	<span className={`${styles.chip} ${active ? styles.chipActive : styles.chipInactive}`}>
+	<span
+		className={`${styles.chip} ${active ? styles.chipActive : styles.chipInactive}`}
+	>
 		{children}
 	</span>
 );

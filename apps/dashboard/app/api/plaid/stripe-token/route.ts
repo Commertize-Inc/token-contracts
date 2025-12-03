@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { ProcessorTokenCreateRequest } from 'plaid';
-import { privyClient } from '@/lib/privy/client';
-import { plaidClient } from '@/lib/plaid/client';
-import { getEM } from '@/lib/db/orm';
-import { User } from '@/lib/db/entities/User';
-import { BankAccount } from '@/lib/db/entities/BankAccount';
+import { NextRequest, NextResponse } from "next/server";
+import { ProcessorTokenCreateRequest } from "plaid";
+import { privyClient } from "@/lib/privy/client";
+import { plaidClient } from "@/lib/plaid/client";
+import { getEM } from "@/lib/db/orm";
+import { User } from "@/lib/db/entities/User";
+import { BankAccount } from "@/lib/db/entities/BankAccount";
 
 /**
  * POST: Create Stripe processor token for ACH payments
@@ -26,9 +26,9 @@ import { BankAccount } from '@/lib/db/entities/BankAccount';
 export async function POST(request: NextRequest) {
 	try {
 		// Verify authentication
-		const privyToken = request.cookies.get('privy-token')?.value;
+		const privyToken = request.cookies.get("privy-token")?.value;
 		if (!privyToken) {
-			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 		}
 
 		const claims = await privyClient.verifyAuthToken(privyToken);
@@ -37,13 +37,10 @@ export async function POST(request: NextRequest) {
 		// Parse request body
 		const { accountId } = await request.json();
 		if (!accountId) {
-			return NextResponse.json(
-				{ error: 'Missing accountId' },
-				{ status: 400 }
-			);
+			return NextResponse.json({ error: "Missing accountId" }, { status: 400 });
 		}
 
-		console.log('[Stripe Token] Creating processor token:', {
+		console.log("[Stripe Token] Creating processor token:", {
 			accountId,
 			userId: privyId,
 		});
@@ -53,38 +50,38 @@ export async function POST(request: NextRequest) {
 
 		const user = await em.findOne(User, { privyId });
 		if (!user) {
-			return NextResponse.json({ error: 'User not found' }, { status: 404 });
+			return NextResponse.json({ error: "User not found" }, { status: 404 });
 		}
 
 		const account = await em.findOne(
 			BankAccount,
 			{ id: accountId },
-			{ populate: ['plaidItem'] }
+			{ populate: ["plaidItem"] }
 		);
 
 		if (!account) {
 			return NextResponse.json(
-				{ error: 'Bank account not found' },
+				{ error: "Bank account not found" },
 				{ status: 404 }
 			);
 		}
 
 		// Verify ownership
 		if (account.user.id !== user.id) {
-			return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+			return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 		}
 
 		// Verify account is active
-		if (account.status !== 'active') {
+		if (account.status !== "active") {
 			return NextResponse.json(
-				{ error: 'Bank account is not active' },
+				{ error: "Bank account is not active" },
 				{ status: 400 }
 			);
 		}
 
 		// Check if we already have a processor token
 		if (account.stripeProcessorToken) {
-			console.log('[Stripe Token] Using existing token');
+			console.log("[Stripe Token] Using existing token");
 
 			// Update last used timestamp
 			account.stripeTokenLastUsedAt = new Date();
@@ -106,7 +103,7 @@ export async function POST(request: NextRequest) {
 		const processorTokenRequest: ProcessorTokenCreateRequest = {
 			access_token: accessToken,
 			account_id: account.plaidAccountId,
-			processor: 'stripe' as any,  // Stripe not in enum yet, but supported by API
+			processor: "stripe" as any, // Stripe not in enum yet, but supported by API
 		};
 
 		const response = await plaidClient.processorTokenCreate(
@@ -115,7 +112,7 @@ export async function POST(request: NextRequest) {
 
 		const processorToken = response.data.processor_token;
 
-		console.log('[Stripe Token] Processor token created:', {
+		console.log("[Stripe Token] Processor token created:", {
 			accountId: account.id,
 			hasToken: !!processorToken,
 		});
@@ -133,16 +130,16 @@ export async function POST(request: NextRequest) {
 			accountId: account.id,
 		});
 	} catch (error: any) {
-		console.error('[Stripe Token] Error:', {
+		console.error("[Stripe Token] Error:", {
 			message: error?.message,
 			response: error?.response?.data,
 			stack: error?.stack,
 		});
 
-		const isDevelopment = process.env.NODE_ENV === 'development';
+		const isDevelopment = process.env.NODE_ENV === "development";
 		return NextResponse.json(
 			{
-				error: 'Failed to create Stripe processor token',
+				error: "Failed to create Stripe processor token",
 				...(isDevelopment && {
 					details: {
 						message: error?.message,

@@ -1,188 +1,196 @@
-import { aiContentService } from './aiContentService';
-import { dalleService } from './dalleService';
-import { xApiService } from './xApiService';
-import fs from 'fs';
+import { aiContentService } from "./aiContentService";
+import { dalleService } from "./dalleService";
+import { xApiService } from "./xApiService";
+import fs from "fs";
 
 interface PostResult {
-  success: boolean;
-  tweetId?: string;
-  text?: string;
-  imagePath?: string;
-  error?: string;
-  timestamp: string;
+	success: boolean;
+	tweetId?: string;
+	text?: string;
+	imagePath?: string;
+	error?: string;
+	timestamp: string;
 }
 
 interface PostHistory {
-  posts: PostResult[];
-  lastPostDate: string;
+	posts: PostResult[];
+	lastPostDate: string;
 }
 
 class AutomatedPostService {
-  private historyFile: string;
-  private postHistory: PostHistory;
+	private historyFile: string;
+	private postHistory: PostHistory;
 
-  constructor() {
-    this.historyFile = 'post-history.json';
-    this.postHistory = this.loadHistory();
-  }
+	constructor() {
+		this.historyFile = "post-history.json";
+		this.postHistory = this.loadHistory();
+	}
 
-  private loadHistory(): PostHistory {
-    try {
-      if (fs.existsSync(this.historyFile)) {
-        const data = fs.readFileSync(this.historyFile, 'utf-8');
-        return JSON.parse(data);
-      }
-    } catch (error) {
-      console.error('Failed to load post history:', error);
-    }
-    return { posts: [], lastPostDate: '' };
-  }
+	private loadHistory(): PostHistory {
+		try {
+			if (fs.existsSync(this.historyFile)) {
+				const data = fs.readFileSync(this.historyFile, "utf-8");
+				return JSON.parse(data);
+			}
+		} catch (error) {
+			console.error("Failed to load post history:", error);
+		}
+		return { posts: [], lastPostDate: "" };
+	}
 
-  private saveHistory(): void {
-    try {
-      fs.writeFileSync(this.historyFile, JSON.stringify(this.postHistory, null, 2));
-    } catch (error) {
-      console.error('Failed to save post history:', error);
-    }
-  }
+	private saveHistory(): void {
+		try {
+			fs.writeFileSync(
+				this.historyFile,
+				JSON.stringify(this.postHistory, null, 2)
+			);
+		} catch (error) {
+			console.error("Failed to save post history:", error);
+		}
+	}
 
-  private shouldPostToday(): boolean {
-    const now = new Date();
-    const dayOfWeek = now.getDay();
-    
-    if (dayOfWeek === 0 || dayOfWeek === 6) {
-      console.log('Weekend - skipping post');
-      return false;
-    }
+	private shouldPostToday(): boolean {
+		const now = new Date();
+		const dayOfWeek = now.getDay();
 
-    const today = now.toISOString().split('T')[0];
-    if (this.postHistory.lastPostDate === today) {
-      console.log('Already posted today');
-      return false;
-    }
+		if (dayOfWeek === 0 || dayOfWeek === 6) {
+			console.log("Weekend - skipping post");
+			return false;
+		}
 
-    return true;
-  }
+		const today = now.toISOString().split("T")[0];
+		if (this.postHistory.lastPostDate === today) {
+			console.log("Already posted today");
+			return false;
+		}
 
-  private isPSTMorning(): boolean {
-    const now = new Date();
-    
-    const pstOffset = -8 * 60;
-    const localOffset = now.getTimezoneOffset();
-    const pstTime = new Date(now.getTime() + (localOffset + pstOffset) * 60 * 1000);
-    
-    const hour = pstTime.getHours();
-    
-    return hour >= 8 && hour <= 10;
-  }
+		return true;
+	}
 
-  async generateAndPost(): Promise<PostResult> {
-    const timestamp = new Date().toISOString();
+	private isPSTMorning(): boolean {
+		const now = new Date();
 
-    try {
-      if (!xApiService.isReady()) {
-        throw new Error('X API client not initialized');
-      }
+		const pstOffset = -8 * 60;
+		const localOffset = now.getTimezoneOffset();
+		const pstTime = new Date(
+			now.getTime() + (localOffset + pstOffset) * 60 * 1000
+		);
 
-      console.log('Generating AI content...');
-      const content = await aiContentService.generateTweetContent();
-      console.log(`Generated tweet: ${content.text.substring(0, 100)}...`);
+		const hour = pstTime.getHours();
 
-      console.log('Generating DALL-E image...');
-      const image = await dalleService.generateImage(content.imagePrompt);
-      console.log(`Generated image: ${image.localPath}`);
+		return hour >= 8 && hour <= 10;
+	}
 
-      console.log('Posting to X...');
-      const tweet = await xApiService.postTweet({
-        text: content.text,
-        media: [image.localPath]
-      });
+	async generateAndPost(): Promise<PostResult> {
+		const timestamp = new Date().toISOString();
 
-      const result: PostResult = {
-        success: true,
-        tweetId: tweet.data.id,
-        text: content.text,
-        imagePath: image.localPath,
-        timestamp
-      };
+		try {
+			if (!xApiService.isReady()) {
+				throw new Error("X API client not initialized");
+			}
 
-      this.postHistory.posts.push(result);
-      this.postHistory.lastPostDate = new Date().toISOString().split('T')[0];
-      this.saveHistory();
+			console.log("Generating AI content...");
+			const content = await aiContentService.generateTweetContent();
+			console.log(`Generated tweet: ${content.text.substring(0, 100)}...`);
 
-      console.log(`Successfully posted tweet: ${tweet.data.id}`);
-      return result;
+			console.log("Generating DALL-E image...");
+			const image = await dalleService.generateImage(content.imagePrompt);
+			console.log(`Generated image: ${image.localPath}`);
 
-    } catch (error: any) {
-      const result: PostResult = {
-        success: false,
-        error: error.message || 'Unknown error',
-        timestamp
-      };
+			console.log("Posting to X...");
+			const tweet = await xApiService.postTweet({
+				text: content.text,
+				media: [image.localPath],
+			});
 
-      this.postHistory.posts.push(result);
-      this.saveHistory();
+			const result: PostResult = {
+				success: true,
+				tweetId: tweet.data.id,
+				text: content.text,
+				imagePath: image.localPath,
+				timestamp,
+			};
 
-      console.error('Failed to generate and post:', error);
-      return result;
-    }
-  }
+			this.postHistory.posts.push(result);
+			this.postHistory.lastPostDate = new Date().toISOString().split("T")[0];
+			this.saveHistory();
 
-  async runScheduledPost(): Promise<PostResult> {
-    console.log('Running scheduled post check...');
+			console.log(`Successfully posted tweet: ${tweet.data.id}`);
+			return result;
+		} catch (error: unknown) {
+			const result: PostResult = {
+				success: false,
+				error: error instanceof Error ? error.message : "Unknown error",
+				timestamp,
+			};
 
-    if (!this.shouldPostToday()) {
-      return {
-        success: false,
-        error: 'Not scheduled to post today',
-        timestamp: new Date().toISOString()
-      };
-    }
+			this.postHistory.posts.push(result);
+			this.saveHistory();
 
-    return this.generateAndPost();
-  }
+			console.error("Failed to generate and post:", error);
+			return result;
+		}
+	}
 
-  async forcePost(): Promise<PostResult> {
-    console.log('Force posting (bypassing schedule checks)...');
-    return this.generateAndPost();
-  }
+	async runScheduledPost(): Promise<PostResult> {
+		console.log("Running scheduled post check...");
 
-  async previewPost(): Promise<{ text: string; imagePrompt: string; topic: string }> {
-    console.log('Generating preview (no posting)...');
-    const content = await aiContentService.generateTweetContent();
-    return {
-      text: content.text,
-      imagePrompt: content.imagePrompt,
-      topic: content.topic
-    };
-  }
+		if (!this.shouldPostToday()) {
+			return {
+				success: false,
+				error: "Not scheduled to post today",
+				timestamp: new Date().toISOString(),
+			};
+		}
 
-  getPostHistory(limit: number = 10): PostResult[] {
-    return this.postHistory.posts.slice(-limit).reverse();
-  }
+		return this.generateAndPost();
+	}
 
-  getStatus(): {
-    lastPostDate: string;
-    totalPosts: number;
-    successfulPosts: number;
-    isWeekday: boolean;
-    apiReady: boolean;
-  } {
-    const now = new Date();
-    const dayOfWeek = now.getDay();
+	async forcePost(): Promise<PostResult> {
+		console.log("Force posting (bypassing schedule checks)...");
+		return this.generateAndPost();
+	}
 
-    return {
-      lastPostDate: this.postHistory.lastPostDate,
-      totalPosts: this.postHistory.posts.length,
-      successfulPosts: this.postHistory.posts.filter(p => p.success).length,
-      isWeekday: dayOfWeek !== 0 && dayOfWeek !== 6,
-      apiReady: xApiService.isReady()
-    };
-  }
+	async previewPost(): Promise<{
+		text: string;
+		imagePrompt: string;
+		topic: string;
+	}> {
+		console.log("Generating preview (no posting)...");
+		const content = await aiContentService.generateTweetContent();
+		return {
+			text: content.text,
+			imagePrompt: content.imagePrompt,
+			topic: content.topic,
+		};
+	}
 
-  cleanupOldImages(): void {
-    dalleService.cleanupOldImages(48);
-  }
+	getPostHistory(limit: number = 10): PostResult[] {
+		return this.postHistory.posts.slice(-limit).reverse();
+	}
+
+	getStatus(): {
+		lastPostDate: string;
+		totalPosts: number;
+		successfulPosts: number;
+		isWeekday: boolean;
+		apiReady: boolean;
+	} {
+		const now = new Date();
+		const dayOfWeek = now.getDay();
+
+		return {
+			lastPostDate: this.postHistory.lastPostDate,
+			totalPosts: this.postHistory.posts.length,
+			successfulPosts: this.postHistory.posts.filter((p) => p.success).length,
+			isWeekday: dayOfWeek !== 0 && dayOfWeek !== 6,
+			apiReady: xApiService.isReady(),
+		};
+	}
+
+	cleanupOldImages(): void {
+		dalleService.cleanupOldImages(48);
+	}
 }
 
 export const automatedPostService = new AutomatedPostService();

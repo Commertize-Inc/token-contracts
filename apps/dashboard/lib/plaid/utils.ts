@@ -3,10 +3,14 @@
  * Helper functions for formatting, validation, and security
  */
 
-import crypto from 'crypto';
-import type { BankAccount } from '../db/entities/BankAccount';
-import type { PlaidItem } from '../db/entities/PlaidItem';
-import type { BankAccountResponse, PlaidItemResponse, PlaidWebhookEvent } from './types';
+import crypto from "crypto";
+import type { BankAccount } from "../db/entities/BankAccount";
+import type { PlaidItem } from "../db/entities/PlaidItem";
+import type {
+	BankAccountResponse,
+	PlaidItemResponse,
+	PlaidWebhookEvent,
+} from "./types";
 
 // ============================================
 // Formatting Functions
@@ -23,9 +27,12 @@ export function formatAccountMask(mask: string): string {
  * Format account name for display
  * E.g., "Plaid Checking" → "Checking" if institution name is included separately
  */
-export function formatAccountName(name: string, institutionName: string): string {
+export function formatAccountName(
+	name: string,
+	institutionName: string
+): string {
 	// Remove institution name from account name if present
-	const cleanName = name.replace(institutionName, '').trim();
+	const cleanName = name.replace(institutionName, "").trim();
 	return cleanName || name;
 }
 
@@ -44,21 +51,21 @@ export function formatAccountType(type: string): string {
  * Check if account is verified and active
  */
 export function isAccountVerified(account: BankAccount): boolean {
-	return account.isVerified && account.status === 'active';
+	return account.isVerified && account.status === "active";
 }
 
 /**
  * Check if Plaid item is in good standing
  */
 export function isItemActive(item: PlaidItem): boolean {
-	return item.status === 'active';
+	return item.status === "active";
 }
 
 /**
  * Check if item requires re-authentication
  */
 export function itemNeedsReauth(item: PlaidItem): boolean {
-	return item.status === 'login_required';
+	return item.status === "login_required";
 }
 
 /**
@@ -71,16 +78,16 @@ export function validateWebhookSignature(
 ): boolean {
 	try {
 		const expectedSignature = crypto
-			.createHmac('sha256', secret)
+			.createHmac("sha256", secret)
 			.update(body)
-			.digest('hex');
+			.digest("hex");
 
 		return crypto.timingSafeEqual(
 			Buffer.from(signature),
 			Buffer.from(expectedSignature)
 		);
 	} catch (error) {
-		console.error('[Plaid Webhook] Signature validation error:', error);
+		console.error("[Plaid Webhook] Signature validation error:", error);
 		return false;
 	}
 }
@@ -133,12 +140,12 @@ export function sanitizePlaidItem(
  * Sanitize log data (remove sensitive information)
  */
 export function sanitizeLogData(data: any): any {
-	const sensitive = ['access_token', 'accessToken', 'public_token', 'secret'];
+	const sensitive = ["access_token", "accessToken", "public_token", "secret"];
 	const sanitized = { ...data };
 
 	for (const key of sensitive) {
 		if (sanitized[key]) {
-			sanitized[key] = '[REDACTED]';
+			sanitized[key] = "[REDACTED]";
 		}
 	}
 
@@ -153,7 +160,7 @@ export function sanitizeLogData(data: any): any {
  * Parse webhook event from request body
  */
 export function parseWebhookEvent(body: string | any): PlaidWebhookEvent {
-	const event = typeof body === 'string' ? JSON.parse(body) : body;
+	const event = typeof body === "string" ? JSON.parse(body) : body;
 
 	return {
 		webhook_type: event.webhook_type,
@@ -170,22 +177,25 @@ export function parseWebhookEvent(body: string | any): PlaidWebhookEvent {
  */
 export function getWebhookStatusMessage(event: PlaidWebhookEvent): string {
 	switch (event.webhook_code) {
-		case 'ITEM_LOGIN_REQUIRED':
-			return 'Bank account requires re-authentication';
-		case 'ERROR':
-			return event.error?.display_message || 'An error occurred with the bank connection';
-		case 'PENDING_EXPIRATION':
-			return 'Bank connection will expire soon';
-		case 'USER_PERMISSION_REVOKED':
-			return 'User revoked access to bank account';
-		case 'WEBHOOK_UPDATE_ACKNOWLEDGED':
-			return 'Webhook URL updated successfully';
-		case 'DEFAULT_UPDATE':
-			return 'Bank connection updated';
-		case 'TRANSACTIONS_REMOVED':
-			return 'Historical transactions removed';
+		case "ITEM_LOGIN_REQUIRED":
+			return "Bank account requires re-authentication";
+		case "ERROR":
+			return (
+				event.error?.display_message ||
+				"An error occurred with the bank connection"
+			);
+		case "PENDING_EXPIRATION":
+			return "Bank connection will expire soon";
+		case "USER_PERMISSION_REVOKED":
+			return "User revoked access to bank account";
+		case "WEBHOOK_UPDATE_ACKNOWLEDGED":
+			return "Webhook URL updated successfully";
+		case "DEFAULT_UPDATE":
+			return "Bank connection updated";
+		case "TRANSACTIONS_REMOVED":
+			return "Historical transactions removed";
 		default:
-			return 'Bank connection status changed';
+			return "Bank connection status changed";
 	}
 }
 
@@ -198,17 +208,17 @@ export function getWebhookStatusMessage(event: PlaidWebhookEvent): string {
  */
 export function getStatusColor(
 	status: string
-): 'success' | 'warning' | 'error' | 'default' {
+): "success" | "warning" | "error" | "default" {
 	switch (status) {
-		case 'active':
-			return 'success';
-		case 'login_required':
-			return 'warning';
-		case 'error':
-		case 'inactive':
-			return 'error';
+		case "active":
+			return "success";
+		case "login_required":
+			return "warning";
+		case "error":
+		case "inactive":
+			return "error";
 		default:
-			return 'default';
+			return "default";
 	}
 }
 
@@ -217,16 +227,16 @@ export function getStatusColor(
  */
 export function getStatusText(status: string): string {
 	switch (status) {
-		case 'active':
-			return 'Connected';
-		case 'login_required':
-			return 'Re-auth Required';
-		case 'error':
-			return 'Error';
-		case 'inactive':
-			return 'Disconnected';
+		case "active":
+			return "Connected";
+		case "login_required":
+			return "Re-auth Required";
+		case "error":
+			return "Error";
+		case "inactive":
+			return "Disconnected";
 		default:
-			return 'Unknown';
+			return "Unknown";
 	}
 }
 
@@ -244,7 +254,7 @@ export function getPlaidErrorMessage(error: any): string {
 	if (error?.message) {
 		return error.message;
 	}
-	return 'An unexpected error occurred';
+	return "An unexpected error occurred";
 }
 
 /**
@@ -254,7 +264,7 @@ export function getPlaidDisplayMessage(error: any): string {
 	if (error?.response?.data?.display_message) {
 		return error.response.data.display_message;
 	}
-	return 'We encountered an issue connecting to your bank. Please try again.';
+	return "We encountered an issue connecting to your bank. Please try again.";
 }
 
 /**
@@ -262,8 +272,7 @@ export function getPlaidDisplayMessage(error: any): string {
  */
 export function isPlaidError(error: any): boolean {
 	return !!(
-		error?.response?.data?.error_code ||
-		error?.response?.data?.error_type
+		error?.response?.data?.error_code || error?.response?.data?.error_type
 	);
 }
 
@@ -274,13 +283,15 @@ export function isPlaidError(error: any): boolean {
 /**
  * Get primary account from list, or first account if none marked primary
  */
-export function getPrimaryAccount(
-	accounts: BankAccount[]
-): BankAccount | null {
+export function getPrimaryAccount(accounts: BankAccount[]): BankAccount | null {
 	if (accounts.length === 0) return null;
 
-	const primary = accounts.find((acc) => acc.isPrimary && acc.status === 'active');
-	return primary || accounts.find((acc) => acc.status === 'active') || accounts[0];
+	const primary = accounts.find(
+		(acc) => acc.isPrimary && acc.status === "active"
+	);
+	return (
+		primary || accounts.find((acc) => acc.status === "active") || accounts[0]
+	);
 }
 
 /**
@@ -313,9 +324,9 @@ export function transformPlaidAccount(
 } {
 	return {
 		plaidAccountId: plaidAccount.account_id,
-		accountName: plaidAccount.name || plaidAccount.official_name || 'Account',
-		accountType: plaidAccount.subtype || plaidAccount.type || 'depository',
-		accountMask: plaidAccount.mask || '0000',
+		accountName: plaidAccount.name || plaidAccount.official_name || "Account",
+		accountType: plaidAccount.subtype || plaidAccount.type || "depository",
+		accountMask: plaidAccount.mask || "0000",
 		institutionName,
 	};
 }

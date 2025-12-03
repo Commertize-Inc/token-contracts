@@ -42,6 +42,7 @@ pnpm dev
 ```
 
 Visit:
+
 - Landing page: [http://localhost:3000](http://localhost:3000)
 - Dashboard: [http://localhost:3001](http://localhost:3001)
 
@@ -50,6 +51,7 @@ Visit:
 ### Environment Variables (Cascading Setup)
 
 Commertize uses a **cascading environment variable system**:
+
 1. **Root `.env`** - Shared configuration for all apps
 2. **App-specific `.env`** (optional) - Override specific values per app
 
@@ -95,6 +97,7 @@ PLAID_SECRET=your_plaid_secret
 ```
 
 **📚 Detailed Documentation:**
+
 - [Quick Reference](ENV_QUICK_REFERENCE.md) - Common scenarios and troubleshooting
 - [Complete Guide](ENV_SETUP.md) - Full documentation with examples
 - [Implementation Summary](ENV_IMPLEMENTATION_SUMMARY.md) - What was implemented and how it works
@@ -116,12 +119,14 @@ commertize.com/
 ## Features
 
 ### Landing Page (`apps/landing`)
+
 - Premium real estate showcase
 - Property listings with investment details
 - SEO-optimized static pages
 - Responsive design with brand-consistent UI
 
 ### Dashboard (`apps/dashboard`)
+
 - **Authentication**: Privy-powered email/wallet login
 - **Auth Guard**: Automatic redirect to `/auth` when not authenticated
 - **KYC Verification**: Required before accessing investment features
@@ -130,6 +135,7 @@ commertize.com/
 - **Shared Components**: Uses `@commertize/ui` for consistent branding
 
 ### Shared UI Package (`packages/ui`)
+
 - **Button**: Multiple variants (primary, secondary, outlined, text)
 - **Chip**: Active/inactive states
 - **Logo**: Light/dark theme support
@@ -203,6 +209,7 @@ pnpm update -r
 ### Database Schema
 
 #### User Entity
+
 ```typescript
 {
   id: string (UUID)

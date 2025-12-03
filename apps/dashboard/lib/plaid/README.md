@@ -29,6 +29,7 @@ User
 ```
 
 **Key Entities:**
+
 - **PlaidItem**: Represents a connection to one financial institution
 - **BankAccount**: Individual account (checking, savings, etc.)
 - **User**: Keeps only IDV (KYC) data; bank data is in PlaidItem/BankAccount
@@ -64,6 +65,7 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable
 ### 3. Database Migration
 
 Already completed! The migration created:
+
 - `plaid_item` table
 - `bank_account` table
 - Removed redundant fields from `user` table
@@ -124,15 +126,15 @@ export function LinkBankButton() {
 
 ```typescript
 // In your API route or server component
-import { getEM } from '@/lib/db/orm';
-import { BankAccount } from '@/lib/db/entities/BankAccount';
-import { sanitizeBankAccount } from '@/lib/plaid';
+import { getEM } from "@/lib/db/orm";
+import { BankAccount } from "@/lib/db/entities/BankAccount";
+import { sanitizeBankAccount } from "@/lib/plaid";
 
 // Get user's accounts
 const em = await getEM();
 const accounts = await em.find(BankAccount, {
-  user: userId,
-  status: 'active',
+	user: userId,
+	status: "active",
 });
 
 // Sanitize before sending to client
@@ -143,36 +145,36 @@ const safeAccounts = accounts.map(sanitizeBankAccount);
 
 ```typescript
 // Frontend: Get processor token
-const response = await fetch('/api/plaid/stripe-token', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ accountId: selectedAccount.id }),
+const response = await fetch("/api/plaid/stripe-token", {
+	method: "POST",
+	headers: { "Content-Type": "application/json" },
+	body: JSON.stringify({ accountId: selectedAccount.id }),
 });
 
 const { processorToken } = await response.json();
 
 // Backend: Use with Stripe
-import Stripe from 'stripe';
+import Stripe from "stripe";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 // Create bank account source
 const bankAccount = await stripe.customers.createSource(customerId, {
-  source: processorToken,
+	source: processorToken,
 });
 
 // Create ACH debit (charge investor)
 const charge = await stripe.charges.create({
-  amount: 50000,  // $500.00
-  currency: 'usd',
-  customer: customerId,
-  source: bankAccount.id,
+	amount: 50000, // $500.00
+	currency: "usd",
+	customer: customerId,
+	source: bankAccount.id,
 });
 
 // Create ACH credit (pay investor)
 const payout = await stripe.payouts.create({
-  amount: 10000,  // $100.00
-  currency: 'usd',
-  destination: bankAccount.id,
+	amount: 10000, // $100.00
+	currency: "usd",
+	destination: bankAccount.id,
 });
 ```
 
@@ -181,53 +183,62 @@ const payout = await stripe.payouts.create({
 All routes under `/api/plaid/`:
 
 ### `POST /create_link_token`
+
 Create Plaid Link token for bank linking.
 
 **Body:**
+
 ```json
 { "flow": "auth" }
 ```
 
 **Response:**
+
 ```json
 { "link_token": "link-sandbox-..." }
 ```
 
 ### `POST /exchange_public_token`
+
 Exchange public token and save bank accounts.
 
 **Body:**
+
 ```json
 { "public_token": "public-sandbox-..." }
 ```
 
 **Response:**
+
 ```json
 {
-  "success": true,
-  "accounts": [
-    {
-      "id": "uuid",
-      "accountName": "Chase Checking",
-      "accountType": "checking",
-      "accountMask": "••••1234",
-      "institutionName": "Chase",
-      "isPrimary": true,
-      "isVerified": true,
-      "status": "active"
-    }
-  ]
+	"success": true,
+	"accounts": [
+		{
+			"id": "uuid",
+			"accountName": "Chase Checking",
+			"accountType": "checking",
+			"accountMask": "••••1234",
+			"institutionName": "Chase",
+			"isPrimary": true,
+			"isVerified": true,
+			"status": "active"
+		}
+	]
 }
 ```
 
 ### `GET /accounts`
+
 List user's bank accounts.
 
 **Query params:**
+
 - `status` - Filter by status (active/inactive/error)
 - `primary` - Filter by isPrimary (true/false)
 
 **Response:**
+
 ```json
 {
   "accounts": [...]
@@ -235,31 +246,38 @@ List user's bank accounts.
 ```
 
 ### `GET /accounts/[id]`
+
 Get single account details.
 
 ### `DELETE /accounts/[id]`
+
 Remove/unlink bank account (soft delete).
 
 ### `POST /accounts/[id]/set-primary`
+
 Set account as primary payment method.
 
 ### `POST /stripe-token`
+
 Create Stripe processor token.
 
 **Body:**
+
 ```json
 { "accountId": "uuid" }
 ```
 
 **Response:**
+
 ```json
 {
-  "processorToken": "btok_...",
-  "accountId": "uuid"
+	"processorToken": "btok_...",
+	"accountId": "uuid"
 }
 ```
 
 ### `POST /webhooks`
+
 Handle Plaid webhook events.
 
 ## Webhooks
@@ -294,25 +312,28 @@ Plaid sends webhooks for important events:
 ### 🔒 Production Recommendations
 
 1. **Encrypt access tokens in database:**
+
 ```typescript
 // Use crypto or DB-level encryption
-import { encrypt, decrypt } from '@/lib/crypto';
+import { encrypt, decrypt } from "@/lib/crypto";
 
 plaidItem.accessToken = encrypt(access_token);
 ```
 
 2. **Rate limiting:**
+
 ```typescript
 // Add rate limiting middleware
-import rateLimit from '@/lib/rateLimit';
+import rateLimit from "@/lib/rateLimit";
 
 export const POST = rateLimit(actualHandler, {
-  max: 5,
-  windowMs: 60000,  // 5 requests per minute
+	max: 5,
+	windowMs: 60000, // 5 requests per minute
 });
 ```
 
 3. **PCI compliance:**
+
 - Never log full account numbers
 - Use HTTPS only
 - Regular security audits
@@ -322,33 +343,33 @@ export const POST = rateLimit(actualHandler, {
 ### Formatting
 
 ```typescript
-import { formatAccountMask, formatAccountName } from '@/lib/plaid';
+import { formatAccountMask, formatAccountName } from "@/lib/plaid";
 
-formatAccountMask('1234')  // "••••1234"
-formatAccountName('Plaid Checking', 'Plaid')  // "Checking"
+formatAccountMask("1234"); // "••••1234"
+formatAccountName("Plaid Checking", "Plaid"); // "Checking"
 ```
 
 ### Validation
 
 ```typescript
-import { isAccountVerified, itemNeedsReauth } from '@/lib/plaid';
+import { isAccountVerified, itemNeedsReauth } from "@/lib/plaid";
 
 if (isAccountVerified(account)) {
-  // Process payment
+	// Process payment
 }
 
 if (itemNeedsReauth(plaidItem)) {
-  // Show re-auth prompt
+	// Show re-auth prompt
 }
 ```
 
 ### Account Selection
 
 ```typescript
-import { getPrimaryAccount, sortAccounts } from '@/lib/plaid';
+import { getPrimaryAccount, sortAccounts } from "@/lib/plaid";
 
 const primary = getPrimaryAccount(accounts);
-const sorted = sortAccounts(accounts);  // Primary first, then by date
+const sorted = sortAccounts(accounts); // Primary first, then by date
 ```
 
 ## Testing
@@ -356,6 +377,7 @@ const sorted = sortAccounts(accounts);  // Primary first, then by date
 ### Plaid Sandbox
 
 Use these credentials in sandbox:
+
 - **Username:** `user_good`
 - **Password:** `pass_good`
 - **Institution:** Any from test list
@@ -376,20 +398,24 @@ Trigger webhooks via Plaid Dashboard → Sandbox → Fire Webhook Event
 ## Troubleshooting
 
 ### "Missing public_token"
+
 - Ensure Plaid Link completed successfully
 - Check `onSuccess` callback receives token
 
 ### "Account not found"
+
 - Verify account ID is correct UUID
 - Check user owns the account
 - Ensure account status is 'active'
 
 ### "Item requires re-authentication"
+
 - PlaidItem status is 'login_required'
 - Create new link token with `update` mode
 - User must re-authenticate via Plaid Link
 
 ### Webhook not received
+
 - Verify PLAID_WEBHOOK_URL is publicly accessible
 - Check webhook configuration in Plaid Dashboard
 - Ensure route returns 200 status
@@ -404,15 +430,18 @@ Trigger webhooks via Plaid Dashboard → Sandbox → Fire Webhook Event
 ## Support
 
 For issues:
+
 1. Check logs in browser console and server
 2. Verify environment variables are set
 3. Review Plaid Dashboard for API errors
 4. Check webhook delivery logs
 
 For Plaid support:
+
 - Email: support@plaid.com
 - Docs: https://plaid.com/docs/
 
 For Stripe support:
+
 - Email: support@stripe.com
 - Docs: https://stripe.com/docs/

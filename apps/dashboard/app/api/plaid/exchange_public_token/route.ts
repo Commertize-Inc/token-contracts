@@ -1,12 +1,16 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { privyClient } from '@/lib/privy/client';
-import { plaidClient } from '@/lib/plaid/client';
-import { getEM } from '@/lib/db/orm';
-import { User } from '@/lib/db/entities/User';
-import { PlaidItem } from '@/lib/db/entities/PlaidItem';
-import { BankAccount } from '@/lib/db/entities/BankAccount';
-import { CountryCode, sanitizeBankAccount, transformPlaidAccount } from '@/lib/plaid';
-import { encrypt } from '@/lib/security/encryption';
+import { NextRequest, NextResponse } from "next/server";
+import { privyClient } from "@/lib/privy/client";
+import { plaidClient } from "@/lib/plaid/client";
+import { getEM } from "@/lib/db/orm";
+import { User } from "@/lib/db/entities/User";
+import { PlaidItem } from "@/lib/db/entities/PlaidItem";
+import { BankAccount } from "@/lib/db/entities/BankAccount";
+import {
+	CountryCode,
+	sanitizeBankAccount,
+	transformPlaidAccount,
+} from "@/lib/plaid";
+import { encrypt } from "@/lib/security/encryption";
 
 /**
  * Exchange public token for access token and save bank accounts
@@ -26,9 +30,9 @@ import { encrypt } from '@/lib/security/encryption';
 export async function POST(request: NextRequest) {
 	try {
 		// Verify authentication
-		const privyToken = request.cookies.get('privy-token')?.value;
+		const privyToken = request.cookies.get("privy-token")?.value;
 		if (!privyToken) {
-			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 		}
 
 		const claims = await privyClient.verifyAuthToken(privyToken);
@@ -38,12 +42,12 @@ export async function POST(request: NextRequest) {
 		const { public_token } = await request.json();
 		if (!public_token) {
 			return NextResponse.json(
-				{ error: 'Missing public_token' },
+				{ error: "Missing public_token" },
 				{ status: 400 }
 			);
 		}
 
-		console.log('[Exchange Token] Starting exchange for user:', privyId);
+		console.log("[Exchange Token] Starting exchange for user:", privyId);
 
 		// Exchange public token for access token
 		const exchangeResponse = await plaidClient.itemPublicTokenExchange({
@@ -52,7 +56,7 @@ export async function POST(request: NextRequest) {
 
 		const { access_token, item_id } = exchangeResponse.data;
 
-		console.log('[Exchange Token] Token exchanged successfully:', {
+		console.log("[Exchange Token] Token exchanged successfully:", {
 			item_id,
 			hasAccessToken: !!access_token,
 		});
@@ -68,7 +72,7 @@ export async function POST(request: NextRequest) {
 		});
 		const institution = institutionResponse.data.institution;
 
-		console.log('[Exchange Token] Institution:', {
+		console.log("[Exchange Token] Institution:", {
 			name: institution.name,
 			institution_id: institution.institution_id,
 		});
@@ -77,7 +81,7 @@ export async function POST(request: NextRequest) {
 		const accountsResponse = await plaidClient.accountsGet({ access_token });
 		const accounts = accountsResponse.data.accounts;
 
-		console.log('[Exchange Token] Found accounts:', {
+		console.log("[Exchange Token] Found accounts:", {
 			count: accounts.length,
 			types: accounts.map((acc) => acc.type),
 		});
@@ -100,7 +104,7 @@ export async function POST(request: NextRequest) {
 		// Check if user already has any accounts
 		const existingAccountsCount = await em.count(BankAccount, {
 			user: user.id,
-			status: 'active',
+			status: "active",
 		});
 
 		// Check if this item already exists
@@ -109,7 +113,7 @@ export async function POST(request: NextRequest) {
 		if (plaidItem) {
 			// Update existing item (encrypt access token)
 			plaidItem.setAccessToken(access_token);
-			plaidItem.status = 'active';
+			plaidItem.status = "active";
 			plaidItem.updatedAt = new Date();
 		} else {
 			// Create new PlaidItem (encrypt access token before storing)
@@ -119,7 +123,7 @@ export async function POST(request: NextRequest) {
 				accessToken: encrypt(access_token),
 				institutionId: institution.institution_id,
 				institutionName: institution.name,
-				status: 'active',
+				status: "active",
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			});
@@ -127,7 +131,7 @@ export async function POST(request: NextRequest) {
 
 		await em.persistAndFlush(plaidItem);
 
-		console.log('[Exchange Token] PlaidItem saved:', plaidItem.id);
+		console.log("[Exchange Token] PlaidItem saved:", plaidItem.id);
 
 		// Create BankAccount records for each account
 		const bankAccounts: BankAccount[] = [];
@@ -141,7 +145,7 @@ export async function POST(request: NextRequest) {
 
 			if (bankAccount) {
 				// Update existing account
-				bankAccount.status = 'active';
+				bankAccount.status = "active";
 				bankAccount.updatedAt = new Date();
 			} else {
 				// Transform Plaid account data
@@ -158,13 +162,13 @@ export async function POST(request: NextRequest) {
 					user,
 					plaidItem,
 					plaidAccountId: accountData.plaidAccountId,
-					institutionName: '',  // Ignored - computed from plaidItem.institutionName
+					institutionName: "", // Ignored - computed from plaidItem.institutionName
 					accountName: accountData.accountName,
 					accountType: accountData.accountType,
 					accountMask: accountData.accountMask,
 					isVerified: true,
 					isPrimary,
-					status: 'active',
+					status: "active",
 					createdAt: new Date(),
 					updatedAt: new Date(),
 				});
@@ -175,7 +179,7 @@ export async function POST(request: NextRequest) {
 
 		await em.persistAndFlush(bankAccounts);
 
-		console.log('[Exchange Token] Created/updated bank accounts:', {
+		console.log("[Exchange Token] Created/updated bank accounts:", {
 			count: bankAccounts.length,
 			ids: bankAccounts.map((acc) => acc.id),
 		});
@@ -186,16 +190,16 @@ export async function POST(request: NextRequest) {
 			accounts: bankAccounts.map(sanitizeBankAccount),
 		});
 	} catch (error: any) {
-		console.error('[Exchange Token] Error:', {
+		console.error("[Exchange Token] Error:", {
 			message: error?.message,
 			response: error?.response?.data,
 			stack: error?.stack,
 		});
 
-		const isDevelopment = process.env.NODE_ENV === 'development';
+		const isDevelopment = process.env.NODE_ENV === "development";
 		return NextResponse.json(
 			{
-				error: 'Failed to link bank account',
+				error: "Failed to link bank account",
 				...(isDevelopment && {
 					details: {
 						message: error?.message,

@@ -3,6 +3,7 @@
 ## Prerequisites
 
 You need:
+
 - **Privy App ID and Secret** from https://dashboard.privy.io/
 - **NeonDB connection string** from https://console.neon.tech/
 

@@ -3,7 +3,7 @@
  * Complete type safety for Plaid API responses and internal data structures
  */
 
-import type { Products, CountryCode } from 'plaid';
+import type { Products, CountryCode } from "plaid";
 
 // ============================================
 // Link Token Types
@@ -109,7 +109,7 @@ export interface PlaidItemResponse {
 // ============================================
 
 export interface StripeProcessorTokenRequest {
-	accountId: string;  // Our BankAccount.id
+	accountId: string; // Our BankAccount.id
 }
 
 export interface StripeProcessorTokenResponse {
@@ -122,13 +122,13 @@ export interface StripeProcessorTokenResponse {
 // ============================================
 
 export type PlaidWebhookCode =
-	| 'ITEM_LOGIN_REQUIRED'
-	| 'ERROR'
-	| 'PENDING_EXPIRATION'
-	| 'USER_PERMISSION_REVOKED'
-	| 'WEBHOOK_UPDATE_ACKNOWLEDGED'
-	| 'DEFAULT_UPDATE'
-	| 'TRANSACTIONS_REMOVED';
+	| "ITEM_LOGIN_REQUIRED"
+	| "ERROR"
+	| "PENDING_EXPIRATION"
+	| "USER_PERMISSION_REVOKED"
+	| "WEBHOOK_UPDATE_ACKNOWLEDGED"
+	| "DEFAULT_UPDATE"
+	| "TRANSACTIONS_REMOVED";
 
 export interface PlaidWebhookEvent {
 	webhook_type: string;
@@ -141,7 +141,7 @@ export interface PlaidWebhookEvent {
 		display_message: string | null;
 	};
 	consent_expiration_time?: string;
-	environment: 'sandbox' | 'development' | 'production';
+	environment: "sandbox" | "development" | "production";
 }
 
 // ============================================
@@ -195,7 +195,7 @@ export class PlaidAPIError extends Error {
 
 	constructor(plaidError: PlaidError) {
 		super(plaidError.error_message);
-		this.name = 'PlaidAPIError';
+		this.name = "PlaidAPIError";
 		this.errorType = plaidError.error_type;
 		this.errorCode = plaidError.error_code;
 		this.displayMessage = plaidError.display_message;
@@ -209,7 +209,7 @@ export class PlaidAPIError extends Error {
 
 export interface ListBankAccountsQuery {
 	userId: string;
-	status?: 'active' | 'inactive' | 'error';
+	status?: "active" | "inactive" | "error";
 	isPrimary?: boolean;
 }
 
@@ -222,11 +222,6 @@ export interface ListPlaidItemsQuery {
 // Re-export Plaid SDK types for convenience
 // ============================================
 
-export { CountryCode } from 'plaid';  // Value export (enum)
+export { CountryCode } from "plaid"; // Value export (enum)
 
-export type {
-	Products,
-	AccountBase,
-	AccountType,
-	AccountSubtype,
-} from 'plaid';
+export type { Products, AccountBase, AccountType, AccountSubtype } from "plaid";

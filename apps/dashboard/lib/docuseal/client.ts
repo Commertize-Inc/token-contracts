@@ -1,4 +1,4 @@
-import docuseal from '@docuseal/api';
+import docuseal from "@docuseal/api";
 import type {
 	CreateSubmissionData,
 	CreateSubmissionResponse,
@@ -14,13 +14,14 @@ import type {
 	ArchiveTemplateResponse,
 	CreateTemplateFromPdfData,
 	CreateTemplateFromPdfResponse,
-} from '@docuseal/api';
+} from "@docuseal/api";
 
 /**
  * DocuSeal API Base URL
  * Use DOCUSEAL_API_URL env var for custom instances, defaults to DocuSeal cloud
  */
-const DOCUSEAL_API_URL = process.env.DOCUSEAL_API_URL || 'https://api.docuseal.com';
+const DOCUSEAL_API_URL =
+	process.env.DOCUSEAL_API_URL || "https://api.docuseal.com";
 
 /**
  * Initialize DocuSeal client with configuration
@@ -31,8 +32,8 @@ export const initializeDocuSealClient = () => {
 
 	if (!apiKey) {
 		throw new Error(
-			'DOCUSEAL_API_KEY environment variable is not set. ' +
-			'Please obtain an API key from https://console.docuseal.com/api'
+			"DOCUSEAL_API_KEY environment variable is not set. " +
+				"Please obtain an API key from https://console.docuseal.com/api"
 		);
 	}
 
@@ -70,7 +71,9 @@ export const createSubmission = async (
 /**
  * Get a submission by ID
  */
-export const getSubmission = async (id: number): Promise<GetSubmissionResponse> => {
+export const getSubmission = async (
+	id: number
+): Promise<GetSubmissionResponse> => {
 	const client = initializeDocuSealClient();
 	return await client.getSubmission(id);
 };
@@ -96,7 +99,9 @@ export const listSubmissions = async (
 /**
  * Archive a submission
  */
-export const archiveSubmission = async (id: number): Promise<ArchiveSubmissionResponse> => {
+export const archiveSubmission = async (
+	id: number
+): Promise<ArchiveSubmissionResponse> => {
 	const client = initializeDocuSealClient();
 	return await client.archiveSubmission(id);
 };
@@ -154,7 +159,9 @@ export const updateTemplate = async (
 /**
  * Archive a template
  */
-export const archiveTemplate = async (id: number): Promise<ArchiveTemplateResponse> => {
+export const archiveTemplate = async (
+	id: number
+): Promise<ArchiveTemplateResponse> => {
 	const client = initializeDocuSealClient();
 	return await client.archiveTemplate(id);
 };
@@ -167,7 +174,7 @@ export const docusealClient = (() => {
 	try {
 		return initializeDocuSealClient();
 	} catch (error) {
-		console.warn('DocuSeal client not initialized:', (error as Error).message);
+		console.warn("DocuSeal client not initialized:", (error as Error).message);
 		return null;
 	}
 })();

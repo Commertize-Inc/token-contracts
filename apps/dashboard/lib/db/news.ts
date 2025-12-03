@@ -1,4 +1,4 @@
-import { Pool } from 'pg';
+import { Pool } from "pg";
 
 let pool: Pool | null = null;
 
@@ -31,7 +31,10 @@ export interface NewsArticle {
 	updated_at: Date;
 }
 
-export async function getNewsArticles(limit: number = 10, category?: string): Promise<NewsArticle[]> {
+export async function getNewsArticles(
+	limit: number = 10,
+	category?: string
+): Promise<NewsArticle[]> {
 	const pool = getPool();
 
 	let query = `
@@ -60,12 +63,14 @@ export async function getNewsArticles(limit: number = 10, category?: string): Pr
 		const result = await pool.query(query, params);
 		return result.rows;
 	} catch (error) {
-		console.error('Error fetching news articles:', error);
+		console.error("Error fetching news articles:", error);
 		return [];
 	}
 }
 
-export async function getNewsArticleBySlug(slug: string): Promise<NewsArticle | null> {
+export async function getNewsArticleBySlug(
+	slug: string
+): Promise<NewsArticle | null> {
 	const pool = getPool();
 
 	const query = `
@@ -83,7 +88,7 @@ export async function getNewsArticleBySlug(slug: string): Promise<NewsArticle | 
 		const result = await pool.query(query, [slug]);
 		return result.rows[0] || null;
 	} catch (error) {
-		console.error('Error fetching news article:', error);
+		console.error("Error fetching news article:", error);
 		return null;
 	}
 }

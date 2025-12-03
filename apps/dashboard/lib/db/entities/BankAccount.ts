@@ -1,6 +1,7 @@
 import { Entity, PrimaryKey, Property, ManyToOne } from "@mikro-orm/core";
 import { v4 } from "uuid";
 import { User } from "./User";
+import { PlaidItem } from "./PlaidItem";
 
 /**
  * BankAccount entity for storing individual bank accounts
@@ -16,16 +17,16 @@ export class BankAccount {
 	@ManyToOne(() => User)
 	user!: User;
 
-	@ManyToOne('PlaidItem')
-	plaidItem: any;
+	@ManyToOne(() => PlaidItem)
+	plaidItem!: PlaidItem;
 
 	// Computed property: Institution name from PlaidItem relation
 	// Always ensure plaidItem is populated when querying BankAccount
 	get institutionName(): string {
 		if (!this.plaidItem) {
 			throw new Error(
-				'BankAccount.institutionName accessed but plaidItem relation not populated. ' +
-				'Add { populate: ["plaidItem"] } to your query.'
+				"BankAccount.institutionName accessed but plaidItem relation not populated. " +
+					'Add { populate: ["plaidItem"] } to your query.'
 			);
 		}
 		return this.plaidItem.institutionName;
@@ -38,45 +39,45 @@ export class BankAccount {
 	}
 
 	// Plaid account identifier
-	@Property({ type: 'string', unique: true, index: true })
-	plaidAccountId!: string;  // Unique ID for this specific account
+	@Property({ type: "string", unique: true, index: true })
+	plaidAccountId!: string; // Unique ID for this specific account
 
 	// Stripe integration
-	@Property({ type: 'string', nullable: true })
+	@Property({ type: "string", nullable: true })
 	stripeProcessorToken?: string;
 
-	@Property({ type: 'string', nullable: true })
+	@Property({ type: "string", nullable: true })
 	stripeBankAccountId?: string;
 
-	@Property({ type: 'date', nullable: true })
-	stripeTokenCreatedAt?: Date;  // When the processor token was first created
+	@Property({ type: "date", nullable: true })
+	stripeTokenCreatedAt?: Date; // When the processor token was first created
 
-	@Property({ type: 'date', nullable: true })
-	stripeTokenLastUsedAt?: Date;  // Last time the token was used for a payment
+	@Property({ type: "date", nullable: true })
+	stripeTokenLastUsedAt?: Date; // Last time the token was used for a payment
 
 	// Account metadata (cached from Plaid for performance)
-	@Property({ type: 'string' })
-	accountName!: string;  // E.g., "Chase Checking", "Savings"
+	@Property({ type: "string" })
+	accountName!: string; // E.g., "Chase Checking", "Savings"
 
-	@Property({ type: 'string' })
-	accountType!: string;  // 'checking', 'savings', 'credit', etc.
+	@Property({ type: "string" })
+	accountType!: string; // 'checking', 'savings', 'credit', etc.
 
-	@Property({ type: 'string' })
-	accountMask!: string;  // Last 4 digits (e.g., "1234")
+	@Property({ type: "string" })
+	accountMask!: string; // Last 4 digits (e.g., "1234")
 
 	// Status tracking
-	@Property({ type: 'boolean', default: true })
+	@Property({ type: "boolean", default: true })
 	isVerified: boolean = true;
 
-	@Property({ type: 'boolean', default: false })
+	@Property({ type: "boolean", default: false })
 	isPrimary: boolean = false;
 
-	@Property({ type: 'string', default: 'active', index: true })
-	status: string = 'active';  // 'active', 'inactive', 'error'
+	@Property({ type: "string", default: "active", index: true })
+	status: string = "active"; // 'active', 'inactive', 'error'
 
-	@Property({ type: 'date' })
+	@Property({ type: "date" })
 	createdAt: Date = new Date();
 
-	@Property({ type: 'date', onUpdate: () => new Date() })
+	@Property({ type: "date", onUpdate: () => new Date() })
 	updatedAt: Date = new Date();
 }

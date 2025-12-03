@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getEM } from '@/lib/db/orm';
-import { NewsArticle } from '@/lib/db/entities/NewsArticle';
+import { NextRequest, NextResponse } from "next/server";
+import { getEM } from "@/lib/db/orm";
+import { NewsArticle } from "@/lib/db/entities/NewsArticle";
 
 interface ArticleInput {
 	slug?: string;
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
 
 		if (!articles || !Array.isArray(articles)) {
 			return NextResponse.json(
-				{ error: 'Articles array is required' },
+				{ error: "Articles array is required" },
 				{ status: 400 }
 			);
 		}
@@ -32,13 +32,25 @@ export async function POST(request: NextRequest) {
 		let skipped = 0;
 
 		for (const articleData of articles as ArticleInput[]) {
-			const slug = articleData.slug || articleData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-			const readTime = articleData.readTime || Math.ceil((articleData.content?.length || articleData.summary.length) / 1000) || 3;
-			const publishedAt = articleData.publishedAt || new Date().toLocaleDateString('en-US', {
-				month: 'short',
-				day: 'numeric',
-				year: 'numeric',
-			});
+			const slug =
+				articleData.slug ||
+				articleData.title
+					.toLowerCase()
+					.replace(/[^a-z0-9]+/g, "-")
+					.replace(/(^-|-$)/g, "");
+			const readTime =
+				articleData.readTime ||
+				Math.ceil(
+					(articleData.content?.length || articleData.summary.length) / 1000
+				) ||
+				3;
+			const publishedAt =
+				articleData.publishedAt ||
+				new Date().toLocaleDateString("en-US", {
+					month: "short",
+					day: "numeric",
+					year: "numeric",
+				});
 			const isGenerated = articleData.isGenerated ?? false;
 			const isPublished = articleData.isPublished ?? true;
 
@@ -55,7 +67,7 @@ export async function POST(request: NextRequest) {
 				article.slug = slug;
 				article.title = articleData.title;
 				article.summary = articleData.summary;
-				article.content = articleData.content || '';
+				article.content = articleData.content || "";
 				article.category = articleData.category;
 				article.imageUrl = articleData.imageUrl;
 				article.readTime = readTime;
@@ -65,8 +77,8 @@ export async function POST(request: NextRequest) {
 
 				em.persist(article);
 				imported++;
-			} catch (err: any) {
-				console.error('Error inserting article:', err);
+			} catch (err: unknown) {
+				console.error("Error inserting article:", err);
 				skipped++;
 			}
 		}
@@ -77,13 +89,12 @@ export async function POST(request: NextRequest) {
 			success: true,
 			imported,
 			skipped,
-			total: articles.length
+			total: articles.length,
 		});
-
-	} catch (error: any) {
-		console.error('Import news error:', error);
+	} catch (error: unknown) {
+		console.error("Import news error:", error);
 		return NextResponse.json(
-			{ error: 'Failed to import articles', details: error.message },
+			{ error: "Failed to import articles", details: error instanceof Error ? error.message : "Unknown error" },
 			{ status: 500 }
 		);
 	}

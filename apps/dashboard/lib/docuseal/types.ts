@@ -36,7 +36,7 @@ export interface DocuSealSubmission {
 	combined_document_url?: string;
 	expire_at?: string;
 	expired_at?: string;
-	status?: 'pending' | 'completed' | 'declined' | 'archived';
+	status?: "pending" | "completed" | "declined" | "archived";
 	submitters: Array<{
 		id: number;
 		submission_id: number;
@@ -54,7 +54,7 @@ export interface DocuSealSubmission {
 		role?: string;
 		external_id?: string;
 		metadata?: Record<string, unknown>;
-		status: 'pending' | 'sent' | 'opened' | 'completed' | 'declined';
+		status: "pending" | "sent" | "opened" | "completed" | "declined";
 		values?: Array<{
 			field: string;
 			value: string | number | boolean;
@@ -103,7 +103,7 @@ export interface CreateSubmissionParams {
 		body?: string;
 	};
 	completed_redirect_url?: string;
-	order?: 'preserved' | 'random';
+	order?: "preserved" | "random";
 	metadata?: Record<string, unknown>;
 	external_id?: string;
 	expire_at?: string;
@@ -125,7 +125,17 @@ export interface CreateTemplateParams {
 	fields?: Array<{
 		name: string;
 		submitter?: string;
-		type?: 'text' | 'signature' | 'date' | 'checkbox' | 'image' | 'select' | 'cells' | 'stamp' | 'payment' | 'file';
+		type?:
+			| "text"
+			| "signature"
+			| "date"
+			| "checkbox"
+			| "image"
+			| "select"
+			| "cells"
+			| "stamp"
+			| "payment"
+			| "file";
 		required?: boolean;
 		default_value?: string | number | boolean;
 		readonly?: boolean;
@@ -147,7 +157,7 @@ export interface CreateTemplateParams {
 }
 
 export interface DocuSealWebhookEvent {
-	event_type: 'form.viewed' | 'form.started' | 'form.completed';
+	event_type: "form.viewed" | "form.started" | "form.completed";
 	timestamp: string;
 	data: {
 		submission_id: number;

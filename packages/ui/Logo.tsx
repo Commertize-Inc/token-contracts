@@ -1,10 +1,10 @@
-import React from 'react';
-import styles from './Logo.module.css';
-import { Building } from 'lucide-react';
+import React from "react";
+import styles from "./Logo.module.css";
+import { Building } from "lucide-react";
 
 interface LogoProps {
 	className?: string;
-	theme?: 'light' | 'dark';
+	theme?: "light" | "dark";
 	src?: string;
 	alt?: string;
 	width?: number;
@@ -17,7 +17,7 @@ const Logo: React.FC<LogoProps> = ({
 	src,
 	alt = "Commertize",
 	width = 180,
-	height = 60
+	height = 60,
 }) => {
 	// If image src is provided, use the image instead of icon + text
 	if (src) {
@@ -38,7 +38,11 @@ const Logo: React.FC<LogoProps> = ({
 			<div className={styles.logoIcon}>
 				<Building size={20} strokeWidth={2.5} />
 			</div>
-			<span className={`${styles.logoText} ${theme === 'light' ? styles.logoTextWhite : ''}`}>COMMERTIZE</span>
+			<span
+				className={`${styles.logoText} ${theme === "light" ? styles.logoTextWhite : ""}`}
+			>
+				COMMERTIZE
+			</span>
 		</div>
 	);
 };

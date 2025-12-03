@@ -15,7 +15,9 @@ export async function getEM() {
 	return ormInstance.em.fork();
 }
 
-export async function withORM<T>(callback: (em: EntityManager) => Promise<T>): Promise<T> {
+export async function withORM<T>(
+	callback: (em: EntityManager) => Promise<T>
+): Promise<T> {
 	const ormInstance = await getORM();
 	return RequestContext.create(ormInstance.em.fork(), callback);
 }
