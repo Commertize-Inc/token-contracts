@@ -9,6 +9,7 @@ import {
 import { v4 } from "uuid";
 import { User } from "./User";
 import { encrypt, decrypt } from "../../security/encryption";
+import { BankAccount } from "./BankAccount";
 
 /**
  * PlaidItem entity represents a connection to a financial institution via Plaid
@@ -50,7 +51,7 @@ export class PlaidItem {
 
 	// Relationships
 	@OneToMany("BankAccount", "plaidItem")
-	accounts = new Collection<any>(this);
+	accounts = new Collection<BankAccount>(this);
 
 	@Property({ type: "date" })
 	createdAt: Date = new Date();
