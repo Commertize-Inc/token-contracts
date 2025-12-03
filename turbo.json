@@ -1,0 +1,43 @@
+{
+	"$schema": "https://turbo.build/schema.json",
+	"ui": "tui",
+	"tasks": {
+		"build": {
+			"dependsOn": ["^build"],
+			"outputs": [".next/**", "!.next/cache/**", "dist/**"],
+			"env": [
+				"DATABASE_URL",
+				"NEXT_PUBLIC_PRIVY_APP_ID",
+				"PRIVY_APP_SECRET",
+				"PLAID_CLIENT_ID",
+				"PLAID_SECRET",
+				"PLAID_ENVIRONMENT",
+				"PLAID_IDENTITY_VERIFICATION_TEMPLATE_ID",
+				"STRIPE_SECRET_KEY",
+				"OPENAI_API_KEY",
+				"ENCRYPTION_KEY",
+				"TWITTER_API_KEY",
+				"TWITTER_API_SECRET",
+				"TWITTER_ACCESS_TOKEN",
+				"TWITTER_ACCESS_TOKEN_SECRET",
+				"TWITTER_BEARER_TOKEN",
+				"DOCUSEAL_API_KEY"
+			]
+		},
+		"dev": {
+			"cache": false,
+			"persistent": true
+		},
+		"lint": {
+			"dependsOn": ["^build"]
+		},
+		"migration:create": {
+			"cache": false
+		},
+		"migration:up": {
+			"cache": false
+		}
+	},
+	"globalEnv": ["NODE_ENV", "VERCEL_ENV", "VERCEL_URL"],
+	"globalPassThroughEnv": ["NODE_ENV"]
+}

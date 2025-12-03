@@ -26,6 +26,13 @@ const config: Options<PostgreSqlDriver> = {
 		},
 	},
 
+	// Disable dynamic file access for production builds
+	// This prevents MikroORM from scanning the filesystem for entities
+	discovery: {
+		disableDynamicFileAccess: true,
+		requireEntitiesArray: true,
+	},
+
 	debug: process.env.NODE_ENV !== "production",
 	migrations: {
 		// path: "./lib/db/migrations",

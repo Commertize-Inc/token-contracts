@@ -56,6 +56,17 @@ const nextConfig: NextConfig = {
 		workerThreads: false,
 	},
 
+	// Use standalone output for Vercel deployment
+	output: "standalone",
+
+	// Disable static optimization to prevent prerender errors with client-only libraries
+	...(process.env.SKIP_BUILD_STATIC_GENERATION && {
+		experimental: {
+			...{ workerThreads: false },
+			isrFlushToDisk: false,
+		},
+	}),
+
 	turbopack: {
 		root: monorepoRoot,
 	},
