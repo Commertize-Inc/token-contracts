@@ -4,6 +4,11 @@ import tsparser from "@typescript-eslint/parser";
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import prettierConfig from "eslint-config-prettier";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
@@ -31,6 +36,8 @@ export default [
 			parserOptions: {
 				ecmaVersion: "latest",
 				sourceType: "module",
+				tsconfigRootDir: __dirname,
+				project: ["./apps/*/tsconfig.json", "./packages/*/tsconfig.json"],
 				ecmaFeatures: {
 					jsx: true,
 				},

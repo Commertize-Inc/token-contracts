@@ -1,4 +1,4 @@
-import { TwitterApi } from "twitter-api-v2";
+import { TwitterApi, TweetV2, SendTweetV2Params } from "twitter-api-v2";
 import fs from "fs";
 import path from "path";
 
@@ -11,14 +11,7 @@ interface XPostData {
 	};
 }
 
-interface TweetData {
-	text: string;
-	media?: { media_ids: string[] };
-	poll?: {
-		options: string[];
-		duration_minutes: number;
-	};
-}
+type MediaIds = [string] | [string, string] | [string, string, string] | [string, string, string, string];
 
 interface TweetResponse {
 	data: {
@@ -116,12 +109,12 @@ class XApiService {
 		}
 
 		try {
-			const tweetData: TweetData = { text: data.text };
+			const tweetData: SendTweetV2Params = { text: data.text };
 
 			if (data.media && data.media.length > 0) {
 				const mediaIds = await this.uploadMedia(data.media);
-				if (mediaIds.length > 0) {
-					tweetData.media = { media_ids: mediaIds };
+				if (mediaIds.length > 0 && mediaIds.length <= 4) {
+					tweetData.media = { media_ids: mediaIds as MediaIds };
 				}
 			}
 
@@ -184,7 +177,7 @@ class XApiService {
 		return videoExtensions.includes(path.extname(filePath).toLowerCase());
 	}
 
-	async getMentions(since_id?: string): Promise<Record<string, unknown>[]> {
+	async getMentions(since_id?: string): Promise<TweetV2[]> {
 		if (!this.client) return [];
 		try {
 			const mentions = await this.client.v2.userMentionTimeline("me", {
@@ -228,7 +221,7 @@ class XApiService {
 		}
 	}
 
-	async searchTweets(query: string, maxResults = 10): Promise<Record<string, unknown>[]> {
+	async searchTweets(query: string, maxResults = 10): Promise<TweetV2[]> {
 		if (!this.client) return [];
 		try {
 			const results = await this.client.v2.search(query, {
