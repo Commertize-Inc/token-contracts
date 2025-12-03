@@ -61,7 +61,10 @@ export async function POST(request: NextRequest) {
 		return NextResponse.json(
 			{
 				success: false,
-				error: error instanceof Error ? error.message : "Failed to process automated post",
+				error:
+					error instanceof Error
+						? error.message
+						: "Failed to process automated post",
 			},
 			{ status: 500 }
 		);
@@ -80,7 +83,9 @@ export async function GET() {
 	} catch (error: unknown) {
 		console.error("Status check error:", error);
 		return NextResponse.json(
-			{ error: error instanceof Error ? error.message : "Failed to get status" },
+			{
+				error: error instanceof Error ? error.message : "Failed to get status",
+			},
 			{ status: 500 }
 		);
 	}

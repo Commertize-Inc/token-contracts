@@ -8,8 +8,8 @@ import {
 } from "@mikro-orm/core";
 import { v4 } from "uuid";
 import { User } from "./User";
-import { BankAccount } from "./BankAccount";
 import { encrypt, decrypt } from "../../security/encryption";
+import { BankAccount } from "./BankAccount";
 
 /**
  * PlaidItem entity represents a connection to a financial institution via Plaid
@@ -50,7 +50,7 @@ export class PlaidItem {
 	errorMessage?: string; // Store last error message for debugging
 
 	// Relationships
-	@OneToMany(() => BankAccount, "plaidItem")
+	@OneToMany("BankAccount", "plaidItem")
 	accounts = new Collection<BankAccount>(this);
 
 	@Property({ type: "date" })

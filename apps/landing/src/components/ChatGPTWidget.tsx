@@ -94,7 +94,7 @@ export default function ChatGPTWidget() {
 			id: Date.now().toString(),
 			content: inputMessage,
 			role: "user",
-			 
+
 			timestamp: new Date(),
 		};
 

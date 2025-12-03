@@ -17,8 +17,8 @@ export class BankAccount {
 	@ManyToOne(() => User)
 	user!: User;
 
-	@ManyToOne(() => PlaidItem)
-	plaidItem!: PlaidItem;
+	@ManyToOne("PlaidItem")
+	plaidItem?: PlaidItem;
 
 	// Computed property: Institution name from PlaidItem relation
 	// Always ensure plaidItem is populated when querying BankAccount

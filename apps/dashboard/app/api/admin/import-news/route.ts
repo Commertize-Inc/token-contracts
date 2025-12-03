@@ -94,7 +94,10 @@ export async function POST(request: NextRequest) {
 	} catch (error: unknown) {
 		console.error("Import news error:", error);
 		return NextResponse.json(
-			{ error: "Failed to import articles", details: error instanceof Error ? error.message : "Unknown error" },
+			{
+				error: "Failed to import articles",
+				details: error instanceof Error ? error.message : "Unknown error",
+			},
 			{ status: 500 }
 		);
 	}

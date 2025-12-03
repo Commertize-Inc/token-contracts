@@ -104,7 +104,11 @@ class XScheduler {
 		return xApiService.postTweet({ text, media });
 	}
 
-	getStatus(): { isRunning: boolean; pendingPosts: number; rateLimits: RateLimitStatus } {
+	getStatus(): {
+		isRunning: boolean;
+		pendingPosts: number;
+		rateLimits: RateLimitStatus;
+	} {
 		return {
 			isRunning: this.isRunning,
 			pendingPosts: this.scheduledPosts.filter((p) => !p.posted).length,

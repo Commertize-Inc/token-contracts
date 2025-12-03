@@ -11,7 +11,11 @@ interface XPostData {
 	};
 }
 
-type MediaIds = [string] | [string, string] | [string, string, string] | [string, string, string, string];
+type MediaIds =
+	| [string]
+	| [string, string]
+	| [string, string, string]
+	| [string, string, string, string];
 
 interface TweetResponse {
 	data: {
@@ -191,7 +195,10 @@ class XApiService {
 		}
 	}
 
-	async replyToTweet(tweetId: string, replyText: string): Promise<TweetResponse> {
+	async replyToTweet(
+		tweetId: string,
+		replyText: string
+	): Promise<TweetResponse> {
 		if (!this.client) throw new Error("X API client not initialized");
 		return this.client.v2.tweet({
 			text: replyText,

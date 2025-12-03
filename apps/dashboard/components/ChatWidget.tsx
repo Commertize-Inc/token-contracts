@@ -101,7 +101,11 @@ export default function ChatWidget() {
 				lastActive: new Date(),
 			}));
 		} catch (err: unknown) {
-			setError(err instanceof Error ? err.message : "Failed to send message. Please try again.");
+			setError(
+				err instanceof Error
+					? err.message
+					: "Failed to send message. Please try again."
+			);
 		} finally {
 			setIsTyping(false);
 		}
