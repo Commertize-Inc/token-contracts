@@ -156,7 +156,12 @@ export async function POST(request: NextRequest) {
 	} catch (error: unknown) {
 		console.error("Chat API error:", error);
 
-		if (error && typeof error === "object" && "code" in error && error.code === "insufficient_quota") {
+		if (
+			error &&
+			typeof error === "object" &&
+			"code" in error &&
+			error.code === "insufficient_quota"
+		) {
 			return NextResponse.json(
 				{ error: "API quota exceeded. Please try again later." },
 				{ status: 503 }
