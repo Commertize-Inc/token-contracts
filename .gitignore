@@ -25,7 +25,7 @@ npm-debug.log*
 .pnpm-debug.log*
 
 # env files
-.env
+.env*
 !.env*.example
 
 # Root development env (safe to commit for dev, contains dev values)
