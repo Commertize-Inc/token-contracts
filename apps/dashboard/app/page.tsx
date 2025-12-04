@@ -4,28 +4,34 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import { Loader2 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
+import { OnboardingStep } from "@/lib/types/onboarding";
 
 export default function DashboardHome() {
 	const router = useRouter();
 	const [kycStatus, setKycStatus] = useState<{
 		loading: boolean;
-		isKycd: boolean | null;
-	}>({ loading: true, isKycd: null });
+		onboardingStep: OnboardingStep | null;
+		isKycd: boolean;
+	}>({ loading: true, onboardingStep: null, isKycd: false });
 
 	const checkKycStatus = useCallback(async () => {
-		setKycStatus({ loading: true, isKycd: null });
+		setKycStatus((prev) => ({ ...prev, loading: true }));
 		try {
 			const response = await fetch("/api/kyc/status");
 			const data = await response.json();
-			setKycStatus({ loading: false, isKycd: data.isKycd });
+			setKycStatus({
+				loading: false,
+				onboardingStep: data.onboardingStep,
+				isKycd: data.isKycd,
+			});
 
-			if (!data.isKycd) {
+			if (data.onboardingStep !== OnboardingStep.COMPLETE) {
 				// Redirect to KYC flow
-				router.push("/kyc");
+				router.push("/onboarding");
 			}
 		} catch (error) {
 			console.error("Error checking KYC status:", error);
-			setKycStatus({ loading: false, isKycd: null });
+			setKycStatus({ loading: false, onboardingStep: null, isKycd: false });
 		}
 	}, [router]);
 
@@ -46,7 +52,7 @@ export default function DashboardHome() {
 		);
 	}
 
-	if (kycStatus.isKycd === false) {
+	if (kycStatus.onboardingStep !== OnboardingStep.COMPLETE) {
 		return (
 			<div className="min-h-screen flex items-center justify-center bg-slate-50">
 				<div className="max-w-md w-full space-y-8 p-8 bg-white rounded-2xl shadow-lg">
@@ -59,10 +65,40 @@ export default function DashboardHome() {
 							complete KYC verification.
 						</p>
 						<button
-							onClick={() => router.push("/kyc")}
+							onClick={() => router.push("/onboarding")}
 							className="w-full bg-[#C59B26] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#B08B20] transition-colors"
 						>
 							Start KYC Verification
+						</button>
+					</div>
+				</div>
+			</div>
+		);
+	}
+
+	if (
+		kycStatus.onboardingStep === OnboardingStep.COMPLETE &&
+		!kycStatus.isKycd
+	) {
+		return (
+			<div className="min-h-screen flex items-center justify-center bg-slate-50">
+				<div className="max-w-md w-full space-y-8 p-8 bg-white rounded-2xl shadow-lg">
+					<div className="text-center">
+						<div className="bg-yellow-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+							<Loader2 className="w-8 h-8 text-yellow-600 animate-spin" />
+						</div>
+						<h1 className="text-2xl font-bold text-slate-900 mb-4">
+							Account Pending Review
+						</h1>
+						<p className="text-slate-600 mb-6">
+							Your account is currently under review. We will notify you once your
+							identity verification is complete.
+						</p>
+						<button
+							onClick={() => window.location.reload()}
+							className="w-full bg-slate-100 text-slate-700 py-3 px-6 rounded-lg font-semibold hover:bg-slate-200 transition-colors"
+						>
+							Check Status
 						</button>
 					</div>
 				</div>

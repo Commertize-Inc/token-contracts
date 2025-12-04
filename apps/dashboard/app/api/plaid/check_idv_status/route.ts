@@ -1,4 +1,5 @@
 import { User } from "@/lib/db/entities/User";
+import { OnboardingStep } from "@/lib/types/onboarding";
 import { getEM } from "@/lib/db/orm";
 import { NextRequest, NextResponse } from "next/server";
 import { privyClient } from "@/lib/privy/client";
@@ -103,12 +104,16 @@ export async function POST(request: NextRequest) {
 				isKycd: false,
 				createdAt: new Date(),
 				updatedAt: new Date(),
+				onboardingStep: OnboardingStep.KYC,
 			});
 		}
 
 		// Check if status is 'success' or 'active' (pending)
 		// Plaid IDV statuses: 'success', 'failed', 'active'
-		if (verificationStatus.status === "success") {
+		if (
+			verificationStatus.status === "success" ||
+			verificationStatus.status === "active"
+		) {
 			user.isKycd = true;
 			user.kycCompletedAt = new Date();
 		}
@@ -132,13 +137,13 @@ export async function POST(request: NextRequest) {
 			baseURL: error?.config?.baseURL,
 			headers: error?.config?.headers
 				? {
-						"PLAID-CLIENT-ID": error.config.headers["PLAID-CLIENT-ID"]
-							? "[REDACTED]"
-							: undefined,
-						"PLAID-SECRET": error.config.headers["PLAID-SECRET"]
-							? "[REDACTED]"
-							: undefined,
-					}
+					"PLAID-CLIENT-ID": error.config.headers["PLAID-CLIENT-ID"]
+						? "[REDACTED]"
+						: undefined,
+					"PLAID-SECRET": error.config.headers["PLAID-SECRET"]
+						? "[REDACTED]"
+						: undefined,
+				}
 				: undefined,
 			responseData: error?.response?.data,
 			stack: error?.stack,
