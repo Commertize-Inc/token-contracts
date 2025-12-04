@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getEM } from "@/lib/db/orm";
 import { User } from "@/lib/db/entities/User";
+import { OnboardingStep } from "@/lib/types/onboarding";
 import { privyClient } from "@/lib/privy/client";
 
 export async function GET(request: NextRequest) {
@@ -32,6 +33,7 @@ export async function GET(request: NextRequest) {
 						isKycd: false,
 						createdAt: new Date(),
 						updatedAt: new Date(),
+						onboardingStep: OnboardingStep.KYC,
 					});
 					await em.persistAndFlush(user);
 				}
@@ -39,6 +41,7 @@ export async function GET(request: NextRequest) {
 				return NextResponse.json({
 					isKycd: user.isKycd,
 					kycCompletedAt: user.kycCompletedAt,
+					onboardingStep: user.onboardingStep,
 				});
 			} catch (verifyError) {
 				console.error("Token verification error:", verifyError);
@@ -59,6 +62,7 @@ export async function GET(request: NextRequest) {
 				isKycd: false,
 				createdAt: new Date(),
 				updatedAt: new Date(),
+				onboardingStep: OnboardingStep.KYC,
 			});
 			await em.persistAndFlush(user);
 		}
@@ -66,6 +70,7 @@ export async function GET(request: NextRequest) {
 		return NextResponse.json({
 			isKycd: user.isKycd,
 			kycCompletedAt: user.kycCompletedAt,
+			onboardingStep: user.onboardingStep,
 		});
 	} catch (error) {
 		console.error("Error checking KYC status:", error);

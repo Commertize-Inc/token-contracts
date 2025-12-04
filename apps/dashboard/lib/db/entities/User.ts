@@ -1,5 +1,6 @@
 import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
 import { v4 } from "uuid";
+import { OnboardingStep } from "@/lib/types/onboarding";
 
 @Entity({ tableName: "user" })
 export class User {
@@ -34,4 +35,7 @@ export class User {
 
 	@Property({ type: "date", onUpdate: () => new Date() })
 	updatedAt: Date = new Date();
+
+	@Property({ type: "string", default: OnboardingStep.KYC })
+	onboardingStep: OnboardingStep = OnboardingStep.KYC;
 }

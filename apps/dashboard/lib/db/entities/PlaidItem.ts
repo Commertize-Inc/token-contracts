@@ -14,7 +14,7 @@ export class PlaidItem {
 	@PrimaryKey()
 	id: string = v4();
 
-	@ManyToOne(() => User)
+	@ManyToOne(() => User, { deleteRule: "cascade" })
 	user!: User;
 
 	// Plaid identifiers

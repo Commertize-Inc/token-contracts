@@ -84,6 +84,7 @@ const Navbar: React.FC<NavbarProps> = ({
 
 	// Use provided LinkComponent or default to anchor tag
 	const LogoLink = LinkComponent || DefaultLink;
+	const ProfileLink = LinkComponent || DefaultLink;
 
 	return (
 		<nav className={styles.navbar}>
@@ -116,9 +117,8 @@ const Navbar: React.FC<NavbarProps> = ({
 										<span className={styles.userName}>{getUserDisplay()}</span>
 									</div>
 									<ChevronDown
-										className={`${styles.chevronIcon} ${
-											isDropdownOpen ? styles.chevronIconOpen : ""
-										}`}
+										className={`${styles.chevronIcon} ${isDropdownOpen ? styles.chevronIconOpen : ""
+											}`}
 									/>
 								</button>
 
@@ -143,6 +143,15 @@ const Navbar: React.FC<NavbarProps> = ({
 												</p>
 											</div>
 										)}
+
+										{/* Profile Link */}
+										<ProfileLink
+											href="/profile"
+											className={styles.profileLink}
+										>
+											<User className={styles.profileIcon} />
+											Profile
+										</ProfileLink>
 
 										{/* Logout Button */}
 										{onLogout && (

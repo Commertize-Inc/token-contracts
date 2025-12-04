@@ -42,6 +42,7 @@
 		"react-dom": "19.2.0",
 		"react-plaid-link": "^4.1.1",
 		"reflect-metadata": "^0.2.2",
+		"stripe": "^20.0.0",
 		"tailwind-merge": "^3.4.0",
 		"uuid": "^11.1.0"
 	},

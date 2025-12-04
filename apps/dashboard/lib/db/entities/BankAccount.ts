@@ -14,10 +14,10 @@ export class BankAccount {
 	@PrimaryKey()
 	id: string = v4();
 
-	@ManyToOne(() => User)
+	@ManyToOne(() => User, { deleteRule: "cascade" })
 	user!: User;
 
-	@ManyToOne(() => PlaidItem)
+	@ManyToOne(() => PlaidItem, { deleteRule: "cascade" })
 	plaidItem?: PlaidItem;
 
 	// Computed property: Institution name from PlaidItem relation
@@ -26,7 +26,7 @@ export class BankAccount {
 		if (!this.plaidItem) {
 			throw new Error(
 				"BankAccount.institutionName accessed but plaidItem relation not populated. " +
-					'Add { populate: ["plaidItem"] } to your query.'
+				'Add { populate: ["plaidItem"] } to your query.'
 			);
 		}
 		return this.plaidItem.institutionName;

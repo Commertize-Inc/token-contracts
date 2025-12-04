@@ -17,7 +17,7 @@ export default function DashboardHome() {
 	const checkKycStatus = useCallback(async () => {
 		setKycStatus((prev) => ({ ...prev, loading: true }));
 		try {
-			const response = await fetch("/api/kyc/status");
+			const response = await fetch("/api/onboarding/status");
 			const data = await response.json();
 			setKycStatus({
 				loading: false,

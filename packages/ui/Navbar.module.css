@@ -202,6 +202,31 @@
 	color: var(--color-slate-700, #334155);
 }
 
+.profileLink {
+	width: 100%;
+	padding: 0.5rem 1rem;
+	text-align: left;
+	font-size: 0.875rem;
+	color: var(--color-slate-700, #334155);
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	transition: background-color 0.2s ease;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	text-decoration: none;
+}
+
+.profileLink:hover {
+	background-color: var(--color-slate-100, #f1f5f9);
+}
+
+.profileIcon {
+	width: 1rem;
+	height: 1rem;
+}
+
 .logoutButton {
 	width: 100%;
 	padding: 0.5rem 1rem;

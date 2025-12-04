@@ -31,7 +31,7 @@ export default function KYCPage() {
 	useEffect(() => {
 		const fetchStatus = async () => {
 			try {
-				const response = await fetch("/api/kyc/status");
+				const response = await fetch("/api/onboarding/status");
 				const data = await response.json();
 				if (data.onboardingStep) {
 					setStep(data.onboardingStep);
@@ -176,7 +176,7 @@ export default function KYCPage() {
 	const handleSkipKYC = async () => {
 		setLoading(true);
 		try {
-			const response = await fetch("/api/kyc/submit", {
+			const response = await fetch("/api/onboarding/submit", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
