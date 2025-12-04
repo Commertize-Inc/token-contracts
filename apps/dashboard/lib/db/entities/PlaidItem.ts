@@ -9,7 +9,7 @@ import { encrypt, decrypt } from "../../security/encryption";
  *
  * Example: User links Chase Bank → one PlaidItem with multiple BankAccounts (checking, savings)
  */
-@Entity({ tableName: "plaid_item" })
+@Entity({ tableName: "plaid_item", name: "PlaidItem" })
 export class PlaidItem {
 	@PrimaryKey()
 	id: string = v4();
