@@ -38,6 +38,8 @@ const nextConfig: NextConfig = {
 				pino: false,
 				"thread-stream": false,
 			};
+		} else {
+			config.optimization.minimize = false;
 		}
 
 		return config;
