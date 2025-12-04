@@ -9,7 +9,7 @@ import { PlaidItem } from "./PlaidItem";
  *
  * Example: Chase checking and Chase savings both reference the same PlaidItem
  */
-@Entity({ tableName: "bank_account", name: "BankAccount" })
+@Entity({ tableName: "bank_account" })
 export class BankAccount {
 	@PrimaryKey()
 	id: string = v4();

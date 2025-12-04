@@ -1,7 +1,7 @@
 import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
 import { v4 } from "uuid";
 
-@Entity({ tableName: "news_article", name: "NewsArticle" })
+@Entity({ tableName: "news_article" })
 export class NewsArticle {
 	@PrimaryKey()
 	id: string = v4();
