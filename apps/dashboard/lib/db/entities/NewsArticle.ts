@@ -1,4 +1,4 @@
-import { Entity, PrimaryKey, Property, Index } from "@mikro-orm/core";
+import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
 import { v4 } from "uuid";
 
 @Entity({ tableName: "news_article", name: "NewsArticle" })
@@ -6,8 +6,7 @@ export class NewsArticle {
 	@PrimaryKey()
 	id: string = v4();
 
-	@Property({ type: "string" })
-	@Index()
+	@Property({ type: "string", index: true })
 	slug!: string;
 
 	@Property({ type: "string" })
