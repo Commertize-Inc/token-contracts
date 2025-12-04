@@ -54,6 +54,8 @@ export function loadEnv(
 	const rootEnv = dotenv.config({ path: rootEnvPath });
 	dotenvExpand.expand(rootEnv);
 
+	let result = rootEnv;
+
 	// 2. Check for app-specific .env override
 	// fromPath is typically the app directory (e.g., apps/dashboard)
 	const appEnvPath = path.join(fromPath, ".env");
@@ -63,10 +65,15 @@ export function loadEnv(
 		const appEnv = dotenv.config({ path: appEnvPath });
 		dotenvExpand.expand(appEnv);
 
-		// Return the app-specific config (which has overridden process.env)
-		return appEnv;
+		// Use the app-specific config (which has overridden process.env)
+		result = appEnv;
 	}
 
-	// Return root config if no app-specific override exists
-	return rootEnv;
+	// Explicitly expand process.env to handle variables injected by the environment (e.g. Vercel)
+	// that might be referenced in .env files but not defined there.
+	if (result.parsed) {
+		dotenvExpand.expand({ parsed: process.env as any });
+	}
+
+	return result;
 }
