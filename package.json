@@ -11,8 +11,8 @@
 		"lint": "turbo run lint",
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",
-		"migration:create": "turbo run migration:create --filter=@commertize/dashboard",
-		"migration:up": "turbo run migration:up --filter=@commertize/dashboard"
+		"migration:create": "turbo run migration:create",
+		"migration:up": "turbo run migration:up"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.39.1",

@@ -60,6 +60,9 @@ importers:
 
   apps/dashboard:
     dependencies:
+      '@commertize/data':
+        specifier: workspace:*
+        version: link:../../packages/data
       '@commertize/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -90,6 +93,9 @@ importers:
       '@privy-io/server-auth':
         specifier: ^1.32.5
         version: 1.32.5(bufferutil@4.0.9)(encoding@0.1.13)(typescript@5.9.3)(utf-8-validate@5.0.10)(viem@2.41.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.13))
+      add:
+        specifier: ^2.0.6
+        version: 2.0.6
       better-sqlite3:
         specifier: ^12.5.0
         version: 12.5.0
@@ -132,6 +138,15 @@ importers:
       plaid:
         specifier: ^39.1.0
         version: 39.1.0
+      pnpm:
+        specifier: ^10.25.0
+        version: 10.25.0
+      posthog-js:
+        specifier: ^1.302.2
+        version: 1.302.2
+      posthog-node:
+        specifier: ^5.17.2
+        version: 5.17.2
       react:
         specifier: 19.2.0
         version: 19.2.0
@@ -196,6 +211,9 @@ importers:
 
   apps/landing:
     dependencies:
+      '@commertize/data':
+        specifier: workspace:*
+        version: link:../../packages/data
       '@commertize/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -211,6 +229,9 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.90.12
         version: 5.90.12(react@19.2.0)
+      add:
+        specifier: ^2.0.6
+        version: 2.0.6
       autoprefixer:
         specifier: ^10.4.22
         version: 10.4.22(postcss@8.5.6)
@@ -232,9 +253,18 @@ importers:
       pg:
         specifier: ^8.16.3
         version: 8.16.3
+      pnpm:
+        specifier: ^10.25.0
+        version: 10.25.0
       postcss:
         specifier: ^8.5.6
         version: 8.5.6
+      posthog-js:
+        specifier: ^1.302.2
+        version: 1.302.2
+      posthog-node:
+        specifier: ^5.17.2
+        version: 5.17.2
       react:
         specifier: 19.2.0
         version: 19.2.0
@@ -244,6 +274,9 @@ importers:
       react-hook-form:
         specifier: ^7.68.0
         version: 7.68.0(react@19.2.0)
+      reflect-metadata:
+        specifier: ^0.2.2
+        version: 0.2.2
       tailwind-merge:
         specifier: ^3.4.0
         version: 3.4.0
@@ -263,6 +296,21 @@ importers:
         specifier: ^4.1.13
         version: 4.1.13
     devDependencies:
+      '@mikro-orm/cli':
+        specifier: ^6.6.1
+        version: 6.6.1(better-sqlite3@12.5.0)(libsql@0.5.22)(mariadb@3.4.5)(mysql2@3.15.3)(mysql@2.18.1)(pg@8.16.3)
+      '@mikro-orm/core':
+        specifier: ^6.6.1
+        version: 6.6.1
+      '@mikro-orm/migrations':
+        specifier: ^6.6.1
+        version: 6.6.1(@mikro-orm/core@6.6.1)(@types/node@20.19.25)(better-sqlite3@12.5.0)(libsql@0.5.22)(mariadb@3.4.5)(mysql2@3.15.3)(mysql@2.18.1)(pg@8.16.3)
+      '@mikro-orm/postgresql':
+        specifier: ^6.6.1
+        version: 6.6.1(@mikro-orm/core@6.6.1)(better-sqlite3@12.5.0)(libsql@0.5.22)(mariadb@3.4.5)(mysql2@3.15.3)(mysql@2.18.1)
+      '@mikro-orm/reflection':
+        specifier: ^6.6.1
+        version: 6.6.1(@mikro-orm/core@6.6.1)
       '@types/node':
         specifier: ^20.19.25
         version: 20.19.25
@@ -282,11 +330,60 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
+  packages/data:
+    dependencies:
+      '@commertize/utils':
+        specifier: workspace:*
+        version: link:../utils
+      '@mikro-orm/core':
+        specifier: ^6.6.1
+        version: 6.6.1
+      '@mikro-orm/postgresql':
+        specifier: ^6.6.1
+        version: 6.6.1(@mikro-orm/core@6.6.1)(better-sqlite3@12.5.0)(libsql@0.5.22)(mariadb@3.4.5)(mysql2@3.15.3)(mysql@2.18.1)
+      '@mikro-orm/reflection':
+        specifier: ^6.6.1
+        version: 6.6.1(@mikro-orm/core@6.6.1)
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
+      reflect-metadata:
+        specifier: ^0.2.2
+        version: 0.2.2
+      uuid:
+        specifier: ^11.1.0
+        version: 11.1.0
+    devDependencies:
+      '@mikro-orm/cli':
+        specifier: ^6.6.1
+        version: 6.6.1(better-sqlite3@12.5.0)(libsql@0.5.22)(mariadb@3.4.5)(mysql2@3.15.3)(mysql@2.18.1)(pg@8.16.3)
+      '@types/node':
+        specifier: ^20.19.25
+        version: 20.19.25
+      '@types/uuid':
+        specifier: ^10.0.0
+        version: 10.0.0
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
   packages/ui:
     dependencies:
+      add:
+        specifier: ^2.0.6
+        version: 2.0.6
       lucide-react:
         specifier: ^0.554.0
         version: 0.554.0(react@19.2.1)
+      pnpm:
+        specifier: ^10.25.0
+        version: 10.25.0
+      posthog-js:
+        specifier: ^1.302.2
+        version: 1.302.2
+      posthog-node:
+        specifier: ^5.17.2
+        version: 5.17.2
       react:
         specifier: ^19.0.0
         version: 19.2.1
@@ -306,6 +403,9 @@ importers:
 
   packages/utils:
     dependencies:
+      add:
+        specifier: ^2.0.6
+        version: 2.0.6
       dotenv:
         specifier: ^17.2.3
         version: 17.2.3
@@ -315,6 +415,15 @@ importers:
       fs:
         specifier: 0.0.1-security
         version: 0.0.1-security
+      pnpm:
+        specifier: ^10.25.0
+        version: 10.25.0
+      posthog-js:
+        specifier: ^1.302.2
+        version: 1.302.2
+      posthog-node:
+        specifier: ^5.17.2
+        version: 5.17.2
       react:
         specifier: ^18.0.0 || ^19.0.0
         version: 19.2.1
@@ -1237,6 +1346,9 @@ packages:
     resolution: {integrity: sha512-QNqXyfVS2wm9hweSYD2O7F0G06uurj9kZ96TRQE5Y9hU7+tgdZwIkbAKc5Ocy1HxEY2kuDQa6cQ1WRs/O5LFKA==}
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
 
+  '@posthog/core@1.7.1':
+    resolution: {integrity: sha512-kjK0eFMIpKo9GXIbts8VtAknsoZ18oZorANdtuTj1CbgS28t4ZVq//HAWhnxEuXRTrtkd+SUJ6Ux3j2Af8NCuA==}
+
   '@privy-io/api-base@1.4.1':
     resolution: {integrity: sha512-q98uQGVBIY5SBHjJWL/udpbxM9ISpZl8Lwwjd0p0XHSMJMOgEhS4GLjcO7l3clfNrqL0fAuinQaa+seCaYOzng==}
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
@@ -1891,6 +2003,9 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
+  add@2.0.6:
+    resolution: {integrity: sha512-j5QzrmsokwWWp6kUcJQySpbG+xfOBqqKnup3OIk1pz+kB/80SLorZ9V8zHFLO92Lcd+hbvq8bT+zOGoPkmBV0Q==}
+
   aes-js@3.0.0:
     resolution: {integrity: sha512-H7wUZRn8WpTq9jocdxQ2c8x2sKo9ZVmzfRE13GiNJXfp7NcKYEdvl3vspKjXox6RIG2VtaRe4JFvxG4rqp2Zuw==}
 
@@ -2241,6 +2356,9 @@ packages:
 
   cookie-es@1.2.2:
     resolution: {integrity: sha512-+W7VmiVINB+ywl1HGXJXmrqkOhpKrIiVZV6tQuV54ZyQC7MMuBt81Vc336GMLoHBq5hV/F9eXgt5Mnx0Rha5Fg==}
+
+  core-js@3.47.0:
+    resolution: {integrity: sha512-c3Q2VVkGAUyupsjRnaNX6u8Dq2vAdzm9iuPj5FW0fRxzlxgq9Q39MDq10IvmQSpLgHQNyQzQmOo6bgGHmH3NNg==}
 
   core-util-is@1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
@@ -2771,6 +2889,9 @@ packages:
 
   fetch-retry@5.0.6:
     resolution: {integrity: sha512-3yurQZ2hD9VISAhJJP9bpYFNQrHHBXE2JxxjY5aLEcDi46RmAzJE2OC9FAde0yis5ElW0jTTzs0zfg/Cca4XqQ==}
+
+  fflate@0.4.8:
+    resolution: {integrity: sha512-FJqqoDBR00Mdj9ppamLa/Y7vxm+PRmNWA67N846RvsoYVMKB4q3y/de5PA7gUmRMYK/8CMz2GDZQmCRN1wBcWA==}
 
   figlet@1.9.4:
     resolution: {integrity: sha512-uN6QE+TrzTAHC1IWTyrc4FfGo2KH/82J8Jl1tyKB7+z5DBit/m3D++Iu5lg91qJMnQQ3vpJrj5gxcK/pk4R9tQ==}
@@ -3802,6 +3923,11 @@ packages:
     resolution: {integrity: sha512-40QW5YalBNfQo5yRYmiw7Yz6TKKVr3h6970B2YE+3fQpsWcrbj1PzJgxeJ19DRQjhMbKPIuMY8rFaXc8moolVw==}
     engines: {node: '>=10.13.0'}
 
+  pnpm@10.25.0:
+    resolution: {integrity: sha512-XoJjkCevN8+DIGG8xtY5whljRIjg8rrr54UCink957Ul/80/f/V09emGBlTgmP6FK6isXdXO/hdn0joCCpL1AQ==}
+    engines: {node: '>=18.12'}
+    hasBin: true
+
   pony-cause@2.1.11:
     resolution: {integrity: sha512-M7LhCsdNbNgiLYiP4WjsfLUuFmCfnjdF6jKe2R9NKl4WFN+HZPGHJZ9lnLP7f9ZnKe3U9nuWD0szirmj+migUg==}
     engines: {node: '>=12.0.0'}
@@ -3896,6 +4022,13 @@ packages:
   postgres-interval@4.0.2:
     resolution: {integrity: sha512-EMsphSQ1YkQqKZL2cuG0zHkmjCCzQqQ71l2GXITqRwjhRleCdv00bDk/ktaSi0LnlaPzAc3535KTrjXsTdtx7A==}
     engines: {node: '>=12'}
+
+  posthog-js@1.302.2:
+    resolution: {integrity: sha512-4voih22zQe7yHA7DynlQ3B7kgzJOaKIjzV7K3jJ2Qf+UDXd1ZgO7xYmLWYVtuKEvD1OXHbKk/fPhUTZeHEWpBw==}
+
+  posthog-node@5.17.2:
+    resolution: {integrity: sha512-lz3YJOr0Nmiz0yHASaINEDHqoV+0bC3eD8aZAG+Ky292dAnVYul+ga/dMX8KCBXg8hHfKdxw0SztYD5j6dgUqQ==}
+    engines: {node: '>=20'}
 
   preact@10.28.0:
     resolution: {integrity: sha512-rytDAoiXr3+t6OIP3WGlDd0ouCUG1iCWzkcY3++Nreuoi17y6T5i/zRhe6uYfoVcxq6YU+sBtJouuRDsq8vvqA==}
@@ -4762,6 +4895,9 @@ packages:
     peerDependenciesMeta:
       typescript:
         optional: true
+
+  web-vitals@4.2.4:
+    resolution: {integrity: sha512-r4DIlprAGwJ7YM11VZp4R884m0Vmgr6EAKe3P+kO0PPj3Unqyvv59rczf6UiGcb9Z8QxZVcqKNwv/g0WNdWwsw==}
 
   web3-core-helpers@1.10.3:
     resolution: {integrity: sha512-Yv7dQC3B9ipOc5sWm3VAz1ys70Izfzb8n9rSiQYIPjpqtJM+3V4EeK6ghzNR6CO2es0+Yu9CtCkw0h8gQhrTxA==}
@@ -6043,6 +6179,10 @@ snapshots:
       lit: 3.3.0
 
   '@pkgr/core@0.2.9': {}
+
+  '@posthog/core@1.7.1':
+    dependencies:
+      cross-spawn: 7.0.6
 
   '@privy-io/api-base@1.4.1':
     dependencies:
@@ -7611,6 +7751,8 @@ snapshots:
 
   acorn@8.15.0: {}
 
+  add@2.0.6: {}
+
   aes-js@3.0.0: {}
 
   agentkeepalive@4.6.0:
@@ -7974,6 +8116,8 @@ snapshots:
   convert-source-map@2.0.0: {}
 
   cookie-es@1.2.2: {}
+
+  core-js@3.47.0: {}
 
   core-util-is@1.0.3: {}
 
@@ -8348,7 +8492,7 @@ snapshots:
       eslint: 9.39.1(jiti@2.6.1)
       eslint-import-resolver-node: 0.3.9
       eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0)(eslint@9.39.1(jiti@2.6.1))
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.1(jiti@2.6.1))
       eslint-plugin-jsx-a11y: 6.10.2(eslint@9.39.1(jiti@2.6.1))
       eslint-plugin-react: 7.37.5(eslint@9.39.1(jiti@2.6.1))
       eslint-plugin-react-hooks: 7.0.1(eslint@9.39.1(jiti@2.6.1))
@@ -8385,7 +8529,7 @@ snapshots:
       tinyglobby: 0.2.15
       unrs-resolver: 1.11.1
     optionalDependencies:
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.1(jiti@2.6.1))
     transitivePeerDependencies:
       - supports-color
 
@@ -8400,7 +8544,7 @@ snapshots:
       tinyglobby: 0.2.15
       unrs-resolver: 1.11.1
     optionalDependencies:
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.1(jiti@2.6.1))
     transitivePeerDependencies:
       - supports-color
 
@@ -8455,7 +8599,7 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
-  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1)):
+  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.1(jiti@2.6.1)):
     dependencies:
       '@rtsao/scc': 1.1.0
       array-includes: 3.1.9
@@ -8838,6 +8982,8 @@ snapshots:
       picomatch: 4.0.3
 
   fetch-retry@5.0.6: {}
+
+  fflate@0.4.8: {}
 
   figlet@1.9.4:
     dependencies:
@@ -9918,6 +10064,8 @@ snapshots:
 
   pngjs@5.0.0: {}
 
+  pnpm@10.25.0: {}
+
   pony-cause@2.1.11: {}
 
   possible-typed-array-names@1.1.0: {}
@@ -9992,6 +10140,18 @@ snapshots:
       xtend: 4.0.2
 
   postgres-interval@4.0.2: {}
+
+  posthog-js@1.302.2:
+    dependencies:
+      '@posthog/core': 1.7.1
+      core-js: 3.47.0
+      fflate: 0.4.8
+      preact: 10.28.0
+      web-vitals: 4.2.4
+
+  posthog-node@5.17.2:
+    dependencies:
+      '@posthog/core': 1.7.1
 
   preact@10.28.0: {}
 
@@ -10971,6 +11131,8 @@ snapshots:
       - bufferutil
       - utf-8-validate
       - zod
+
+  web-vitals@4.2.4: {}
 
   web3-core-helpers@1.10.3:
     dependencies:
