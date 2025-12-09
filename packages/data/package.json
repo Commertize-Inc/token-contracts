@@ -10,7 +10,8 @@
 	},
 	"scripts": {
 		"migration:create": "npx mikro-orm migration:create",
-		"migration:up": "npx mikro-orm migration:up"
+		"migration:up": "npx mikro-orm migration:up",
+		"migration:pending": "npx mikro-orm migration:pending"
 	},
 	"dependencies": {
 		"@commertize/utils": "workspace:*",
