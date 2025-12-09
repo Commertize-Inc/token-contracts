@@ -3,7 +3,9 @@
 	"compilerOptions": {
 		// Generate declaration files for published package
 		"declaration": true,
-		"declarationMap": true
+		"declarationMap": true,
+		"lib": ["dom", "dom.iterable", "esnext"],
+		"jsx": "react-jsx"
 	},
-	"include": ["./**/*.ts"]
+	"include": ["./src/**/*"]
 }

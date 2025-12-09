@@ -1,17 +1,14 @@
 import { Options } from "@mikro-orm/core";
 import { PostgreSqlDriver } from "@mikro-orm/postgresql";
-import { loadEnv } from "@commertize/utils";
+import { loadEnv } from "@commertize/utils/env";
 import "reflect-metadata";
-import { User } from "./entities/User";
-import { NewsArticle } from "./entities/NewsArticle";
-import { PlaidItem } from "./entities/PlaidItem";
-import { BankAccount } from "./entities/BankAccount";
+import { User, NewsArticle, PlaidItem, BankAccount, Waitlist } from "@commertize/data";
 
 // Load environment variables with interpolation support
 loadEnv(__dirname);
 
 const config: Options<PostgreSqlDriver> = {
-	entities: [User, NewsArticle, PlaidItem, BankAccount],
+	entities: [User, NewsArticle, PlaidItem, BankAccount, Waitlist],
 	driver: PostgreSqlDriver,
 	connect: true,
 

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getEM } from "@/lib/db/orm";
-import { NewsArticle } from "@/lib/db/entities/NewsArticle";
+import { NewsArticle } from "@commertize/data";
 
 interface ArticleInput {
 	slug?: string;
@@ -44,13 +44,9 @@ export async function POST(request: NextRequest) {
 					(articleData.content?.length || articleData.summary.length) / 1000
 				) ||
 				3;
-			const publishedAt =
-				articleData.publishedAt ||
-				new Date().toLocaleDateString("en-US", {
-					month: "short",
-					day: "numeric",
-					year: "numeric",
-				});
+			const publishedAt = articleData.publishedAt
+				? new Date(articleData.publishedAt)
+				: new Date();
 			const isGenerated = articleData.isGenerated ?? false;
 			const isPublished = articleData.isPublished ?? true;
 

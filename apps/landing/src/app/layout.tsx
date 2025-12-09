@@ -9,6 +9,8 @@ import {
 import "./globals.css";
 import QueryProvider from "@/components/QueryProvider";
 import { ToastProvider } from "@/hooks/use-toast";
+import Navbar from "@/components/Navbar";
+import { PostHogProvider } from "@commertize/utils/posthog";
 
 // 1. Configure the Serif (Institutional) Font
 const playfair = Playfair_Display({
@@ -70,7 +72,10 @@ export default function RootLayout({
 		>
 			<body>
 				<QueryProvider>
-					<ToastProvider>{children}</ToastProvider>
+					<PostHogProvider>
+						<Navbar />
+						<ToastProvider>{children}</ToastProvider>
+					</PostHogProvider>
 				</QueryProvider>
 			</body>
 		</html>

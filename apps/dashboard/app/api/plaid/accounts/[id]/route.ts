@@ -1,90 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { privyClient } from "@/lib/privy/client";
 import { getEM } from "@/lib/db/orm";
-import { User } from "@/lib/db/entities/User";
-import { BankAccount } from "@/lib/db/entities/BankAccount";
-import { sanitizeBankAccount, getPrimaryAccount } from "@/lib/plaid";
+import { BankAccount } from "@commertize/data";
+import { User } from "@commertize/data";
+import { PlaidItem } from "@commertize/data";
+import { privyClient } from "@/lib/privy/client";
+import { getPlaidClient } from "@/lib/plaid/client";
 
-/**
- * GET: Get single bank account by ID
- *
- * @param request - Request object
- * @param params - Route params with account id
- * @returns Bank account details
- */
-export async function GET(
-	request: NextRequest,
-	{ params }: { params: Promise<{ id: string }> }
-) {
-	try {
-		// Verify authentication
-		const privyToken = request.cookies.get("privy-token")?.value;
-		if (!privyToken) {
-			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-		}
-
-		const claims = await privyClient.verifyAuthToken(privyToken);
-		const privyId = claims.userId;
-
-		const { id } = await params;
-
-		// Database query
-		const em = await getEM();
-
-		const user = await em.findOne(User, { privyId });
-		if (!user) {
-			return NextResponse.json({ error: "User not found" }, { status: 404 });
-		}
-
-		const account = await em.findOne(
-			BankAccount,
-			{ id },
-			{
-				populate: ["plaidItem"],
-			}
-		);
-
-		if (!account) {
-			return NextResponse.json({ error: "Account not found" }, { status: 404 });
-		}
-
-		// Verify ownership
-		if (account.user.id !== user.id) {
-			return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-		}
-
-		// Return sanitized data
-		return NextResponse.json({ account: sanitizeBankAccount(account) });
-	} catch (error: any) {
-		console.error("[Get Account] Error:", {
-			message: error?.message,
-			stack: error?.stack,
-		});
-
-		return NextResponse.json(
-			{ error: "Failed to fetch bank account" },
-			{ status: 500 }
-		);
-	}
-}
-
-/**
- * DELETE: Remove/unlink a bank account
- *
- * Performs soft delete by setting status to 'inactive'
- * If deleted account was primary, assigns a new primary account
- *
- * @param request - Request object
- * @param params - Route params with account id
- * @returns Success status
- */
 export async function DELETE(
 	request: NextRequest,
 	{ params }: { params: Promise<{ id: string }> }
 ) {
 	try {
-		// Verify authentication
+		const { id } = await params;
 		const privyToken = request.cookies.get("privy-token")?.value;
+
 		if (!privyToken) {
 			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 		}
@@ -92,73 +21,70 @@ export async function DELETE(
 		const claims = await privyClient.verifyAuthToken(privyToken);
 		const privyId = claims.userId;
 
-		const { id } = await params;
-
-		// Database operations
 		const em = await getEM();
 
 		const user = await em.findOne(User, { privyId });
+
 		if (!user) {
 			return NextResponse.json({ error: "User not found" }, { status: 404 });
 		}
 
-		const account = await em.findOne(BankAccount, { id });
+		const bankAccount = await em.findOne(
+			BankAccount,
+			{
+				id,
+				user: user,
+			},
+			{ populate: ["plaidItem"] }
+		);
 
-		if (!account) {
-			return NextResponse.json({ error: "Account not found" }, { status: 404 });
+		if (!bankAccount) {
+			return NextResponse.json(
+				{ error: "Bank account not found" },
+				{ status: 404 }
+			);
 		}
 
-		// Verify ownership
-		if (account.user.id !== user.id) {
-			return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-		}
+		// Soft delete the account
+		bankAccount.status = "inactive";
+		bankAccount.isPrimary = false;
 
-		const wasPrimary = account.isPrimary;
+		// Check if there are other active accounts for this Plaid Item
+		if (bankAccount.plaidItem) {
+			const plaidItem = bankAccount.plaidItem;
 
-		// Soft delete - set status to inactive
-		account.status = "inactive";
-		account.isPrimary = false;
-		account.updatedAt = new Date();
-
-		await em.persistAndFlush(account);
-
-		console.log("[Delete Account] Account deactivated:", {
-			accountId: id,
-			wasPrimary,
-		});
-
-		// If this was the primary account, assign a new primary
-		if (wasPrimary) {
-			const otherAccounts = await em.find(BankAccount, {
-				user: user.id,
+			// Count other active accounts for this item
+			const activeAccountsCount = await em.count(BankAccount, {
+				plaidItem: plaidItem,
 				status: "active",
+				id: { $ne: bankAccount.id }, // Exclude the one we just deactivated
 			});
 
-			if (otherAccounts.length > 0) {
-				const newPrimary = getPrimaryAccount(otherAccounts);
-				if (newPrimary) {
-					newPrimary.isPrimary = true;
-					await em.persistAndFlush(newPrimary);
-
-					console.log("[Delete Account] New primary assigned:", {
-						accountId: newPrimary.id,
+			// If no other active accounts, revoke Plaid access
+			if (activeAccountsCount === 0) {
+				try {
+					const plaidClient = getPlaidClient();
+					await plaidClient.itemRemove({
+						access_token: plaidItem.accessToken,
 					});
+
+					// Mark PlaidItem as inactive
+					plaidItem.status = "inactive";
+					console.log(`Revoked Plaid access for item ${plaidItem.id}`);
+				} catch (plaidError) {
+					console.error("Error revoking Plaid access:", plaidError);
+					// Continue even if Plaid revocation fails, but log it
 				}
 			}
 		}
 
-		return NextResponse.json({
-			success: true,
-			message: "Bank account removed successfully",
-		});
-	} catch (error: any) {
-		console.error("[Delete Account] Error:", {
-			message: error?.message,
-			stack: error?.stack,
-		});
+		await em.flush();
 
+		return NextResponse.json({ success: true });
+	} catch (error) {
+		console.error("Error disconnecting bank account:", error);
 		return NextResponse.json(
-			{ error: "Failed to remove bank account" },
+			{ error: "Internal server error" },
 			{ status: 500 }
 		);
 	}

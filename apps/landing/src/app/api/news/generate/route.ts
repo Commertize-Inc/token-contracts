@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
-import { getPool } from "../../../../../lib/db";
+import { getEM } from "../../../../../lib/db";
+import { EntityManager } from "@mikro-orm/core";
+import { PostgreSqlDriver } from "@mikro-orm/postgresql";
 import { v4 as uuidv4 } from "uuid";
 
 const openai = new OpenAI({
@@ -74,15 +76,15 @@ const NEWS_CATEGORIES = [
 ];
 
 async function getRecentCategories(
-	pool: ReturnType<typeof getPool>,
+	em: EntityManager,
 	limit: number = 3
 ): Promise<string[]> {
 	try {
-		const result = await pool.query(
-			`SELECT category FROM news_category_history ORDER BY used_at DESC LIMIT $1`,
+		const result = await em.getConnection().execute(
+			`SELECT category FROM news_category_history ORDER BY used_at DESC LIMIT ?`,
 			[limit]
 		);
-		return result.rows.map((row) => row.category);
+		return (result as any[]).map((row) => row.category);
 	} catch (error) {
 		console.error("Error fetching recent categories:", error);
 		return [];
@@ -90,15 +92,15 @@ async function getRecentCategories(
 }
 
 async function recordCategoryUsage(
-	pool: ReturnType<typeof getPool>,
+	em: EntityManager,
 	category: string
 ): Promise<void> {
 	try {
-		await pool.query(
-			`INSERT INTO news_category_history (category, used_at) VALUES ($1, NOW())`,
+		await em.getConnection().execute(
+			`INSERT INTO news_category_history (category, used_at) VALUES (?, NOW())`,
 			[category]
 		);
-		await pool.query(
+		await em.getConnection().execute(
 			`DELETE FROM news_category_history WHERE id NOT IN (
         SELECT id FROM news_category_history ORDER BY used_at DESC LIMIT 10
       )`
@@ -145,7 +147,7 @@ async function generateArticleImage(
 }
 
 async function saveArticle(
-	pool: ReturnType<typeof getPool>,
+	em: EntityManager,
 	article: {
 		id: string;
 		slug: string;
@@ -159,9 +161,9 @@ async function saveArticle(
 	}
 ): Promise<boolean> {
 	try {
-		await pool.query(
+		await em.getConnection().execute(
 			`INSERT INTO news_article (id, slug, title, summary, content, category, image_url, read_time, published_at, is_generated, is_published, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, true, true, NOW(), NOW())
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, true, true, NOW(), NOW())
        ON CONFLICT (slug) DO UPDATE SET
          title = EXCLUDED.title,
          summary = EXCLUDED.summary,
@@ -200,10 +202,10 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		const pool = getPool();
+		const em = await getEM();
 		const articles = [];
 		const numArticles = Math.min(count, 5);
-		let recentCategories = await getRecentCategories(pool, 3);
+		let recentCategories = await getRecentCategories(em, 3);
 
 		for (let i = 0; i < numArticles; i++) {
 			const selectedCategory = selectCategory(recentCategories);
@@ -271,8 +273,8 @@ Focus on current trends, market insights, and actionable information for investo
 			};
 
 			if (saveToDb) {
-				await saveArticle(pool, article);
-				await recordCategoryUsage(pool, selectedCategory.id);
+				await saveArticle(em, article);
+				await recordCategoryUsage(em, selectedCategory.id);
 			}
 
 			recentCategories = [selectedCategory.id, ...recentCategories.slice(0, 2)];
@@ -302,8 +304,8 @@ Focus on current trends, market insights, and actionable information for investo
 }
 
 export async function GET() {
-	const pool = getPool();
-	const recentCategories = await getRecentCategories(pool, 3);
+	const em = await getEM();
+	const recentCategories = await getRecentCategories(em, 3);
 	const availableCategories = NEWS_CATEGORIES.filter(
 		(cat) => !recentCategories.includes(cat.id)
 	);

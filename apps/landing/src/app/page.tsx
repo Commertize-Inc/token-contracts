@@ -1,49 +1,49 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import ChatGPTWidget from "@/components/ChatGPTWidget";
+import { Button, Logo, PropertyCard, PropertyData, BentoBox } from "@commertize/ui";
+import { useIsMounted } from "@commertize/utils/hooks";
+import { AnimatePresence, motion } from "framer-motion";
 import {
+	Activity,
+	ArrowLeftRight,
+	ArrowRight,
+	Bell,
 	Building,
 	Building2,
-	Wallet,
-	LayoutDashboard,
-	PieChart,
-	FileText,
-	Settings,
-	LogOut,
-	TrendingUp,
-	ShieldCheck,
-	ChevronRight,
+	Calendar,
+	Check,
 	ChevronDown,
-	Menu,
-	X,
-	Bell,
-	Search,
-	Filter,
-	DollarSign,
-	Activity,
+	ChevronRight,
+	Clock,
 	Coins,
-	Warehouse,
+	Cookie,
+	DollarSign,
+	FileText,
+	Filter,
+	Globe,
 	Home as HomeIcon,
 	Layers,
-	Sun,
-	Wind,
-	Calendar,
-	Clock,
-	ArrowRight,
-	MapPin,
-	Cookie,
+	LayoutDashboard,
 	Link2,
-	ArrowLeftRight,
+	LogOut,
+	MapPin,
+	Menu,
+	PieChart,
+	Search,
+	Settings,
+	ShieldCheck,
+	Sun,
+	TrendingUp,
 	Users,
-	Check,
-	Globe,
+	Wallet,
+	Warehouse,
+	Wind,
+	X,
 } from "lucide-react";
 import Link from "next/link";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "./page.module.css";
-import { Button, Logo, PropertyCard, PropertyData } from "@commertize/ui";
-import { useIsMounted } from "@commertize/utils/hooks";
-import ChatGPTWidget from "@/components/ChatGPTWidget";
 
 const SAMPLE_PROPERTIES: PropertyData[] = [
 	{
@@ -226,246 +226,7 @@ const SectionHeading = ({
 
 // --- Sections ---
 
-const Navbar = () => {
-	const [isOpen, setIsOpen] = useState(false);
-	const [scrolled, setScrolled] = useState(false);
-	const [companyOpen, setCompanyOpen] = useState(false);
-	const companyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-	useEffect(() => {
-		const handleScroll = () => setScrolled(window.scrollY > 50);
-		handleScroll();
-		window.addEventListener("scroll", handleScroll);
-		return () => {
-			window.removeEventListener("scroll", handleScroll);
-			if (companyTimeoutRef.current) clearTimeout(companyTimeoutRef.current);
-		};
-	}, []);
-
-	return (
-		<nav
-			className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-white/95 backdrop-blur-md shadow-sm" : "bg-white/80 backdrop-blur-sm"}`}
-		>
-			<div className="container mx-auto px-4 sm:px-6 lg:px-8">
-				<div className="flex items-center justify-between h-16">
-					<Link href="/" className="flex-shrink-0">
-						<Logo src="/assets/logo.png" width={240} height={75} />
-					</Link>
-
-					<div className="hidden md:flex items-center gap-6 lg:gap-8">
-						<a
-							href="#about"
-							className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light"
-						>
-							Mission
-						</a>
-						<Link
-							href="/marketplace"
-							className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light"
-						>
-							Marketplace
-						</Link>
-						<Link
-							href="/nexus"
-							className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light"
-						>
-							Nexus
-						</Link>
-						<a
-							href="/omnigrid"
-							className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light"
-						>
-							OmniGrid
-						</a>
-
-						<div
-							className="relative"
-							onMouseEnter={() => {
-								if (companyTimeoutRef.current)
-									clearTimeout(companyTimeoutRef.current);
-								setCompanyOpen(true);
-							}}
-							onMouseLeave={() => {
-								companyTimeoutRef.current = setTimeout(
-									() => setCompanyOpen(false),
-									150
-								);
-							}}
-						>
-							<button className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light flex items-center gap-1">
-								Company
-								<ChevronRight
-									size={12}
-									className={`transition-transform ${companyOpen ? "rotate-90" : ""}`}
-								/>
-							</button>
-							{companyOpen && (
-								<div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-2">
-									<Link
-										href="/team"
-										className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4A024]"
-									>
-										Team
-									</Link>
-									<a
-										href="/market-analytics"
-										className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4A024]"
-									>
-										Market Analytics
-									</a>
-									<Link
-										href="/news"
-										className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4A024]"
-									>
-										News
-									</Link>
-									<a
-										href="#contact"
-										className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4A024]"
-									>
-										Contact
-									</a>
-									<a
-										href="/faq"
-										className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4A024]"
-									>
-										FAQ
-									</a>
-								</div>
-							)}
-						</div>
-					</div>
-
-					<div className="hidden md:flex items-center gap-4">
-						<a
-							href="/waitlist"
-							className="inline-flex items-center justify-center px-5 py-2 border border-[#D4A024] text-[#D4A024] text-sm font-light rounded-lg hover:bg-[#D4A024] hover:text-white transition-colors"
-						>
-							Join Waitlist
-						</a>
-						<a
-							href={
-								process.env.NEXT_PUBLIC_DASHBOARD_URL || "http://localhost:3001"
-							}
-							className="inline-flex items-center justify-center px-5 py-2 bg-[#D4A024] text-white text-sm font-light rounded-lg hover:bg-[#B8881C] transition-colors"
-						>
-							Sign In
-						</a>
-					</div>
-
-					<div className="md:hidden">
-						<button
-							onClick={() => setIsOpen(!isOpen)}
-							className="text-[#D4A024] p-2"
-						>
-							{isOpen ? <X size={24} /> : <Menu size={24} />}
-						</button>
-					</div>
-				</div>
-			</div>
-
-			{isOpen && (
-				<div
-					className="md:hidden fixed inset-0 top-16 bg-black/50"
-					onClick={() => setIsOpen(false)}
-				>
-					<div
-						className="bg-white p-4 shadow-lg"
-						onClick={(e) => e.stopPropagation()}
-					>
-						<a
-							href="#about"
-							className="block py-3 text-gray-700 border-b border-gray-100"
-							onClick={() => setIsOpen(false)}
-						>
-							Mission
-						</a>
-						<Link
-							href="/marketplace"
-							className="block py-3 text-gray-700 border-b border-gray-100"
-							onClick={() => setIsOpen(false)}
-						>
-							Marketplace
-						</Link>
-						<Link
-							href="/nexus"
-							className="block py-3 text-gray-700 border-b border-gray-100"
-							onClick={() => setIsOpen(false)}
-						>
-							Nexus
-						</Link>
-						<a
-							href="/omnigrid"
-							className="block py-3 text-gray-700 border-b border-gray-100"
-							onClick={() => setIsOpen(false)}
-						>
-							OmniGrid
-						</a>
-						<div className="py-2 border-t border-gray-100">
-							<div className="text-xs text-gray-500 uppercase tracking-wider mb-2">
-								Company
-							</div>
-							<Link
-								href="/team"
-								className="block py-2 pl-4 text-gray-600 text-sm"
-								onClick={() => setIsOpen(false)}
-							>
-								Team
-							</Link>
-							<a
-								href="/market-analytics"
-								className="block py-2 pl-4 text-gray-600 text-sm"
-								onClick={() => setIsOpen(false)}
-							>
-								Market Analytics
-							</a>
-							<Link
-								href="/news"
-								className="block py-2 pl-4 text-gray-600 text-sm"
-								onClick={() => setIsOpen(false)}
-							>
-								News
-							</Link>
-							<a
-								href="#contact"
-								className="block py-2 pl-4 text-gray-600 text-sm"
-								onClick={() => setIsOpen(false)}
-							>
-								Contact
-							</a>
-							<a
-								href="/faq"
-								className="block py-2 pl-4 text-gray-600 text-sm"
-								onClick={() => setIsOpen(false)}
-							>
-								FAQ
-							</a>
-						</div>
-						<div className="pt-4 border-t border-gray-100 space-y-3">
-							<a
-								href="/waitlist"
-								className="block w-full text-center px-5 py-3 border border-[#D4A024] text-[#D4A024] font-light rounded-lg"
-								onClick={() => setIsOpen(false)}
-							>
-								Join Waitlist
-							</a>
-							<a
-								href={
-									process.env.NEXT_PUBLIC_DASHBOARD_URL ||
-									"http://localhost:3001"
-								}
-								className="block w-full text-center px-5 py-3 bg-[#D4A024] text-white font-light rounded-lg"
-								onClick={() => setIsOpen(false)}
-							>
-								Sign In
-							</a>
-						</div>
-					</div>
-				</div>
-			)}
-		</nav>
-	);
-};
 
 const FlippingText = () => {
 	const prefixes = [
@@ -1003,16 +764,10 @@ const WhyCommertize = () => {
 								ease: "easeOut",
 							}}
 							whileHover={{ y: -8, transition: { duration: 0.3 } }}
-							className="relative group"
+							className="relative group h-full"
 						>
-							<div className="bg-white rounded-2xl p-8 h-full border border-gray-100 shadow-sm hover:shadow-xl hover:border-[#D4A024]/30 transition-all duration-300">
-								<div className="absolute top-0 right-0 -mt-2 -mr-2">
-									<span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#D4A024]/10 text-[#D4A024] border border-[#D4A024]/20">
-										{feature.highlight}
-									</span>
-								</div>
-
-								<div className="mt-6 pt-6 border-t border-gray-100">
+							<BentoBox
+								footer={
 									<Link
 										href="/faq"
 										className="flex items-center text-[#D4A024] font-logo text-sm font-light group-hover:translate-x-2 transition-transform duration-300"
@@ -1020,8 +775,26 @@ const WhyCommertize = () => {
 										Learn more
 										<ArrowRight className="w-4 h-4 ml-2" />
 									</Link>
+								}
+							>
+								<div className="absolute top-0 right-0 -mt-2 -mr-2">
+									<span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#D4A024]/10 text-[#D4A024] border border-[#D4A024]/20">
+										{feature.highlight}
+									</span>
 								</div>
-							</div>
+
+								<div className="mb-6 mt-2">
+									<div className="w-12 h-12 bg-[#D4A024]/10 rounded-xl flex items-center justify-center mb-6">
+										<feature.icon className="w-6 h-6 text-[#D4A024]" />
+									</div>
+									<h3 className="text-xl font-logo font-light text-gray-900 mb-3">
+										{feature.title}
+									</h3>
+									<p className="text-gray-600 font-light leading-relaxed text-sm">
+										{feature.description}
+									</p>
+								</div>
+							</BentoBox>
 						</motion.div>
 					))}
 				</div>
@@ -2451,7 +2224,6 @@ export default function Home() {
 				color: "#0f172a",
 			}}
 		>
-			<Navbar />
 			<Hero />
 			<AboutUs />
 			<WhyCommertize />
@@ -2491,21 +2263,19 @@ export default function Home() {
 						<div className="inline-flex bg-white rounded-full p-1.5 shadow-lg border border-gray-100">
 							<button
 								onClick={() => setActiveTab("investors")}
-								className={`px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 ${
-									activeTab === "investors"
-										? "bg-gradient-to-r from-[#D4A024] to-yellow-500 text-white shadow-md"
-										: "text-gray-600 hover:text-gray-900"
-								}`}
+								className={`px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 ${activeTab === "investors"
+									? "bg-gradient-to-r from-[#D4A024] to-yellow-500 text-white shadow-md"
+									: "text-gray-600 hover:text-gray-900"
+									}`}
 							>
 								For Investors
 							</button>
 							<button
 								onClick={() => setActiveTab("sponsors")}
-								className={`px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 ${
-									activeTab === "sponsors"
-										? "bg-gradient-to-r from-[#D4A024] to-yellow-500 text-white shadow-md"
-										: "text-gray-600 hover:text-gray-900"
-								}`}
+								className={`px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 ${activeTab === "sponsors"
+									? "bg-gradient-to-r from-[#D4A024] to-yellow-500 text-white shadow-md"
+									: "text-gray-600 hover:text-gray-900"
+									}`}
 							>
 								For Sponsors
 							</button>
@@ -2518,111 +2288,111 @@ export default function Home() {
 						<div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 relative z-10">
 							{activeTab === "investors"
 								? [
-										{
-											icon: ShieldCheck,
-											title: "Complete KYC",
-											desc: "Verify your identity and accreditation status through our secure portal",
-										},
-										{
-											icon: Search,
-											title: "Browse Properties",
-											desc: "Explore vetted commercial properties across asset classes and regions",
-										},
-										{
-											icon: Wallet,
-											title: "Invest",
-											desc: "Purchase fractional shares using fiat or cryptocurrency",
-										},
-										{
-											icon: TrendingUp,
-											title: "Earn Distributions",
-											desc: "Receive quarterly income directly to your account or wallet",
-										},
-										{
-											icon: ArrowLeftRight,
-											title: "Trade Anytime",
-											desc: "Sell shares on our regulated secondary market instantly",
-										},
-									].map((step, index) => (
-										<motion.div
-											key={step.title}
-											initial={{ opacity: 0, y: 40 }}
-											whileInView={{ opacity: 1, y: 0 }}
-											viewport={{ once: true }}
-											transition={{ duration: 0.5, delay: index * 0.1 }}
-											className="group"
-										>
-											<div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:border-[#D4A024]/30 transition-all duration-300 h-full relative">
-												<div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 bg-gradient-to-br from-[#D4A024] to-yellow-500 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg">
-													{index + 1}
-												</div>
-												<div className="pt-4">
-													<div className="w-14 h-14 bg-gradient-to-br from-[#D4A024]/10 to-[#D4A024]/5 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:from-[#D4A024]/20 group-hover:to-[#D4A024]/10 transition-all duration-300">
-														<step.icon className="w-7 h-7 text-[#D4A024]" />
-													</div>
-													<h4 className="text-lg font-medium text-gray-900 text-center mb-2">
-														{step.title}
-													</h4>
-													<p className="text-sm text-gray-500 font-light text-center leading-relaxed">
-														{step.desc}
-													</p>
-												</div>
+									{
+										icon: ShieldCheck,
+										title: "Complete KYC",
+										desc: "Verify your identity and accreditation status through our secure portal",
+									},
+									{
+										icon: Search,
+										title: "Browse Properties",
+										desc: "Explore vetted commercial properties across asset classes and regions",
+									},
+									{
+										icon: Wallet,
+										title: "Invest",
+										desc: "Purchase fractional shares using fiat or cryptocurrency",
+									},
+									{
+										icon: TrendingUp,
+										title: "Earn Distributions",
+										desc: "Receive quarterly income directly to your account or wallet",
+									},
+									{
+										icon: ArrowLeftRight,
+										title: "Trade Anytime",
+										desc: "Sell shares on our regulated secondary market instantly",
+									},
+								].map((step, index) => (
+									<motion.div
+										key={step.title}
+										initial={{ opacity: 0, y: 40 }}
+										whileInView={{ opacity: 1, y: 0 }}
+										viewport={{ once: true }}
+										transition={{ duration: 0.5, delay: index * 0.1 }}
+										className="group"
+									>
+										<div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:border-[#D4A024]/30 transition-all duration-300 h-full relative">
+											<div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 bg-gradient-to-br from-[#D4A024] to-yellow-500 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg">
+												{index + 1}
 											</div>
-										</motion.div>
-									))
+											<div className="pt-4">
+												<div className="w-14 h-14 bg-gradient-to-br from-[#D4A024]/10 to-[#D4A024]/5 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:from-[#D4A024]/20 group-hover:to-[#D4A024]/10 transition-all duration-300">
+													<step.icon className="w-7 h-7 text-[#D4A024]" />
+												</div>
+												<h4 className="text-lg font-medium text-gray-900 text-center mb-2">
+													{step.title}
+												</h4>
+												<p className="text-sm text-gray-500 font-light text-center leading-relaxed">
+													{step.desc}
+												</p>
+											</div>
+										</div>
+									</motion.div>
+								))
 								: [
-										{
-											icon: ShieldCheck,
-											title: "Complete KYC",
-											desc: "Verify identity and credentials before submitting properties",
-										},
-										{
-											icon: FileText,
-											title: "Submit Property",
-											desc: "Upload property details through our streamlined portal",
-										},
-										{
-											icon: Search,
-											title: "Due Diligence",
-											desc: "Comprehensive compliance and verification review",
-										},
-										{
-											icon: Globe,
-											title: "List to Market",
-											desc: "Go live to our network of 14,000+ accredited investors",
-										},
-										{
-											icon: TrendingUp,
-											title: "Raise Capital",
-											desc: "Fund faster with fractional ownership and blockchain",
-										},
-									].map((step, index) => (
-										<motion.div
-											key={step.title}
-											initial={{ opacity: 0, y: 40 }}
-											whileInView={{ opacity: 1, y: 0 }}
-											viewport={{ once: true }}
-											transition={{ duration: 0.5, delay: index * 0.1 }}
-											className="group"
-										>
-											<div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:border-[#D4A024]/30 transition-all duration-300 h-full relative">
-												<div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 bg-gradient-to-br from-[#D4A024] to-yellow-500 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg">
-													{index + 1}
-												</div>
-												<div className="pt-4">
-													<div className="w-14 h-14 bg-gradient-to-br from-[#D4A024]/10 to-[#D4A024]/5 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:from-[#D4A024]/20 group-hover:to-[#D4A024]/10 transition-all duration-300">
-														<step.icon className="w-7 h-7 text-[#D4A024]" />
-													</div>
-													<h4 className="text-lg font-medium text-gray-900 text-center mb-2">
-														{step.title}
-													</h4>
-													<p className="text-sm text-gray-500 font-light text-center leading-relaxed">
-														{step.desc}
-													</p>
-												</div>
+									{
+										icon: ShieldCheck,
+										title: "Complete KYC",
+										desc: "Verify identity and credentials before submitting properties",
+									},
+									{
+										icon: FileText,
+										title: "Submit Property",
+										desc: "Upload property details through our streamlined portal",
+									},
+									{
+										icon: Search,
+										title: "Due Diligence",
+										desc: "Comprehensive compliance and verification review",
+									},
+									{
+										icon: Globe,
+										title: "List to Market",
+										desc: "Go live to our network of 14,000+ accredited investors",
+									},
+									{
+										icon: TrendingUp,
+										title: "Raise Capital",
+										desc: "Fund faster with fractional ownership and blockchain",
+									},
+								].map((step, index) => (
+									<motion.div
+										key={step.title}
+										initial={{ opacity: 0, y: 40 }}
+										whileInView={{ opacity: 1, y: 0 }}
+										viewport={{ once: true }}
+										transition={{ duration: 0.5, delay: index * 0.1 }}
+										className="group"
+									>
+										<div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:border-[#D4A024]/30 transition-all duration-300 h-full relative">
+											<div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 bg-gradient-to-br from-[#D4A024] to-yellow-500 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg">
+												{index + 1}
 											</div>
-										</motion.div>
-									))}
+											<div className="pt-4">
+												<div className="w-14 h-14 bg-gradient-to-br from-[#D4A024]/10 to-[#D4A024]/5 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:from-[#D4A024]/20 group-hover:to-[#D4A024]/10 transition-all duration-300">
+													<step.icon className="w-7 h-7 text-[#D4A024]" />
+												</div>
+												<h4 className="text-lg font-medium text-gray-900 text-center mb-2">
+													{step.title}
+												</h4>
+												<p className="text-sm text-gray-500 font-light text-center leading-relaxed">
+													{step.desc}
+												</p>
+											</div>
+										</div>
+									</motion.div>
+								))}
 						</div>
 					</div>
 

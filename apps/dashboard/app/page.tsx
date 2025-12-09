@@ -4,34 +4,74 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import { Loader2 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
+import { KycStatus } from "@/lib/types/onboarding";
 
 export default function DashboardHome() {
 	const router = useRouter();
 	const [kycStatus, setKycStatus] = useState<{
 		loading: boolean;
-		isKycd: boolean | null;
-	}>({ loading: true, isKycd: null });
+		hasBankAccount: boolean;
+		kycStatus: KycStatus;
+	}>({ loading: true, hasBankAccount: false, kycStatus: KycStatus.NOT_STARTED });
 
 	const checkKycStatus = useCallback(async () => {
-		setKycStatus({ loading: true, isKycd: null });
+		setKycStatus((prev) => ({ ...prev, loading: true }));
 		try {
-			const response = await fetch("/api/kyc/status");
+			// First fetch current status
+			const response = await fetch("/api/onboarding/status");
 			const data = await response.json();
-			setKycStatus({ loading: false, isKycd: data.isKycd });
 
-			if (!data.isKycd) {
-				// Redirect to KYC flow
-				router.push("/kyc");
+			let currentStatus = {
+				hasBankAccount: data.hasBankAccount,
+				kycStatus: data.kycStatus,
+			};
+
+			// If status is PENDING, try to refresh from Plaid
+			if (currentStatus.kycStatus === KycStatus.PENDING) {
+				try {
+					const plaidResponse = await fetch("/api/plaid/check_idv_status", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+					});
+
+					if (plaidResponse.ok) {
+						// Re-fetch status after update
+						const updatedResponse = await fetch("/api/onboarding/status");
+						const updatedData = await updatedResponse.json();
+						currentStatus = {
+							hasBankAccount: updatedData.hasBankAccount,
+							kycStatus: updatedData.kycStatus,
+						};
+					}
+				} catch (plaidError) {
+					console.error("Error refreshing Plaid status:", plaidError);
+				}
+			}
+
+			setKycStatus({
+				loading: false,
+				hasBankAccount: currentStatus.hasBankAccount,
+				kycStatus: currentStatus.kycStatus,
+			});
+
+			// STRICT REDIRECT LOGIC
+			// If not approved or not complete (bank not linked), redirect to onboarding
+			if (
+				currentStatus.kycStatus !== KycStatus.APPROVED ||
+				!currentStatus.hasBankAccount
+			) {
+				router.push("/onboarding");
 			}
 		} catch (error) {
 			console.error("Error checking KYC status:", error);
-			setKycStatus({ loading: false, isKycd: null });
+			setKycStatus({ loading: false, hasBankAccount: false, kycStatus: KycStatus.NOT_STARTED });
 		}
 	}, [router]);
 
 	useEffect(() => {
-		// Check KYC status on mount - this is a legitimate data fetching pattern
-		// eslint-disable-next-line react-hooks/set-state-in-effect
+		// Check KYC status on mount
 		checkKycStatus();
 	}, [checkKycStatus]);
 
@@ -46,31 +86,24 @@ export default function DashboardHome() {
 		);
 	}
 
-	if (kycStatus.isKycd === false) {
+	// This component now strictly renders ONLY if initialized and approved.
+	// Any other state should have been redirected by the effect above.
+	// We render a fallback loading state or null here just in case the redirect takes a messure
+	if (
+		kycStatus.kycStatus !== KycStatus.APPROVED ||
+		!kycStatus.hasBankAccount
+	) {
 		return (
 			<div className="min-h-screen flex items-center justify-center bg-slate-50">
-				<div className="max-w-md w-full space-y-8 p-8 bg-white rounded-2xl shadow-lg">
-					<div className="text-center">
-						<h1 className="text-2xl font-bold text-slate-900 mb-4">
-							KYC Verification Required
-						</h1>
-						<p className="text-slate-600 mb-6">
-							To access the dashboard and invest in properties, you need to
-							complete KYC verification.
-						</p>
-						<button
-							onClick={() => router.push("/kyc")}
-							className="w-full bg-[#C59B26] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#B08B20] transition-colors"
-						>
-							Start KYC Verification
-						</button>
-					</div>
+				<div className="text-center">
+					<Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-slate-400" />
+					<p className="text-slate-600">Redirecting to onboarding...</p>
 				</div>
 			</div>
 		);
 	}
 
-	// User is authenticated and KYC'd
+	// User is authenticated, KYC'd (APPROVED), and Onboarding Complete
 	return (
 		<div className="min-h-screen bg-slate-50">
 			<Navbar />

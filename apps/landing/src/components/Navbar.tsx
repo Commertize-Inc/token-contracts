@@ -1,17 +1,20 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
-import { ChevronRight, X, Menu } from "lucide-react";
 import { Logo } from "@commertize/ui";
+import { useFeatureFlag } from "@commertize/utils/posthog";
 import { useIsMounted } from "@commertize/utils/hooks";
+import { ChevronRight, Menu, X } from "lucide-react";
+import Link from "next/link";
+import React, { useEffect, useRef, useState } from "react";
 
 const Navbar = () => {
 	const [isOpen, setIsOpen] = useState(false);
+	const isMounted = useIsMounted();
 	const [scrolled, setScrolled] = useState(false);
 	const [companyOpen, setCompanyOpen] = useState(false);
-	const isMounted = useIsMounted();
 	const companyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+	const ffLogin = useFeatureFlag("landing_login");
 
 	useEffect(() => {
 		const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -23,15 +26,10 @@ const Navbar = () => {
 		};
 	}, []);
 
-	const navClass = isMounted
-		? `fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-white/95 backdrop-blur-md shadow-sm" : "bg-white/80 backdrop-blur-sm"}`
-		: "fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm";
-
-	const dashboardUrl =
-		process.env.NEXT_PUBLIC_DASHBOARD_URL || "http://localhost:3001";
-
 	return (
-		<nav className={navClass}>
+		<nav
+			className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-white/95 backdrop-blur-md shadow-sm" : "bg-white/80 backdrop-blur-sm"}`}
+		>
 			<div className="container mx-auto px-4 sm:px-6 lg:px-8">
 				<div className="flex items-center justify-between h-16">
 					<Link href="/" className="flex-shrink-0">
@@ -129,12 +127,17 @@ const Navbar = () => {
 						>
 							Join Waitlist
 						</a>
-						<a
-							href={dashboardUrl}
-							className="inline-flex items-center justify-center px-5 py-2 bg-[#D4A024] text-white text-sm font-light rounded-lg hover:bg-[#B8881C] transition-colors"
-						>
-							Sign In
-						</a>
+						{isMounted && ffLogin && (
+							<a
+								href={
+									process.env.NEXT_PUBLIC_DASHBOARD_URL ||
+									"http://localhost:3001"
+								}
+								className="inline-flex items-center justify-center px-5 py-2 bg-[#D4A024] text-white text-sm font-light rounded-lg hover:bg-[#B8881C] transition-colors"
+							>
+								Sign In
+							</a>
+						)}
 					</div>
 
 					<div className="md:hidden">
@@ -233,13 +236,18 @@ const Navbar = () => {
 							>
 								Join Waitlist
 							</a>
-							<a
-								href={dashboardUrl}
-								className="block w-full text-center px-5 py-3 bg-[#D4A024] text-white font-light rounded-lg"
-								onClick={() => setIsOpen(false)}
-							>
-								Sign In
-							</a>
+							{isMounted && ffLogin && (
+								<a
+									href={
+										process.env.NEXT_PUBLIC_DASHBOARD_URL ||
+										"http://localhost:3001"
+									}
+									className="block w-full text-center px-5 py-3 bg-[#D4A024] text-white font-light rounded-lg"
+									onClick={() => setIsOpen(false)}
+								>
+									Sign In
+								</a>
+							)}
 						</div>
 					</div>
 				</div>

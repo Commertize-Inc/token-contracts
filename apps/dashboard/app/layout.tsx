@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
-import { Providers } from "./providers";
+import ClientProviders from "./ClientProviders";
 import ChatWidget from "@/components/ChatWidget";
 
 export const metadata: Metadata = {
@@ -12,6 +12,8 @@ export const metadata: Metadata = {
 		apple: "/assets/logo.png",
 	},
 };
+
+import { PostHogProvider } from "@commertize/utils/posthog";
 
 // Force dynamic rendering to prevent SSR issues with Privy
 export const dynamic = "force-dynamic";
@@ -25,10 +27,12 @@ export default function RootLayout({
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<body>
-				<Providers>
-					{children}
-					<ChatWidget />
-				</Providers>
+				<PostHogProvider>
+					<ClientProviders>
+						{children}
+						<ChatWidget />
+					</ClientProviders>
+				</PostHogProvider>
 				<Script
 					id="suppress-warnings"
 					strategy="beforeInteractive"

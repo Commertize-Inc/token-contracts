@@ -1,0 +1,32 @@
+{
+	"name": "@commertize/data",
+	"version": "0.1.0",
+	"private": true,
+	"main": "./src/index.ts",
+	"types": "./src/index.ts",
+	"exports": {
+		".": "./src/index.ts",
+		"./*": "./src/*"
+	},
+	"scripts": {
+		"migration:create": "npx mikro-orm migration:create",
+		"migration:up": "npx mikro-orm migration:up",
+		"migration:pending": "npx mikro-orm migration:pending"
+	},
+	"dependencies": {
+		"@commertize/utils": "workspace:*",
+		"@mikro-orm/core": "^6.6.1",
+		"@mikro-orm/postgresql": "^6.6.1",
+		"@mikro-orm/reflection": "^6.6.1",
+		"dotenv": "^17.2.3",
+		"reflect-metadata": "^0.2.2",
+		"uuid": "^11.1.0"
+	},
+	"devDependencies": {
+		"@mikro-orm/cli": "^6.6.1",
+		"@mikro-orm/migrations": "^6.6.1",
+		"@types/node": "^20.19.25",
+		"@types/uuid": "^10.0.0",
+		"typescript": "^5.9.3"
+	}
+}

@@ -1,5 +1,5 @@
 import type { NextConfig } from "next";
-import { loadEnv, getMonorepoRoot } from "@commertize/utils";
+import { loadEnv, getMonorepoRoot } from "@commertize/utils/env";
 
 loadEnv(__dirname);
 
@@ -32,21 +32,14 @@ const nextConfig: NextConfig = {
 			// Provide fallbacks for Node.js built-ins in client bundle
 			config.resolve.fallback = {
 				...config.resolve.fallback,
-				worker_threads: false,
-				child_process: false,
 				fs: false,
 				net: false,
 				tls: false,
-				dns: false,
-				crypto: false,
-				stream: false,
-				path: false,
-				os: false,
-				http: false,
-				https: false,
-				zlib: false,
-				querystring: false,
+				pino: false,
+				"thread-stream": false,
 			};
+		} else {
+			config.optimization.minimize = false;
 		}
 
 		return config;
@@ -56,16 +49,8 @@ const nextConfig: NextConfig = {
 		workerThreads: false,
 	},
 
-	// Use standalone output for Vercel deployment
-	output: "standalone",
-
-	// Disable static optimization to prevent prerender errors with client-only libraries
-	...(process.env.SKIP_BUILD_STATIC_GENERATION && {
-		experimental: {
-			...{ workerThreads: false },
-			isrFlushToDisk: false,
-		},
-	}),
+	// Don't generate static pages during build
+	skipTrailingSlashRedirect: true,
 
 	turbopack: {
 		root: monorepoRoot,

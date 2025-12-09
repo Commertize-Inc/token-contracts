@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getEM } from "@/lib/db/orm";
-import { NewsArticle } from "@/lib/db/entities/NewsArticle";
+import { NewsArticle } from "@commertize/data";
 
 export async function GET(request: NextRequest) {
 	try {
@@ -57,13 +57,7 @@ export async function POST(request: NextRequest) {
 			article.category = articleData.category;
 			article.imageUrl = articleData.imageUrl;
 			article.readTime = articleData.readTime || 5;
-			article.publishedAt =
-				articleData.publishedAt ||
-				new Date().toLocaleDateString("en-US", {
-					month: "short",
-					day: "numeric",
-					year: "numeric",
-				});
+			article.publishedAt = articleData.publishedAt ? new Date(articleData.publishedAt) : new Date();
 			article.isGenerated = true;
 			article.isPublished = true;
 

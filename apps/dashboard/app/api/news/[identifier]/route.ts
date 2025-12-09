@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getEM } from "@/lib/db/orm";
-import { NewsArticle } from "@/lib/db/entities/NewsArticle";
+import { NewsArticle } from "@commertize/data";
 
 export async function GET(
 	request: NextRequest,

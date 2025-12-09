@@ -1,0 +1,80 @@
+name: Database Migrations
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to run migrations on'
+        required: true
+        type: choice
+        options:
+          - development
+          - preview
+          - production
+      dry_run:
+        description: 'Show pending migrations without executing'
+        required: false
+        type: boolean
+        default: false
+  push:
+    branches:
+      - main
+    paths:
+      - 'packages/data/src/migrations/**'
+      - 'packages/data/src/**/*.ts'
+
+jobs:
+  migrate:
+    name: Run Migrations
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'development' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10.13.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Check pending migrations
+        working-directory: packages/data
+        run: pnpm migration:pending
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NODE_ENV: ${{ github.event.inputs.environment || 'development' }}
+
+      - name: Run migrations (Dry Run)
+        if: ${{ github.event.inputs.dry_run == true }}
+        working-directory: packages/data
+        run: |
+          echo "::notice::Dry run mode - migrations would be applied but are being skipped"
+          pnpm migration:pending
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NODE_ENV: ${{ github.event.inputs.environment || 'development' }}
+
+      - name: Run migrations
+        if: ${{ github.event.inputs.dry_run != true }}
+        working-directory: packages/data
+        run: pnpm migration:up
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NODE_ENV: ${{ github.event.inputs.environment || 'development' }}
+
+      - name: Verify migrations
+        working-directory: packages/data
+        run: pnpm migration:pending
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NODE_ENV: ${{ github.event.inputs.environment || 'development' }}

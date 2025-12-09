@@ -2,15 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { privyClient } from "@/lib/privy/client";
 import { getPlaidClient } from "@/lib/plaid/client";
 import { getEM } from "@/lib/db/orm";
-import { User } from "@/lib/db/entities/User";
-import { PlaidItem } from "@/lib/db/entities/PlaidItem";
-import { BankAccount } from "@/lib/db/entities/BankAccount";
+import { User } from "@commertize/data";
+import { KycStatus } from "@/lib/types/onboarding";
+import { PlaidItem } from "@commertize/data";
+import { BankAccount } from "@commertize/data";
 import {
 	CountryCode,
 	sanitizeBankAccount,
 	transformPlaidAccount,
 } from "@/lib/plaid";
 import { encrypt } from "@/lib/security/encryption";
+import { createStripeCustomer, createStripeBankAccount } from "@/lib/stripe/utils";
+import { ProcessorStripeBankAccountTokenCreateRequest } from "plaid";
 
 /**
  * Exchange public token for access token and save bank accounts
@@ -95,11 +98,29 @@ export async function POST(request: NextRequest) {
 		if (!user) {
 			user = em.create(User, {
 				privyId,
-				isKycd: false,
 				createdAt: new Date(),
 				updatedAt: new Date(),
+				kycStatus: KycStatus.NOT_STARTED,
 			});
 			await em.persistAndFlush(user);
+		}
+
+		// Ensure user has a Stripe Customer ID
+		if (!user.stripeCustomerId) {
+			try {
+				console.log("[Exchange Token] Creating Stripe customer for user:", user.id);
+				const customer = await createStripeCustomer(
+					user.email || `user-${user.id}@example.com`,
+					undefined, // Name not always available here
+					{ userId: user.id, privyId: user.privyId }
+				);
+				user.stripeCustomerId = customer.id;
+				await em.persistAndFlush(user);
+				console.log("[Exchange Token] Stripe customer created:", customer.id);
+			} catch (stripeError) {
+				console.error("[Exchange Token] Failed to create Stripe customer:", stripeError);
+				// Continue without Stripe - we can try again later
+			}
 		}
 
 		// Check if user already has any accounts
@@ -173,6 +194,36 @@ export async function POST(request: NextRequest) {
 					createdAt: new Date(),
 					updatedAt: new Date(),
 				});
+			}
+
+			// Integrate with Stripe if we have a customer ID
+			if (user.stripeCustomerId) {
+				try {
+					console.log("[Exchange Token] Creating Stripe token for account:", plaidAccount.account_id);
+
+					// 1. Create Processor Token via Plaid
+					const processorTokenRequest: ProcessorStripeBankAccountTokenCreateRequest = {
+						access_token: access_token,
+						account_id: plaidAccount.account_id,
+					};
+
+					const processorTokenResponse = await plaidClient.processorStripeBankAccountTokenCreate(processorTokenRequest);
+					const bankAccountToken = processorTokenResponse.data.stripe_bank_account_token;
+
+					// 2. Create Stripe Bank Account (Source)
+					console.log("[Exchange Token] Creating Stripe source...");
+					const stripeSource = await createStripeBankAccount(user.stripeCustomerId, bankAccountToken);
+
+					// 3. Save to BankAccount entity
+					bankAccount.stripeProcessorToken = bankAccountToken;
+					bankAccount.stripeBankAccountId = stripeSource.id;
+					bankAccount.stripeTokenCreatedAt = new Date();
+
+					console.log("[Exchange Token] Stripe source created:", stripeSource.id);
+				} catch (stripeError) {
+					console.error("[Exchange Token] Failed to link to Stripe:", stripeError);
+					// Continue - account is linked in Plaid even if Stripe fails
+				}
 			}
 
 			bankAccounts.push(bankAccount);
