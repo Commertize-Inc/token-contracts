@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getEM } from "@/lib/db/orm";
-import { User } from "@/lib/db/entities/User";
-import { OnboardingStep } from "@/lib/types/onboarding";
+import { User } from "@commertize/data";
+import { BankAccount } from "@commertize/data";
+import { KycStatus } from "@/lib/types/onboarding";
 import { privyClient } from "@/lib/privy/client";
 
 export async function GET(request: NextRequest) {
@@ -10,47 +11,24 @@ export async function GET(request: NextRequest) {
 			.get("authorization")
 			?.replace("Bearer ", "");
 
-		if (!authToken) {
-			// In client-side requests, Privy handles auth differently
-			// We'll check cookies instead
-			const privyToken = request.cookies.get("privy-token")?.value;
+		let privyId: string | null = null;
 
+		if (!authToken) {
+			const privyToken = request.cookies.get("privy-token")?.value;
 			if (!privyToken) {
 				return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 			}
-
 			try {
 				const claims = await privyClient.verifyAuthToken(privyToken);
-				const privyId = claims.userId;
-
-				const em = await getEM();
-				let user = await em.findOne(User, { privyId });
-
-				if (!user) {
-					// Create user if doesn't exist
-					user = em.create(User, {
-						privyId,
-						isKycd: false,
-						createdAt: new Date(),
-						updatedAt: new Date(),
-						onboardingStep: OnboardingStep.KYC,
-					});
-					await em.persistAndFlush(user);
-				}
-
-				return NextResponse.json({
-					isKycd: user.isKycd,
-					kycCompletedAt: user.kycCompletedAt,
-					onboardingStep: user.onboardingStep,
-				});
+				privyId = claims.userId;
 			} catch (verifyError) {
 				console.error("Token verification error:", verifyError);
 				return NextResponse.json({ error: "Invalid token" }, { status: 401 });
 			}
+		} else {
+			const claims = await privyClient.verifyAuthToken(authToken);
+			privyId = claims.userId;
 		}
-
-		const claims = await privyClient.verifyAuthToken(authToken);
-		const privyId = claims.userId;
 
 		const em = await getEM();
 		let user = await em.findOne(User, { privyId });
@@ -59,18 +37,22 @@ export async function GET(request: NextRequest) {
 			// Create user if doesn't exist
 			user = em.create(User, {
 				privyId,
-				isKycd: false,
 				createdAt: new Date(),
 				updatedAt: new Date(),
-				onboardingStep: OnboardingStep.KYC,
+				kycStatus: KycStatus.NOT_STARTED,
 			});
 			await em.persistAndFlush(user);
 		}
 
+		// Check for active bank accounts
+		const activeBankAccountsCount = await em.count(BankAccount, {
+			user: user.id,
+			status: "active",
+		});
+
 		return NextResponse.json({
-			isKycd: user.isKycd,
-			kycCompletedAt: user.kycCompletedAt,
-			onboardingStep: user.onboardingStep,
+			kycStatus: user.kycStatus,
+			hasBankAccount: activeBankAccountsCount > 0,
 		});
 	} catch (error) {
 		console.error("Error checking KYC status:", error);

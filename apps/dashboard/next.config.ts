@@ -1,5 +1,5 @@
 import type { NextConfig } from "next";
-import { loadEnv, getMonorepoRoot } from "@commertize/utils";
+import { loadEnv, getMonorepoRoot } from "@commertize/utils/env";
 
 loadEnv(__dirname);
 

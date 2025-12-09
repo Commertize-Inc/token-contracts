@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getEM } from "@/lib/db/orm";
-import { BankAccount } from "@/lib/db/entities/BankAccount";
-import { User } from "@/lib/db/entities/User";
-import { PlaidItem } from "@/lib/db/entities/PlaidItem";
+import { BankAccount } from "@commertize/data";
+import { User } from "@commertize/data";
+import { PlaidItem } from "@commertize/data";
 import { privyClient } from "@/lib/privy/client";
 import { getPlaidClient } from "@/lib/plaid/client";
 

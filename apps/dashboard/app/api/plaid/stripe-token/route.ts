@@ -3,8 +3,8 @@ import { ProcessorTokenCreateRequest } from "plaid";
 import { privyClient } from "@/lib/privy/client";
 import { getPlaidClient } from "@/lib/plaid/client";
 import { getEM } from "@/lib/db/orm";
-import { User } from "@/lib/db/entities/User";
-import { BankAccount } from "@/lib/db/entities/BankAccount";
+import { User } from "@commertize/data";
+import { BankAccount } from "@commertize/data";
 
 /**
  * POST: Create Stripe processor token for ACH payments

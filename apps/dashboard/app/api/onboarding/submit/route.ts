@@ -1,5 +1,5 @@
-import { User } from "@/lib/db/entities/User";
-import { OnboardingStep } from "@/lib/types/onboarding";
+import { User } from "@commertize/data";
+import { KycStatus } from "@/lib/types/onboarding";
 import { getEM } from "@/lib/db/orm";
 import { NextRequest, NextResponse } from "next/server";
 import { privyClient } from "@/lib/privy/client";
@@ -21,15 +21,15 @@ export async function POST(request: NextRequest) {
 		if (!user) {
 			user = em.create(User, {
 				privyId,
-				isKycd: false,
 				createdAt: new Date(),
 				updatedAt: new Date(),
-				onboardingStep: OnboardingStep.KYC,
+				kycStatus: KycStatus.NOT_STARTED,
 			});
 		}
 
-		user.isKycd = true;
-		user.kycCompletedAt = new Date();
+		// This route was used to "skip" KYC in dev.
+		// Now we should just set kycStatus to APPROVED.
+		user.kycStatus = KycStatus.APPROVED;
 		await em.persistAndFlush(user);
 
 		return NextResponse.json({ success: true });

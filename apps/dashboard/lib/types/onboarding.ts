@@ -3,3 +3,10 @@ export enum OnboardingStep {
 	ACH = "ach",
 	COMPLETE = "complete",
 }
+
+export enum KycStatus {
+	NOT_STARTED = "not_started",
+	PENDING = "pending",
+	APPROVED = "approved",
+	REJECTED = "rejected",
+}

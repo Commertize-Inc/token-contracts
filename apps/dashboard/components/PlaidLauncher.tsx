@@ -8,7 +8,7 @@ import {
 } from "react-plaid-link";
 
 interface PlaidLauncherProps {
-	token: string;
+	token: string | null;
 	onSuccess: PlaidLinkOnSuccess;
 	onExit?: PlaidLinkOnExit;
 }
@@ -19,16 +19,16 @@ export const PlaidLauncher = ({
 	onExit,
 }: PlaidLauncherProps) => {
 	const { open, ready } = usePlaidLink({
-		token,
+		token: token || "",
 		onSuccess,
 		onExit,
 	});
 
 	useEffect(() => {
-		if (ready) {
+		if (ready && token) {
 			open();
 		}
-	}, [ready, open]);
+	}, [ready, open, token]);
 
 	return null;
 };

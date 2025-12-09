@@ -4,15 +4,17 @@ import { usePrivy } from "@privy-io/react-auth";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
+import { usePostHog } from "@commertize/utils/posthog";
 
 interface AuthGuardProps {
 	children: React.ReactNode;
 }
 
 export function AuthGuard({ children }: AuthGuardProps) {
-	const { ready, authenticated } = usePrivy();
+	const { ready, authenticated, user } = usePrivy();
 	const router = useRouter();
 	const pathname = usePathname();
+	const posthog = usePostHog();
 
 	useEffect(() => {
 		// Don't redirect if we're already on the auth page
@@ -24,7 +26,15 @@ export function AuthGuard({ children }: AuthGuardProps) {
 		if (ready && !authenticated) {
 			router.push("/auth");
 		}
-	}, [ready, authenticated, router, pathname]);
+
+		// Identify user in PostHog
+		if (ready && authenticated && user) {
+			posthog?.identify(user.id, {
+				email: user.email?.address,
+				wallet: user.wallet?.address,
+			});
+		}
+	}, [ready, authenticated, router, pathname, user, posthog]);
 
 	// Show loading state while Privy is initializing
 	if (!ready) {

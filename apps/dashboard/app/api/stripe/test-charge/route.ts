@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { privyClient } from "@/lib/privy/client";
 import { getEM } from "@/lib/db/orm";
-import { BankAccount } from "@/lib/db/entities/BankAccount";
+import { BankAccount } from "@commertize/data";
 import { getStripeClient } from "@/lib/stripe/client";
-import { User } from "@/lib/db/entities/User";
+import { User } from "@commertize/data";
 
 export async function POST(request: NextRequest) {
 	try {

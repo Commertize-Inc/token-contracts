@@ -4,40 +4,74 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import { Loader2 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
-import { OnboardingStep } from "@/lib/types/onboarding";
+import { KycStatus } from "@/lib/types/onboarding";
 
 export default function DashboardHome() {
 	const router = useRouter();
 	const [kycStatus, setKycStatus] = useState<{
 		loading: boolean;
-		onboardingStep: OnboardingStep | null;
-		isKycd: boolean;
-	}>({ loading: true, onboardingStep: null, isKycd: false });
+		hasBankAccount: boolean;
+		kycStatus: KycStatus;
+	}>({ loading: true, hasBankAccount: false, kycStatus: KycStatus.NOT_STARTED });
 
 	const checkKycStatus = useCallback(async () => {
 		setKycStatus((prev) => ({ ...prev, loading: true }));
 		try {
+			// First fetch current status
 			const response = await fetch("/api/onboarding/status");
 			const data = await response.json();
+
+			let currentStatus = {
+				hasBankAccount: data.hasBankAccount,
+				kycStatus: data.kycStatus,
+			};
+
+			// If status is PENDING, try to refresh from Plaid
+			if (currentStatus.kycStatus === KycStatus.PENDING) {
+				try {
+					const plaidResponse = await fetch("/api/plaid/check_idv_status", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+					});
+
+					if (plaidResponse.ok) {
+						// Re-fetch status after update
+						const updatedResponse = await fetch("/api/onboarding/status");
+						const updatedData = await updatedResponse.json();
+						currentStatus = {
+							hasBankAccount: updatedData.hasBankAccount,
+							kycStatus: updatedData.kycStatus,
+						};
+					}
+				} catch (plaidError) {
+					console.error("Error refreshing Plaid status:", plaidError);
+				}
+			}
+
 			setKycStatus({
 				loading: false,
-				onboardingStep: data.onboardingStep,
-				isKycd: data.isKycd,
+				hasBankAccount: currentStatus.hasBankAccount,
+				kycStatus: currentStatus.kycStatus,
 			});
 
-			if (data.onboardingStep !== OnboardingStep.COMPLETE) {
-				// Redirect to KYC flow
+			// STRICT REDIRECT LOGIC
+			// If not approved or not complete (bank not linked), redirect to onboarding
+			if (
+				currentStatus.kycStatus !== KycStatus.APPROVED ||
+				!currentStatus.hasBankAccount
+			) {
 				router.push("/onboarding");
 			}
 		} catch (error) {
 			console.error("Error checking KYC status:", error);
-			setKycStatus({ loading: false, onboardingStep: null, isKycd: false });
+			setKycStatus({ loading: false, hasBankAccount: false, kycStatus: KycStatus.NOT_STARTED });
 		}
 	}, [router]);
 
 	useEffect(() => {
-		// Check KYC status on mount - this is a legitimate data fetching pattern
-		// eslint-disable-next-line react-hooks/set-state-in-effect
+		// Check KYC status on mount
 		checkKycStatus();
 	}, [checkKycStatus]);
 
@@ -52,61 +86,24 @@ export default function DashboardHome() {
 		);
 	}
 
-	if (kycStatus.onboardingStep !== OnboardingStep.COMPLETE) {
-		return (
-			<div className="min-h-screen flex items-center justify-center bg-slate-50">
-				<div className="max-w-md w-full space-y-8 p-8 bg-white rounded-2xl shadow-lg">
-					<div className="text-center">
-						<h1 className="text-2xl font-bold text-slate-900 mb-4">
-							KYC Verification Required
-						</h1>
-						<p className="text-slate-600 mb-6">
-							To access the dashboard and invest in properties, you need to
-							complete KYC verification.
-						</p>
-						<button
-							onClick={() => router.push("/onboarding")}
-							className="w-full bg-[#C59B26] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#B08B20] transition-colors"
-						>
-							Start KYC Verification
-						</button>
-					</div>
-				</div>
-			</div>
-		);
-	}
-
+	// This component now strictly renders ONLY if initialized and approved.
+	// Any other state should have been redirected by the effect above.
+	// We render a fallback loading state or null here just in case the redirect takes a messure
 	if (
-		kycStatus.onboardingStep === OnboardingStep.COMPLETE &&
-		!kycStatus.isKycd
+		kycStatus.kycStatus !== KycStatus.APPROVED ||
+		!kycStatus.hasBankAccount
 	) {
 		return (
 			<div className="min-h-screen flex items-center justify-center bg-slate-50">
-				<div className="max-w-md w-full space-y-8 p-8 bg-white rounded-2xl shadow-lg">
-					<div className="text-center">
-						<div className="bg-yellow-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-							<Loader2 className="w-8 h-8 text-yellow-600 animate-spin" />
-						</div>
-						<h1 className="text-2xl font-bold text-slate-900 mb-4">
-							Account Pending Review
-						</h1>
-						<p className="text-slate-600 mb-6">
-							Your account is currently under review. We will notify you once your
-							identity verification is complete.
-						</p>
-						<button
-							onClick={() => window.location.reload()}
-							className="w-full bg-slate-100 text-slate-700 py-3 px-6 rounded-lg font-semibold hover:bg-slate-200 transition-colors"
-						>
-							Check Status
-						</button>
-					</div>
+				<div className="text-center">
+					<Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-slate-400" />
+					<p className="text-slate-600">Redirecting to onboarding...</p>
 				</div>
 			</div>
 		);
 	}
 
-	// User is authenticated and KYC'd
+	// User is authenticated, KYC'd (APPROVED), and Onboarding Complete
 	return (
 		<div className="min-h-screen bg-slate-50">
 			<Navbar />

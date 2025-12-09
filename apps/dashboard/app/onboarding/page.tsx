@@ -16,7 +16,7 @@ import {
 	PlaidLinkOnExit,
 } from "react-plaid-link";
 import { PlaidLauncher } from "@/components/PlaidLauncher";
-import { OnboardingStep } from "@/lib/types/onboarding";
+import { OnboardingStep, KycStatus } from "@/lib/types/onboarding";
 
 
 
@@ -27,26 +27,47 @@ export default function KYCPage() {
 	const [loading, setLoading] = useState(false);
 	const [success, setSuccess] = useState(false);
 	const [linkToken, setLinkToken] = useState<string | null>(null);
+	const [isCheckingStatus, setIsCheckingStatus] = useState(true);
 
 	useEffect(() => {
 		const fetchStatus = async () => {
 			try {
 				const response = await fetch("/api/onboarding/status");
 				const data = await response.json();
-				if (data.onboardingStep) {
-					setStep(data.onboardingStep);
+
+				// Priority Logic:
+				// 1. If status is NOT APPROVED -> Force KYC step
+				// 2. If status is APPROVED -> Check if has bank account
+				if (data.kycStatus === KycStatus.APPROVED) {
+					if (data.hasBankAccount) {
+						// Already done
+						setStep(OnboardingStep.COMPLETE);
+						setSuccess(true);
+						setTimeout(() => {
+							router.push("/");
+						}, 2000);
+					} else {
+						// Needs bank account
+						setStep(OnboardingStep.ACH);
+					}
+				} else {
+					// User is not verified (NOT_STARTED, PENDING, REJECTED)
+					// Force them to KYC step to see status/verify
+					setStep(OnboardingStep.KYC);
 				}
 			} catch (error) {
 				console.error("Error fetching onboarding status:", error);
+			} finally {
+				setIsCheckingStatus(false);
 			}
 		};
 
 		if (user) {
 			fetchStatus();
 		}
-	}, [user]);
+	}, [user, router]);
 
-	const [shouldOpenPlaid, setShouldOpenPlaid] = useState(false);
+	// const [shouldOpenPlaid, setShouldOpenPlaid] = useState(false);
 
 	// Fetch link token based on current step
 	const createLinkToken = useCallback(
@@ -63,7 +84,6 @@ export default function KYCPage() {
 			} catch (error) {
 				console.error("Error creating link token:", error);
 				setLoading(false);
-				setShouldOpenPlaid(false);
 			}
 		},
 		[]
@@ -73,27 +93,9 @@ export default function KYCPage() {
 	useEffect(() => {
 		if (user) {
 			setLinkToken(null);
-			setShouldOpenPlaid(false);
 		}
 	}, [user, step]);
 
-	const updateStep = async (newStep: OnboardingStep) => {
-		try {
-			await fetch("/api/onboarding/step", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ step: newStep }),
-			});
-
-			if (newStep !== OnboardingStep.COMPLETE) {
-				setStep(newStep);
-			}
-		} catch (error) {
-			console.error("Error updating step:", error);
-		}
-	};
 
 	const onKycSuccess = useCallback<PlaidLinkOnSuccess>(
 		async (public_token, metadata) => {
@@ -110,8 +112,9 @@ export default function KYCPage() {
 				const data = await response.json();
 
 				if (response.ok && data.success) {
-					// Move to next step and persist
-					await updateStep(OnboardingStep.ACH);
+					// Move to next step (ACH) purely on client state for now.
+					// The user's kycStatus should be updated in DB by check_idv_status.
+					setStep(OnboardingStep.ACH);
 				} else {
 					console.error("IDV Verification failed or pending:", data);
 				}
@@ -139,7 +142,7 @@ export default function KYCPage() {
 				const data = await response.json();
 
 				if (response.ok && data.success) {
-					await updateStep(OnboardingStep.COMPLETE);
+					setStep(OnboardingStep.COMPLETE);
 					setSuccess(true);
 					setTimeout(() => {
 						router.push("/");
@@ -157,13 +160,12 @@ export default function KYCPage() {
 	);
 
 	const handlePlaidExit: PlaidLinkOnExit = useCallback(() => {
-		setShouldOpenPlaid(false);
+		setLinkToken(null);
 		setLoading(false);
 	}, []);
 
 	const handleStartPlaid = () => {
 		setLoading(true);
-		setShouldOpenPlaid(true);
 		if (!linkToken) {
 			if (step === OnboardingStep.KYC) {
 				createLinkToken("idv");
@@ -184,7 +186,7 @@ export default function KYCPage() {
 			});
 
 			if (response.ok) {
-				await updateStep(OnboardingStep.ACH);
+				setStep(OnboardingStep.ACH);
 			}
 		} catch (error) {
 			console.error("Error skipping KYC:", error);
@@ -192,6 +194,17 @@ export default function KYCPage() {
 			setLoading(false);
 		}
 	};
+
+	if (isCheckingStatus) {
+		return (
+			<div className="min-h-screen flex items-center justify-center bg-slate-50">
+				<div className="text-center">
+					<Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-slate-400" />
+					<p className="text-slate-600">Checking account status...</p>
+				</div>
+			</div>
+		);
+	}
 
 	if (success) {
 		return (
@@ -217,13 +230,11 @@ export default function KYCPage() {
 			<Navbar />
 
 			<main className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-				{shouldOpenPlaid && linkToken && (
-					<PlaidLauncher
-						token={linkToken}
-						onSuccess={step === OnboardingStep.KYC ? onKycSuccess : onAchSuccess}
-						onExit={handlePlaidExit}
-					/>
-				)}
+				<PlaidLauncher
+					token={linkToken}
+					onSuccess={step === OnboardingStep.KYC ? onKycSuccess : onAchSuccess}
+					onExit={handlePlaidExit}
+				/>
 				{/* Progress Steps */}
 				<div className="mb-8">
 					<div className="flex items-center justify-center space-x-4">
@@ -356,7 +367,7 @@ export default function KYCPage() {
 											</>
 										) : (
 											<>
-												Connect with Plaid
+												Connect
 												<ArrowRight className="w-5 h-5 ml-2" />
 											</>
 										)}
@@ -371,7 +382,7 @@ export default function KYCPage() {
 						servers.
 					</p>
 				</div>
-			</main>
-		</div>
+			</main >
+		</div >
 	);
 }

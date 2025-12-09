@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { privyClient } from "@/lib/privy/client";
 import { getPlaidClient } from "@/lib/plaid/client";
 import { getEM } from "@/lib/db/orm";
-import { User } from "@/lib/db/entities/User";
-import { OnboardingStep } from "@/lib/types/onboarding";
-import { PlaidItem } from "@/lib/db/entities/PlaidItem";
-import { BankAccount } from "@/lib/db/entities/BankAccount";
+import { User } from "@commertize/data";
+import { KycStatus } from "@/lib/types/onboarding";
+import { PlaidItem } from "@commertize/data";
+import { BankAccount } from "@commertize/data";
 import {
 	CountryCode,
 	sanitizeBankAccount,
@@ -13,7 +13,7 @@ import {
 } from "@/lib/plaid";
 import { encrypt } from "@/lib/security/encryption";
 import { createStripeCustomer, createStripeBankAccount } from "@/lib/stripe/utils";
-import { ProcessorTokenCreateRequest } from "plaid";
+import { ProcessorStripeBankAccountTokenCreateRequest } from "plaid";
 
 /**
  * Exchange public token for access token and save bank accounts
@@ -98,10 +98,9 @@ export async function POST(request: NextRequest) {
 		if (!user) {
 			user = em.create(User, {
 				privyId,
-				isKycd: false,
 				createdAt: new Date(),
 				updatedAt: new Date(),
-				onboardingStep: OnboardingStep.KYC,
+				kycStatus: KycStatus.NOT_STARTED,
 			});
 			await em.persistAndFlush(user);
 		}
@@ -203,21 +202,20 @@ export async function POST(request: NextRequest) {
 					console.log("[Exchange Token] Creating Stripe token for account:", plaidAccount.account_id);
 
 					// 1. Create Processor Token via Plaid
-					const processorTokenRequest: ProcessorTokenCreateRequest = {
+					const processorTokenRequest: ProcessorStripeBankAccountTokenCreateRequest = {
 						access_token: access_token,
 						account_id: plaidAccount.account_id,
-						processor: "stripe" as any,
 					};
 
-					const processorTokenResponse = await plaidClient.processorTokenCreate(processorTokenRequest);
-					const processorToken = processorTokenResponse.data.processor_token;
+					const processorTokenResponse = await plaidClient.processorStripeBankAccountTokenCreate(processorTokenRequest);
+					const bankAccountToken = processorTokenResponse.data.stripe_bank_account_token;
 
 					// 2. Create Stripe Bank Account (Source)
 					console.log("[Exchange Token] Creating Stripe source...");
-					const stripeSource = await createStripeBankAccount(user.stripeCustomerId, processorToken);
+					const stripeSource = await createStripeBankAccount(user.stripeCustomerId, bankAccountToken);
 
 					// 3. Save to BankAccount entity
-					bankAccount.stripeProcessorToken = processorToken;
+					bankAccount.stripeProcessorToken = bankAccountToken;
 					bankAccount.stripeBankAccountId = stripeSource.id;
 					bankAccount.stripeTokenCreatedAt = new Date();
 

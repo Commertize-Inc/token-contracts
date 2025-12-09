@@ -64,6 +64,15 @@
           "length": 255,
           "mappedType": "string"
         },
+        "tags": {
+          "name": "tags",
+          "type": "jsonb",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "json"
+        },
         "image_url": {
           "name": "image_url",
           "type": "varchar(255)",
@@ -86,13 +95,13 @@
         },
         "published_at": {
           "name": "published_at",
-          "type": "varchar(255)",
+          "type": "timestamptz",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 255,
-          "mappedType": "string"
+          "length": 6,
+          "mappedType": "datetime"
         },
         "is_generated": {
           "name": "is_generated",
@@ -215,26 +224,6 @@
           "length": 255,
           "mappedType": "string"
         },
-        "is_kycd": {
-          "name": "is_kycd",
-          "type": "boolean",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "default": "false",
-          "mappedType": "boolean"
-        },
-        "kyc_completed_at": {
-          "name": "kyc_completed_at",
-          "type": "date",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "length": 0,
-          "mappedType": "date"
-        },
         "stripe_customer_id": {
           "name": "stripe_customer_id",
           "type": "varchar(255)",
@@ -265,15 +254,15 @@
           "length": 0,
           "mappedType": "date"
         },
-        "onboarding_step": {
-          "name": "onboarding_step",
+        "kyc_status": {
+          "name": "kyc_status",
           "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
           "length": 255,
-          "default": "'kyc'",
+          "default": "'not_started'",
           "mappedType": "string"
         }
       },

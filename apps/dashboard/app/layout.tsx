@@ -13,6 +13,8 @@ export const metadata: Metadata = {
 	},
 };
 
+import { PostHogProvider } from "@commertize/utils/posthog";
+
 // Force dynamic rendering to prevent SSR issues with Privy
 export const dynamic = "force-dynamic";
 export const dynamicParams = true;
@@ -25,10 +27,12 @@ export default function RootLayout({
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<body>
-				<ClientProviders>
-					{children}
-					<ChatWidget />
-				</ClientProviders>
+				<PostHogProvider>
+					<ClientProviders>
+						{children}
+						<ChatWidget />
+					</ClientProviders>
+				</PostHogProvider>
 				<Script
 					id="suppress-warnings"
 					strategy="beforeInteractive"

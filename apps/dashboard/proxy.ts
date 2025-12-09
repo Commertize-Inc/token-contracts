@@ -1,7 +1,19 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
+const POSTHOG_IPS = [
+	"44.205.89.55",
+	"44.208.188.173",
+	"52.4.194.122",
+];
+
+export function proxy(request: NextRequest) {
+	// Allow PostHog IPs to bypass CORS checks
+	const ip = (request as any).ip ?? request.headers.get("x-forwarded-for") ?? "";
+	if (POSTHOG_IPS.includes(ip)) {
+		return NextResponse.next();
+	}
+
 	// Only apply to /api routes
 	if (request.nextUrl.pathname.startsWith("/api")) {
 		const origin = request.headers.get("origin");
@@ -17,7 +29,7 @@ export function middleware(request: NextRequest) {
 			if (origin !== appOrigin) {
 				return new NextResponse(null, {
 					status: 403,
-					statusText: "Forbidden: Cross-origin access denied"
+					statusText: "Forbidden: Cross-origin access denied",
 				});
 			}
 		}

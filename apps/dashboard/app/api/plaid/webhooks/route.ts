@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getEM } from "@/lib/db/orm";
-import { PlaidItem } from "@/lib/db/entities/PlaidItem";
+import { PlaidItem } from "@commertize/data";
 import {
 	validateWebhookSignature,
 	parseWebhookEvent,

@@ -4,8 +4,7 @@
  */
 
 import crypto from "crypto";
-import type { BankAccount } from "../db/entities/BankAccount";
-import type { PlaidItem } from "../db/entities/PlaidItem";
+import type { BankAccount, PlaidItem } from "@commertize/data";
 import type {
 	BankAccountResponse,
 	PlaidItemResponse,
