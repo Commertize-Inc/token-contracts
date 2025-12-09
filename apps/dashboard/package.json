@@ -7,8 +7,6 @@
 		"build": "next build --webpack",
 		"start": "next start -H 0.0.0.0 -p 3001",
 		"lint": "eslint .",
-		"migration:create": "npx mikro-orm migration:create",
-		"migration:up": "npx mikro-orm migration:up",
 		"staging:seed": "npx tsx lib/staging/seed.ts",
 		"staging:reset": "curl -X DELETE http://localhost:3001/api/staging/reset",
 		"staging:test": "curl http://localhost:3001/api/staging/test-integration | json_pp"

@@ -6,9 +6,7 @@
 		"dev": "next dev --turbo -H 0.0.0.0 -p 3000",
 		"build": "next build",
 		"start": "next start -H 0.0.0.0 -p 3000",
-		"lint": "eslint .",
-		"migration:create": "npx mikro-orm migration:create",
-		"migration:up": "npx mikro-orm migration:up"
+		"lint": "eslint ."
 	},
 	"dependencies": {
 		"@commertize/data": "workspace:*",

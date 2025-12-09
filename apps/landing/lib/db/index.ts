@@ -1,6 +1,6 @@
 import { MikroORM, EntityManager } from "@mikro-orm/core";
 import { PostgreSqlDriver } from "@mikro-orm/postgresql";
-import config from "../../mikro-orm.config";
+import { mikroOrmConfig as config } from "@commertize/data";
 
 let orm: MikroORM<PostgreSqlDriver>;
 
