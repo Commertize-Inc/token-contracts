@@ -13,17 +13,21 @@ const config: Options<PostgreSqlDriver> = {
 	driver: PostgreSqlDriver,
 	connect: true,
 	clientUrl: process.env.DATABASE_URL!,
-	driverOptions: {
-		connection: {
-			ssl: {
-				rejectUnauthorized: process.env.NODE_ENV !== "production",
+	driverOptions:
+		process.env.DATABASE_URL?.includes("localhost") ||
+			process.env.DATABASE_URL?.includes("127.0.0.1")
+			? undefined
+			: {
+				connection: {
+					ssl: {
+						rejectUnauthorized: process.env.NODE_ENV === "production",
+					},
+				},
 			},
-		},
-	},
 	debug: process.env.NODE_ENV !== "production",
 	migrations: {
-		path: "./migrations",
-		pathTs: "./migrations",
+		path: "../migrations",
+		pathTs: "../migrations",
 	},
 };
 

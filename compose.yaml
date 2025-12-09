@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: commertize
       POSTGRES_DB: commertize_dev
     ports:
-      - "5432:5432"
+      - 5432:5432
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:

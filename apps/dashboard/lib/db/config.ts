@@ -1,27 +1,18 @@
+import { mikroOrmConfig } from "@commertize/data";
+import { loadEnv } from "@commertize/utils/env";
 import { Options } from "@mikro-orm/core";
 import { PostgreSqlDriver } from "@mikro-orm/postgresql";
-import { loadEnv } from "@commertize/utils/env";
 import "reflect-metadata";
-import { User, NewsArticle, PlaidItem, BankAccount, Waitlist } from "@commertize/data";
 
 // Load environment variables with interpolation support
+// Although mikroOrmConfig loads envs, we load here again to ensure dashboard-specific contexts are handled if they exist
 loadEnv(__dirname);
 
 const config: Options<PostgreSqlDriver> = {
-	entities: [User, NewsArticle, PlaidItem, BankAccount, Waitlist],
-	driver: PostgreSqlDriver,
-	connect: true,
+	...mikroOrmConfig,
 
+	// Ensure clientUrl is set from the currently loaded environment
 	clientUrl: process.env.DATABASE_URL,
-
-	// SSL configuration for NeonDB
-	driverOptions: {
-		connection: {
-			ssl: {
-				rejectUnauthorized: false, // Required for NeonDB
-			},
-		},
-	},
 
 	// Disable dynamic file access for production builds
 	// This prevents MikroORM from scanning the filesystem for entities
@@ -30,9 +21,9 @@ const config: Options<PostgreSqlDriver> = {
 		requireEntitiesArray: true,
 	},
 
+	// Override specific to dashboard if needed
 	debug: process.env.NODE_ENV !== "production",
 	migrations: {
-		// path: "./lib/db/migrations",
 		pathTs: "./lib/db/migrations",
 	},
 };
