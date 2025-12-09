@@ -32,6 +32,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
 			posthog?.identify(user.id, {
 				email: user.email?.address,
 				wallet: user.wallet?.address,
+				NODE_ENV: process.env.NODE_ENV || 'development',
 			});
 		}
 	}, [ready, authenticated, router, pathname, user, posthog]);
