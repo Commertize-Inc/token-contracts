@@ -57,7 +57,6 @@ export function loadEnv(
 	}
 
 	const monorepoRoot = getMonorepoRoot(fromPath);
-	const mode = process.env.NODE_ENV;
 
 	// Accumulate all parsed variables here to return the final merged result
 	let combinedParsed: Record<string, string> = {};
@@ -71,6 +70,8 @@ export function loadEnv(
 			dotenvExpand.expand(result);
 
 			if (result.parsed) {
+				const envCount = Object.keys(result.parsed).length;
+				console.log(`[dotenv@${require('dotenv/package.json').version}] injecting env (${envCount}) from ${path.relative(process.cwd(), filePath)} -- tip: 👥 sync secrets across teammates & machines: https://dotenvx.com/ops`);
 				combinedParsed = { ...combinedParsed, ...result.parsed };
 			}
 		}
@@ -78,6 +79,9 @@ export function loadEnv(
 
 	// 1. Root .env
 	loadFile(path.join(monorepoRoot, ".env"));
+
+	// Read NODE_ENV after loading root .env, in case it's defined there
+	const mode = process.env.NODE_ENV;
 
 	// 2. Root .env.{NODE_ENV}
 	if (mode) {
