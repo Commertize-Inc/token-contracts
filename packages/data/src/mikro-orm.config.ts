@@ -26,8 +26,8 @@ const config: Options<PostgreSqlDriver> = {
 			},
 	debug: process.env.NODE_ENV !== "production",
 	migrations: {
-		path: "../migrations",
-		pathTs: "../migrations",
+		path: "./migrations",
+		pathTs: "./migrations",
 	},
 };
 

@@ -3,14 +3,6 @@ name: Database Migrations
 on:
   workflow_dispatch:
     inputs:
-      environment:
-        description: 'Environment to run migrations on'
-        required: true
-        type: choice
-        options:
-          - development
-          - preview
-          - production
       dry_run:
         description: 'Show pending migrations without executing'
         required: false
@@ -18,16 +10,43 @@ on:
         default: false
   push:
     branches:
-      - main
+      - 'release/production'
+      - 'release/preview'
     paths:
       - 'packages/data/src/migrations/**'
       - 'packages/data/src/**/*.ts'
+      - '.github/workflows/migrate.yml'
 
 jobs:
-  migrate:
-    name: Run Migrations
+  setup:
+    name: Determine Environments
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment || 'development' }}
+    outputs:
+      environments: ${{ steps.set-envs.outputs.environments }}
+    steps:
+      - id: set-envs
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "environments=['development']" >> "$GITHUB_OUTPUT"
+          elif [[ "${{ github.ref }}" == "refs/heads/release/production" ]]; then
+            echo "environments=['production', 'preview', 'development']" >> "$GITHUB_OUTPUT"
+          elif [[ "${{ github.ref }}" == "refs/heads/release/preview" ]]; then
+            echo "environments=['preview']" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::Unknown trigger or branch, defaulting to empty list"
+            echo "environments=[]" >> "$GITHUB_OUTPUT"
+          fi
+
+  migrate:
+    name: Run Migrations (${{ matrix.environment }})
+    needs: setup
+    if: ${{ needs.setup.outputs.environments != '[]' && needs.setup.outputs.environments != '' }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: ${{ fromJson(needs.setup.outputs.environments) }}
+    environment: ${{ matrix.environment }}
 
     steps:
       - name: Checkout
@@ -52,29 +71,29 @@ jobs:
         run: pnpm migration:pending
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          NODE_ENV: ${{ github.event.inputs.environment || 'development' }}
+          NODE_ENV: ${{ matrix.environment }}
 
       - name: Run migrations (Dry Run)
-        if: ${{ github.event.inputs.dry_run == true }}
+        if: ${{ github.event.inputs.dry_run == 'true' }}
         working-directory: packages/data
         run: |
           echo "::notice::Dry run mode - migrations would be applied but are being skipped"
           pnpm migration:pending
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          NODE_ENV: ${{ github.event.inputs.environment || 'development' }}
+          NODE_ENV: ${{ matrix.environment }}
 
       - name: Run migrations
-        if: ${{ github.event.inputs.dry_run != true }}
+        if: ${{ github.event.inputs.dry_run != 'true' }}
         working-directory: packages/data
         run: pnpm migration:up
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          NODE_ENV: ${{ github.event.inputs.environment || 'development' }}
+          NODE_ENV: ${{ matrix.environment }}
 
       - name: Verify migrations
         working-directory: packages/data
         run: pnpm migration:pending
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          NODE_ENV: ${{ github.event.inputs.environment || 'development' }}
+          NODE_ENV: ${{ matrix.environment }}

@@ -1,6 +1,6 @@
 import { Migration } from '@mikro-orm/migrations';
 
-export class Migration20251209091626 extends Migration {
+export class Migration20251209102811 extends Migration {
 
   override async up(): Promise<void> {
     this.addSql(`create table "news_article" ("id" varchar(255) not null, "slug" varchar(255) not null, "title" varchar(255) not null, "summary" text not null, "content" text null, "category" varchar(255) not null, "tags" jsonb null, "image_url" varchar(255) null, "read_time" int not null default 5, "published_at" timestamptz not null, "is_generated" boolean not null default false, "is_published" boolean not null default true, "created_at" date not null, "updated_at" date not null, constraint "news_article_pkey" primary key ("id"));`);
@@ -26,24 +26,6 @@ export class Migration20251209091626 extends Migration {
 
     this.addSql(`alter table "bank_account" add constraint "bank_account_user_id_foreign" foreign key ("user_id") references "user" ("id") on update cascade on delete cascade;`);
     this.addSql(`alter table "bank_account" add constraint "bank_account_plaid_item_id_foreign" foreign key ("plaid_item_id") references "plaid_item" ("id") on update cascade on delete cascade;`);
-  }
-
-  override async down(): Promise<void> {
-    this.addSql(`alter table "plaid_item" drop constraint "plaid_item_user_id_foreign";`);
-
-    this.addSql(`alter table "bank_account" drop constraint "bank_account_user_id_foreign";`);
-
-    this.addSql(`alter table "bank_account" drop constraint "bank_account_plaid_item_id_foreign";`);
-
-    this.addSql(`drop table if exists "news_article" cascade;`);
-
-    this.addSql(`drop table if exists "user" cascade;`);
-
-    this.addSql(`drop table if exists "plaid_item" cascade;`);
-
-    this.addSql(`drop table if exists "bank_account" cascade;`);
-
-    this.addSql(`drop table if exists "waitlist" cascade;`);
   }
 
 }
