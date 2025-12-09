@@ -1,7 +1,12 @@
 import dotenv from "dotenv";
 import dotenvExpand from "dotenv-expand";
 import path from "path";
-import { existsSync } from "fs";
+
+// Dynamically require fs to avoid client-side build errors
+let fs: any;
+if (typeof window === "undefined") {
+	fs = require("fs");
+}
 
 /**
  * Finds the monorepo root by looking for pnpm-workspace.yaml file.
@@ -16,7 +21,7 @@ export function getMonorepoRoot(fromPath: string = __dirname): string {
 	// Go up max levels to find the monorepo root
 	for (let i = 0; i < 5; i++) {
 		const workspaceFile = path.join(currentPath, "pnpm-workspace.yaml");
-		if (existsSync(workspaceFile)) {
+		if (fs && fs.existsSync && fs.existsSync(workspaceFile)) {
 			return currentPath;
 		}
 		currentPath = path.dirname(currentPath);
@@ -47,33 +52,51 @@ export function getMonorepoRoot(fromPath: string = __dirname): string {
 export function loadEnv(
 	fromPath: string = __dirname
 ): dotenv.DotenvConfigOutput {
+	if (typeof window !== "undefined") {
+		return { parsed: {} };
+	}
+
 	const monorepoRoot = getMonorepoRoot(fromPath);
+	const mode = process.env.NODE_ENV;
 
-	// 1. Load root .env file (base configuration)
-	const rootEnvPath = path.join(monorepoRoot, ".env");
-	const rootEnv = dotenv.config({ path: rootEnvPath });
-	dotenvExpand.expand(rootEnv);
+	// Accumulate all parsed variables here to return the final merged result
+	let combinedParsed: Record<string, string> = {};
 
-	let result = rootEnv;
+	// Helper to load and expand an env file
+	const loadFile = (filePath: string) => {
+		if (fs && fs.existsSync && fs.existsSync(filePath)) {
+			// override: true ensures that variables from this file overwrite
+			// any previously loaded variables in process.env
+			const result = dotenv.config({ path: filePath, override: true });
+			dotenvExpand.expand(result);
 
-	// 2. Check for app-specific .env override
-	// fromPath is typically the app directory (e.g., apps/dashboard)
+			if (result.parsed) {
+				combinedParsed = { ...combinedParsed, ...result.parsed };
+			}
+		}
+	};
+
+	// 1. Root .env
+	loadFile(path.join(monorepoRoot, ".env"));
+
+	// 2. Root .env.{NODE_ENV}
+	if (mode) {
+		loadFile(path.join(monorepoRoot, `.env.${mode}`));
+	}
+
+	// 3. App-specific .env
 	const appEnvPath = path.join(fromPath, ".env");
+	loadFile(appEnvPath);
 
-	if (process.env.NODE_ENV == "production" && existsSync(appEnvPath)) {
-		// Load app-specific .env, which will override root values
-		const appEnv = dotenv.config({ path: appEnvPath });
-		dotenvExpand.expand(appEnv);
-
-		// Use the app-specific config (which has overridden process.env)
-		result = appEnv;
+	// 4. App-specific .env.{NODE_ENV}
+	if (mode) {
+		loadFile(path.join(fromPath, `.env.${mode}`));
 	}
 
 	// Explicitly expand process.env to handle variables injected by the environment (e.g. Vercel)
 	// that might be referenced in .env files but not defined there.
-	if (result.parsed) {
-		dotenvExpand.expand({ parsed: process.env as any });
-	}
+	// We pass the combined parsed vars + process.env to ensure everything is expanded correctly relative to the current state.
+	dotenvExpand.expand({ parsed: process.env as any });
 
-	return result;
+	return { parsed: combinedParsed };
 }
