@@ -8,8 +8,8 @@ export const metadata: Metadata = {
 	title: "Commertize Dashboard",
 	description: "Commertize investor dashboard",
 	icons: {
-		icon: "/assets/logo.png",
-		apple: "/assets/logo.png",
+		icon: "/assets/favicon.png",
+		apple: "/assets/favicon.png",
 	},
 };
 

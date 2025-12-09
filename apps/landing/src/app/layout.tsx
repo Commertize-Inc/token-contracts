@@ -55,8 +55,8 @@ export const metadata: Metadata = {
 	description:
 		"Democratizing access to premium real estate investments through blockchain technology.",
 	icons: {
-		icon: "/assets/logo.png",
-		apple: "/assets/logo.png",
+		icon: "/assets/favicon.png",
+		apple: "/assets/favicon.png",
 	},
 };
 
