@@ -5,9 +5,6 @@
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"scripts": {
-		"build": "tsc",
-		"dev": "tsc -w",
-		"lint": "eslint .",
 		"migration:create": "npx mikro-orm migration:create",
 		"migration:up": "npx mikro-orm migration:up"
 	},
@@ -22,6 +19,7 @@
 	},
 	"devDependencies": {
 		"@mikro-orm/cli": "^6.6.1",
+		"@mikro-orm/migrations": "^6.6.1",
 		"@types/node": "^20.19.25",
 		"@types/uuid": "^10.0.0",
 		"typescript": "^5.9.3"
