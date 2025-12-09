@@ -268,29 +268,11 @@ export default function Marketplace() {
 							</p>
 							<div className="grid md:grid-cols-2 gap-4 mb-4">
 								<div className="flex items-center text-sm text-gray-700">
-									<motion.div
-										animate={{ y: [0, -2, 0], rotate: [0, 5, 0, -5, 0] }}
-										transition={{
-											duration: 3,
-											repeat: Infinity,
-											ease: "easeInOut",
-										}}
-									>
-										<BarChart3 className="w-4 h-4 text-[#D4A024] mr-2" />
-									</motion.div>
+									<BarChart3 className="w-4 h-4 text-[#D4A024] mr-2" />
 									<span>Proprietary analytics and insights</span>
 								</div>
 								<div className="flex items-center text-sm text-gray-700">
-									<motion.div
-										animate={{ rotate: 360 }}
-										transition={{
-											duration: 8,
-											repeat: Infinity,
-											ease: "linear",
-										}}
-									>
-										<Globe className="w-4 h-4 text-[#D4A024] mr-2" />
-									</motion.div>
+									<Globe className="w-4 h-4 text-[#D4A024] mr-2" />
 									<span>Global real estate opportunities</span>
 								</div>
 							</div>
@@ -325,11 +307,10 @@ export default function Marketplace() {
 								<div className="flex gap-2">
 									<button
 										onClick={() => setShowFilters(!showFilters)}
-										className={`flex items-center gap-2 px-6 py-3 border rounded-xl transition-colors ${
-											showFilters
-												? "bg-[#D4A024] text-white border-[#D4A024]"
-												: "border-gray-200 hover:bg-gray-50"
-										}`}
+										className={`flex items-center gap-2 px-6 py-3 border rounded-xl transition-colors ${showFilters
+											? "bg-[#D4A024] text-white border-[#D4A024]"
+											: "border-gray-200 hover:bg-gray-50"
+											}`}
 									>
 										<Filter className="w-4 h-4" />
 										Filters
