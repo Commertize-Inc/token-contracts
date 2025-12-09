@@ -24,221 +24,92 @@ Commertize is a monorepo built with Next.js 16, featuring a public landing page 
 - PostgreSQL database (NeonDB recommended)
 - Privy account ([Get one here](https://dashboard.privy.io/))
 
-### Installation
+### Installation & Setup
+
+1.  **Install dependencies**
+
+    ```bash
+    pnpm install
+    ```
+
+2.  **Configure Environment**
+
+    Commertize uses a cascading environment variable system. Start by copying the root template:
+
+    ```bash
+    cp .env.example .env
+    ```
+
+    Then navigate to the dashboard app and configure its specific environment:
+
+    ```bash
+    cd apps/dashboard
+    cp .env.example .env.local
+    ```
+
+    Update `apps/dashboard/.env.local` with your credentials:
+    ```env
+    NEXT_PUBLIC_PRIVY_APP_ID=your_app_id
+    NEXT_PUBLIC_PRIVY_CLIENT_ID=your_client_id
+    PRIVY_APP_SECRET=your_secret
+    DATABASE_URL=postgresql://user:pass@host/dbname?sslmode=require
+    ```
+
+3.  **Initialize Database**
+
+    ```bash
+    # From apps/dashboard directory
+    pnpm mikro-orm migration:create --initial
+    pnpm mikro-orm migration:up
+    cd ../..
+    ```
+
+### Running the Apps
 
 ```bash
-# Install dependencies
-pnpm install
-
-# Set up environment variables (cascading configuration)
-cp .env.example .env
-# Edit .env with your configuration
-
-# Run database migrations
-cd apps/dashboard && pnpm mikro-orm migration:up && cd ../..
-
-# Start development servers
+# Start all apps
 pnpm dev
+
+# Start specific app
+pnpm dev:landing    # http://localhost:3000
+pnpm dev:dashboard  # http://localhost:3001
 ```
-
-Visit:
-
-- Landing page: [http://localhost:3000](http://localhost:3000)
-- Dashboard: [http://localhost:3001](http://localhost:3001)
-
-## Configuration
-
-### Environment Variables (Cascading Setup)
-
-Commertize uses a **cascading environment variable system**:
-
-1. **Root `.env`** - Shared configuration for all apps
-2. **App-specific `.env`** (optional) - Override specific values per app
-
-#### Quick Setup
-
-```bash
-# 1. Copy root template
-cp .env.example .env
-
-# 2. Edit with your values
-nano .env
-
-# 3. (Optional) Create app-specific overrides
-cd apps/dashboard
-cp .env.example .env
-# Edit with dashboard-specific values
-```
-
-#### Root `.env` (Shared)
-
-```env
-# Database
-DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require
-
-# API Keys (shared)
-OPENAI_API_KEY=sk-your-key-here
-
-# App URLs
-DASHBOARD_URL=http://localhost:3001
-LANDING_URL=http://localhost:3000
-```
-
-#### `apps/dashboard/.env` (Optional Overrides)
-
-```env
-# Privy Authentication
-NEXT_PUBLIC_PRIVY_APP_ID=your_privy_app_id
-PRIVY_APP_SECRET=your_privy_app_secret
-
-# Plaid Integration
-PLAID_CLIENT_ID=your_plaid_client_id
-PLAID_SECRET=your_plaid_secret
-```
-
-**📚 Detailed Documentation:**
-
-- [Quick Reference](ENV_QUICK_REFERENCE.md) - Common scenarios and troubleshooting
-- [Complete Guide](ENV_SETUP.md) - Full documentation with examples
-- [Implementation Summary](ENV_IMPLEMENTATION_SUMMARY.md) - What was implemented and how it works
 
 ## Project Structure
 
 ```
 commertize.com/
 ├── apps/
-│   ├── landing/          # Public landing page (Next.js)
-│   └── dashboard/        # Investor dashboard with auth (Next.js)
+│   ├── landing/          # Public marketing site
+│   └── dashboard/        # Investor portal (Auth, KYC)
 ├── packages/
-│   └── ui/              # Shared UI components (Button, Chip, Logo)
-├── docs/                # Additional documentation
-│   └── branding/        # Brand guidelines and assets
+│   └── ui/              # Shared design system components
+├── docs/                # Detailed documentation
 └── pnpm-workspace.yaml
 ```
+
+## Documentation
+
+- **[Development Guide](DEVELOPMENT.md)** - detailed workflows, standards, and troubleshooting.
+- **[Contributing](CONTRIBUTING.md)** - how to contribute to this project.
+- **[Docs Folder](docs/README.md)** - deep dive into architecture, branding, and environment setup.
 
 ## Features
 
 ### Landing Page (`apps/landing`)
-
 - Premium real estate showcase
-- Property listings with investment details
 - SEO-optimized static pages
-- Responsive design with brand-consistent UI
+- Responsive, brand-consistent UI
 
 ### Dashboard (`apps/dashboard`)
-
 - **Authentication**: Privy-powered email/wallet login
-- **Auth Guard**: Automatic redirect to `/auth` when not authenticated
-- **KYC Verification**: Required before accessing investment features
-- **User Management**: PostgreSQL database with MikroORM
-- **Session Management**: Secure logout with session invalidation
-- **Shared Components**: Uses `@commertize/ui` for consistent branding
+- **KYC Verification**: Required identity verification flow
+- **User Management**: PostgreSQL + MikroORM
+- **Session Security**: Robust session invalidation
 
-### Shared UI Package (`packages/ui`)
-
-- **Button**: Multiple variants (primary, secondary, outlined, text)
-- **Chip**: Active/inactive states
-- **Logo**: Light/dark theme support
-- Reusable across all apps with consistent styling
-
-## Development
-
-### Running Apps
-
-```bash
-# Run all apps
-pnpm dev
-
-# Run specific app
-pnpm dev:landing    # Landing page only
-pnpm dev:dashboard  # Dashboard only
-```
-
-### Working with Shared UI
-
-Import components from `@commertize/ui`:
-
-```tsx
-import { Logo, Button, Chip } from "@commertize/ui";
-
-<Logo theme="dark" />
-<Button variant="primary">Invest Now</Button>
-<Chip active>New</Chip>
-```
-
-### Database Migrations
-
-```bash
-cd apps/dashboard
-
-# Create migration
-pnpm mikro-orm migration:create
-
-# Run migrations
-pnpm mikro-orm migration:up
-
-# Rollback migration
-pnpm mikro-orm migration:down
-```
-
-### Package Management
-
-```bash
-# Add dependency to specific app
-pnpm --filter @commertize/dashboard add package-name
-
-# Add dev dependency to root
-pnpm add -D -w package-name
-
-# Update all dependencies
-pnpm update -r
-```
-
-## Architecture
-
-### Authentication Flow
-
-1. User visits landing page → clicks "Sign In"
-2. Redirects to dashboard `/auth` page
-3. Privy authentication modal (email/wallet)
-4. `AuthGuard` checks authentication status
-5. System verifies KYC status from database
-6. Non-KYC'd users redirected to `/kyc` flow
-7. Authenticated + KYC'd users access dashboard
-
-### Database Schema
-
-#### User Entity
-
-```typescript
-{
-  id: string (UUID)
-  privyId: string
-  email?: string
-  walletAddress?: string
-  isKycd: boolean
-  kycCompletedAt?: Date
-  createdAt: Date
-  updatedAt: Date
-}
-```
-
-### API Routes
-
-- `GET /api/kyc/status` - Check KYC status
-- `POST /api/kyc/submit` - Submit KYC (demo implementation)
-
-## Documentation
-
-- [Quick Start Guide](QUICK_START.md) - Get up and running in 5 minutes
-- [Environment Setup](ENV_SETUP.md) - Detailed configuration guide
-- [Monorepo Architecture](MONOREPO_SETUP.md) - Deep dive into project structure
-- [Brand Identity](docs/branding/brand_identity.md) - Colors, typography, design philosophy
-- [Style Guide](docs/branding/style_guide.md) - UI component guidelines
-
-## Contributing
-
-This is a private project. For questions or issues, contact the development team.
+### Shared UI (`packages/ui`)
+- Reusable components (Button, Chip, Logo)
+- Consistent theming and typography
 
 ## License
 
