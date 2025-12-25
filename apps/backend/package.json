@@ -3,10 +3,6 @@
 	"version": "0.1.0",
 	"private": true,
 	"type": "module",
-	"engines": {
-		"node": ">=20.0.0",
-		"pnpm": ">=10.0.0"
-	},
 	"scripts": {
 		"dev": "NODE_OPTIONS='--conditions=development' tsx watch src/index.ts",
 		"build": "pnpm build:deps && tsup",
@@ -23,7 +19,6 @@
 		"@hono/node-server": "^1.13.7",
 		"@mikro-orm/core": "^6.6.2",
 		"@mikro-orm/postgresql": "^6.6.2",
-		"@mikro-orm/seeder": "^6.6.2",
 		"@privy-io/server-auth": "^1.32.5",
 		"@vercel/blob": "^2.0.0",
 		"date-fns": "^4.1.0",

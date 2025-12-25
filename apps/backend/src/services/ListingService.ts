@@ -119,9 +119,4 @@ export class ListingService {
 
 		await this.em.remove(listing).flush();
 	}
-
-	async mintPropertyToken(listing: Listing) {
-		// STUB: Minting Property Token via RPC (No-op for now)
-		console.log(`[STUB] Minting property token for listing: ${listing.id}`);
-	}
 }

@@ -14,7 +14,7 @@ const getPort = () => {
 		try {
 			const url = new URL(process.env.VITE_API_URL);
 			if (url.port) return parseInt(url.port);
-		} catch {
+		} catch (e) {
 			// fallback if not a valid URL
 		}
 		const parts = process.env.VITE_API_URL.split(":");

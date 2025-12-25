@@ -8,7 +8,7 @@ import {
 	ListingStatus,
 	Sponsor,
 } from "@commertize/data";
-import { randomUUID } from "crypto";
+import { v4 } from "uuid";
 
 describe("ListingService", () => {
 	let service: ListingService;
@@ -22,10 +22,12 @@ describe("ListingService", () => {
 			findOne: vi.fn(),
 			persist: vi.fn().mockReturnThis(),
 			flush: vi.fn(),
-			create: vi.fn().mockImplementation((entity: any, data: any) => ({
-				...data,
-				id: randomUUID(),
-			})),
+			create: vi
+				.fn()
+				.mockImplementation((entity: any, data: any) => ({
+					...data,
+					id: v4(),
+				})),
 			assign: vi.fn((entity, data) => Object.assign(entity, data)),
 			remove: vi.fn().mockReturnThis(),
 		};
@@ -158,17 +160,6 @@ describe("ListingService", () => {
 			await service.deleteListing(mockUser, "listing-123");
 
 			expect(mockEm.remove).toHaveBeenCalledWith(mockListing);
-		});
-	});
-
-	describe("mintPropertyToken", () => {
-		it("should log minting message", async () => {
-			const consoleSpy = vi.spyOn(console, "log");
-			await service.mintPropertyToken(mockListing);
-			expect(consoleSpy).toHaveBeenCalledWith(
-				expect.stringContaining("Minting property token for listing")
-			);
-			consoleSpy.mockRestore();
 		});
 	});
 });

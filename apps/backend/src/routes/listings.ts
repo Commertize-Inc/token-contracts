@@ -5,23 +5,40 @@ import {
 	User,
 } from "@commertize/data";
 import { ListingStatus, VerificationStatus } from "@commertize/data/enums";
+import { getFeatureFlag, PostHogFeatureFlags } from "@commertize/utils/server";
 import { Hono } from "hono";
 import { getEM } from "../db";
 import { apiKeyMiddleware } from "../middleware/apiKey";
 import { authMiddleware } from "../middleware/auth";
 import { HonoEnv } from "../types";
+import { ListingService } from "../services/ListingService";
+import { MOCK_LISTINGS } from "@commertize/data";
 
 const listings = new Hono<HonoEnv>();
 
-// listings.ts content below...
+// Stub function for RPC call
+const mintPropertyToken = async (listing: Listing) => {
+	// STUB: Minting Property Token via RPC (No-op for now)
+};
 
 listings.get("/", apiKeyMiddleware, async (c) => {
 	try {
+		const useMockData = await getFeatureFlag(
+			PostHogFeatureFlags.USE_MOCK_DATA,
+			"system"
+		);
+
 		const activeStatuses = [
 			ListingStatus.ACTIVE,
 			ListingStatus.FULLY_FUNDED,
 			ListingStatus.TOKENIZING,
 		];
+
+		if (useMockData) {
+			return c.json(
+				MOCK_LISTINGS.filter((l: any) => activeStatuses.includes(l.status))
+			);
+		}
 
 		const em = await getEM();
 		const listings = await em.find(
@@ -88,6 +105,19 @@ listings.get("/my-listings", authMiddleware, async (c) => {
 listings.get("/:id", apiKeyMiddleware, async (c) => {
 	try {
 		const id = c.req.param("id");
+
+		const useMockData = await getFeatureFlag(
+			PostHogFeatureFlags.USE_MOCK_DATA,
+			"system"
+		);
+
+		if (useMockData) {
+			const listing = MOCK_LISTINGS.find((l: any) => l.id === id);
+			if (!listing) {
+				return c.json({ error: "Listing not found" }, 404);
+			}
+			return c.json(listing);
+		}
 
 		const em = await getEM();
 		const listing = await em.findOne(
@@ -186,6 +216,9 @@ listings.post("/", authMiddleware, async (c) => {
 		if (data.highlights) listing.highlights = data.highlights;
 
 		await em.persist(listing).flush();
+
+		// Call the RPC stub
+		await mintPropertyToken(listing);
 
 		return c.json({ success: true, listing });
 	} catch (error) {

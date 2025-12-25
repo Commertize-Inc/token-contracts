@@ -16,7 +16,6 @@ import { getEM } from "../db";
 import { authMiddleware } from "../middleware/auth";
 import { HonoEnv } from "../types";
 import { NotificationService } from "../services/NotificationService";
-import { ListingService } from "../services/ListingService";
 
 const admin = new Hono<HonoEnv>();
 
@@ -168,8 +167,9 @@ admin.get("/submissions", async (c) => {
 					"propertyType",
 					"status",
 					"createdAt",
-					"sponsor.id",
-					"sponsor.members",
+					"sponsor.firstName",
+					"sponsor.lastName",
+					"sponsor.email",
 				],
 			}
 		);
@@ -239,7 +239,9 @@ admin.get("/submissions", async (c) => {
 				submittedAt: l.createdAt,
 				title: `Listing: ${l.name}`,
 				user: {
-					id: l.sponsor.members[0].id,
+					id: l.sponsor.id,
+					email: l.sponsor.email,
+					name: `${l.sponsor.firstName} ${l.sponsor.lastName}`,
 				},
 			})),
 		];
@@ -263,7 +265,7 @@ admin.post("/submissions/:type/:id/review", async (c) => {
 		const type = c.req.param("type").toUpperCase() as EntityType;
 		const id = c.req.param("id");
 		const body = await c.req.json();
-		const { action, comment } = body;
+		const { action, comment } = body; // action: 'APPROVE' | 'REJECT' | 'REQUEST_INFO'
 
 		if (
 			![
@@ -370,12 +372,6 @@ admin.post("/submissions/:type/:id/review", async (c) => {
 			comment
 		);
 
-		// 4. Mint tokens if listing is approved
-		if (type === EntityType.LISTING && action === "APPROVE") {
-			const listingService = new ListingService(em);
-			await listingService.mintPropertyToken(targetEntity);
-		}
-
 		em.persist(targetEntity);
 		await em.flush();
 
@@ -393,7 +389,7 @@ admin.post("/submissions/:type/:id/review", async (c) => {
 		return c.json(
 			{
 				error: "Internal Server Error",
-				details: error ? String(error) : "Unknown error",
+				details: error?.message || String(error),
 			},
 			500
 		);
@@ -468,7 +464,10 @@ admin.post("/sponsor-update-requests/:id/approve", async (c) => {
 		}
 
 		if (updateRequest.status !== SponsorUpdateRequestStatus.PENDING) {
-			return c.json({ error: "Only pending requests can be approved" }, 400);
+			return c.json(
+				{ error: "Only pending requests can be approved" },
+				400
+			);
 		}
 
 		// Apply the requested changes to the sponsor
@@ -529,7 +528,10 @@ admin.post("/sponsor-update-requests/:id/reject", async (c) => {
 		}
 
 		if (updateRequest.status !== SponsorUpdateRequestStatus.PENDING) {
-			return c.json({ error: "Only pending requests can be rejected" }, 400);
+			return c.json(
+				{ error: "Only pending requests can be rejected" },
+				400
+			);
 		}
 
 		// Update request status

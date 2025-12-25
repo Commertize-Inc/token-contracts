@@ -26,6 +26,8 @@ import upload from "./routes/upload";
 
 const app = new Hono();
 
+app.use(logger());
+
 const allowedOrigins = [
 	process.env.VITE_LANDING_URL || "https://commertize.com",
 	process.env.VITE_DASHBOARD_URL || "https://app.commertize.com",
@@ -44,7 +46,6 @@ const checkOrigin = (origin: string): boolean => {
 };
 
 app.use(
-	"*",
 	cors({
 		origin: (origin) => {
 			if (checkOrigin(origin)) return origin;
@@ -62,8 +63,6 @@ app.use(
 		credentials: true,
 	})
 );
-
-app.use(logger());
 
 app.use(dbMiddleware);
 app.use(apiKeyMiddleware);
