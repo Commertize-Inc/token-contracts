@@ -6,8 +6,6 @@ export enum PostHogEvents {
 
 export enum PostHogFeatureFlags {
 	// eslint-disable-next-line no-unused-vars
-	USE_MOCK_DATA = "use-mock-data",
-	// eslint-disable-next-line no-unused-vars
 	LANDING_LOGIN = "landing_login",
 	// eslint-disable-next-line no-unused-vars
 	NEWS_GENERATION = "news-generation",
