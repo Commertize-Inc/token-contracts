@@ -22,7 +22,10 @@ export default function Invest() {
 				const data = await api.get(`listings/${id}`);
 				setListing(data);
 				// Suggest minimum investment or based on token price
-				if (data?.tokenomics?.minInvestmentTokens && data?.tokenomics?.tokenPrice) {
+				if (
+					data?.tokenomics?.minInvestmentTokens &&
+					data?.tokenomics?.tokenPrice
+				) {
 					const minUsd =
 						data.tokenomics.minInvestmentTokens * data.tokenomics.tokenPrice;
 					setInvestAmount(minUsd.toString());
@@ -66,7 +69,9 @@ export default function Invest() {
 			// Or maybe the backend returns payment instructions we should show?
 			// The backend returns: { investmentId, status, paymentInstructions }
 			// For MVP, lets alert and go back.
-			alert("Investment intent registered! Check your email for payment instructions.");
+			alert(
+				"Investment intent registered! Check your email for payment instructions."
+			);
 			navigate("/marketplace");
 		} catch (err: any) {
 			console.error(err);
@@ -91,8 +96,7 @@ export default function Invest() {
 
 	const { stats, tokenomics } = listing;
 	const tokenPrice = tokenomics?.tokenPrice || 0;
-	const minInvestment =
-		(tokenomics?.minInvestmentTokens || 1) * tokenPrice;
+	const minInvestment = (tokenomics?.minInvestmentTokens || 1) * tokenPrice;
 
 	const percent = stats?.percentageFunded || 0;
 	const raised = stats?.currentFunding || 0;
@@ -124,19 +128,23 @@ export default function Invest() {
 									{listing.offeringType?.replace("_", " ") || "REG D"}
 								</span>
 								<span>•</span>
-								<span>{listing.city}, {listing.state}</span>
+								<span>
+									{listing.city}, {listing.state}
+								</span>
 							</div>
 						</div>
 
 						{/* Highlights / Description Summary */}
 						<div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
-							<h3 className="font-semibold text-lg mb-4">Investment Highlights</h3>
+							<h3 className="font-semibold text-lg mb-4">
+								Investment Highlights
+							</h3>
 							<ul className="list-disc list-inside space-y-2 text-slate-600">
 								{listing.highlights?.map((h: string, i: number) => (
 									<li key={i}>{h}</li>
 								)) || (
-										<li>Detailed property financials available in data room.</li>
-									)}
+									<li>Detailed property financials available in data room.</li>
+								)}
 							</ul>
 						</div>
 
@@ -145,8 +153,9 @@ export default function Invest() {
 							<div className="text-sm text-blue-800">
 								<p className="font-semibold mb-1">Primary Market Offering</p>
 								<p>
-									You are subscribing to a new issuance of tokens directly from the issuer.
-									Funds will be held in escrow until the minimum funding goal is met.
+									You are subscribing to a new issuance of tokens directly from
+									the issuer. Funds will be held in escrow until the minimum
+									funding goal is met.
 								</p>
 							</div>
 						</div>
@@ -193,7 +202,8 @@ export default function Invest() {
 										max={remaining}
 									/>
 									<p className="text-xs text-slate-500 mt-1">
-										Minimum: ${minInvestment.toLocaleString()} • Max: ${remaining.toLocaleString()}
+										Minimum: ${minInvestment.toLocaleString()} • Max: $
+										{remaining.toLocaleString()}
 									</p>
 								</div>
 							</div>

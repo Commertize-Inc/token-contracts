@@ -47,9 +47,9 @@ profile.get("/", async (c) => {
 			businessName: user.sponsor?.businessName,
 			sponsor: user.sponsor
 				? {
-					businessName: user.sponsor.businessName,
-					status: user.sponsor.status,
-				}
+						businessName: user.sponsor.businessName,
+						status: user.sponsor.status,
+					}
 				: undefined,
 			walletAddress: user.walletAddress,
 			email: user.email,
@@ -167,7 +167,9 @@ profile.delete("/", async (c) => {
 					if (item.accessToken) {
 						const accessToken = decrypt(item.accessToken);
 						await plaidClient.itemRemove({ access_token: accessToken });
-						console.info(`[Plaid] Removed item ${item.itemId} during user deletion`);
+						console.info(
+							`[Plaid] Removed item ${item.itemId} during user deletion`
+						);
 					}
 				} catch (plaidError: any) {
 					console.warn(

@@ -2,7 +2,7 @@ import {
 	createListingSchema,
 	Listing,
 	updateListingSchema,
-	User
+	User,
 } from "@commertize/data";
 import { ListingStatus, VerificationStatus } from "@commertize/data/enums";
 import { Hono } from "hono";
@@ -120,8 +120,7 @@ listings.get("/:id", apiKeyMiddleware, async (c) => {
 		);
 
 		// Optionally populate investor count?
-		const investorsCount = new Set(investments.map((inv) => inv.user.id))
-			.size;
+		const investorsCount = new Set(investments.map((inv) => inv.user.id)).size;
 
 		return c.json({
 			...listing,

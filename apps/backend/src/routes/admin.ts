@@ -464,10 +464,7 @@ admin.post("/sponsor-update-requests/:id/approve", async (c) => {
 		}
 
 		if (updateRequest.status !== SponsorUpdateRequestStatus.PENDING) {
-			return c.json(
-				{ error: "Only pending requests can be approved" },
-				400
-			);
+			return c.json({ error: "Only pending requests can be approved" }, 400);
 		}
 
 		// Apply the requested changes to the sponsor
@@ -528,10 +525,7 @@ admin.post("/sponsor-update-requests/:id/reject", async (c) => {
 		}
 
 		if (updateRequest.status !== SponsorUpdateRequestStatus.PENDING) {
-			return c.json(
-				{ error: "Only pending requests can be rejected" },
-				400
-			);
+			return c.json({ error: "Only pending requests can be rejected" }, 400);
 		}
 
 		// Update request status

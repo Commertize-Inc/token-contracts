@@ -22,12 +22,10 @@ describe("ListingService", () => {
 			findOne: vi.fn(),
 			persist: vi.fn().mockReturnThis(),
 			flush: vi.fn(),
-			create: vi
-				.fn()
-				.mockImplementation((entity: any, data: any) => ({
-					...data,
-					id: v4(),
-				})),
+			create: vi.fn().mockImplementation((entity: any, data: any) => ({
+				...data,
+				id: v4(),
+			})),
 			assign: vi.fn((entity, data) => Object.assign(entity, data)),
 			remove: vi.fn().mockReturnThis(),
 		};

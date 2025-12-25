@@ -2,19 +2,23 @@
 import { Options } from "@mikro-orm/core";
 import { PostgreSqlDriver } from "@mikro-orm/postgresql";
 import "reflect-metadata";
-import { BankAccount } from "./entities/BankAccount";
-import { Investment } from "./entities/Investment";
-import { Investor } from "./entities/Investor";
-import { LegalDocument } from "./entities/LegalDocument";
-import { Listing } from "./entities/Listing";
-import { NewsArticle } from "./entities/NewsArticle";
-import { Notification } from "./entities/Notification";
-import { PlaidItem } from "./entities/PlaidItem";
-import { ReviewComment } from "./entities/ReviewComment";
-import { Sponsor } from "./entities/Sponsor";
-import { SponsorUpdateRequest } from "./entities/SponsorUpdateRequest";
-import { User } from "./entities/User";
-import { Waitlist } from "./entities/Waitlist";
+import {
+	BankAccount,
+	Dividend,
+	Investment,
+	Investor,
+	LegalDocument,
+	Listing,
+	NewsArticle,
+	Notification,
+	PlaidItem,
+	ReviewComment,
+	Sponsor,
+	SponsorUpdateRequest,
+	User,
+	Waitlist,
+	VerificationRequest,
+} from "./entities";
 
 // Load environment variables dynamically
 const configPromise = (async () => {
@@ -29,19 +33,21 @@ const configPromise = (async () => {
 
 	const config: Options<PostgreSqlDriver> = {
 		entities: [
-			User,
-			NewsArticle,
-			PlaidItem,
 			BankAccount,
-			Waitlist,
-			Listing,
+			Dividend,
 			Investment,
-			LegalDocument,
 			Investor,
-			Sponsor,
-			ReviewComment,
-			SponsorUpdateRequest,
+			LegalDocument,
+			Listing,
+			NewsArticle,
 			Notification,
+			PlaidItem,
+			ReviewComment,
+			Sponsor,
+			SponsorUpdateRequest,
+			User,
+			VerificationRequest,
+			Waitlist,
 		],
 		driver: PostgreSqlDriver,
 		connect: true,

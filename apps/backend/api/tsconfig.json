@@ -3,10 +3,7 @@
 	"compilerOptions": {
 		"noEmit": true
 	},
-	"include": [
-		"*.mts",
-		"../dist/**/*.d.ts"
-	],
+	"include": ["*.mts", "../dist/**/*.d.ts"],
 	"exclude": [
 		"**/node_modules/**",
 		"../../apps/landing",
