@@ -6,6 +6,6 @@ export default defineConfig({
 	clean: true,
 	dts: true,
 	splitting: false,
-	noExternal: [/(^@commertize\/)/],
-	external: [/^@mikro-orm\//, "tedious", "sqlite3"],
+	noExternal: [],
+	external: [/^@commertize\//, /^@mikro-orm\//, "tedious", "sqlite3"],
 });
