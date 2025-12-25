@@ -11,6 +11,7 @@
 		"jsx": "react-jsx",
 		// Generate declaration files for type checking
 		"declaration": true,
-		"declarationMap": true
+		"declarationMap": true,
+		"noEmit": true
 	}
 }
