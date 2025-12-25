@@ -8,7 +8,7 @@ import {
 } from "@commertize/data";
 
 export class ListingService {
-	constructor(private readonly em: EntityManager) { }
+	constructor(private readonly em: EntityManager) {}
 
 	async createListing(user: User, data: any) {
 		if (!user.sponsor || user.sponsor.status !== VerificationStatus.VERIFIED) {

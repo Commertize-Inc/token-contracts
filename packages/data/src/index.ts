@@ -19,5 +19,5 @@ export * from "./enums/sponsor";
 
 export * from "./schemas";
 
-export * from "./seeders/UserSeeder";
-export * from "./seeders/PropertySeeder";
+// Seeders are not exported here to avoid bundling @mikro-orm/seeder
+// into runtime code. They are only used by CLI tools that import directly.

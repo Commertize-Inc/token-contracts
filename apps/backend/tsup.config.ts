@@ -4,8 +4,12 @@ export default defineConfig({
 	entry: ["src/index.ts", "src/app.ts"],
 	format: ["esm"],
 	clean: true,
-	dts: true,
+	dts: {
+		resolve: true,
+	},
+	tsconfig: "./tsconfig.build.json",
 	splitting: false,
 	noExternal: [],
 	external: [/^@commertize\//, /^@mikro-orm\//, "tedious", "sqlite3"],
+	onSuccess: "echo 'Build completed successfully'",
 });

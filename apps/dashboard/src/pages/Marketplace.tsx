@@ -275,7 +275,8 @@ export default function MarketplacePage() {
 															else if (val === "price")
 																table.setSorting([
 																	{ id: "tokenPrice", desc: false },
-																]); // Asc?
+																]);
+															// Asc?
 															else if (val === "capRate")
 																table.setSorting([
 																	{ id: "capRate", desc: true },
