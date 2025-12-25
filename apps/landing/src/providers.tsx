@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 import { PostHogProvider } from "posthog-js/react";
 import { ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
