@@ -4,48 +4,81 @@
 		"target": "ES2022",
 		"module": "ESNext",
 		"moduleResolution": "bundler",
-		"lib": ["ES2022"],
+		"lib": [
+			"ES2022",
+			"DOM",
+			"DOM.Iterable"
+		],
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
 		"strict": true,
 		"skipLibCheck": true,
 		"jsx": "react-jsx",
+		"maxNodeModuleJsDepth": 0,
+		"noResolve": false,
 		"paths": {
-			"@commertize/utils/client": ["../../packages/utils/src/client.ts"],
-			"@commertize/utils/server": ["../../packages/utils/src/server.ts"],
+			"@commertize/utils/client": [
+				"../../packages/utils/dist/client.d.ts"
+			],
+			"@commertize/utils/server": [
+				"../../packages/utils/dist/server.d.ts"
+			],
 			"@commertize/utils/env-server": [
-				"../../packages/utils/src/env-server.ts"
+				"../../packages/utils/dist/env-server.d.ts"
 			],
-			"@commertize/utils": ["../../packages/utils/src/index.ts"],
+			"@commertize/utils": [
+				"../../packages/utils/dist/index.d.ts"
+			],
 			"@commertize/data/config": [
-				"../../packages/data/src/mikro-orm.config.ts"
+				"../../packages/data/dist/mikro-orm.config.d.ts"
 			],
-			"@commertize/data/enums": ["../../packages/data/src/enums/index.ts"],
-			"@commertize/data/schemas": ["../../packages/data/src/schemas/index.ts"],
+			"@commertize/data/enums": [
+				"../../packages/data/dist/enums/index.d.ts"
+			],
+			"@commertize/data/schemas": [
+				"../../packages/data/dist/schemas/index.d.ts"
+			],
 			"@commertize/data/encryption": [
-				"../../packages/data/src/utils/encryption.ts"
+				"../../packages/data/dist/utils/encryption.d.ts"
 			],
-			"@commertize/data": ["../../packages/data/src/index.ts"]
+			"@commertize/data": [
+				"../../packages/data/dist/index.d.ts"
+			]
 		},
-		"typeRoots": ["../../node_modules/@types", "node_modules/@types"]
+		"typeRoots": [
+			"../../node_modules/@types",
+			"node_modules/@types"
+		]
 	},
 	"include": [
-		"src/**/*",
-		"api/**/*",
-		"vercel-env.d.ts",
-		"../../packages/data/src/**/*",
-		"../../packages/utils/src/**/*"
+		"src/**/*.ts",
+		"api/**/*.mts",
+		"vercel-env.d.ts"
 	],
 	"exclude": [
 		"node_modules",
 		"dist",
+		"**/node_modules/**",
 		"../landing",
+		"../landing/**",
 		"../landing/**/*",
 		"../dashboard",
+		"../dashboard/**",
 		"../dashboard/**/*",
+		"../../apps/landing",
+		"../../apps/landing/**",
+		"../../apps/landing/**/*",
+		"../../apps/dashboard",
+		"../../apps/dashboard/**",
+		"../../apps/dashboard/**/*",
 		"../../packages/ui",
+		"../../packages/ui/**",
 		"../../packages/ui/**/*",
 		"**/*.test.ts",
-		"**/*.spec.ts"
+		"**/*.spec.ts",
+		"**/*.test.tsx",
+		"**/*.spec.tsx",
+		"**/apps/landing/**",
+		"**/apps/dashboard/**"
 	]
 }

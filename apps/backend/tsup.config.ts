@@ -4,9 +4,7 @@ export default defineConfig({
 	entry: ["src/index.ts", "src/app.ts"],
 	format: ["esm"],
 	clean: true,
-	dts: {
-		resolve: false,
-	},
+	dts: false,
 	tsconfig: "./tsconfig.build.json",
 	splitting: false,
 	noExternal: [],

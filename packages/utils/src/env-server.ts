@@ -162,7 +162,7 @@ export function loadEnv(cwd?: string): void {
 			runId: "run1",
 			hypothesisId: "env-prec",
 		}),
-	}).catch(() => {});
+	}).catch(() => { });
 	// #endregion
 }
 
