@@ -10,6 +10,7 @@ import { getEM } from "../db";
 import { apiKeyMiddleware } from "../middleware/apiKey";
 import { authMiddleware } from "../middleware/auth";
 import { HonoEnv } from "../types";
+import { Investment, InvestmentStatus } from "@commertize/data";
 
 const listings = new Hono<HonoEnv>();
 
@@ -107,7 +108,33 @@ listings.get("/:id", apiKeyMiddleware, async (c) => {
 			return c.json({ error: "Listing not found" }, 404);
 		}
 
-		return c.json(listing);
+		// Calculate funding stats
+		const investments = await em.find(Investment, {
+			property: listing,
+			status: { $in: [InvestmentStatus.PENDING, InvestmentStatus.COMPLETED] },
+		});
+
+		const currentFunding = investments.reduce(
+			(sum: number, inv: Investment) => sum + parseFloat(inv.amountUsdc),
+			0
+		);
+
+		// Optionally populate investor count?
+		const investorsCount = new Set(investments.map((inv) => inv.user.id))
+			.size;
+
+		return c.json({
+			...listing,
+			stats: {
+				currentFunding,
+				targetRaise: listing.impliedEquityValuation || 0,
+				percentageFunded:
+					(listing.impliedEquityValuation || 0) > 0
+						? (currentFunding / (listing.impliedEquityValuation || 1)) * 100
+						: 0,
+				investorsCount,
+			},
+		});
 	} catch (error) {
 		console.error("Error fetching listing:", error);
 		return c.json({ error: "Internal server error" }, 500);
