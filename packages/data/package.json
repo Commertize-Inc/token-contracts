@@ -42,8 +42,8 @@
 		"./*": "./dist/*"
 	},
 	"scripts": {
-		"build": "tsup src/index.ts src/mikro-orm.config.ts src/enums/index.ts src/schemas/index.ts src/utils/encryption.ts --format cjs,esm --dts --clean --no-splitting",
-		"dev": "tsup src/index.ts src/mikro-orm.config.ts src/enums/index.ts src/schemas/index.ts src/utils/encryption.ts --format cjs,esm --dts --watch",
+		"build": "tsup src/index.ts src/mikro-orm.config.ts src/enums/index.ts src/schemas/index.ts src/utils/encryption.ts --format cjs,esm --dts --clean --no-splitting --external @mikro-orm/core --external @mikro-orm/postgresql --external @mikro-orm/reflection --external @mikro-orm/seeder --external @mikro-orm/migrations",
+		"dev": "tsup src/index.ts src/mikro-orm.config.ts src/enums/index.ts src/schemas/index.ts src/utils/encryption.ts --format cjs,esm --dts --watch --external @mikro-orm/core --external @mikro-orm/postgresql --external @mikro-orm/reflection --external @mikro-orm/seeder --external @mikro-orm/migrations",
 		"db:seed": "NODE_OPTIONS='--import tsx' mikro-orm seeder:run --config src/mikro-orm.config.ts",
 		"migration:create": "NODE_OPTIONS='--import tsx' mikro-orm migration:create --config src/mikro-orm.config.ts",
 		"migration:up": "NODE_OPTIONS='--import tsx' mikro-orm migration:up --config src/mikro-orm.config.ts",
