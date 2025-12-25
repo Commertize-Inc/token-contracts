@@ -181,7 +181,7 @@ export default function MarketplacePage() {
 									animate={{ opacity: 1, y: 0 }}
 								>
 									<ListingCard
-										listing={listing as any}
+										listing={listing as Listing}
 										currentFunding={0} // Marketplace items don't have amountFunded on Listing type usually, but checking implementation.
 										// Listing type in @commertize/data might not have amountFunded.
 										// But SponsorDashboard had ListingWithFunding.
@@ -215,10 +215,11 @@ export default function MarketplacePage() {
 										<div className="flex gap-2">
 											<button
 												onClick={() => setShowFilters(!showFilters)}
-												className={`flex items-center gap-2 px-4 py-2 border rounded-md h-10 transition-colors text-sm font-medium ${showFilters
-													? "bg-[#D4A024] text-white border-[#D4A024]"
-													: "border-input hover:bg-accent hover:text-accent-foreground text-slate-700"
-													}`}
+												className={`flex items-center gap-2 px-4 py-2 border rounded-md h-10 transition-colors text-sm font-medium ${
+													showFilters
+														? "bg-[#D4A024] text-white border-[#D4A024]"
+														: "border-input hover:bg-accent hover:text-accent-foreground text-slate-700"
+												}`}
 											>
 												<Filter className="w-4 h-4" />
 												Filters

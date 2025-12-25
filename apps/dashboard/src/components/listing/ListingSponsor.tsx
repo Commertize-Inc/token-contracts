@@ -11,8 +11,7 @@ export function ListingSponsor({ sponsor }: { sponsor: Listing["sponsor"] }) {
 	}
 
 	// Determine display name: Business Name > ID partial
-	const displayName =
-		sponsor.businessName || `Sponsor ${sponsor.id.slice(0, 8)}`;
+	const displayName = sponsor.businessName || "";
 	const joinYear = new Date(sponsor.createdAt).getFullYear();
 
 	return (
@@ -37,17 +36,21 @@ export function ListingSponsor({ sponsor }: { sponsor: Listing["sponsor"] }) {
 					<Trophy className="w-6 h-6 text-amber-500 mx-auto mb-2" />
 					<p className="text-2xl font-bold text-slate-900">
 						{/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-						{(sponsor as any).stats?.activeDeals ?? 0}
+						{(sponsor as any).stats?.activeDeals !== undefined
+							? (sponsor as any).stats.activeDeals
+							: ""}
 					</p>
 					<p className="text-xs text-slate-500">Active Deals</p>
 				</div>
 				<div className="p-4 bg-slate-50 rounded-lg border border-slate-100 text-center">
 					<Trophy className="w-6 h-6 text-slate-400 mx-auto mb-2" />
 					<p className="text-2xl font-bold text-slate-900">
-						{}$
-						{(
-							(sponsor as any).stats?.assetsUnderManagement ?? 0
-						).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+						{(sponsor as any).stats?.assetsUnderManagement
+							? `$${(sponsor as any).stats.assetsUnderManagement.toLocaleString(
+									undefined,
+									{ maximumFractionDigits: 0 }
+								)}`
+							: ""}
 					</p>
 					<p className="text-xs text-slate-500">Assets Under Mgmt</p>
 				</div>
@@ -60,10 +63,7 @@ export function ListingSponsor({ sponsor }: { sponsor: Listing["sponsor"] }) {
 
 			<div className="prose prose-slate max-w-none">
 				<h4>About the Sponsor</h4>
-				<p className="text-slate-600">
-					{sponsor.bio ||
-						`${displayName} is an experienced real estate operator with a focus on commercial and multi-family listings.`}
-				</p>
+				<p className="text-slate-600">{sponsor.bio}</p>
 			</div>
 		</div>
 	);

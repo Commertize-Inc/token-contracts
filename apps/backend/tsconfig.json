@@ -10,6 +10,8 @@
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
 		"strict": true,
+		"skipLibCheck": true,
+		"jsx": "react-jsx",
 		"paths": {
 			"@commertize/utils/client": [
 				"../../packages/utils/src/client.ts"
@@ -38,10 +40,7 @@
 			"@commertize/data": [
 				"../../packages/data/src/index.ts"
 			]
-		},
-		"types": [
-			"@types/node"
-		]
+		}
 	},
 	"include": [
 		"src",
@@ -54,6 +53,10 @@
 		"node_modules",
 		"dist",
 		"../landing",
-		"../dashboard"
+		"../landing/**/*",
+		"../dashboard",
+		"../dashboard/**/*",
+		"../../packages/ui",
+		"../../packages/ui/**/*"
 	]
 }

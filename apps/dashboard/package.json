@@ -5,7 +5,8 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
-		"build": "pnpm build:deps && tsc -b && vite build",
+		"build": "pnpm build:deps && vite build",
+		"typecheck": "tsc --noEmit",
 		"build:deps": "cd ../.. && npx turbo run build --filter=@commertize/dashboard^...",
 		"start": "vite preview",
 		"lint": "eslint .",

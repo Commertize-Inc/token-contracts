@@ -4,59 +4,48 @@
 		"target": "ES2022",
 		"module": "ESNext",
 		"moduleResolution": "bundler",
-		"lib": [
-			"ES2022"
-		],
-		"jsx": "react-jsx",
+		"lib": ["ES2022"],
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
 		"strict": true,
 		"skipLibCheck": true,
+		"jsx": "react-jsx",
 		"paths": {
-			"@commertize/utils/client": [
-				"../../packages/utils/src/client.ts"
-			],
-			"@commertize/utils/server": [
-				"../../packages/utils/src/server.ts"
-			],
+			"@commertize/utils/client": ["../../packages/utils/src/client.ts"],
+			"@commertize/utils/server": ["../../packages/utils/src/server.ts"],
 			"@commertize/utils/env-server": [
 				"../../packages/utils/src/env-server.ts"
 			],
-			"@commertize/utils": [
-				"../../packages/utils/src/index.ts"
-			],
+			"@commertize/utils": ["../../packages/utils/src/index.ts"],
 			"@commertize/data/config": [
 				"../../packages/data/src/mikro-orm.config.ts"
 			],
-			"@commertize/data/enums": [
-				"../../packages/data/src/enums/index.ts"
-			],
-			"@commertize/data/schemas": [
-				"../../packages/data/src/schemas/index.ts"
-			],
+			"@commertize/data/enums": ["../../packages/data/src/enums/index.ts"],
+			"@commertize/data/schemas": ["../../packages/data/src/schemas/index.ts"],
 			"@commertize/data/encryption": [
 				"../../packages/data/src/utils/encryption.ts"
 			],
-			"@commertize/data": [
-				"../../packages/data/src/index.ts"
-			]
+			"@commertize/data": ["../../packages/data/src/index.ts"]
 		},
-		"types": [
-			"@types/node"
-		]
+		"typeRoots": ["../../node_modules/@types", "node_modules/@types"]
 	},
 	"include": [
-		"src",
-		"api",
+		"src/**/*",
+		"api/**/*",
 		"vercel-env.d.ts",
-		"../../packages/data/src",
-		"../../packages/utils/src"
+		"../../packages/data/src/**/*",
+		"../../packages/utils/src/**/*"
 	],
 	"exclude": [
 		"node_modules",
 		"dist",
-		"../../apps/landing",
-		"../../apps/dashboard",
-		"../../packages/ui"
+		"../landing",
+		"../landing/**/*",
+		"../dashboard",
+		"../dashboard/**/*",
+		"../../packages/ui",
+		"../../packages/ui/**/*",
+		"**/*.test.ts",
+		"**/*.spec.ts"
 	]
 }

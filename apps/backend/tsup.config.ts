@@ -5,7 +5,7 @@ export default defineConfig({
 	format: ["esm"],
 	clean: true,
 	dts: {
-		resolve: true,
+		resolve: false,
 	},
 	tsconfig: "./tsconfig.build.json",
 	splitting: false,

@@ -29,9 +29,21 @@ export default defineConfig(({ mode }) => {
 			alias: {
 				"@": path.resolve(__dirname, "./src"),
 			},
+			// Prioritize browser-compatible exports from packages
+			conditions: ["browser", "module", "import", "default"],
 		},
 		optimizeDeps: {
-			exclude: ["@commertize/backend", "@commertize/data"],
+			exclude: ["@commertize/backend", "@commertize/data", "@commertize/ui"],
+			esbuildOptions: {
+				define: {
+					global: "globalThis",
+				},
+			},
+		},
+		build: {
+			commonjsOptions: {
+				transformMixedEsModules: true,
+			},
 		},
 	};
 });

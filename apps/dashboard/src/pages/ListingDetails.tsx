@@ -177,8 +177,7 @@ export default function ListingDetails() {
 							<section className="scroll-mt-32">
 								<div className="prose prose-slate max-w-none">
 									<p className="text-slate-700 leading-relaxed text-lg">
-										{listing.description ||
-											"No description provided for this listing."}
+										{listing.description}
 									</p>
 
 									<div className="mt-8">
@@ -199,7 +198,10 @@ export default function ListingDetails() {
 											<div className="bg-white p-4 rounded-lg border border-slate-100 shadow-sm">
 												<p className="text-sm text-slate-500">Min Investment</p>
 												<p className="font-semibold text-slate-900">
-													${(listing.tokenomics?.tokenPrice || 0) * 10}
+													$
+													{listing.tokenomics?.tokenPrice
+														? listing.tokenomics.tokenPrice * 10
+														: ""}
 												</p>
 											</div>
 											<div className="bg-white p-4 rounded-lg border border-slate-100 shadow-sm">

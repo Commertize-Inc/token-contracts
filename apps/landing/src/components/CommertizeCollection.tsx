@@ -2,17 +2,18 @@ import { useState, useEffect } from "react";
 import { api } from "../lib/api";
 import { motion } from "framer-motion";
 import { Building2 } from "lucide-react";
-import { ListingData, ListingCard } from "@commertize/ui";
+import type { Listing } from "@commertize/data";
+import { ListingCard } from "@commertize/ui";
 
 const CommertizeCollection = () => {
-	const [listings, setListings] = useState<ListingData[]>([]);
+	const [listings, setListings] = useState<Listing[]>([]);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		const fetchListings = async () => {
 			try {
 				const data = await api.get("/listings");
-				const mappedListings: ListingData[] = data.map((p: any) => {
+				const mappedListings: Listing[] = data.map((p: Listing) => {
 					const tokenomics = p.tokenomics || {};
 					const financials = p.financials || {};
 
@@ -27,12 +28,8 @@ const CommertizeCollection = () => {
 						sponsor: p.sponsor || { firstName: "Commertize" },
 						financials: {
 							...financials,
-							tokenPrice: financials.tokenPrice || tokenomics.tokenPrice || 0,
-							targetRaise:
-								financials.targetRaise ||
-								(tokenomics.tokensForInvestors || 0) *
-									(tokenomics.tokenPrice || 0) ||
-								0,
+							tokenPrice: tokenomics.tokenPrice || 0,
+							targetRaise: p.impliedEquityValuation || 0,
 						},
 						tokenContractAddress: p.tokenContractAddress,
 						propertyType: p.propertyType,

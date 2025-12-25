@@ -17,14 +17,16 @@ export function ListingFinancials({
 		},
 		{
 			label: "Cap Rate",
-			value: `${financials.exitCapRate || 0}%`,
+			value: financials.exitCapRate ? `${financials.exitCapRate}%` : "",
 			icon: TrendingUp,
 			description: "Expected annual return on investment",
 			highlight: true,
 		},
 		{
 			label: "Token Price",
-			value: `$${tokenomics?.tokenPrice?.toLocaleString() || 0}`,
+			value: tokenomics?.tokenPrice
+				? `$${tokenomics.tokenPrice.toLocaleString()}`
+				: "",
 			icon: BadgeDollarSign,
 			description: "Price per fractional share",
 		},

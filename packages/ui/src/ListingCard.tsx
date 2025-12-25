@@ -1,33 +1,10 @@
 import { motion } from "framer-motion";
 import { MapPin, Building2 } from "lucide-react";
 import Button from "./Button";
-
-export interface ListingData {
-	id: string;
-	name: string;
-	address?: string; // Optional as per template usage
-	city: string;
-	state: string;
-	status: string;
-	images: string[];
-	financials: {
-		targetRaise: number;
-		tokenPrice: number;
-		capRate?: number;
-		noi?: number;
-		occupancyRate?: number;
-	};
-	tokenContractAddress?: string;
-	propertyType?: string;
-	sponsor?: {
-		businessName?: string;
-		firstName?: string;
-		email?: string;
-	};
-}
+import type { Listing } from "@commertize/data";
 
 export interface ListingCardProps {
-	listing: ListingData;
+	listing: Listing;
 	index?: number;
 	className?: string;
 	onViewDetails?: () => void;
@@ -49,9 +26,16 @@ export const ListingCard = ({
 		}
 	};
 
-	const fundingProgress = listing.financials?.targetRaise
-		? Math.min((currentFunding / listing.financials.targetRaise) * 100, 100)
-		: 0;
+	const targetRaise =
+		listing.impliedEquityValuation ??
+		(listing.tokenomics?.tokensForInvestors && listing.tokenomics?.tokenPrice
+			? listing.tokenomics.tokensForInvestors * listing.tokenomics.tokenPrice
+			: null);
+
+	const fundingProgress =
+		targetRaise && targetRaise > 0
+			? Math.min((currentFunding / targetRaise) * 100, 100)
+			: 0;
 
 	return (
 		<motion.div
@@ -99,9 +83,7 @@ export const ListingCard = ({
 				<div className="mb-3">
 					<div className="text-xs text-gray-900 font-light">Sponsor</div>
 					<div className="text-sm text-gray-900 font-light">
-						{listing.sponsor?.businessName ||
-							listing.sponsor?.firstName ||
-							"Commertize"}
+						{listing.sponsor?.businessName}
 					</div>
 				</div>
 
@@ -122,12 +104,17 @@ export const ListingCard = ({
 
 				<div className="text-center mb-4">
 					<div className="text-sm text-gray-900 font-light">
-						Target Raise: $
-						{listing.financials?.targetRaise?.toLocaleString() || "TBD"}
+						Target Raise: ${targetRaise?.toLocaleString() || "TBD"}
 					</div>
 					<div className="text-xs text-gray-900 font-light">
 						Min. Investment: $
-						{listing.financials?.tokenPrice?.toLocaleString() || "TBD"}
+						{listing.tokenomics?.tokenPrice &&
+						listing.tokenomics?.minInvestmentTokens
+							? (
+									listing.tokenomics.tokenPrice *
+									listing.tokenomics.minInvestmentTokens
+								).toLocaleString()
+							: listing.tokenomics?.tokenPrice?.toLocaleString() || "TBD"}
 					</div>
 				</div>
 

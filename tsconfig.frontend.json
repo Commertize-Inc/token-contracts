@@ -3,24 +3,12 @@
 	"extends": "./tsconfig.base.json",
 	"compilerOptions": {
 		"paths": {
-			"@commertize/utils/*": [
-				"packages/utils/src/*"
-			],
-			"@commertize/utils": [
-				"packages/utils/src/index.ts"
-			],
-			"@commertize/data/*": [
-				"packages/data/src/*"
-			],
-			"@commertize/data": [
-				"packages/data/src/index.ts"
-			],
-			"@commertize/ui/*": [
-				"packages/ui/src/*"
-			],
-			"@commertize/ui": [
-				"packages/ui/src/index.ts"
-			]
+			"@commertize/utils/*": ["packages/utils/src/*"],
+			"@commertize/utils": ["packages/utils/src/index.ts"],
+			"@commertize/data/*": ["packages/data/src/*"],
+			"@commertize/data": ["packages/data/src/index.ts"],
+			"@commertize/ui/*": ["packages/ui/src/*"],
+			"@commertize/ui": ["packages/ui/src/index.ts"]
 		}
 	}
 }
