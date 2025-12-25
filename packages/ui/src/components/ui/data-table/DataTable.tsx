@@ -34,11 +34,14 @@ interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
 	view?: "table" | "grid";
-	renderGridItem?: (item: TData) => React.ReactNode;
-	renderToolbar?: (table: TableInstance<TData>) => React.ReactNode;
+	// eslint-disable-next-line no-unused-vars
+	renderGridItem?: (_item: TData) => React.ReactNode;
+	// eslint-disable-next-line no-unused-vars
+	renderToolbar?: (_table: TableInstance<TData>) => React.ReactNode;
 	filterColumnName?: string; // For simple search
 	searchPlaceholder?: string;
-	onRowClick?: (row: TData) => void;
+	// eslint-disable-next-line no-unused-vars
+	onRowClick?: (_row: TData) => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -141,9 +144,9 @@ export function DataTable<TData, TValue>({
 												{header.isPlaceholder
 													? null
 													: flexRender(
-															header.column.columnDef.header,
-															header.getContext()
-														)}
+														header.column.columnDef.header,
+														header.getContext()
+													)}
 											</TableHead>
 										);
 									})}

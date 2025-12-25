@@ -2,7 +2,7 @@ import {
 	createListingSchema,
 	Listing,
 	updateListingSchema,
-	User,
+	User
 } from "@commertize/data";
 import { ListingStatus, VerificationStatus } from "@commertize/data/enums";
 import { Hono } from "hono";
@@ -14,6 +14,7 @@ import { HonoEnv } from "../types";
 const listings = new Hono<HonoEnv>();
 
 // Stub function for RPC call
+// eslint-disable-next-line no-unused-vars
 const mintPropertyToken = async (_listing: Listing) => {
 	// STUB: Minting Property Token via RPC (No-op for now)
 };
@@ -46,11 +47,14 @@ listings.get("/", apiKeyMiddleware, async (c) => {
 					"status",
 					"images",
 					"sponsor.id",
-					"sponsor.firstName",
-					"sponsor.lastName",
-					"sponsor.email",
-					"sponsor.sponsor.businessName",
-					"sponsor.sponsor.status",
+					"sponsor.members",
+					"sponsor.businessName",
+					"sponsor.status",
+					"sponsor.votingMembers",
+					"sponsor.members",
+					"sponsor.businessName",
+					"sponsor.status",
+					"sponsor.votingMembers",
 				],
 				populate: ["sponsor"],
 			}
@@ -168,7 +172,7 @@ listings.post("/", authMiddleware, async (c) => {
 		const data = validation.data;
 
 		const listing = new Listing();
-		listing.sponsor = listingSponsor;
+		listing.sponsor = listingSponsor.sponsor!;
 		listing.status = ListingStatus.PENDING_REVIEW;
 		listing.name = data.name;
 		listing.address = data.address;
