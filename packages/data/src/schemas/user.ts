@@ -11,4 +11,5 @@ export const userProfileSchema = z.object({
 	countryOfResidence: z.string().min(2).optional(),
 });
 
+/** Input type for updating a user profile. Derived from Zod schema. */
 export type UserProfileInput = z.infer<typeof userProfileSchema>;

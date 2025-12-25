@@ -17,6 +17,7 @@ export class PlaidItem {
 	user!: User;
 
 	// Plaid identifiers
+	/** Unique identifier for the item (bank connection) from Plaid. */
 	@Property({ type: "string", unique: true, index: true })
 	itemId!: string; // Plaid's item_id (unique per bank connection)
 
@@ -24,9 +25,11 @@ export class PlaidItem {
 	accessToken!: string; // Stored encrypted - use setAccessToken() and getDecryptedAccessToken()
 
 	// Institution metadata
+	/** Plaid institution ID (e.g., "ins_12345"). */
 	@Property({ type: "string" })
 	institutionId!: string; // Plaid's institution_id
 
+	/** Name of the institution (e.g., "Chase", "Bank of America"). */
 	@Property({ type: "string" })
 	institutionName!: string; // E.g., "Chase", "Bank of America"
 

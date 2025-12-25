@@ -7,6 +7,10 @@ import {
 import { v4 } from "uuid";
 import { LegalDocumentType, RelatedEntityType } from "../enums/entities";
 
+/**
+ * Represents a legal document associated with a user or property.
+ * Stores generic documents like tax forms, NDAs, or accreditation proofs.
+ */
 @Entity({ tableName: "legal_document" })
 export class LegalDocument {
 	/** Unique identifier for the document. */

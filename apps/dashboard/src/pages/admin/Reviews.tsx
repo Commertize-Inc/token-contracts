@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../lib/api";
-import { Button, Badge } from "@commertize/ui";
+import { Button, Badge, DataTable, DataTableColumnHeader } from "@commertize/ui";
+import { ColumnDef } from "@tanstack/react-table";
 import {
 	Loader2,
 	CheckCircle,
@@ -32,7 +33,6 @@ interface Submission {
 export default function AdminReviews() {
 	const queryClient = useQueryClient();
 	const { getAccessToken } = usePrivy();
-	const [filterType, setFilterType] = useState<string>("ALL");
 	const [showAll, setShowAll] = useState(false);
 	const [selectedSubmission, setSelectedSubmission] =
 		useState<Submission | null>(null);
@@ -134,10 +134,10 @@ export default function AdminReviews() {
 		}).format(new Date(dateString));
 	};
 
-	const filteredSubmissions = submissions.filter((sub) => {
-		if (filterType !== "ALL" && sub.type !== filterType) return false;
-		return true;
-	});
+	// const filteredSubmissions = submissions.filter((sub) => {
+	// 	if (filterType !== "ALL" && sub.type !== filterType) return false;
+	// 	return true;
+	// });
 
 	const getStatusColor = (status: string) => {
 		switch (status) {
@@ -168,6 +168,91 @@ export default function AdminReviews() {
 			</div>
 		);
 
+	const columns: ColumnDef<Submission>[] = [
+		{
+			accessorKey: "user",
+			header: "Applicant",
+			cell: ({ row }) => {
+				const user = row.original.user;
+				return (
+					<div>
+						<div className="font-medium text-foreground">{user.name}</div>
+						<div className="text-xs text-muted-foreground">{user.email}</div>
+					</div>
+				);
+			},
+			filterFn: (row, id, value) => {
+				const user = row.getValue(id) as { name: string; email: string };
+				return (
+					user.name.toLowerCase().includes(value.toLowerCase()) ||
+					user.email.toLowerCase().includes(value.toLowerCase())
+				);
+			},
+		},
+		{
+			accessorKey: "type",
+			header: "Type",
+			cell: ({ row }) => (
+				<Badge variant="outline" className="font-mono text-xs">
+					{row.getValue("type")}
+				</Badge>
+			),
+			filterFn: (row, id, value) => {
+				return value === "ALL" || row.getValue(id) === value;
+			},
+		},
+		{
+			accessorKey: "title",
+			header: ({ column }) => (
+				<DataTableColumnHeader column={column} title="Title" />
+			),
+			cell: ({ row }) => (
+				<div className="text-foreground font-medium">{row.getValue("title")}</div>
+			),
+		},
+		{
+			accessorKey: "status",
+			header: "Status",
+			cell: ({ row }) => (
+				<Badge variant={getStatusColor(row.getValue("status")) as any}>
+					{(row.getValue("status") as string).replace(/_/g, " ")}
+				</Badge>
+			),
+			filterFn: (row, id, value) => {
+				return value === "ALL" || row.getValue(id) === value;
+			},
+		},
+		{
+			accessorKey: "submittedAt",
+			header: ({ column }) => (
+				<DataTableColumnHeader column={column} title="Submitted At" />
+			),
+			cell: ({ row }) => (
+				<div className="text-muted-foreground">
+					{formatDate(row.getValue("submittedAt"))}
+				</div>
+			),
+		},
+		{
+			id: "actions",
+			cell: ({ row }) => (
+				<div className="text-right">
+					<Button
+						variant="text"
+						className="text-primary hover:text-primary/80 hover:bg-primary/5 text-sm px-2 py-1"
+						onClick={() => {
+							setSelectedSubmission(row.original);
+							setReviewAction(null); // Reset action
+						}}
+					>
+						<Eye className="h-4 w-4 mr-2" />
+						Review
+					</Button>
+				</div>
+			),
+		},
+	];
+
 	return (
 		<div className="min-h-screen bg-slate-50 pb-20">
 			<Navbar />
@@ -190,95 +275,38 @@ export default function AdminReviews() {
 								Show All History
 							</label>
 						</div>
-						<div className="flex items-center gap-2 bg-white px-3 py-2 rounded-md border shadow-sm">
-							<Filter className="h-4 w-4 text-muted-foreground" />
-							<select
-								className="bg-transparent border-none text-sm focus:ring-0 outline-none"
-								value={filterType}
-								onChange={(e) => setFilterType(e.target.value)}
-							>
-								<option value="ALL">All Types</option>
-								<option value="KYC">KYC</option>
-								<option value="INVESTOR">Investor</option>
-								<option value="SPONSOR">Sponsor</option>
-								<option value="LISTING">Listing</option>
-							</select>
-						</div>
 					</div>
 				</div>
 
-				<div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-					<div className="overflow-x-auto">
-						<table className="w-full text-sm text-left">
-							<thead className="bg-slate-50 text-muted-foreground border-b font-medium">
-								<tr>
-									<th className="px-6 py-4">Applicant</th>
-									<th className="px-6 py-4">Type</th>
-									<th className="px-6 py-4">Title</th>
-									<th className="px-6 py-4">Status</th>
-									<th className="px-6 py-4">Submitted At</th>
-									<th className="px-6 py-4 text-right">Actions</th>
-								</tr>
-							</thead>
-							<tbody className="divide-y">
-								{filteredSubmissions.length === 0 ? (
-									<tr>
-										<td
-											colSpan={6}
-											className="px-6 py-12 text-center text-muted-foreground"
-										>
-											No pending submissions.
-										</td>
-									</tr>
-								) : (
-									filteredSubmissions.map((sub, idx) => (
-										<tr
-											key={`${sub.type}-${sub.id}-${idx}`}
-											className="hover:bg-slate-50/50 transition-colors"
-										>
-											<td className="px-6 py-4">
-												<div className="font-medium text-foreground">
-													{sub.user.name}
-												</div>
-												<div className="text-xs text-muted-foreground">
-													{sub.user.email}
-												</div>
-											</td>
-											<td className="px-6 py-4">
-												<Badge variant="outline" className="font-mono text-xs">
-													{sub.type}
-												</Badge>
-											</td>
-											<td className="px-6 py-4 text-foreground font-medium">
-												{sub.title}
-											</td>
-											<td className="px-6 py-4">
-												<Badge variant={getStatusColor(sub.status) as any}>
-													{sub.status.replace(/_/g, " ")}
-												</Badge>
-											</td>
-											<td className="px-6 py-4 text-muted-foreground">
-												{formatDate(sub.submittedAt)}
-											</td>
-											<td className="px-6 py-4 text-right">
-												<Button
-													variant="text"
-													className="text-primary hover:text-primary/80 hover:bg-primary/5 text-sm px-2 py-1"
-													onClick={() => {
-														setSelectedSubmission(sub);
-														setReviewAction(null); // Reset action
-													}}
-												>
-													<Eye className="h-4 w-4 mr-2" />
-													Review
-												</Button>
-											</td>
-										</tr>
-									))
-								)}
-							</tbody>
-						</table>
-					</div>
+				<div className="bg-white rounded-lg shadow-sm border p-4">
+					<DataTable
+						columns={columns}
+						data={submissions}
+						searchPlaceholder="Search applicants..."
+						filterColumnName="user"
+						renderToolbar={(table) => (
+							<div className="flex items-center gap-2">
+								<div className="flex items-center gap-2 bg-white px-3 py-2 rounded-md border shadow-sm">
+									<Filter className="h-4 w-4 text-muted-foreground" />
+									<select
+										className="bg-transparent border-none text-sm focus:ring-0 outline-none"
+										value={
+											(table.getColumn("type")?.getFilterValue() as string) ?? "ALL"
+										}
+										onChange={(e) =>
+											table.getColumn("type")?.setFilterValue(e.target.value)
+										}
+									>
+										<option value="ALL">All Types</option>
+										<option value="KYC">KYC</option>
+										<option value="INVESTOR">Investor</option>
+										<option value="SPONSOR">Sponsor</option>
+										<option value="LISTING">Listing</option>
+									</select>
+								</div>
+							</div>
+						)}
+					/>
 				</div>
 
 				{/* Enhanced Review Modal */}

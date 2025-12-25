@@ -14,9 +14,11 @@ export class BankAccount {
 	@PrimaryKey()
 	id: string = v4();
 
+	/** The user who owns this bank account. */
 	@ManyToOne(() => User, { deleteRule: "cascade" })
 	user!: User;
 
+	/** The Plaid Item (connection) associated with this account. */
 	@ManyToOne(() => PlaidItem, { deleteRule: "cascade" })
 	plaidItem?: PlaidItem;
 
@@ -26,7 +28,7 @@ export class BankAccount {
 		if (!this.plaidItem) {
 			throw new Error(
 				"BankAccount.institutionName accessed but plaidItem relation not populated. " +
-					'Add { populate: ["plaidItem"] } to your query.'
+				'Add { populate: ["plaidItem"] } to your query.'
 			);
 		}
 		return this.plaidItem.institutionName;
@@ -39,10 +41,17 @@ export class BankAccount {
 	}
 
 	// Plaid account identifier
+	/**
+	 * Unique identifier for the account returned by Plaid.
+	 * Used to correlate with Plaid API responses.
+	 */
 	@Property({ type: "string", unique: true, index: true })
 	plaidAccountId!: string; // Unique ID for this specific account
 
 	// Stripe integration
+	/**
+	 * Token representing the bank account in Stripe, used for processing payments.
+	 */
 	@Property({ type: "string", nullable: true })
 	stripeProcessorToken?: string;
 
@@ -66,6 +75,9 @@ export class BankAccount {
 	accountMask!: string; // Last 4 digits (e.g., "1234")
 
 	// Status tracking
+	/**
+	 * Whether the account has been verified (e.g., via Plaid or micro-deposits).
+	 */
 	@Property({ type: "boolean", default: true })
 	isVerified: boolean = true;
 

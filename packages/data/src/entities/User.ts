@@ -11,25 +11,33 @@ import { KycStatus, UserRole } from "../enums/onboarding";
 import { Sponsor } from "./Sponsor";
 import { Investor } from "./Investor";
 
+/**
+ * Core user entity representing an account on the platform.
+ * Can hold multiple roles (Investor, Sponsor, Admin) and related profiles.
+ */
 @Entity({ tableName: "user" })
 export class User {
 	@PrimaryKey()
 	id: string = v4();
 
-	constructor() {}
+	constructor() { }
 
+	/** Unique identifier from the authentication provider (Privy). */
 	@Property({ type: "string", unique: true, index: true })
 	privyId!: string;
 
+	/** Primary role of the user (Investor, Sponsor, etc.). */
 	@Enum({ items: () => UserRole, nullable: true })
 	role?: UserRole;
 
+	/** Whether the user has administrative privileges. */
 	@Property({ type: "boolean", default: false })
 	isAdmin: boolean = false;
 
 	@Property({ type: "string", nullable: true })
 	email?: string;
 
+	/** Connected cryptocurrency wallet address. */
 	@Property({ type: "string", nullable: true })
 	walletAddress?: string;
 

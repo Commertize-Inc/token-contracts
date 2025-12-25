@@ -92,7 +92,6 @@ export default function ListingDetails() {
 				<div className="flex flex-col lg:flex-row gap-8 relative">
 					{/* Left Sidebar: SubNavbar (Vertical) */}
 					<SubNavbar
-						variant="vertical"
 						items={[
 							{
 								id: "overview",

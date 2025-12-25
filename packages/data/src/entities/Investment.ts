@@ -10,6 +10,10 @@ import { User } from "./User";
 import { Listing } from "./Listing";
 import { InvestmentStatus } from "../enums/entities";
 
+/**
+ * Represents a single investment transaction.
+ * Records the investor, property, amount, and status of the investment.
+ */
 @Entity({ tableName: "investment" })
 export class Investment {
 	/** Unique identifier for the investment transaction. */
@@ -44,9 +48,11 @@ export class Investment {
 	@MikroProperty({ type: "string", nullable: true })
 	transactionHash?: string;
 
+	/** URL to the signed subscription agreement document. */
 	@MikroProperty({ type: "string", nullable: true })
 	signedSubscriptionAgreementUrl?: string;
 
+	/** Date when the investor agreed to the terms. */
 	@MikroProperty({ type: "date", nullable: true })
 	agreedToTermsAt?: Date;
 

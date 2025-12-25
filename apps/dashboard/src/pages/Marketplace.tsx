@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import {
 	Search,
 	Filter,
-	Building2,
 	BarChart3,
 	Globe,
 	Users,
@@ -14,9 +13,13 @@ import {
 } from "lucide-react";
 import { Navbar } from "../components/Navbar";
 import { ListingCard, PageHeader } from "@commertize/ui";
-import { Button } from "@commertize/ui"; // Keep UI button for specific uses if needed, or replace
+// Keep UI button for specific uses if needed, or replace
 import { ListingStatus } from "@commertize/data/enums";
 import { useListings } from "../hooks/useListings";
+
+import { DataTable } from "@commertize/ui";
+import { ColumnDef } from "@tanstack/react-table";
+import type { Listing } from "@commertize/data"; // Import Listing type
 
 // Skeleton Component equivalent
 function SkeletonCard() {
@@ -44,63 +47,22 @@ export default function MarketplacePage() {
 
 	const { data: listings = [], isLoading: loading } = useListings();
 
-	// Filters
-	const [statusFilter, setStatusFilter] = useState<string>("all");
-	const [listingType, setListingType] = useState<string>("all");
-	const [searchQuery, setSearchQuery] = useState<string>("");
-	const [sortBy, setSortBy] = useState<string>("name");
 	const [showFilters, setShowFilters] = useState<boolean>(false);
-
-	// User info (mock or real)
 	const [userName] = useState<string>("Investor");
 
-	const filteredListings = listings
-		.filter((listing) => {
-			// Status Filter
-			if (statusFilter !== "all" && listing.status !== statusFilter)
-				return false;
-
-			// Type Filter
-			if (listingType !== "all" && listing.propertyType !== listingType)
-				return false;
-
-			// Search
-			if (searchQuery.trim()) {
-				const term = searchQuery.toLowerCase();
-				return (
-					listing.name.toLowerCase().includes(term) ||
-					listing.city.toLowerCase().includes(term) ||
-					listing.state.toLowerCase().includes(term)
-				);
-			}
-			return true;
-		})
-		.sort((a, b) => {
-			switch (sortBy) {
-				case "name":
-					return a.name.localeCompare(b.name);
-				case "price":
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
-					return (a.tokenomics?.tokenPrice || 0) - (b.tokenomics?.tokenPrice || 0);
-				case "capRate":
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
-					return (b.financials?.exitCapRate || 0) - (a.financials?.exitCapRate || 0);
-				default:
-					return 0;
-			}
-		});
-
-	const clearAllFilters = () => {
-		setStatusFilter("all");
-		setListingType("all");
-		setSearchQuery("");
-		setSortBy("name");
-	};
-
-	const hasActiveFilters =
-		statusFilter !== "all" ||
-		listingType !== "all" ||
-		searchQuery.trim() !== "";
+	const columns: ColumnDef<Listing>[] = [
+		{ accessorKey: "name", filterFn: "includesString" },
+		{ accessorKey: "propertyType", filterFn: "equals" },
+		{ accessorKey: "status", filterFn: "equals" },
+		{
+			id: "tokenPrice",
+			accessorFn: (row) => row.tokenomics?.tokenPrice ?? 0,
+		},
+		{
+			id: "capRate",
+			accessorFn: (row) => row.financials?.exitCapRate ?? 0,
+		},
+	];
 
 	return (
 		<div className="min-h-screen bg-slate-50">
@@ -161,172 +123,143 @@ export default function MarketplacePage() {
 						</div>
 					</motion.div>
 
-					{/* Search and Filter Section */}
-					<motion.div
-						initial={{ opacity: 0, y: 20 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ delay: 0.5, duration: 0.6 }}
-						className="mb-8"
-					>
-						<div className="bg-white border-2 border-[#D4A024] rounded-2xl p-6 shadow-lg">
-							{/* Search Bar */}
-							<div className="flex flex-col lg:flex-row gap-4 mb-6">
-								<div className="relative flex-1">
-									<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-									<input
-										type="text"
-										placeholder="Search listings by name, user, city..."
-										value={searchQuery}
-										onChange={(e) => setSearchQuery(e.target.value)}
-										className="w-full pl-10 pr-4 py-3 text-lg border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D4A024]/50 focus:border-[#D4A024] text-slate-900 placeholder:text-slate-400"
-									/>
-								</div>
-								<div className="flex gap-2">
-									<button
-										onClick={() => setShowFilters(!showFilters)}
-										className={`flex items-center gap-2 px-6 py-3 border rounded-xl transition-colors ${showFilters
-											? "bg-[#D4A024] text-white border-[#D4A024]"
-											: "border-gray-200 hover:bg-gray-50 text-slate-700"
-											}`}
-									>
-										<Filter className="w-4 h-4" />
-										Filters
-									</button>
-									{hasActiveFilters && (
-										<button
-											onClick={clearAllFilters}
-											className="flex items-center gap-2 px-6 py-3 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors text-slate-700"
-										>
-											<X className="w-4 h-4" />
-											Clear All
-										</button>
-									)}
-								</div>
-							</div>
-
-							{/* Advanced Filters */}
-							<AnimatePresence>
-								{showFilters && (
-									<motion.div
-										initial={{ opacity: 0, height: 0 }}
-										animate={{ opacity: 1, height: "auto" }}
-										exit={{ opacity: 0, height: 0 }}
-										transition={{ duration: 0.3 }}
-										className="border-t border-gray-100 pt-6"
-									>
-										<div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-											<select
-												value={statusFilter}
-												onChange={(e) => setStatusFilter(e.target.value)}
-												className="px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D4A024]/50 text-slate-700"
-											>
-												<option value="all">All Status</option>
-												{Object.values(ListingStatus).map((s) => {
-													let label = s
-														.replace(/_/g, " ")
-														.toLowerCase()
-														.replace(/\b\w/g, (c) => c.toUpperCase());
-													if (s === ListingStatus.ACTIVE) label = "Live";
-													return (
-														<option key={s} value={s}>
-															{label}
-														</option>
-													);
-												})}
-											</select>
-
-											<select
-												value={listingType}
-												onChange={(e) => setListingType(e.target.value)}
-												className="px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D4A024]/50 text-slate-700"
-											>
-												<option value="all">All Types</option>
-												<option value="Commercial">Commercial</option>
-												<option value="Multi-Family">Multi-Family</option>
-												<option value="Office">Office</option>
-												<option value="Industrial">Industrial</option>
-												<option value="Retail">Retail</option>
-												<option value="Hospitality">Hospitality</option>
-												<option value="Mixed Use">Mixed Use</option>
-											</select>
-
-											<select
-												value={sortBy}
-												onChange={(e) => setSortBy(e.target.value)}
-												className="px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D4A024]/50 text-slate-700"
-											>
-												<option value="name">Sort by Name</option>
-												<option value="price">Sort by Tok. Price</option>
-												<option value="capRate">Sort by Cap Rate</option>
-											</select>
-										</div>
-									</motion.div>
-								)}
-							</AnimatePresence>
-						</div>
-					</motion.div>
-
-					{/* Results Summary */}
-					<div className="mb-6 flex items-center justify-between">
-						<p className="text-gray-600">
-							Showing{" "}
-							<span className="font-medium text-[#D4A024]">
-								{loading ? "..." : filteredListings.length}
-							</span>{" "}
-							listings
-						</p>
-					</div>
-
-					{/* Grid */}
 					{loading ? (
 						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 							{[...Array(3)].map((_, i) => (
 								<SkeletonCard key={i} />
 							))}
 						</div>
-					) : filteredListings.length > 0 ? (
-						<motion.div
-							initial={{ opacity: 0 }}
-							animate={{ opacity: 1 }}
-							className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-						>
-							{filteredListings.map((listing, index) => (
+					) : (
+						<DataTable
+							columns={columns}
+							data={listings}
+							view="grid"
+							renderGridItem={(listing) => (
 								<motion.div
-									key={listing.id}
 									initial={{ opacity: 0, y: 20 }}
 									animate={{ opacity: 1, y: 0 }}
-									transition={{ delay: 0.1 * index }}
 								>
 									<ListingCard
-										key={listing.id}
 										listing={listing as any}
-										currentFunding={0}
+										currentFunding={0} // Marketplace items don't have amountFunded on Listing type usually, but checking implementation.
+										// Listing type in @commertize/data might not have amountFunded.
+										// But SponsorDashboard had ListingWithFunding.
+										// Helper: (listing as any).amountFunded || 0
 										onViewDetails={() => navigate(`/listing/${listing.id}`)}
 									/>
 								</motion.div>
-							))}
-						</motion.div>
-					) : (
-						<motion.div
-							initial={{ opacity: 0 }}
-							animate={{ opacity: 1 }}
-							className="text-center py-16 bg-white rounded-2xl border-2 border-gray-200"
-						>
-							<Building2 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-							<h3 className="text-xl font-medium text-gray-700 mb-2">
-								No Listings Found
-							</h3>
-							<p className="text-gray-500 mb-6 max-w-md mx-auto">
-								We couldn&apos;t find any listings matching your criteria.
-							</p>
-							<Button
-								variant="text"
-								className="mt-2 text-[#D4A024]"
-								onClick={clearAllFilters}
-							>
-								Clear All Filters
-							</Button>
-						</motion.div>
+							)}
+							renderToolbar={(table) => (
+								<div className="mb-8">
+									{/* Search Bar */}
+									<div className="flex flex-col lg:flex-row gap-4 mb-4">
+										<div className="relative flex-1">
+											<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+											<input
+												type="text"
+												placeholder="Search listings..."
+												value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+												onChange={(e) =>
+													table.getColumn("name")?.setFilterValue(e.target.value)
+												}
+												className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 pl-9 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+											/>
+										</div>
+										<div className="flex gap-2">
+											<button
+												onClick={() => setShowFilters(!showFilters)}
+												className={`flex items-center gap-2 px-4 py-2 border rounded-md h-10 transition-colors text-sm font-medium ${showFilters
+													? "bg-[#D4A024] text-white border-[#D4A024]"
+													: "border-input hover:bg-accent hover:text-accent-foreground text-slate-700"
+													}`}
+											>
+												<Filter className="w-4 h-4" />
+												Filters
+											</button>
+											{(table.getState().columnFilters.length > 0) && (
+												<button
+													onClick={() => table.resetColumnFilters()}
+													className="flex items-center gap-2 px-4 py-2 border border-input rounded-md h-10 hover:bg-accent hover:text-accent-foreground transition-colors text-sm font-medium text-slate-700"
+												>
+													<X className="w-4 h-4" />
+													Clear All
+												</button>
+											)}
+										</div>
+									</div>
+
+									{/* Advanced Filters */}
+									<AnimatePresence>
+										{showFilters && (
+											<motion.div
+												initial={{ opacity: 0, height: 0 }}
+												animate={{ opacity: 1, height: "auto" }}
+												exit={{ opacity: 0, height: 0 }}
+												transition={{ duration: 0.3 }}
+												className="border-t border-gray-100 pt-6"
+											>
+												<div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+													<select
+														value={(table.getColumn("status")?.getFilterValue() as string) ?? "all"}
+														onChange={(e) =>
+															table.getColumn("status")?.setFilterValue(e.target.value === "all" ? undefined : e.target.value)
+														}
+														className="px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D4A024]/50 text-slate-700"
+													>
+														<option value="all">All Status</option>
+														{Object.values(ListingStatus).map((s) => {
+															let label = s
+																.replace(/_/g, " ")
+																.toLowerCase()
+																.replace(/\b\w/g, (c) => c.toUpperCase());
+															if (s === ListingStatus.ACTIVE) label = "Live";
+															return (
+																<option key={s} value={s}>
+																	{label}
+																</option>
+															);
+														})}
+													</select>
+
+													<select
+														value={(table.getColumn("propertyType")?.getFilterValue() as string) ?? "all"}
+														onChange={(e) =>
+															table.getColumn("propertyType")?.setFilterValue(e.target.value === "all" ? undefined : e.target.value)
+														}
+														className="px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D4A024]/50 text-slate-700"
+													>
+														<option value="all">All Types</option>
+														<option value="Commercial">Commercial</option>
+														<option value="Multi-Family">Multi-Family</option>
+														<option value="Office">Office</option>
+														<option value="Industrial">Industrial</option>
+														<option value="Retail">Retail</option>
+														<option value="Hospitality">Hospitality</option>
+														<option value="Mixed Use">Mixed Use</option>
+													</select>
+
+													{/* Sorting using setSorting */}
+													{/* Note: DataTable manages sorting state. We need to interact with it. */}
+													<select
+														onChange={(e) => {
+															const val = e.target.value;
+															if (val === "name") table.setSorting([{ id: "name", desc: false }]);
+															else if (val === "price") table.setSorting([{ id: "tokenPrice", desc: false }]); // Asc?
+															else if (val === "capRate") table.setSorting([{ id: "capRate", desc: true }]); // Desc for Cap Rate?
+														}}
+														className="px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D4A024]/50 text-slate-700"
+													>
+														<option value="name">Sort by Name</option>
+														<option value="price">Sort by Tok. Price</option>
+														<option value="capRate">Sort by Cap Rate</option>
+													</select>
+												</div>
+											</motion.div>
+										)}
+									</AnimatePresence>
+								</div>
+							)}
+						/>
 					)}
 
 					{/* Disclaimer */}

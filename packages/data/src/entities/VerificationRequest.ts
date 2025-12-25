@@ -3,6 +3,10 @@ import { v4 } from "uuid";
 import { User } from "./User";
 import { VerificationRequestStatus } from "../enums/verification";
 
+/**
+ * Abstract base class for verification requests (e.g., identity, acceleration).
+ * Stores common fields like status, requestor, and admin notes.
+ */
 @Entity({ abstract: true })
 export abstract class VerificationRequest {
 	@PrimaryKey()
@@ -11,6 +15,7 @@ export abstract class VerificationRequest {
 	@ManyToOne(() => User)
 	requestedBy!: User;
 
+	/** Status of the request (Pending, Approved, Rejected). */
 	@Enum({
 		items: () => VerificationRequestStatus,
 		default: VerificationRequestStatus.PENDING,

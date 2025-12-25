@@ -6,6 +6,10 @@ export enum WaitlistType {
 	SPONSOR = "sponsor",
 }
 
+/**
+ * Entity representing a user on the waitlist.
+ * capturing interest from potential investors or sponsors.
+ */
 @Entity({ tableName: "waitlist" })
 export class Waitlist {
 	@PrimaryKey()
@@ -14,6 +18,7 @@ export class Waitlist {
 	@Property({ type: "string", unique: true })
 	email!: string;
 
+	/** Type of user joining the waitlist (Investor or Sponsor). */
 	@Enum(() => WaitlistType)
 	type!: WaitlistType;
 

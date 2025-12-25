@@ -79,6 +79,10 @@ type Tokenomics = {
 	transferRestricted: boolean;
 };
 
+/**
+ * Entity representing a real estate listing or offering on the platform.
+ * Contains property details, financial data, tokenomics, and status.
+ */
 @Entity({ tableName: "listing" })
 export class Listing {
 	@PrimaryKey()

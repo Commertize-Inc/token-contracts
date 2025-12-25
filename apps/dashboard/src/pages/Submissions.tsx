@@ -1,6 +1,7 @@
 import { usePrivy } from "@privy-io/react-auth";
-import { Badge, Button } from "@commertize/ui";
+import { Badge, Button, DataTable, DataTableColumnHeader } from "@commertize/ui";
 import { useQuery } from "@tanstack/react-query";
+import { ColumnDef } from "@tanstack/react-table";
 import { api } from "../lib/api";
 import { Loader2, MessageSquare, Eye, Filter, X } from "lucide-react";
 import { Navbar } from "../components/Navbar";
@@ -30,7 +31,6 @@ interface ReviewComment {
 
 export default function Submissions() {
 	const { user, getAccessToken } = usePrivy();
-	const [filterType, setFilterType] = useState<string>("ALL");
 	const [selectedSubmission, setSelectedSubmission] =
 		useState<StatusItem | null>(null);
 	const navigate = useNavigate();
@@ -174,10 +174,10 @@ export default function Submissions() {
 		}).format(new Date(dateString));
 	};
 
-	const filteredSubmissions = submissions.filter((item) => {
-		if (filterType !== "ALL" && item.type !== filterType) return false;
-		return true;
-	});
+	// const filteredSubmissions = submissions.filter((item) => {
+	// 	if (filterType !== "ALL" && item.type !== filterType) return false;
+	// 	return true;
+	// });
 
 	const handleResubmit = (submission: StatusItem) => {
 		switch (submission.type) {
@@ -197,11 +197,109 @@ export default function Submissions() {
 	};
 
 	// Sort by updatedAt desc
-	filteredSubmissions.sort((a, b) => {
+	submissions.sort((a, b) => {
 		const dateA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
 		const dateB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
 		return dateB - dateA;
 	});
+
+	const columns: ColumnDef<StatusItem>[] = [
+		{
+			accessorKey: "title",
+			header: ({ column }) => (
+				<DataTableColumnHeader column={column} title="Title" />
+			),
+			cell: ({ row }) => (
+				<div className="font-medium text-foreground">{row.getValue("title")}</div>
+			),
+			filterFn: (row, id, value) => {
+				return (row.getValue(id) as string).toLowerCase().includes(value.toLowerCase());
+			}
+		},
+		{
+			accessorKey: "type",
+			header: "Type",
+			cell: ({ row }) => (
+				<Badge variant="outline" className="font-mono text-xs">
+					{row.getValue("type")}
+				</Badge>
+			),
+			filterFn: (row, id, value) => {
+				return value === "ALL" || row.getValue(id) === value;
+			},
+		},
+		{
+			accessorKey: "status",
+			header: "Status",
+			cell: ({ row }) => (
+				<Badge variant={getStatusColor(row.getValue("status")) as any}>
+					{row.getValue("status")
+						? (row.getValue("status") as string).replace(/_/g, " ")
+						: "UNKNOWN"}
+				</Badge>
+			),
+			filterFn: (row, id, value) => {
+				return value === "ALL" || row.getValue(id) === value;
+			},
+		},
+		{
+			accessorKey: "updatedAt",
+			header: ({ column }) => (
+				<DataTableColumnHeader column={column} title="Last Updated" />
+			),
+			cell: ({ row }) => (
+				<div className="text-muted-foreground">
+					{formatDate(row.getValue("updatedAt"))}
+				</div>
+			),
+		},
+		{
+			id: "feedback",
+			header: "Feedback",
+			cell: ({ row }) => {
+				const item = row.original;
+				const comments = getCommentsFor(item.type, item.id);
+				const commentCount = comments.length;
+				return commentCount > 0 ? (
+					<div className="flex items-center text-amber-600 gap-1 font-medium">
+						<MessageSquare className="h-4 w-4" />
+						{commentCount}
+					</div>
+				) : (
+					<span className="text-muted-foreground text-xs">-</span>
+				);
+			}
+		},
+		{
+			id: "actions",
+			cell: ({ row }) => {
+				const item = row.original;
+				return (
+					<div className="flex items-center justify-end gap-2 text-right">
+						<Button
+							variant="text"
+							className="text-primary hover:text-primary/80 hover:bg-primary/5 text-sm px-2 py-1"
+							onClick={() => setSelectedSubmission(item)}
+						>
+							<Eye className="h-4 w-4 mr-2" />
+							View
+						</Button>
+						{(item.status.toUpperCase() === "REJECTED" ||
+							item.status.toUpperCase() === "PENDING" ||
+							item.status.toUpperCase() === "PENDING_REVIEW") && (
+								<Button
+									variant="outlined"
+									className="text-sm px-3 py-1"
+									onClick={() => handleResubmit(item)}
+								>
+									{item.status.toUpperCase() === "REJECTED" ? "Resubmit" : "Edit"}
+								</Button>
+							)}
+					</div>
+				)
+			}
+		},
+	];
 
 	return (
 		<div className="min-h-screen bg-slate-50 pb-20">
@@ -209,121 +307,38 @@ export default function Submissions() {
 			<div className="container mx-auto py-8">
 				<div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
 					<h1 className="text-3xl font-bold">My Submissions</h1>
-					<div className="mt-4 md:mt-0 flex items-center gap-4">
-						<div className="flex items-center gap-2 bg-white px-3 py-2 rounded-md border shadow-sm">
-							<Filter className="h-4 w-4 text-muted-foreground" />
-							<select
-								className="bg-transparent border-none text-sm focus:ring-0 outline-none"
-								value={filterType}
-								onChange={(e) => setFilterType(e.target.value)}
-							>
-								<option value="ALL">All Types</option>
-								<option value="KYC">KYC</option>
-								<option value="INVESTOR">Investor</option>
-								<option value="SPONSOR">Sponsor</option>
-								<option value="LISTING">Listing</option>
-							</select>
-						</div>
-					</div>
 				</div>
 
-				<div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-					<div className="overflow-x-auto">
-						<table className="w-full text-sm text-left">
-							<thead className="bg-slate-50 text-muted-foreground border-b font-medium">
-								<tr>
-									<th className="px-6 py-4">Title</th>
-									<th className="px-6 py-4">Type</th>
-									<th className="px-6 py-4">Status</th>
-									<th className="px-6 py-4">Last Updated</th>
-									<th className="px-6 py-4">Feedback</th>
-									<th className="px-6 py-4 text-right">Actions</th>
-								</tr>
-							</thead>
-							<tbody className="divide-y">
-								{filteredSubmissions.length === 0 ? (
-									<tr>
-										<td
-											colSpan={6}
-											className="px-6 py-12 text-center text-muted-foreground"
-										>
-											No submissions found.
-										</td>
-									</tr>
-								) : (
-									filteredSubmissions.map((item, idx) => {
-										const finalVariant = getStatusColor(item.status) as any;
-										const comments = getCommentsFor(item.type, item.id);
-										const commentCount = comments.length;
+				<div className="bg-white rounded-lg shadow-sm border p-4">
 
-										return (
-											<tr
-												key={`${item.type}-${item.id}-${idx}`}
-												className="hover:bg-slate-50/50 transition-colors"
-											>
-												<td className="px-6 py-4 font-medium text-foreground">
-													{item.title}
-												</td>
-												<td className="px-6 py-4">
-													<Badge
-														variant="outline"
-														className="font-mono text-xs"
-													>
-														{item.type}
-													</Badge>
-												</td>
-												<td className="px-6 py-4">
-													<Badge variant={finalVariant}>
-														{item.status
-															? item.status.replace(/_/g, " ")
-															: "UNKNOWN"}
-													</Badge>
-												</td>
-												<td className="px-6 py-4 text-muted-foreground">
-													{formatDate(item.updatedAt)}
-												</td>
-												<td className="px-6 py-4">
-													{commentCount > 0 ? (
-														<div className="flex items-center text-amber-600 gap-1 font-medium">
-															<MessageSquare className="h-4 w-4" />
-															{commentCount}
-														</div>
-													) : (
-														<span className="text-muted-foreground text-xs">
-															-
-														</span>
-													)}
-												</td>
-												<td className="px-6 py-4 text-right">
-													<div className="flex items-center justify-end gap-2">
-														<Button
-															variant="text"
-															className="text-primary hover:text-primary/80 hover:bg-primary/5 text-sm px-2 py-1"
-															onClick={() => setSelectedSubmission(item)}
-														>
-															<Eye className="h-4 w-4 mr-2" />
-															View
-														</Button>
-														{(item.status.toUpperCase() === "REJECTED" ||
-															item.status.toUpperCase() === "PENDING" ||
-															item.status.toUpperCase() === "PENDING_REVIEW") && (
-																<Button
-																	variant="outlined"
-																	className="text-sm px-3 py-1"
-																	onClick={() => handleResubmit(item)}
-																>
-																	{item.status.toUpperCase() === "REJECTED" ? "Resubmit" : "Edit"}
-																</Button>
-															)}
-													</div>
-												</td>
-											</tr>
-										);
-									})
-								)}
-							</tbody>
-						</table>
-					</div>
+					<DataTable
+						columns={columns}
+						data={submissions}
+						searchPlaceholder="Search submissions..."
+						filterColumnName="title"
+						renderToolbar={(table) => (
+							<div className="flex items-center gap-2">
+								<div className="flex items-center gap-2 bg-white px-3 py-2 rounded-md border shadow-sm">
+									<Filter className="h-4 w-4 text-muted-foreground" />
+									<select
+										className="bg-transparent border-none text-sm focus:ring-0 outline-none"
+										value={
+											(table.getColumn("type")?.getFilterValue() as string) ?? "ALL"
+										}
+										onChange={(e) =>
+											table.getColumn("type")?.setFilterValue(e.target.value)
+										}
+									>
+										<option value="ALL">All Types</option>
+										<option value="KYC">KYC</option>
+										<option value="INVESTOR">Investor</option>
+										<option value="SPONSOR">Sponsor</option>
+										<option value="LISTING">Listing</option>
+									</select>
+								</div>
+							</div>
+						)}
+					/>
 				</div>
 			</div>
 

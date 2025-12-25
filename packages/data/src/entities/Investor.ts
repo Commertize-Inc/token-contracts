@@ -10,6 +10,10 @@ import {
 
 import { VerificationStatus } from "../enums/onboarding";
 
+/**
+ * Embeddable entity representing an investor's profile and verification status.
+ * Contains accreditation details, investment preferences, and compliance data.
+ */
 @Embeddable()
 export class Investor {
 	@Enum({

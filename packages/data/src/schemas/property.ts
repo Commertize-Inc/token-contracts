@@ -103,7 +103,10 @@ export const createListingSchema = z.object({
 // Schema for updating a property (partial)
 export const updateListingSchema = createListingSchema.partial();
 
+/** Input type for creating a new listing. Derived from Zod schema. */
 export type CreateListingInput = z.infer<typeof createListingSchema>;
+
+/** Input type for updating an existing listing. Partial of create schema. */
 export type UpdateListingInput = z.infer<typeof updateListingSchema>;
 
 // Schema for admin review

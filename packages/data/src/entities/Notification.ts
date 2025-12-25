@@ -10,6 +10,9 @@ export enum NotificationType {
 	ACTION_REQUIRED = "action_required",
 }
 
+/**
+ * Entity representing a system notification for a user.
+ */
 @Entity({ tableName: "notification" })
 export class Notification {
 	@PrimaryKey()
@@ -18,9 +21,11 @@ export class Notification {
 	@ManyToOne(() => User)
 	user!: User;
 
+	/** Title of the notification. */
 	@Property({ type: "string" })
 	title!: string;
 
+	/** Body content of the notification. */
 	@Property({ type: "text" })
 	message!: string;
 

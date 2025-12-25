@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button, Alert } from "@commertize/ui";
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "@commertize/ui";
+// import {
+// 	Table,
+// 	TableBody,
+// 	TableCell,
+// 	TableHead,
+// 	TableHeader,
+// 	TableRow,
+// } from "@commertize/ui";
 import { Navbar } from "../components/Navbar";
 import { api } from "../lib/api";
 import { SponsorFormFields } from "../components/onboarding/SponsorFormFields";
@@ -30,6 +30,8 @@ import type { Listing } from "@commertize/data";
 import { ListingStatus, EntityType } from "@commertize/data/enums";
 import { DividendModal } from "../components/DividendModal";
 import { FeedbackModal } from "../components/FeedbackModal";
+import { DataTable, DataTableColumnHeader } from "@commertize/ui";
+import type { ColumnDef } from "@tanstack/react-table";
 
 interface ListingWithFunding extends Listing {
 	amountFunded?: number;
@@ -317,6 +319,132 @@ export default function SponsorDashboard() {
 		}
 	};
 
+	const columns: ColumnDef<ListingWithFunding>[] = [
+		{
+			id: "images",
+			header: "Image",
+			cell: ({ row }) => (
+				<div className="w-12 h-12 rounded-lg bg-slate-100 overflow-hidden">
+					{row.original.images?.[0] ? (
+						<img
+							src={row.original.images[0]}
+							alt={row.original.name}
+							className="w-full h-full object-cover"
+						/>
+					) : (
+						<div className="w-full h-full flex items-center justify-center">
+							<Building2 className="w-5 h-5 text-slate-300" />
+						</div>
+					)}
+				</div>
+			),
+		},
+		{
+			accessorKey: "name",
+			header: ({ column }) => (
+				<DataTableColumnHeader column={column} title="Property Name" />
+			),
+			cell: ({ row }) => (
+				<div
+					className="cursor-pointer font-medium"
+					onClick={() => navigate(`/listings/${row.original.id}/edit`)}
+				>
+					{row.original.name}
+					<div className="text-xs text-slate-500 mt-0.5">
+						{row.original.propertyType}
+					</div>
+				</div>
+			),
+		},
+		{
+			accessorKey: "location",
+			header: "Location",
+			cell: ({ row }) => (
+				<div>
+					{row.original.city}, {row.original.state}
+				</div>
+			),
+		},
+		{
+			accessorKey: "status",
+			header: ({ column }) => (
+				<DataTableColumnHeader column={column} title="Status" />
+			),
+			cell: ({ row }) => getStatusBadge(row.original.status),
+			filterFn: (row, id, value) => {
+				return value.includes(row.getValue(id));
+			},
+		},
+		{
+			id: "funded",
+			header: "Funded",
+			cell: ({ row }) => {
+				const listing = row.original;
+				return (
+					<div className="flex flex-col items-end">
+						<span className="font-mono text-sm">
+							${(listing.amountFunded || 0).toLocaleString()}
+						</span>
+						<div className="w-24 h-1.5 bg-slate-100 rounded-full mt-1 overflow-hidden">
+							<div
+								className="h-full bg-green-500 rounded-full"
+								style={{
+									width: `${Math.min(
+										100,
+										((listing.amountFunded || 0) /
+											listing.financials.equityRequired) *
+										100
+									)}%`,
+								}}
+							/>
+						</div>
+					</div>
+				);
+			},
+		},
+		{
+			accessorKey: "equityRequired",
+			header: ({ column }) => (
+				<DataTableColumnHeader column={column} title="Target Raise" />
+			),
+			cell: ({ row }) => (
+				<div className="text-right font-mono">
+					${row.original.financials.equityRequired.toLocaleString()}
+				</div>
+			),
+		},
+		{
+			id: "actions",
+			header: "Actions",
+			cell: ({ row }) => {
+				const listing = row.original;
+				return (
+					<div className="relative flex justify-end">
+						<Button
+							variant="text"
+							className="text-slate-400 hover:text-slate-600 action-menu-trigger"
+							onClick={(e) => {
+								e.stopPropagation();
+								const rect = (
+									e.currentTarget as HTMLButtonElement
+								).getBoundingClientRect();
+								setMenuPosition({
+									top: rect.bottom + window.scrollY,
+									right: window.innerWidth - rect.right,
+								});
+								setOpenActionMenuId(
+									openActionMenuId === listing.id ? null : listing.id
+								);
+							}}
+						>
+							<MoreVertical className="w-5 h-5" />
+						</Button>
+					</div>
+				);
+			},
+		},
+	];
+
 	return (
 		<div className="min-h-screen bg-slate-50">
 			<Navbar />
@@ -379,128 +507,15 @@ export default function SponsorDashboard() {
 									<AlertCircle className="w-8 h-8 mb-2" />
 									<p>{error}</p>
 								</div>
-							) : listings.length === 0 ? (
-								<div className="p-12 text-center">
-									<div className="mx-auto w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mb-4">
-										<Plus className="w-6 h-6 text-slate-400" />
-									</div>
-									<h3 className="text-lg font-medium text-slate-900">
-										No listings yet
-									</h3>
-									<p className="mt-1 text-slate-500 mb-6">
-										Get started by creating your first property listing.
-									</p>
-									<Button
-										onClick={() => navigate("/listings/new")}
-										variant="secondary"
-									>
-										Create Listing
-									</Button>
-								</div>
 							) : (
-								<div className="overflow-x-auto">
-									<Table>
-										<TableHeader>
-											<TableRow>
-												<TableHead className="w-[80px]">Image</TableHead>
-												<TableHead>Property Name</TableHead>
-												<TableHead>Location</TableHead>
-												<TableHead>Status</TableHead>
-												<TableHead className="text-right">Funded</TableHead>
-												<TableHead className="text-right">
-													Target Raise
-												</TableHead>
-												<TableHead className="text-right">Actions</TableHead>
-											</TableRow>
-										</TableHeader>
-										<TableBody>
-											{listings.map((listing) => (
-												<TableRow
-													key={listing.id}
-													onClick={() =>
-														navigate(`/listings/${listing.id}/edit`)
-													}
-													className="cursor-pointer hover:bg-slate-50"
-												>
-													<TableCell>
-														<div className="w-12 h-12 rounded-lg bg-slate-100 overflow-hidden">
-															{listing.images?.[0] ? (
-																<img
-																	src={listing.images[0]}
-																	alt={listing.name}
-																	className="w-full h-full object-cover"
-																/>
-															) : (
-																<div className="w-full h-full flex items-center justify-center">
-																	<Building2 className="w-5 h-5 text-slate-300" />
-																</div>
-															)}
-														</div>
-													</TableCell>
-													<TableCell className="font-medium">
-														{listing.name}
-														<div className="text-xs text-slate-500 mt-0.5">
-															{listing.propertyType}
-														</div>
-													</TableCell>
-													<TableCell>
-														{listing.city}, {listing.state}
-													</TableCell>
-													<TableCell>
-														{getStatusBadge(listing.status)}
-													</TableCell>
-													<TableCell className="text-right">
-														<div className="flex flex-col items-end">
-															<span className="font-mono text-sm">
-																${(listing.amountFunded || 0).toLocaleString()}
-															</span>
-															<div className="w-24 h-1.5 bg-slate-100 rounded-full mt-1 overflow-hidden">
-																<div
-																	className="h-full bg-green-500 rounded-full"
-																	style={{
-																		width: `${Math.min(
-																			100,
-																			((listing.amountFunded || 0) /
-																				listing.financials.equityRequired) *
-																			100
-																		)}%`,
-																	}}
-																/>
-															</div>
-														</div>
-													</TableCell>
-													<TableCell className="text-right font-mono">
-														${listing.financials.equityRequired.toLocaleString()}
-													</TableCell>
-													<TableCell className="text-right">
-														<div className="relative flex justify-end">
-															<Button
-																variant="text"
-																className="text-slate-400 hover:text-slate-600 action-menu-trigger"
-																onClick={(e) => {
-																	e.stopPropagation();
-																	const rect = (
-																		e.currentTarget as HTMLButtonElement
-																	).getBoundingClientRect();
-																	setMenuPosition({
-																		top: rect.bottom + window.scrollY,
-																		right: window.innerWidth - rect.right,
-																	});
-																	setOpenActionMenuId(
-																		openActionMenuId === listing.id
-																			? null
-																			: listing.id
-																	);
-																}}
-															>
-																<MoreVertical className="w-5 h-5" />
-															</Button>
-														</div>
-													</TableCell>
-												</TableRow>
-											))}
-										</TableBody>
-									</Table>
+								<div className="p-6">
+									<DataTable
+										columns={columns}
+										data={listings}
+										view="table"
+										filterColumnName="name"
+										searchPlaceholder="Filter listings..."
+									/>
 								</div>
 							)}
 						</div>

@@ -12,6 +12,10 @@ export interface OnboardingStatusData {
 		id: string;
 		businessName: string;
 		status: VerificationStatus | string;
+		ein?: string;
+		address?: string;
+		bio?: string;
+		kybData?: any;
 	};
 	user?: {
 		id: string;
