@@ -59,7 +59,8 @@ export const ListingCard = ({
 			whileInView={{ opacity: 1, y: 0 }}
 			viewport={{ once: true }}
 			transition={{ duration: 0.6, delay: index * 0.1 }}
-			className={`bg-white rounded-2xl border-2 border-[#D4A024] overflow-hidden hover:shadow-xl transition-all duration-300 ${className}`}
+			onClick={handleViewDetails}
+			className={`bg-white rounded-2xl border-2 border-[#D4A024] overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer ${className}`}
 		>
 			<div className="relative h-48 bg-gradient-to-br from-gray-200 to-gray-300 overflow-hidden">
 				{listing.images && listing.images.length > 0 ? (
@@ -130,7 +131,14 @@ export const ListingCard = ({
 					</div>
 				</div>
 
-				<Button width="full" variant="primary" onClick={handleViewDetails}>
+				<Button
+					width="full"
+					variant="primary"
+					onClick={(e) => {
+						e.stopPropagation();
+						handleViewDetails();
+					}}
+				>
 					View Details
 				</Button>
 			</div>

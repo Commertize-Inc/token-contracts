@@ -38,6 +38,7 @@ interface DataTableProps<TData, TValue> {
 	renderToolbar?: (table: TableInstance<TData>) => React.ReactNode;
 	filterColumnName?: string; // For simple search
 	searchPlaceholder?: string;
+	onRowClick?: (row: TData) => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -48,6 +49,7 @@ export function DataTable<TData, TValue>({
 	renderToolbar,
 	filterColumnName,
 	searchPlaceholder = "Filter...",
+	onRowClick,
 }: DataTableProps<TData, TValue>) {
 	const [rowSelection, setRowSelection] = React.useState({});
 	const [columnVisibility, setColumnVisibility] =
@@ -154,6 +156,8 @@ export function DataTable<TData, TValue>({
 									<TableRow
 										key={row.id}
 										data-state={row.getIsSelected() && "selected"}
+										onClick={() => onRowClick?.(row.original)}
+										className={onRowClick ? "cursor-pointer" : ""}
 									>
 										{row.getVisibleCells().map((cell) => (
 											<TableCell key={cell.id}>

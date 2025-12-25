@@ -51,16 +51,56 @@ export default function MarketplacePage() {
 	const [userName] = useState<string>("Investor");
 
 	const columns: ColumnDef<Listing>[] = [
-		{ accessorKey: "name", filterFn: "includesString" },
-		{ accessorKey: "propertyType", filterFn: "equals" },
-		{ accessorKey: "status", filterFn: "equals" },
+		{
+			accessorKey: "name",
+			header: "Property Name",
+			filterFn: "includesString",
+		},
+		{
+			accessorKey: "propertyType",
+			header: "Type",
+			filterFn: "equals",
+		},
+		{
+			accessorKey: "status",
+			header: "Status",
+			filterFn: "equals",
+			cell: ({ row }) => {
+				const status = row.getValue("status") as string;
+				return (
+					<span className="text-sm">
+						{status === "ACTIVE"
+							? "Live"
+							: status.replace(/_/g, " ").toLowerCase()}
+					</span>
+				);
+			},
+		},
 		{
 			id: "tokenPrice",
+			header: "Token Price",
 			accessorFn: (row) => row.tokenomics?.tokenPrice ?? 0,
+			cell: ({ row }) => {
+				const price = row.getValue("tokenPrice") as number;
+				return (
+					<span className="text-sm">
+						${price > 0 ? price.toLocaleString() : "TBD"}
+					</span>
+				);
+			},
 		},
 		{
 			id: "capRate",
+			header: "Cap Rate",
 			accessorFn: (row) => row.financials?.exitCapRate ?? 0,
+			cell: ({ row }) => {
+				const rate = row.getValue("capRate") as number;
+				return (
+					<span className="text-sm">
+						{rate > 0 ? `${rate.toFixed(2)}%` : "TBD"}
+					</span>
+				);
+			},
 		},
 	];
 
@@ -134,6 +174,7 @@ export default function MarketplacePage() {
 							columns={columns}
 							data={listings}
 							view="grid"
+							onRowClick={(listing) => navigate(`/listing/${listing.id}`)}
 							renderGridItem={(listing) => (
 								<motion.div
 									initial={{ opacity: 0, y: 20 }}
@@ -174,11 +215,10 @@ export default function MarketplacePage() {
 										<div className="flex gap-2">
 											<button
 												onClick={() => setShowFilters(!showFilters)}
-												className={`flex items-center gap-2 px-4 py-2 border rounded-md h-10 transition-colors text-sm font-medium ${
-													showFilters
-														? "bg-[#D4A024] text-white border-[#D4A024]"
-														: "border-input hover:bg-accent hover:text-accent-foreground text-slate-700"
-												}`}
+												className={`flex items-center gap-2 px-4 py-2 border rounded-md h-10 transition-colors text-sm font-medium ${showFilters
+													? "bg-[#D4A024] text-white border-[#D4A024]"
+													: "border-input hover:bg-accent hover:text-accent-foreground text-slate-700"
+													}`}
 											>
 												<Filter className="w-4 h-4" />
 												Filters
