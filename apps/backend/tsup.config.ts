@@ -9,5 +9,6 @@ export default defineConfig({
 	splitting: false,
 	noExternal: [],
 	external: [/^@commertize\//, /^@mikro-orm\//, "tedious", "sqlite3"],
+	skipNodeModulesBundle: true,
 	onSuccess: "echo 'Build completed successfully'",
 });

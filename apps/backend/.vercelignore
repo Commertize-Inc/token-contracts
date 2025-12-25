@@ -1,35 +1,8 @@
-# Other apps
 ../landing
 ../dashboard
-
-# Test files
-**/*.test.ts
-**/*.spec.ts
-test/
-tests/
-__tests__/
-vitest.config.ts
-
-# Development files
-.vscode/
-.idea/
-*.log
-*.local
-
-# Build artifacts
-.turbo
-.next
-coverage
-*.tsbuildinfo
-
-# Documentation
-README.md
-docs/
-
-# Environment files (handled by Vercel)
-.env.local
-.env.*.local
-
-# Example files
-**/EXAMPLE.md
-**/examples/
+../../apps/landing
+../../apps/dashboard
+../../packages/ui
+**/*.tsx
+**/apps/landing/**
+**/apps/dashboard/**

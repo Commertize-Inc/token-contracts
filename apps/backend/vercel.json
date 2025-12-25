@@ -4,5 +4,8 @@
 			"source": "/(.*)",
 			"destination": "/api/index"
 		}
-	]
+	],
+	"buildCommand": "pnpm build",
+	"installCommand": "pnpm install",
+	"framework": null
 }
