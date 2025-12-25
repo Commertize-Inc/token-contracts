@@ -1,0 +1,46 @@
+{
+	"name": "@commertize/backend",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "NODE_OPTIONS='--conditions=development' tsx watch src/index.ts",
+		"build": "pnpm build:deps && tsup",
+		"build:deps": "cd ../.. && npx turbo run build --filter=@commertize/backend^...",
+		"test": "vitest",
+		"clean": "rm -rf node_modules dist .turbo .next .vite coverage"
+	},
+	"exports": {
+		"./client": "./src/client.ts"
+	},
+	"dependencies": {
+		"@commertize/data": "workspace:*",
+		"@commertize/utils": "workspace:*",
+		"@hono/node-server": "^1.13.7",
+		"@mikro-orm/core": "^6.6.2",
+		"@mikro-orm/postgresql": "^6.6.2",
+		"@privy-io/server-auth": "^1.32.5",
+		"@vercel/blob": "^2.0.0",
+		"date-fns": "^4.1.0",
+		"dotenv": "^16.4.7",
+		"hono": "^4.6.14",
+		"openai": "^6.10.0",
+		"plaid": "^39.1.0",
+		"stripe": "^20.0.0",
+		"zod": "^3.23.8"
+	},
+	"devDependencies": {
+		"@mikro-orm/cli": "^6.6.2",
+		"@types/node": "^22.10.2",
+		"@types/supertest": "^6.0.3",
+		"nodemon": "^3.1.11",
+		"reflect-metadata": "^0.2.2",
+		"supertest": "^7.1.4",
+		"ts-node": "^10.9.2",
+		"tsconfig-paths": "^4.2.0",
+		"tsup": "^8.5.1",
+		"tsx": "^4.19.2",
+		"typescript": "^5.7.2",
+		"vitest": "^4.0.16"
+	}
+}

@@ -4,18 +4,18 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: 'Show pending migrations without executing'
+        description: "Show pending migrations without executing"
         required: false
         type: boolean
         default: false
   push:
     branches:
-      - 'release/production'
-      - 'release/preview'
+      - "release/production"
+      - "release/preview"
     paths:
-      - 'packages/data/src/migrations/**'
-      - 'packages/data/src/**/*.ts'
-      - '.github/workflows/migrate.yml'
+      - "packages/data/src/migrations/**"
+      - "packages/data/src/**/*.ts"
+      - ".github/workflows/migrate.yml"
 
 jobs:
   setup:
@@ -37,9 +37,36 @@ jobs:
             echo "environments=[]" >> "$GITHUB_OUTPUT"
           fi
 
+  check-code:
+    name: Lint & Format Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10.13.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Format Check
+        run: pnpm format:check
+
   migrate:
     name: Run Migrations (${{ matrix.environment }})
-    needs: setup
+    needs: [setup, check-code]
     if: ${{ needs.setup.outputs.environments != '[]' && needs.setup.outputs.environments != '' }}
     runs-on: ubuntu-latest
     strategy:
@@ -61,7 +88,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install

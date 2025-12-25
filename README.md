@@ -48,6 +48,7 @@ Commertize is a monorepo built with Next.js 16, featuring a public landing page 
     ```
 
     Update `apps/dashboard/.env.local` with your credentials:
+
     ```env
     NEXT_PUBLIC_PRIVY_APP_ID=your_app_id
     NEXT_PUBLIC_PRIVY_CLIENT_ID=your_client_id
@@ -97,17 +98,20 @@ commertize.com/
 ## Features
 
 ### Landing Page (`apps/landing`)
+
 - Premium real estate showcase
 - SEO-optimized static pages
 - Responsive, brand-consistent UI
 
 ### Dashboard (`apps/dashboard`)
+
 - **Authentication**: Privy-powered email/wallet login
 - **KYC Verification**: Required identity verification flow
 - **User Management**: PostgreSQL + MikroORM
 - **Session Security**: Robust session invalidation
 
 ### Shared UI (`packages/ui`)
+
 - Reusable components (Button, Chip, Logo)
 - Consistent theming and typography
 

@@ -2,29 +2,47 @@
 	"name": "@commertize/ui",
 	"version": "0.1.0",
 	"private": true,
-	"main": "./index.ts",
-	"types": "./index.ts",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
 	"exports": {
-		".": "./index.ts",
-		"./*": "./*"
+		".": {
+			"import": "./dist/index.mjs",
+			"require": "./dist/index.js",
+			"types": "./dist/index.d.ts"
+		},
+		"./*": {
+			"import": "./dist/*.mjs",
+			"require": "./dist/*.js",
+			"types": "./dist/*.d.ts"
+		}
 	},
 	"scripts": {
-		"lint": "eslint ."
+		"build": "tsup src/index.ts --format cjs,esm --dts --clean --external react --external react-dom",
+		"lint": "eslint .",
+		"clean": "rm -rf node_modules dist .turbo .next .vite coverage"
 	},
 	"peerDependencies": {
-		"react": "^19.0.0",
-		"react-dom": "^19.0.0"
+		"react": "^18.0.0",
+		"react-dom": "^18.0.0"
 	},
 	"dependencies": {
+		"@commertize/data": "workspace:*",
+		"@radix-ui/react-progress": "^1.1.8",
+		"@radix-ui/react-slot": "^1.2.4",
 		"add": "^2.0.6",
-		"lucide-react": "^0.554.0",
+		"class-variance-authority": "^0.7.1",
+		"clsx": "^2.1.1",
+		"framer-motion": "12.23.26",
+		"lucide-react": "^0.560.0",
 		"pnpm": "^10.25.0",
-		"posthog-js": "^1.302.2",
-		"posthog-node": "^5.17.2"
+		"posthog-js": "^1.305.0",
+		"posthog-node": "^5.17.2",
+		"tailwind-merge": "^3.4.0"
 	},
 	"devDependencies": {
-		"@types/react": "^19.2.7",
-		"@types/react-dom": "^19.2.3",
+		"@types/react": "^18.0.0",
+		"@types/react-dom": "^18.0.0",
+		"tsup": "^8.5.1",
 		"typescript": "^5.9.3"
 	}
 }

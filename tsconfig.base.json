@@ -5,19 +5,25 @@
 		"strict": true,
 		"skipLibCheck": true,
 		"forceConsistentCasingInFileNames": true,
-
 		// Modules
 		"module": "ESNext",
 		"moduleResolution": "bundler",
 		"resolveJsonModule": true,
-
 		// Emit
 		"esModuleInterop": true,
 		"isolatedModules": true,
-
 		// Language and Environment
 		"target": "ES2020",
-		"lib": ["ES2020"]
+		"lib": ["ES2020"],
+		"baseUrl": "./",
+		"paths": {
+			"@commertize/utils/*": ["packages/utils/src/*"],
+			"@commertize/utils": ["packages/utils/src/index.ts"],
+			"@commertize/data/*": ["packages/data/src/*"],
+			"@commertize/data": ["packages/data/src/index.ts"],
+			"@commertize/ui/*": ["packages/ui/src/*"],
+			"@commertize/ui": ["packages/ui/src/index.ts"]
+		}
 	},
 	"exclude": ["node_modules", "dist"]
 }

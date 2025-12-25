@@ -25,6 +25,7 @@
 			]
 		},
 		"dev": {
+			"dependsOn": ["^build"],
 			"cache": false,
 			"persistent": true
 		},
@@ -32,9 +33,22 @@
 			"dependsOn": ["^build"]
 		},
 		"migration:create": {
+			"dependsOn": ["@commertize/data#build"],
 			"cache": false
 		},
 		"migration:up": {
+			"dependsOn": ["@commertize/data#build"],
+			"cache": false
+		},
+		"migration:pending": {
+			"dependsOn": ["@commertize/data#build"],
+			"cache": false
+		},
+		"test": {
+			"dependsOn": [],
+			"cache": false
+		},
+		"clean": {
 			"cache": false
 		}
 	},

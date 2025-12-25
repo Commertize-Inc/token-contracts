@@ -1,0 +1,221 @@
+/* UserMenu Styles */
+.userSection {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+.statusIndicator {
+	display: none;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.375rem 0.75rem;
+	background-color: #f0fdf4;
+	border: 1px solid #bbf7d0;
+	border-radius: 9999px;
+}
+
+@media (min-width: 640px) {
+	.statusIndicator {
+		display: flex;
+	}
+}
+
+.statusDot {
+	width: 0.5rem;
+	height: 0.5rem;
+	background-color: #22c55e;
+	border-radius: 50%;
+	animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.5;
+	}
+}
+
+.statusText {
+	font-size: 0.75rem;
+	font-weight: 500;
+	color: #15803d;
+}
+
+.dropdownContainer {
+	position: relative;
+}
+
+.dropdownButton {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.5rem 0.75rem;
+	border-radius: var(--radius-md, 0.5rem);
+	transition: background-color 0.2s ease;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+}
+
+.dropdownButton:hover {
+	background-color: var(--color-slate-100, #f1f5f9);
+}
+
+.userInfo {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.userAvatar {
+	width: 2rem;
+	height: 2rem;
+	background-color: #c59b26;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.userAvatarIcon {
+	width: 1rem;
+	height: 1rem;
+	color: white;
+}
+
+.userName {
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: var(--color-slate-700, #334155);
+}
+
+.chevronIcon {
+	width: 1rem;
+	height: 1rem;
+	color: var(--color-slate-400, #94a3b8);
+	transition: transform 0.2s ease;
+}
+
+.chevronIconOpen {
+	transform: rotate(180deg);
+}
+
+.dropdownMenu {
+	position: absolute;
+	right: 0;
+	margin-top: 0.5rem;
+	width: 14rem;
+	background-color: white;
+	border-radius: var(--radius-lg, 0.75rem);
+	box-shadow:
+		0 10px 15px -3px rgba(0, 0, 0, 0.1),
+		0 4px 6px -2px rgba(0, 0, 0, 0.05);
+	border: 1px solid var(--color-slate-200, #e2e8f0);
+	padding: 0.25rem 0;
+	z-index: 50;
+}
+
+.userInfoSection {
+	padding: 0.75rem 1rem;
+	border-bottom: 1px solid var(--color-slate-100, #f1f5f9);
+}
+
+.userInfoLabel {
+	font-size: 0.75rem;
+	color: var(--color-slate-500, #64748b);
+}
+
+.userInfoValue {
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: var(--color-slate-900, #0f172a);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.walletSection {
+	padding: 0.5rem 1rem;
+	border-bottom: 1px solid var(--color-slate-100, #f1f5f9);
+}
+
+.walletLabel {
+	font-size: 0.75rem;
+	color: var(--color-slate-500, #64748b);
+}
+
+.walletAddress {
+	font-size: 0.75rem;
+	font-family: monospace;
+	color: var(--color-slate-700, #334155);
+}
+
+.profileLink {
+	width: 100%;
+	padding: 0.5rem 1rem;
+	text-align: left;
+	font-size: 0.875rem;
+	color: var(--color-slate-700, #334155);
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	transition: background-color 0.2s ease;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	text-decoration: none;
+}
+
+.profileLink:hover {
+	background-color: var(--color-slate-100, #f1f5f9);
+}
+
+.profileIcon {
+	width: 1rem;
+	height: 1rem;
+}
+
+.logoutButton {
+	width: 100%;
+	padding: 0.5rem 1rem;
+	text-align: left;
+	font-size: 0.875rem;
+	color: #dc2626;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	transition: background-color 0.2s ease;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+}
+
+.logoutButton:hover {
+	background-color: #fef2f2;
+}
+
+.logoutIcon {
+	width: 1rem;
+	height: 1rem;
+}
+
+.discordButton {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.5rem;
+	height: 2.5rem;
+	border-radius: var(--radius-md, 0.5rem);
+	color: #d4a024;
+	transition: all 0.2s ease;
+	text-decoration: none;
+}
+
+.discordButton:hover {
+	background-color: var(--color-slate-100, #f1f5f9);
+	opacity: 0.8;
+}

@@ -2,25 +2,30 @@
 	"name": "commertize-monorepo",
 	"version": "0.1.0",
 	"private": true,
-	"packageManager": "pnpm@10.13.1",
+	"packageManager": "pnpm@10.26.1+sha512.664074abc367d2c9324fdc18037097ce0a8f126034160f709928e9e9f95d98714347044e5c3164d65bd5da6c59c6be362b107546292a8eecb7999196e5ce58fa",
 	"scripts": {
 		"dev": "turbo run dev",
 		"dev:landing": "turbo run dev --filter=@commertize/landing",
 		"dev:dashboard": "turbo run dev --filter=@commertize/dashboard",
-		"docker:up": "docker compose up --build -d",
+		"docker:up": "docker compose up --build -d && pnpm migration:up",
 		"docker:down": "docker compose down",
 		"build": "turbo run build",
+		"build:packages": "turbo run build --filter='./packages/*'",
 		"lint": "turbo run lint",
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",
 		"migration:create": "turbo run migration:create",
-		"migration:up": "turbo run migration:up"
+		"migration:up": "turbo run migration:up",
+		"migration:pending": "turbo run migration:pending",
+		"sync:env": "tsx scripts/sync-vercel-env.ts",
+		"test": "turbo run test",
+		"clean": "turbo run clean && rm -rf node_modules"
 	},
 	"devDependencies": {
-		"@eslint/js": "^9.39.1",
-		"@typescript-eslint/eslint-plugin": "^8.48.1",
-		"@typescript-eslint/parser": "^8.48.1",
-		"eslint": "^9.39.1",
+		"@eslint/js": "^9.39.2",
+		"@typescript-eslint/eslint-plugin": "^8.49.0",
+		"@typescript-eslint/parser": "^8.49.0",
+		"eslint": "^9.39.2",
 		"eslint-config-next": "16.0.3",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-prettier": "^5.5.4",
@@ -33,6 +38,8 @@
 	"dependencies": {
 		"dotenv": "^17.2.3",
 		"dotenv-expand": "^12.0.3",
+		"react": "18.3.1",
+		"react-dom": "18.3.1",
 		"tsx": "^4.21.0"
 	}
 }
