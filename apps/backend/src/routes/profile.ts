@@ -47,9 +47,9 @@ profile.get("/", async (c) => {
 			businessName: user.sponsor?.businessName,
 			sponsor: user.sponsor
 				? {
-						businessName: user.sponsor.businessName,
-						status: user.sponsor.status,
-					}
+					businessName: user.sponsor.businessName,
+					status: user.sponsor.status,
+				}
 				: undefined,
 			walletAddress: user.walletAddress,
 			email: user.email,
@@ -127,6 +127,13 @@ profile.put("/", async (c) => {
 	}
 });
 
+// ... imports
+import { decrypt } from "../lib/security/encryption";
+import { getPlaidClient } from "../lib/plaid/client";
+import { PlaidItem } from "@commertize/data";
+
+// ... existing code ...
+
 profile.delete("/", async (c) => {
 	try {
 		const privyId = c.get("userId");
@@ -149,16 +156,42 @@ profile.delete("/", async (c) => {
 			);
 		}
 
-		// Delete from Privy first
+		// 1. Remove from Plaid (Revoke Access Tokens)
 		try {
-			await privyClient.deleteUser(privyId);
-		} catch (privyError) {
-			console.error("Error deleting user from Privy:", privyError);
-			// Continue to delete from DB even if Privy fails, or handle as needed.
-			// Ideally, we want to ensure consistency, but if Privy user is already gone, that's fine.
+			const plaidItems = await em.find(PlaidItem, { user });
+
+			const plaidClient = getPlaidClient();
+
+			for (const item of plaidItems) {
+				try {
+					if (item.accessToken) {
+						const accessToken = decrypt(item.accessToken);
+						await plaidClient.itemRemove({ access_token: accessToken });
+						console.info(`[Plaid] Removed item ${item.itemId} during user deletion`);
+					}
+				} catch (plaidError: any) {
+					console.warn(
+						`[Plaid] Failed to remove item ${item.itemId}:`,
+						plaidError?.response?.data || plaidError.message
+					);
+					// Continue deletion even if Plaid fails (might be already removed)
+				}
+			}
+		} catch (error) {
+			console.error("Error cleaning up Plaid items:", error);
 		}
 
-		// Delete from Database
+		// 2. Delete from Privy
+		try {
+			await privyClient.deleteUser(privyId);
+			console.info(`[Privy] Deleted user ${privyId}`);
+		} catch (privyError) {
+			console.error("Error deleting user from Privy:", privyError);
+			// Continue to delete from DB even if Privy fails
+		}
+
+		// 3. Delete from Database
+		// Cascade delete will remove PlaidItem, BankAccount, Investor, Sponsor, etc.
 		await em.removeAndFlush(user);
 
 		return c.json({ message: "User deleted successfully" });
