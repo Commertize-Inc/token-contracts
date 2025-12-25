@@ -8,7 +8,7 @@ import {
 } from "@commertize/data";
 
 export class ListingService {
-	constructor(private readonly em: EntityManager) {}
+	constructor(private readonly em: EntityManager) { }
 
 	async createListing(user: User, data: any) {
 		if (!user.sponsor || user.sponsor.status !== VerificationStatus.VERIFIED) {
@@ -118,5 +118,10 @@ export class ListingService {
 		}
 
 		await this.em.remove(listing).flush();
+	}
+
+	async mintPropertyToken(listing: Listing) {
+		// STUB: Minting Property Token via RPC (No-op for now)
+		console.log(`[STUB] Minting property token for listing: ${listing.id}`);
 	}
 }

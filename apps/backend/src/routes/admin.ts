@@ -16,6 +16,7 @@ import { getEM } from "../db";
 import { authMiddleware } from "../middleware/auth";
 import { HonoEnv } from "../types";
 import { NotificationService } from "../services/NotificationService";
+import { ListingService } from "../services/ListingService";
 
 const admin = new Hono<HonoEnv>();
 
@@ -167,9 +168,8 @@ admin.get("/submissions", async (c) => {
 					"propertyType",
 					"status",
 					"createdAt",
-					"sponsor.firstName",
-					"sponsor.lastName",
-					"sponsor.email",
+					"sponsor.id",
+					"sponsor.members",
 				],
 			}
 		);
@@ -239,9 +239,7 @@ admin.get("/submissions", async (c) => {
 				submittedAt: l.createdAt,
 				title: `Listing: ${l.name}`,
 				user: {
-					id: l.sponsor.id,
-					email: l.sponsor.email,
-					name: `${l.sponsor.firstName} ${l.sponsor.lastName}`,
+					id: l.sponsor.members[0].id,
 				},
 			})),
 		];
@@ -265,7 +263,7 @@ admin.post("/submissions/:type/:id/review", async (c) => {
 		const type = c.req.param("type").toUpperCase() as EntityType;
 		const id = c.req.param("id");
 		const body = await c.req.json();
-		const { action, comment } = body; // action: 'APPROVE' | 'REJECT' | 'REQUEST_INFO'
+		const { action, comment } = body;
 
 		if (
 			![
@@ -372,6 +370,12 @@ admin.post("/submissions/:type/:id/review", async (c) => {
 			comment
 		);
 
+		// 4. Mint tokens if listing is approved
+		if (type === EntityType.LISTING && action === "APPROVE") {
+			const listingService = new ListingService(em);
+			await listingService.mintPropertyToken(targetEntity);
+		}
+
 		em.persist(targetEntity);
 		await em.flush();
 
@@ -389,7 +393,7 @@ admin.post("/submissions/:type/:id/review", async (c) => {
 		return c.json(
 			{
 				error: "Internal Server Error",
-				details: error?.message || String(error),
+				details: error ? String(error) : "Unknown error",
 			},
 			500
 		);

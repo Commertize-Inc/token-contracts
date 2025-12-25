@@ -16,10 +16,7 @@ import { MOCK_LISTINGS } from "@commertize/data";
 
 const listings = new Hono<HonoEnv>();
 
-// Stub function for RPC call
-const mintPropertyToken = async (listing: Listing) => {
-	// STUB: Minting Property Token via RPC (No-op for now)
-};
+// listings.ts content below...
 
 listings.get("/", apiKeyMiddleware, async (c) => {
 	try {
@@ -216,9 +213,6 @@ listings.post("/", authMiddleware, async (c) => {
 		if (data.highlights) listing.highlights = data.highlights;
 
 		await em.persist(listing).flush();
-
-		// Call the RPC stub
-		await mintPropertyToken(listing);
 
 		return c.json({ success: true, listing });
 	} catch (error) {
