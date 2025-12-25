@@ -2,6 +2,7 @@ import OpenAI from "openai";
 
 const openai = new OpenAI({
 	apiKey: process.env.OPENAI_API_KEY,
+	dangerouslyAllowBrowser: true, // Enable for client-side demo if needed, but normally server-side
 });
 
 const COMMERTIZE_TOPICS = [
@@ -197,7 +198,7 @@ Respond with ONLY the DALL-E prompt, nothing else. Keep it under 200 characters.
 
 			return (
 				completion.choices[0].message.content?.trim() ||
-				"Modern glass skyscraper with golden hour lighting, minimalist architecture, white and gold color scheme, professional corporate aesthetic"
+				"Modern glass skyscraper with golden hour lighting, minimalist architecture, white and gold color scheme, professional corporate photography"
 			);
 		} catch (error) {
 			console.error("Failed to generate image prompt:", error);

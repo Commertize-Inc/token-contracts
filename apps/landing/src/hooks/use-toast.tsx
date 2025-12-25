@@ -1,5 +1,3 @@
-"use client";
-
 import {
 	useState,
 	useCallback,
@@ -15,11 +13,13 @@ interface Toast {
 	variant?: "default" | "destructive";
 }
 
+/* eslint-disable no-unused-vars */
 interface ToastContextType {
 	toasts: Toast[];
 	toast: (props: Omit<Toast, "id">) => void;
 	dismiss: (id: string) => void;
 }
+/* eslint-enable no-unused-vars */
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
@@ -45,15 +45,14 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 				{toasts.map((t) => (
 					<div
 						key={t.id}
-						className={`rounded-lg px-4 py-3 shadow-lg ${
-							t.variant === "destructive"
+						className={`rounded-lg px-4 py-3 shadow-lg ${t.variant === "destructive"
 								? "bg-red-500 text-white"
 								: "bg-white border border-gray-200 text-gray-900"
-						}`}
+							}`}
 					>
-						<p className="font-medium text-sm">{t.title}</p>
+						<p className="font-medium text-sm"> {t.title} </p>
 						{t.description && (
-							<p className="text-xs opacity-80 mt-1">{t.description}</p>
+							<p className="text-xs opacity-80 mt-1"> {t.description} </p>
 						)}
 					</div>
 				))}
@@ -66,11 +65,9 @@ export function useToast() {
 	const context = useContext(ToastContext);
 	if (!context) {
 		return {
-			toast: (props: Omit<Toast, "id">) => {
-				console.log("Toast:", props.title, props.description);
-			},
+			toast: () => { },
 			toasts: [],
-			dismiss: () => {},
+			dismiss: () => { },
 		};
 	}
 	return context;

@@ -1,30 +1,22 @@
 # Landing Page Application
 
-The public marketing face of Commertize. Designed to be fast, SEO-friendly, and visually immersive.
+The public-facing marketing and landing site for Commertize.
 
-## Features
+## Technologies
 
--   **Static Rendering**: High performance and SEO.
--   **Property Showcase**: Visual display of investment opportunities.
--   **Responsive Design**: Mobile-first approach.
+- **Framework**: React
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS
 
-## Tech Stack
-
--   **Framework**: Next.js 16 (App Router)
--   **Styling**: Tailwind CSS + CSS Modules
--   **Components**: Shared UI from `@commertize/ui`
-
-## Development
-
-### Running the App
+## Setup
 
 ```bash
+pnpm dev
+# or from root
 pnpm dev:landing
 ```
-Runs on `http://localhost:3000`.
 
-### Key Directories
+## Structure
 
--   `app/`: Routes and pages.
--   `components/`: Landing-specific components (e.g., Hero, Features).
--   `public/`: Static assets (images, fonts).
+- `src/pages`: Landing pages.
+- `src/components`: Landing-specific UI.

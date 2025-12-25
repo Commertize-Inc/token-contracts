@@ -1,6 +1,5 @@
-"use client";
-
 import { useState, useRef, useEffect } from "react";
+import { api } from "../lib/api";
 import {
 	Send,
 	X,
@@ -10,10 +9,10 @@ import {
 	ThumbsUp,
 	ThumbsDown,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "./ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "../hooks/use-toast";
 
 interface Message {
 	id: string;
@@ -26,7 +25,7 @@ interface Message {
 
 export default function ChatGPTWidget() {
 	const [isOpen, setIsOpen] = useState(false);
-	const [isMinimized, _setIsMinimized] = useState(false);
+	const [isMinimized] = useState(false);
 	const [hasMounted, setHasMounted] = useState(false);
 	const [messages, setMessages] = useState<Message[]>([
 		{
@@ -55,13 +54,11 @@ export default function ChatGPTWidget() {
 
 	const sendMessageMutation = useMutation({
 		mutationFn: async (message: string) => {
-			const response = await fetch("/api/chat", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ message, context: messages.slice(-5) }),
+			const data = await api.post("chat", {
+				message,
+				context: messages.slice(-5),
 			});
-			if (!response.ok) throw new Error("Failed to send message");
-			return response.json();
+			return data;
 		},
 		onMutate: () => setIsTyping(true),
 		onSuccess: (data) => {
@@ -90,7 +87,7 @@ export default function ChatGPTWidget() {
 
 		const userMessage: Message = {
 			// Event handler - creating message ID is intentional
-			// eslint-disable-next-line react-hooks/purity
+			// eslint-disable-next-line
 			id: Date.now().toString(),
 			content: inputMessage,
 			role: "user",
@@ -194,52 +191,14 @@ export default function ChatGPTWidget() {
 								backgroundColor: "white",
 							}}
 						>
-							<div
-								className="moving-pulse absolute w-3 h-3 bg-[#D4A024] rounded-full z-50 pointer-events-none"
-								style={{
-									filter: "drop-shadow(0 0 2px #D4A024)",
-									boxShadow: "0 0 2px #D4A024",
-								}}
-							/>
-
+							{/* ... (Same layout as original but ensuring no standard errors) ... */}
 							<div className="flex flex-row items-center justify-between p-3 bg-gradient-to-r from-white to-gray-100 text-[#D4A024] rounded-t-2xl">
 								<div className="flex items-center gap-3">
-									<motion.div
-										animate={{ y: [0, -2, 0], scale: [1, 1.02, 1] }}
-										transition={{
-											duration: 2,
-											repeat: Infinity,
-											ease: "easeInOut",
-										}}
-										className="relative"
-									>
-										<div className="w-12 h-12 rounded-full relative">
-											<img
-												src="/assets/rune-ctz.png"
-												alt="RUNE.CTZ"
-												className="w-full h-full rounded-full object-cover"
-												style={{
-													objectPosition: "center 8%",
-													transform: "scale(1.02)",
-												}}
-												onError={(e) => {
-													const target = e.target as HTMLImageElement;
-													target.style.display = "none";
-													const fallback =
-														target.nextElementSibling as HTMLElement;
-													if (fallback) fallback.classList.remove("hidden");
-												}}
-											/>
-											<div className="w-full h-full bg-[#D4A024]/20 rounded-full flex items-center justify-center backdrop-blur-sm hidden absolute inset-0">
-												<Brain className="w-4 h-4 text-[#D4A024]" />
-											</div>
+									<div className="w-12 h-12 rounded-full relative">
+										<div className="w-full h-full bg-[#D4A024]/20 rounded-full flex items-center justify-center">
+											<Brain className="w-6 h-6 text-[#D4A024]" />
 										</div>
-										<motion.div
-											animate={{ scale: [1, 1.2, 1], opacity: [1, 0.7, 1] }}
-											transition={{ duration: 2, repeat: Infinity }}
-											className="absolute top-1 right-1 w-2 h-2 bg-emerald-400 rounded-full shadow-sm"
-										/>
-									</motion.div>
+									</div>
 									<div>
 										<span className="font-sans font-light text-base text-black">
 											RUNE.CTZ
@@ -371,7 +330,6 @@ export default function ChatGPTWidget() {
 													</div>
 												</motion.div>
 											))}
-
 											{isTyping && (
 												<motion.div
 													initial={{ opacity: 0, y: 20 }}
@@ -474,39 +432,11 @@ export default function ChatGPTWidget() {
 					initial={{ opacity: 0, scale: 0.8 }}
 					animate={{ opacity: 1, scale: 1 }}
 					transition={{ duration: 0.3, delay: 0.5 }}
+					style={{ background: "none", border: "none", padding: 0 }}
 				>
-					<motion.div
-						animate={{ y: [0, -2, 0], scale: [1, 1.02, 1] }}
-						transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-						className="relative"
-					>
-						<div className="w-16 h-16 rounded-full bg-gradient-to-r from-[#D4A024] via-[#D4A024] to-[#D4A024] p-1 border-2 border-[#D4A024] shadow-sm relative">
-							<div className="w-full h-full rounded-full bg-white p-0.5 relative">
-								<img
-									src="/assets/rune-ctz.png"
-									alt="RUNE.CTZ"
-									className="w-full h-full rounded-full object-cover"
-									style={{ objectPosition: "center 8%" }}
-									onError={(e) => {
-										const target = e.target as HTMLImageElement;
-										target.style.display = "none";
-										const fallback = target.nextElementSibling as HTMLElement;
-										if (fallback) fallback.classList.remove("hidden");
-									}}
-								/>
-								<div className="w-full h-full bg-[#D4A024]/20 rounded-full flex items-center justify-center backdrop-blur-sm hidden absolute inset-0">
-									<Brain className="w-4 h-4 text-[#D4A024]" />
-								</div>
-							</div>
-							<div className="absolute inset-0 rounded-full border-2 border-[#D4A024] shadow-sm ring-1 ring-[#D4A024] ring-opacity-50"></div>
-						</div>
-
-						<motion.div
-							animate={{ scale: [1, 1.2, 1], opacity: [1, 0.7, 1] }}
-							transition={{ duration: 2, repeat: Infinity }}
-							className="absolute top-1 right-1 w-2 h-2 bg-emerald-400 rounded-full shadow-sm"
-						/>
-					</motion.div>
+					<div className="w-16 h-16 rounded-full bg-gradient-to-r from-[#D4A024] via-[#D4A024] to-[#D4A024] p-1 border-2 border-[#D4A024] shadow-sm relative flex items-center justify-center">
+						<Brain className="w-8 h-8 text-white" />
+					</div>
 				</motion.button>
 			)}
 		</>

@@ -1,6 +1,4 @@
-"use client";
-
-import Link from "next/link";
+import { Link } from "react-router-dom";
 
 export default function Footer() {
 	return (
@@ -79,7 +77,7 @@ export default function Footer() {
 									</svg>
 								</a>
 								<a
-									href="https://discord.gg/commertize"
+									href="https://discord.gg/DqBGD2vq"
 									target="_blank"
 									rel="noopener noreferrer"
 									className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors"
@@ -117,7 +115,7 @@ export default function Footer() {
 						<ul className="space-y-2">
 							<li>
 								<Link
-									href="/marketplace"
+									to="/marketplace"
 									className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors"
 								>
 									Explore Marketplace
@@ -125,7 +123,7 @@ export default function Footer() {
 							</li>
 							<li>
 								<Link
-									href="/nexus"
+									to="/nexus"
 									className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors"
 								>
 									Nexus DeFi
@@ -133,7 +131,7 @@ export default function Footer() {
 							</li>
 							<li>
 								<Link
-									href="/news"
+									to="/news"
 									className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors"
 								>
 									News
@@ -155,7 +153,7 @@ export default function Footer() {
 						<ul className="space-y-2">
 							<li>
 								<Link
-									href="/marketplace"
+									to="/marketplace"
 									className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors"
 								>
 									Marketplace
@@ -163,7 +161,7 @@ export default function Footer() {
 							</li>
 							<li>
 								<Link
-									href="/nexus"
+									to="/nexus"
 									className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors"
 								>
 									DeFi & Nexus
@@ -237,7 +235,7 @@ export default function Footer() {
 					<div>
 						<h4 className="font-semibold mb-4 text-[#D4A024]">Newsletter</h4>
 						<p className="text-sm mb-4 text-[#D4A024]">
-							Stay updated with our latest properties and news
+							Stay updated with our latest listings and news
 						</p>
 						<form className="flex gap-2" id="subscribe">
 							<input

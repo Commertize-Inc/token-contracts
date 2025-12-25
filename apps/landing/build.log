@@ -1,0 +1,24 @@
+vite v7.2.7 building client environment for production...
+transforming...
+✓ 2084 modules transformed.
+✗ Build failed in 1.88s
+error during build:
+src/components/Navbar.tsx (2:9): "Navbar" is not exported by "../../packages/ui/dist/index.js", imported by "src/components/Navbar.tsx".
+file: /Users/srv/Developer/MAMBATTU/COMMERTIZE/commertize.com/apps/landing/src/components/Navbar.tsx:2:9
+
+1: import { Navbar as SharedNavbar } from "@commertize/ui";
+2: import { useFeatureFlag } from "@commertize/utils/client"; // Ensure this works in Vite
+            ^
+3: import { useIsMounted } from "@commertize/utils/client"; // Ensure this works in Vite
+4: import { ChevronRight } from "lucide-react";
+
+    at getRollupError (file:///Users/srv/Developer/MAMBATTU/COMMERTIZE/commertize.com/node_modules/.pnpm/rollup@4.53.3/node_modules/rollup/dist/es/shared/parseAst.js:401:41)
+    at error (file:///Users/srv/Developer/MAMBATTU/COMMERTIZE/commertize.com/node_modules/.pnpm/rollup@4.53.3/node_modules/rollup/dist/es/shared/parseAst.js:397:42)
+    at Module.error (file:///Users/srv/Developer/MAMBATTU/COMMERTIZE/commertize.com/node_modules/.pnpm/rollup@4.53.3/node_modules/rollup/dist/es/shared/node-entry.js:16956:16)
+    at Module.traceVariable (file:///Users/srv/Developer/MAMBATTU/COMMERTIZE/commertize.com/node_modules/.pnpm/rollup@4.53.3/node_modules/rollup/dist/es/shared/node-entry.js:17412:29)
+    at ModuleScope.findVariable (file:///Users/srv/Developer/MAMBATTU/COMMERTIZE/commertize.com/node_modules/.pnpm/rollup@4.53.3/node_modules/rollup/dist/es/shared/node-entry.js:15076:39)
+    at ReturnValueScope.findVariable (file:///Users/srv/Developer/MAMBATTU/COMMERTIZE/commertize.com/node_modules/.pnpm/rollup@4.53.3/node_modules/rollup/dist/es/shared/node-entry.js:5649:38)
+    at FunctionBodyScope.findVariable (file:///Users/srv/Developer/MAMBATTU/COMMERTIZE/commertize.com/node_modules/.pnpm/rollup@4.53.3/node_modules/rollup/dist/es/shared/node-entry.js:5649:38)
+    at Identifier.bind (file:///Users/srv/Developer/MAMBATTU/COMMERTIZE/commertize.com/node_modules/.pnpm/rollup@4.53.3/node_modules/rollup/dist/es/shared/node-entry.js:5423:40)
+    at CallExpression.bind (file:///Users/srv/Developer/MAMBATTU/COMMERTIZE/commertize.com/node_modules/.pnpm/rollup@4.53.3/node_modules/rollup/dist/es/shared/node-entry.js:2809:28)
+    at CallExpression.bind (file:///Users/srv/Developer/MAMBATTU/COMMERTIZE/commertize.com/node_modules/.pnpm/rollup@4.53.3/node_modules/rollup/dist/es/shared/node-entry.js:12123:15)
