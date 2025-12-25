@@ -14,6 +14,9 @@ export default defineConfig({
 		".tsx": "tsx",
 	},
 	esbuildOptions(options) {
+		// Ensure proper extension resolution order - tsx first for React components
 		options.resolveExtensions = [".tsx", ".ts", ".jsx", ".js", ".json"];
+		// Enable mainFields for better module resolution
+		options.mainFields = ["module", "main"];
 	},
 });
