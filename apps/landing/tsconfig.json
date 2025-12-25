@@ -4,11 +4,7 @@
 		"tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
 		"target": "ES2020",
 		"useDefineForClassFields": true,
-		"lib": [
-			"ES2020",
-			"DOM",
-			"DOM.Iterable"
-		],
+		"lib": ["ES2020", "DOM", "DOM.Iterable"],
 		"module": "ESNext",
 		"skipLibCheck": true,
 		/* Bundler mode */
@@ -26,48 +22,24 @@
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
 		"paths": {
-			"@/*": [
-				"./src/*"
-			],
-			"@commertize/utils/client": [
-				"../../packages/utils/src/client.ts"
-			],
-			"@commertize/utils/server": [
-				"../../packages/utils/src/server.ts"
-			],
+			"@/*": ["./src/*"],
+			"@commertize/utils/client": ["../../packages/utils/src/client.ts"],
+			"@commertize/utils/server": ["../../packages/utils/src/server.ts"],
 			"@commertize/utils/env-server": [
 				"../../packages/utils/src/env-server.ts"
 			],
-			"@commertize/utils/*": [
-				"../../packages/utils/src/*"
-			],
-			"@commertize/utils": [
-				"../../packages/utils/src/index.ts"
-			],
-			"@commertize/data/enums": [
-				"../../packages/data/src/enums/index.ts"
-			],
-			"@commertize/data/schemas": [
-				"../../packages/data/src/schemas/index.ts"
-			],
-			"@commertize/data/schemas/*": [
-				"../../packages/data/src/schemas/*"
-			],
+			"@commertize/utils/*": ["../../packages/utils/src/*"],
+			"@commertize/utils": ["../../packages/utils/src/index.ts"],
+			"@commertize/data/enums": ["../../packages/data/src/enums/index.ts"],
+			"@commertize/data/schemas": ["../../packages/data/src/schemas/index.ts"],
+			"@commertize/data/schemas/*": ["../../packages/data/src/schemas/*"],
 			"@commertize/data/encryption": [
 				"../../packages/data/src/utils/encryption.ts"
 			],
-			"@commertize/data/*": [
-				"../../packages/data/src/*"
-			],
-			"@commertize/data": [
-				"../../packages/data/src/index.ts"
-			],
-			"@commertize/ui/*": [
-				"../../packages/ui/src/*"
-			],
-			"@commertize/ui": [
-				"../../packages/ui/src/index.ts"
-			]
+			"@commertize/data/*": ["../../packages/data/src/*"],
+			"@commertize/data": ["../../packages/data/src/index.ts"],
+			"@commertize/ui/*": ["../../packages/ui/src/*"],
+			"@commertize/ui": ["../../packages/ui/src/index.ts"]
 		}
 	},
 	"include": [

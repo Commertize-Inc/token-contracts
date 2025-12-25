@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { Building2 } from "lucide-react";
 import { ListingData, ListingCard } from "@commertize/ui";
 
-
 const CommertizeCollection = () => {
 	const [listings, setListings] = useState<ListingData[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -31,7 +30,8 @@ const CommertizeCollection = () => {
 							tokenPrice: financials.tokenPrice || tokenomics.tokenPrice || 0,
 							targetRaise:
 								financials.targetRaise ||
-								((tokenomics.tokensForInvestors || 0) * (tokenomics.tokenPrice || 0)) ||
+								(tokenomics.tokensForInvestors || 0) *
+									(tokenomics.tokenPrice || 0) ||
 								0,
 						},
 						tokenContractAddress: p.tokenContractAddress,

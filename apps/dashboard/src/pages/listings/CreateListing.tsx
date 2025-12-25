@@ -1,4 +1,8 @@
-import { EntityStructure, OfferingType, PropertyType } from "@commertize/data/enums";
+import {
+	EntityStructure,
+	OfferingType,
+	PropertyType,
+} from "@commertize/data/enums";
 import { createListingSchema } from "@commertize/data/schemas/property";
 import type { SubNavbarItem } from "@commertize/ui";
 import {
@@ -12,7 +16,7 @@ import {
 	FormLabel,
 	FormMessage,
 	FormDescription,
-	FileUpload
+	FileUpload,
 } from "@commertize/ui";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getAccessToken } from "@privy-io/react-auth";
@@ -34,7 +38,6 @@ import { Navbar } from "../../components/Navbar";
 import { Tooltip } from "../../components/Tooltip";
 import { api } from "../../lib/api";
 import { useOnboardingStatus } from "../../hooks/useOnboardingStatus";
-
 
 // Extend shared schema for form-specific structures (RHF generic field arrays prefer objects)
 const formSchema = createListingSchema.extend({
@@ -109,7 +112,7 @@ export default function CreateListing() {
 	const {
 		control,
 		handleSubmit,
-		formState: { },
+		formState: {},
 		setValue,
 	} = form;
 
@@ -122,7 +125,9 @@ export default function CreateListing() {
 				// Normalize businessType to EntityStructure enum if possible
 				const normalizedType = kybData.businessType.toUpperCase();
 				if (Object.values(EntityStructure).includes(normalizedType as any)) {
-					setValue("entityStructure", normalizedType as EntityStructure, { shouldDirty: false });
+					setValue("entityStructure", normalizedType as EntityStructure, {
+						shouldDirty: false,
+					});
 				}
 			}
 		}
@@ -185,7 +190,7 @@ export default function CreateListing() {
 			console.error("Submission error:", error);
 			setServerError(
 				error.response?.data?.error ||
-				"Failed to create listing. Please try again."
+					"Failed to create listing. Please try again."
 			);
 		} finally {
 			setIsSubmitting(false);
@@ -210,11 +215,7 @@ export default function CreateListing() {
 			<Navbar />
 			<div className="flex gap-8 max-w-[90rem] mx-auto py-10 px-4 sm:px-6 lg:px-8">
 				{/* Vertical SubNavbar Sidebar */}
-				<SubNavbar
-					items={navItems}
-					offset={80}
-					className="hidden lg:flex"
-				/>
+				<SubNavbar items={navItems} offset={80} className="hidden lg:flex" />
 
 				<div className="flex-1 max-w-4xl">
 					<div className="mb-10 text-center">
@@ -349,7 +350,9 @@ export default function CreateListing() {
 														type="number"
 														placeholder="YYYY"
 														{...field}
-														onChange={(e) => field.onChange(e.target.valueAsNumber)}
+														onChange={(e) =>
+															field.onChange(e.target.valueAsNumber)
+														}
 													/>
 												</FormControl>
 												<FormMessage />
@@ -367,7 +370,9 @@ export default function CreateListing() {
 														type="number"
 														placeholder="e.g. 24"
 														{...field}
-														onChange={(e) => field.onChange(e.target.valueAsNumber)}
+														onChange={(e) =>
+															field.onChange(e.target.valueAsNumber)
+														}
 													/>
 												</FormControl>
 												<FormMessage />
@@ -416,8 +421,9 @@ export default function CreateListing() {
 													type="number"
 													placeholder="5000000"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -439,8 +445,9 @@ export default function CreateListing() {
 													type="number"
 													placeholder="6000000"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -468,8 +475,9 @@ export default function CreateListing() {
 													type="number"
 													placeholder="3500000"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -492,8 +500,9 @@ export default function CreateListing() {
 													step="0.01"
 													placeholder="0.70"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -516,8 +525,9 @@ export default function CreateListing() {
 													step="0.001"
 													placeholder="0.045"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -539,8 +549,9 @@ export default function CreateListing() {
 													type="number"
 													placeholder="10"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -562,8 +573,9 @@ export default function CreateListing() {
 													type="number"
 													placeholder="30"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -585,8 +597,9 @@ export default function CreateListing() {
 													type="number"
 													placeholder="3"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -614,8 +627,9 @@ export default function CreateListing() {
 													type="number"
 													placeholder="2500000"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -637,8 +651,9 @@ export default function CreateListing() {
 													type="number"
 													placeholder="150000"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -660,8 +675,9 @@ export default function CreateListing() {
 													type="number"
 													placeholder="100000"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -683,8 +699,9 @@ export default function CreateListing() {
 													type="number"
 													placeholder="200000"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -706,8 +723,9 @@ export default function CreateListing() {
 													type="number"
 													placeholder="50000"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -729,8 +747,9 @@ export default function CreateListing() {
 													type="number"
 													placeholder="100000"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -759,7 +778,9 @@ export default function CreateListing() {
 													placeholder="500000"
 													{...field}
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -782,7 +803,9 @@ export default function CreateListing() {
 													placeholder="200000"
 													{...field}
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -805,7 +828,9 @@ export default function CreateListing() {
 													placeholder="300000"
 													{...field}
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -829,7 +854,9 @@ export default function CreateListing() {
 													placeholder="0.95"
 													{...field}
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -838,9 +865,11 @@ export default function CreateListing() {
 								/>
 							</div>
 
-
 							<div id="pro-forma-exit">
-								<SectionTitle icon={DollarSign} title="Pro Forma & Exit Strategy" />
+								<SectionTitle
+									icon={DollarSign}
+									title="Pro Forma & Exit Strategy"
+								/>
 							</div>
 
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -859,8 +888,9 @@ export default function CreateListing() {
 													step="0.001"
 													placeholder="0.03"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -883,8 +913,9 @@ export default function CreateListing() {
 													step="0.001"
 													placeholder="0.02"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -906,8 +937,9 @@ export default function CreateListing() {
 													type="number"
 													placeholder="7"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -930,8 +962,9 @@ export default function CreateListing() {
 													step="0.001"
 													placeholder="0.055"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -953,8 +986,9 @@ export default function CreateListing() {
 													type="number"
 													placeholder="6500000"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -983,8 +1017,9 @@ export default function CreateListing() {
 													step="0.001"
 													placeholder="0.08"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -1007,8 +1042,9 @@ export default function CreateListing() {
 													step="0.001"
 													placeholder="0.09"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -1031,8 +1067,9 @@ export default function CreateListing() {
 													step="0.001"
 													placeholder="0.15"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -1055,8 +1092,9 @@ export default function CreateListing() {
 													step="0.1"
 													placeholder="2.0"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -1064,7 +1102,6 @@ export default function CreateListing() {
 									)}
 								/>
 							</div>
-
 
 							<div id="distribution-policy">
 								<SectionTitle icon={DollarSign} title="Distribution Policy" />
@@ -1087,7 +1124,9 @@ export default function CreateListing() {
 													placeholder="0.08"
 													{...field}
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -1111,7 +1150,9 @@ export default function CreateListing() {
 													placeholder="0.20"
 													{...field}
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -1135,7 +1176,9 @@ export default function CreateListing() {
 													placeholder="1.0"
 													{...field}
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -1169,8 +1212,6 @@ export default function CreateListing() {
 								/>
 							</div>
 
-
-
 							<div id="tokenomics">
 								<SectionTitle icon={DollarSign} title="Tokenomics" />
 							</div>
@@ -1190,8 +1231,9 @@ export default function CreateListing() {
 													type="number"
 													placeholder="500000"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -1213,8 +1255,9 @@ export default function CreateListing() {
 													type="number"
 													placeholder="200000"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -1236,8 +1279,9 @@ export default function CreateListing() {
 													type="number"
 													placeholder="300000"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -1260,8 +1304,9 @@ export default function CreateListing() {
 													step="0.01"
 													placeholder="0.95"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -1282,8 +1327,9 @@ export default function CreateListing() {
 													type="number"
 													placeholder="100000"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -1305,8 +1351,9 @@ export default function CreateListing() {
 													type="number"
 													placeholder="80000"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -1328,8 +1375,9 @@ export default function CreateListing() {
 													type="number"
 													placeholder="15000"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -1351,8 +1399,9 @@ export default function CreateListing() {
 													type="number"
 													placeholder="5000"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -1375,8 +1424,9 @@ export default function CreateListing() {
 													step="0.01"
 													placeholder="50.00"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -1398,8 +1448,9 @@ export default function CreateListing() {
 													type="number"
 													placeholder="10"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -1421,8 +1472,9 @@ export default function CreateListing() {
 													type="number"
 													placeholder="5000"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -1444,8 +1496,9 @@ export default function CreateListing() {
 													type="number"
 													placeholder="12"
 													value={field.value ?? ""}
-													onChange={(e) => field.onChange(e.target.valueAsNumber)}
-
+													onChange={(e) =>
+														field.onChange(e.target.valueAsNumber)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -1470,7 +1523,8 @@ export default function CreateListing() {
 												<div className="space-y-1 leading-none">
 													<FormLabel>Transfer Restricted</FormLabel>
 													<FormDescription>
-														Check if token transfers are restricted (e.g., for Reg D compliance).
+														Check if token transfers are restricted (e.g., for
+														Reg D compliance).
 													</FormDescription>
 												</div>
 											</FormItem>
@@ -1631,8 +1685,8 @@ export default function CreateListing() {
 							<div className="space-y-3">
 								<FormLabel>Offering Documents</FormLabel>
 								<p className="text-xs text-slate-500 mb-2">
-									Upload or provide links to the Offering Memorandum, Subscription
-									Agreement, and external compliance documents.
+									Upload or provide links to the Offering Memorandum,
+									Subscription Agreement, and external compliance documents.
 								</p>
 								{documentFields.map((field: any, index: number) => (
 									<div key={field.id} className="flex gap-2 items-start">

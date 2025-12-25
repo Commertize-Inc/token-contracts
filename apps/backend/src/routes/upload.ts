@@ -37,10 +37,7 @@ upload.post("/document", async (c) => {
 		// Validate file size (max 10MB)
 		const maxSize = 10 * 1024 * 1024; // 10MB in bytes
 		if (file.size > maxSize) {
-			return c.json(
-				{ error: "File size exceeds maximum limit of 10MB" },
-				400
-			);
+			return c.json({ error: "File size exceeds maximum limit of 10MB" }, 400);
 		}
 
 		// Generate a unique filename

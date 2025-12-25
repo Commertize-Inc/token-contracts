@@ -51,9 +51,9 @@ export default function TermsPage() {
 										these Terms of Service govern your use of our Website,
 										products, and services (collectively, the
 										&quot;Service&quot;). By accessing or using the Service, you
-										agree to be bound by these Terms, and you represent that
-										you have read and understood them. If you do not agree,
-										you may not access or use the Service.
+										agree to be bound by these Terms, and you represent that you
+										have read and understood them. If you do not agree, you may
+										not access or use the Service.
 									</p>
 
 									<h2
@@ -70,16 +70,16 @@ export default function TermsPage() {
 											bound by these Terms and all other referenced agreements
 											(including our Privacy Policy). You also agree that you
 											have the authority to enter into these Terms personally,
-											or on behalf of the entity you represent, and to bind
-											that entity to these Terms.
+											or on behalf of the entity you represent, and to bind that
+											entity to these Terms.
 										</p>
 										<p className="text-gray-600 font-light mb-8">
-											We reserve the right to modify these Terms at any time.
-											If we do so, we will post the updated Terms and update
-											the &quot;Effective Date&quot; at the top of this
-											document. Your continued use of the Service after any
-											such modification constitutes your acceptance of the
-											revised Terms.
+											We reserve the right to modify these Terms at any time. If
+											we do so, we will post the updated Terms and update the
+											&quot;Effective Date&quot; at the top of this document.
+											Your continued use of the Service after any such
+											modification constitutes your acceptance of the revised
+											Terms.
 										</p>
 									</div>
 
@@ -110,37 +110,34 @@ export default function TermsPage() {
 												</p>
 											</div>
 											<div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-												<p className="text-gray-800 mb-2">
-													Prohibited Conduct
-												</p>
+												<p className="text-gray-800 mb-2">Prohibited Conduct</p>
 												<p className="text-gray-600 font-light text-sm mb-2">
 													You agree not to use the Service in any manner that:
 												</p>
 												<ul className="space-y-1 text-gray-600 font-light text-sm">
 													<li className="flex gap-2">
-														<span className="text-[#D4A024]">•</span>{" "}
-														Violates any applicable local, state, national, or
+														<span className="text-[#D4A024]">•</span> Violates
+														any applicable local, state, national, or
 														international law or regulation
 													</li>
 													<li className="flex gap-2">
-														<span className="text-[#D4A024]">•</span>{" "}
-														Infringes upon the rights of others, including
-														intellectual property rights or privacy rights
+														<span className="text-[#D4A024]">•</span> Infringes
+														upon the rights of others, including intellectual
+														property rights or privacy rights
 													</li>
 													<li className="flex gap-2">
-														<span className="text-[#D4A024]">•</span> Could
-														harm or attempt to harm our systems or any third
+														<span className="text-[#D4A024]">•</span> Could harm
+														or attempt to harm our systems or any third
 														party&apos;s systems
 													</li>
 													<li className="flex gap-2">
 														<span className="text-[#D4A024]">•</span>{" "}
-														Distributes spam, viruses, or other harmful
-														software
+														Distributes spam, viruses, or other harmful software
 													</li>
 													<li className="flex gap-2">
-														<span className="text-[#D4A024]">•</span>{" "}
-														Attempts to gain unauthorized access to any part
-														of the Service or underlying infrastructure
+														<span className="text-[#D4A024]">•</span> Attempts
+														to gain unauthorized access to any part of the
+														Service or underlying infrastructure
 													</li>
 												</ul>
 											</div>
@@ -170,9 +167,7 @@ export default function TermsPage() {
 											<div className="flex gap-3">
 												<div className="w-2 h-2 rounded-full bg-[#D4A024] mt-2 flex-shrink-0"></div>
 												<p className="text-gray-600 font-light">
-													<span className="text-gray-800">
-														Responsibility:
-													</span>{" "}
+													<span className="text-gray-800">Responsibility:</span>{" "}
 													You are fully responsible for all activities that
 													occur under your account. If you suspect any
 													unauthorized use of your account, you must notify
@@ -185,10 +180,9 @@ export default function TermsPage() {
 													<span className="text-gray-800">
 														Account Termination:
 													</span>{" "}
-													Commertize reserves the right to suspend or
-													terminate your account or restrict access to the
-													Service at any time, with or without notice, for any
-													or no reason.
+													Commertize reserves the right to suspend or terminate
+													your account or restrict access to the Service at any
+													time, with or without notice, for any or no reason.
 												</p>
 											</div>
 										</div>
@@ -207,8 +201,8 @@ export default function TermsPage() {
 											and for other lawful purposes. Please review our Privacy
 											Policy for details on how we handle your personal
 											information. By using the Service, you consent to the
-											collection and use of this information in accordance
-											with our Privacy Policy.
+											collection and use of this information in accordance with
+											our Privacy Policy.
 										</p>
 									</div>
 
@@ -223,11 +217,10 @@ export default function TermsPage() {
 											<div className="flex gap-3">
 												<div className="w-2 h-2 rounded-full bg-[#D4A024] mt-2 flex-shrink-0"></div>
 												<p className="text-gray-600 font-light">
-													<span className="text-gray-800">Ownership:</span>{" "}
-													The Service (including text, graphics, logos,
-													images, and software) is owned or licensed by
-													Commertize and is protected by applicable
-													intellectual property laws.
+													<span className="text-gray-800">Ownership:</span> The
+													Service (including text, graphics, logos, images, and
+													software) is owned or licensed by Commertize and is
+													protected by applicable intellectual property laws.
 												</p>
 											</div>
 											<div className="flex gap-3">
@@ -238,17 +231,15 @@ export default function TermsPage() {
 													</span>{" "}
 													Subject to your compliance with these Terms,
 													Commertize grants you a non-exclusive,
-													non-transferable, revocable license to access and
-													use the Service for your personal or internal
-													business use.
+													non-transferable, revocable license to access and use
+													the Service for your personal or internal business
+													use.
 												</p>
 											</div>
 											<div className="flex gap-3">
 												<div className="w-2 h-2 rounded-full bg-[#D4A024] mt-2 flex-shrink-0"></div>
 												<p className="text-gray-600 font-light">
-													<span className="text-gray-800">
-														Restrictions:
-													</span>{" "}
+													<span className="text-gray-800">Restrictions:</span>{" "}
 													You may not modify, copy, distribute, reproduce,
 													publish, license, create derivative works from, or
 													sell any content obtained from the Service without
@@ -276,16 +267,14 @@ export default function TermsPage() {
 													invest in or otherwise engage in transactions with
 													&quot;issuers&quot; through Commertize&apos;s
 													technology. You agree that Commertize is not
-													responsible for the actions or omissions of any
-													issuer or third party.
+													responsible for the actions or omissions of any issuer
+													or third party.
 												</p>
 											</div>
 											<div className="flex gap-3">
 												<div className="w-2 h-2 rounded-full bg-[#D4A024] mt-2 flex-shrink-0"></div>
 												<p className="text-gray-600 font-light">
-													<span className="text-gray-800">
-														Broker-Dealers:
-													</span>{" "}
+													<span className="text-gray-800">Broker-Dealers:</span>{" "}
 													Some investment opportunities available via the
 													Service may be offered by a broker-dealer (an
 													affiliate of Commertize or an unaffiliated third
@@ -301,11 +290,10 @@ export default function TermsPage() {
 													<span className="text-gray-800">
 														Third-Party Services:
 													</span>{" "}
-													The Service may link to or integrate with
-													third-party websites, products, or services. You
-													acknowledge that Commertize does not endorse nor
-													assume responsibility for any third-party content or
-													practices.
+													The Service may link to or integrate with third-party
+													websites, products, or services. You acknowledge that
+													Commertize does not endorse nor assume responsibility
+													for any third-party content or practices.
 												</p>
 											</div>
 										</div>
@@ -340,9 +328,9 @@ export default function TermsPage() {
 													</span>{" "}
 													The Service is not intended for use by individuals
 													under 16 years of age. If you believe we have
-													inadvertently collected information from someone
-													under 16, please contact privacy@commertize.io, and
-													we will take prompt action to delete it.
+													inadvertently collected information from someone under
+													16, please contact privacy@commertize.io, and we will
+													take prompt action to delete it.
 												</p>
 											</div>
 										</div>
@@ -359,33 +347,31 @@ export default function TermsPage() {
 											<p className="text-gray-700 mb-4 uppercase text-sm">
 												Disclaimer of Warranties: THE SERVICE IS PROVIDED
 												&quot;AS IS&quot; AND &quot;AS AVAILABLE.&quot;
-												COMMERTIZE DISCLAIMS ALL WARRANTIES, EXPRESS OR
-												IMPLIED, INCLUDING ANY IMPLIED WARRANTY OF
-												MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
-												AND NON-INFRINGEMENT.
+												COMMERTIZE DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED,
+												INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY,
+												FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
 											</p>
 											<p className="text-gray-700 mb-4 uppercase text-sm">
-												No Guarantee: COMMERTIZE MAKES NO GUARANTEES THAT
-												THE SERVICE WILL BE UNINTERRUPTED, SECURE, OR
-												ERROR-FREE, OR THAT ANY CONTENT WILL BE ACCURATE OR
-												RELIABLE.
+												No Guarantee: COMMERTIZE MAKES NO GUARANTEES THAT THE
+												SERVICE WILL BE UNINTERRUPTED, SECURE, OR ERROR-FREE, OR
+												THAT ANY CONTENT WILL BE ACCURATE OR RELIABLE.
 											</p>
 											<p className="text-gray-700 mb-4 text-sm">
 												Investment Risks: Any investment or financial
-												opportunity listed or referenced on the Service
-												carries inherent risks. Commertize is not
-												responsible for any losses or damages incurred as a
-												result of your investment decisions.
+												opportunity listed or referenced on the Service carries
+												inherent risks. Commertize is not responsible for any
+												losses or damages incurred as a result of your
+												investment decisions.
 											</p>
 											<p className="text-gray-700 uppercase text-sm">
-												Limitation of Liability: TO THE MAXIMUM EXTENT
-												PERMITTED BY LAW, COMMERTIZE AND ITS AFFILIATES,
-												DIRECTORS, OFFICERS, EMPLOYEES, AND AGENTS WILL NOT
-												BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-												SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR ANY
-												OTHER DAMAGES OF ANY KIND, ARISING OUT OF OR RELATED
-												TO YOUR USE OF THE SERVICE, WHETHER BASED ON
-												WARRANTY, CONTRACT, TORT, OR ANY OTHER LEGAL THEORY.
+												Limitation of Liability: TO THE MAXIMUM EXTENT PERMITTED
+												BY LAW, COMMERTIZE AND ITS AFFILIATES, DIRECTORS,
+												OFFICERS, EMPLOYEES, AND AGENTS WILL NOT BE LIABLE FOR
+												ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+												CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR ANY OTHER DAMAGES
+												OF ANY KIND, ARISING OUT OF OR RELATED TO YOUR USE OF
+												THE SERVICE, WHETHER BASED ON WARRANTY, CONTRACT, TORT,
+												OR ANY OTHER LEGAL THEORY.
 											</p>
 										</div>
 									</div>
@@ -400,10 +386,10 @@ export default function TermsPage() {
 										<p className="text-gray-600 font-light mb-4">
 											You agree to defend, indemnify, and hold harmless
 											Commertize and its affiliates, officers, directors,
-											employees, and agents from and against any and all
-											claims, damages, obligations, losses, liabilities,
-											costs, or debt, and expenses (including attorneys&apos;
-											fees) arising out of or related to:
+											employees, and agents from and against any and all claims,
+											damages, obligations, losses, liabilities, costs, or debt,
+											and expenses (including attorneys&apos; fees) arising out
+											of or related to:
 										</p>
 										<ul className="space-y-2 mb-8">
 											<li className="flex gap-3 text-gray-600 font-light">
@@ -433,9 +419,7 @@ export default function TermsPage() {
 											<div className="flex gap-3">
 												<div className="w-2 h-2 rounded-full bg-[#D4A024] mt-2 flex-shrink-0"></div>
 												<p className="text-gray-600 font-light">
-													<span className="text-gray-800">
-														Governing Law:
-													</span>{" "}
+													<span className="text-gray-800">Governing Law:</span>{" "}
 													These Terms are governed by and construed in
 													accordance with the laws of the State of Texas,
 													without regard to its conflict of law principles.
@@ -444,15 +428,12 @@ export default function TermsPage() {
 											<div className="flex gap-3">
 												<div className="w-2 h-2 rounded-full bg-[#D4A024] mt-2 flex-shrink-0"></div>
 												<p className="text-gray-600 font-light">
-													<span className="text-gray-800">
-														Arbitration:
-													</span>{" "}
-													Any dispute or claim arising out of or in
-													connection with these Terms shall be resolved by
-													final and binding arbitration administered by a
-													recognized arbitration center in Houston, Texas,
-													unless otherwise mutually agreed upon in writing by
-													both parties.
+													<span className="text-gray-800">Arbitration:</span>{" "}
+													Any dispute or claim arising out of or in connection
+													with these Terms shall be resolved by final and
+													binding arbitration administered by a recognized
+													arbitration center in Houston, Texas, unless otherwise
+													mutually agreed upon in writing by both parties.
 												</p>
 											</div>
 											<div className="flex gap-3">
@@ -463,8 +444,8 @@ export default function TermsPage() {
 													</span>{" "}
 													Nothing in this section prevents either party from
 													seeking injunctive or other equitable relief from a
-													court of competent jurisdiction to prevent or
-													curtail a breach of these Terms.
+													court of competent jurisdiction to prevent or curtail
+													a breach of these Terms.
 												</p>
 											</div>
 										</div>
@@ -493,9 +474,7 @@ export default function TermsPage() {
 											<div className="flex gap-3">
 												<div className="w-2 h-2 rounded-full bg-[#D4A024] mt-2 flex-shrink-0"></div>
 												<p className="text-gray-600 font-light">
-													<span className="text-gray-800">
-														Severability:
-													</span>{" "}
+													<span className="text-gray-800">Severability:</span>{" "}
 													If any portion of these Terms is held to be invalid,
 													the remaining provisions shall remain in full force.
 												</p>
@@ -503,18 +482,18 @@ export default function TermsPage() {
 											<div className="flex gap-3">
 												<div className="w-2 h-2 rounded-full bg-[#D4A024] mt-2 flex-shrink-0"></div>
 												<p className="text-gray-600 font-light">
-													<span className="text-gray-800">Assignment:</span>{" "}
-													You may not assign or transfer your rights or
-													obligations under these Terms without Commertize&apos;s
-													prior written consent.
+													<span className="text-gray-800">Assignment:</span> You
+													may not assign or transfer your rights or obligations
+													under these Terms without Commertize&apos;s prior
+													written consent.
 												</p>
 											</div>
 											<div className="flex gap-3">
 												<div className="w-2 h-2 rounded-full bg-[#D4A024] mt-2 flex-shrink-0"></div>
 												<p className="text-gray-600 font-light">
 													<span className="text-gray-800">No Waiver:</span>{" "}
-													Commertize&apos;s failure to enforce any provision
-													of these Terms shall not be deemed a waiver of that
+													Commertize&apos;s failure to enforce any provision of
+													these Terms shall not be deemed a waiver of that
 													provision.
 												</p>
 											</div>
@@ -557,14 +536,14 @@ export default function TermsPage() {
 									</h2>
 									<div className="pl-6">
 										<p className="text-gray-600 font-light mb-8">
-											We may modify these Terms at any time. If we make
-											material changes, we will notify you by updating the
+											We may modify these Terms at any time. If we make material
+											changes, we will notify you by updating the
 											&quot;Effective Date&quot; above and posting the revised
 											Terms on the Website. We may also provide another method
 											of notification (e.g., email). Any modifications become
 											effective upon posting (or as otherwise indicated), and
-											your continued use of the Service signifies acceptance
-											of the updated Terms.
+											your continued use of the Service signifies acceptance of
+											the updated Terms.
 										</p>
 									</div>
 								</div>

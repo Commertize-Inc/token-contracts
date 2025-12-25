@@ -65,7 +65,7 @@ export default function EditListing() {
 			},
 			tokenomics: {
 				tokenPrice: 0,
-			}
+			},
 		},
 	});
 
@@ -175,7 +175,7 @@ export default function EditListing() {
 			console.error("Submission error:", error);
 			setServerError(
 				error.response?.data?.error ||
-				"Failed to update listing. Please try again."
+					"Failed to update listing. Please try again."
 			);
 		} finally {
 			setIsSubmitting(false);
@@ -356,8 +356,12 @@ export default function EditListing() {
 						</label>
 						<Input
 							type="number"
-							{...register("financials.equityRequired", { valueAsNumber: true })}
-							className={errors.financials?.equityRequired ? "border-red-500" : ""}
+							{...register("financials.equityRequired", {
+								valueAsNumber: true,
+							})}
+							className={
+								errors.financials?.equityRequired ? "border-red-500" : ""
+							}
 						/>
 						{errors.financials?.equityRequired && (
 							<p className="text-xs text-red-500">
@@ -575,7 +579,7 @@ export default function EditListing() {
 						)}
 					</Button>
 				</div>
-			</form >
-		</div >
+			</form>
+		</div>
 	);
 }

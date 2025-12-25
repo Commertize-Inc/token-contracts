@@ -158,9 +158,15 @@ export default function MarketplacePage() {
 											<input
 												type="text"
 												placeholder="Search listings..."
-												value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+												value={
+													(table
+														.getColumn("name")
+														?.getFilterValue() as string) ?? ""
+												}
 												onChange={(e) =>
-													table.getColumn("name")?.setFilterValue(e.target.value)
+													table
+														.getColumn("name")
+														?.setFilterValue(e.target.value)
 												}
 												className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 pl-9 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 											/>
@@ -168,15 +174,16 @@ export default function MarketplacePage() {
 										<div className="flex gap-2">
 											<button
 												onClick={() => setShowFilters(!showFilters)}
-												className={`flex items-center gap-2 px-4 py-2 border rounded-md h-10 transition-colors text-sm font-medium ${showFilters
-													? "bg-[#D4A024] text-white border-[#D4A024]"
-													: "border-input hover:bg-accent hover:text-accent-foreground text-slate-700"
-													}`}
+												className={`flex items-center gap-2 px-4 py-2 border rounded-md h-10 transition-colors text-sm font-medium ${
+													showFilters
+														? "bg-[#D4A024] text-white border-[#D4A024]"
+														: "border-input hover:bg-accent hover:text-accent-foreground text-slate-700"
+												}`}
 											>
 												<Filter className="w-4 h-4" />
 												Filters
 											</button>
-											{(table.getState().columnFilters.length > 0) && (
+											{table.getState().columnFilters.length > 0 && (
 												<button
 													onClick={() => table.resetColumnFilters()}
 													className="flex items-center gap-2 px-4 py-2 border border-input rounded-md h-10 hover:bg-accent hover:text-accent-foreground transition-colors text-sm font-medium text-slate-700"
@@ -200,9 +207,19 @@ export default function MarketplacePage() {
 											>
 												<div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 													<select
-														value={(table.getColumn("status")?.getFilterValue() as string) ?? "all"}
+														value={
+															(table
+																.getColumn("status")
+																?.getFilterValue() as string) ?? "all"
+														}
 														onChange={(e) =>
-															table.getColumn("status")?.setFilterValue(e.target.value === "all" ? undefined : e.target.value)
+															table
+																.getColumn("status")
+																?.setFilterValue(
+																	e.target.value === "all"
+																		? undefined
+																		: e.target.value
+																)
 														}
 														className="px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D4A024]/50 text-slate-700"
 													>
@@ -222,9 +239,19 @@ export default function MarketplacePage() {
 													</select>
 
 													<select
-														value={(table.getColumn("propertyType")?.getFilterValue() as string) ?? "all"}
+														value={
+															(table
+																.getColumn("propertyType")
+																?.getFilterValue() as string) ?? "all"
+														}
 														onChange={(e) =>
-															table.getColumn("propertyType")?.setFilterValue(e.target.value === "all" ? undefined : e.target.value)
+															table
+																.getColumn("propertyType")
+																?.setFilterValue(
+																	e.target.value === "all"
+																		? undefined
+																		: e.target.value
+																)
 														}
 														className="px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D4A024]/50 text-slate-700"
 													>
@@ -243,9 +270,16 @@ export default function MarketplacePage() {
 													<select
 														onChange={(e) => {
 															const val = e.target.value;
-															if (val === "name") table.setSorting([{ id: "name", desc: false }]);
-															else if (val === "price") table.setSorting([{ id: "tokenPrice", desc: false }]); // Asc?
-															else if (val === "capRate") table.setSorting([{ id: "capRate", desc: true }]); // Desc for Cap Rate?
+															if (val === "name")
+																table.setSorting([{ id: "name", desc: false }]);
+															else if (val === "price")
+																table.setSorting([
+																	{ id: "tokenPrice", desc: false },
+																]); // Asc?
+															else if (val === "capRate")
+																table.setSorting([
+																	{ id: "capRate", desc: true },
+																]); // Desc for Cap Rate?
 														}}
 														className="px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D4A024]/50 text-slate-700"
 													>

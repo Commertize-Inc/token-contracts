@@ -28,7 +28,7 @@ export class BankAccount {
 		if (!this.plaidItem) {
 			throw new Error(
 				"BankAccount.institutionName accessed but plaidItem relation not populated. " +
-				'Add { populate: ["plaidItem"] } to your query.'
+					'Add { populate: ["plaidItem"] } to your query.'
 			);
 		}
 		return this.plaidItem.institutionName;

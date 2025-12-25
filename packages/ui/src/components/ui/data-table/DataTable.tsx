@@ -88,8 +88,9 @@ export function DataTable<TData, TValue>({
 						<Input
 							placeholder={searchPlaceholder}
 							value={
-								(table.getColumn(filterColumnName)?.getFilterValue() as string) ??
-								""
+								(table
+									.getColumn(filterColumnName)
+									?.getFilterValue() as string) ?? ""
 							}
 							onChange={(event) =>
 								table
@@ -138,9 +139,9 @@ export function DataTable<TData, TValue>({
 												{header.isPlaceholder
 													? null
 													: flexRender(
-														header.column.columnDef.header,
-														header.getContext()
-													)}
+															header.column.columnDef.header,
+															header.getContext()
+														)}
 											</TableHead>
 										);
 									})}
@@ -179,7 +180,7 @@ export function DataTable<TData, TValue>({
 				</div>
 			) : (
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-					{table.getRowModel().rows.map(row => (
+					{table.getRowModel().rows.map((row) => (
 						<div key={row.id}>
 							{renderGridItem && renderGridItem(row.original)}
 						</div>

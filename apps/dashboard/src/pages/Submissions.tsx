@@ -1,5 +1,10 @@
 import { usePrivy } from "@privy-io/react-auth";
-import { Badge, Button, DataTable, DataTableColumnHeader } from "@commertize/ui";
+import {
+	Badge,
+	Button,
+	DataTable,
+	DataTableColumnHeader,
+} from "@commertize/ui";
 import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import { api } from "../lib/api";
@@ -210,11 +215,15 @@ export default function Submissions() {
 				<DataTableColumnHeader column={column} title="Title" />
 			),
 			cell: ({ row }) => (
-				<div className="font-medium text-foreground">{row.getValue("title")}</div>
+				<div className="font-medium text-foreground">
+					{row.getValue("title")}
+				</div>
 			),
 			filterFn: (row, id, value) => {
-				return (row.getValue(id) as string).toLowerCase().includes(value.toLowerCase());
-			}
+				return (row.getValue(id) as string)
+					.toLowerCase()
+					.includes(value.toLowerCase());
+			},
 		},
 		{
 			accessorKey: "type",
@@ -268,7 +277,7 @@ export default function Submissions() {
 				) : (
 					<span className="text-muted-foreground text-xs">-</span>
 				);
-			}
+			},
 		},
 		{
 			id: "actions",
@@ -287,17 +296,17 @@ export default function Submissions() {
 						{(item.status.toUpperCase() === "REJECTED" ||
 							item.status.toUpperCase() === "PENDING" ||
 							item.status.toUpperCase() === "PENDING_REVIEW") && (
-								<Button
-									variant="outlined"
-									className="text-sm px-3 py-1"
-									onClick={() => handleResubmit(item)}
-								>
-									{item.status.toUpperCase() === "REJECTED" ? "Resubmit" : "Edit"}
-								</Button>
-							)}
+							<Button
+								variant="outlined"
+								className="text-sm px-3 py-1"
+								onClick={() => handleResubmit(item)}
+							>
+								{item.status.toUpperCase() === "REJECTED" ? "Resubmit" : "Edit"}
+							</Button>
+						)}
 					</div>
-				)
-			}
+				);
+			},
 		},
 	];
 
@@ -310,7 +319,6 @@ export default function Submissions() {
 				</div>
 
 				<div className="bg-white rounded-lg shadow-sm border p-4">
-
 					<DataTable
 						columns={columns}
 						data={submissions}
@@ -323,7 +331,8 @@ export default function Submissions() {
 									<select
 										className="bg-transparent border-none text-sm focus:ring-0 outline-none"
 										value={
-											(table.getColumn("type")?.getFilterValue() as string) ?? "ALL"
+											(table.getColumn("type")?.getFilterValue() as string) ??
+											"ALL"
 										}
 										onChange={(e) =>
 											table.getColumn("type")?.setFilterValue(e.target.value)
@@ -367,33 +376,33 @@ export default function Submissions() {
 							{/* Admin Feedback Section */}
 							{getCommentsFor(selectedSubmission.type, selectedSubmission.id)
 								.length > 0 && (
+								<div className="space-y-3">
+									<h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+										Review Feedback
+									</h4>
 									<div className="space-y-3">
-										<h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-											Review Feedback
-										</h4>
-										<div className="space-y-3">
-											{getCommentsFor(
-												selectedSubmission.type,
-												selectedSubmission.id
-											).map((comment) => (
-												<div
-													key={comment.id}
-													className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-900"
-												>
-													<div className="flex items-center justify-between mb-2">
-														<span className="font-semibold text-amber-700">
-															{comment.author.firstName} {comment.author.lastName}
-														</span>
-														<span className="text-xs text-amber-600/70">
-															{formatDateTime(comment.createdAt)}
-														</span>
-													</div>
-													<p>{comment.content}</p>
+										{getCommentsFor(
+											selectedSubmission.type,
+											selectedSubmission.id
+										).map((comment) => (
+											<div
+												key={comment.id}
+												className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-900"
+											>
+												<div className="flex items-center justify-between mb-2">
+													<span className="font-semibold text-amber-700">
+														{comment.author.firstName} {comment.author.lastName}
+													</span>
+													<span className="text-xs text-amber-600/70">
+														{formatDateTime(comment.createdAt)}
+													</span>
 												</div>
-											))}
-										</div>
+												<p>{comment.content}</p>
+											</div>
+										))}
 									</div>
-								)}
+								</div>
+							)}
 
 							{/* Metadata Section */}
 							<div className="space-y-3">
@@ -417,11 +426,14 @@ export default function Submissions() {
 							</Button>
 							{(selectedSubmission.status.toUpperCase() === "REJECTED" ||
 								selectedSubmission.status.toUpperCase() === "PENDING" ||
-								selectedSubmission.status.toUpperCase() === "PENDING_REVIEW") && (
-									<Button onClick={() => handleResubmit(selectedSubmission)}>
-										{selectedSubmission.status.toUpperCase() === "REJECTED" ? "Resubmit" : "Edit Submission"}
-									</Button>
-								)}
+								selectedSubmission.status.toUpperCase() ===
+									"PENDING_REVIEW") && (
+								<Button onClick={() => handleResubmit(selectedSubmission)}>
+									{selectedSubmission.status.toUpperCase() === "REJECTED"
+										? "Resubmit"
+										: "Edit Submission"}
+								</Button>
+							)}
 						</div>
 					</div>
 				</div>

@@ -44,7 +44,7 @@ export function ListingSponsor({ sponsor }: { sponsor: Listing["sponsor"] }) {
 				<div className="p-4 bg-slate-50 rounded-lg border border-slate-100 text-center">
 					<Trophy className="w-6 h-6 text-slate-400 mx-auto mb-2" />
 					<p className="text-2xl font-bold text-slate-900">
-						{ }$
+						{}$
 						{(
 							(sponsor as any).stats?.assetsUnderManagement ?? 0
 						).toLocaleString(undefined, { maximumFractionDigits: 0 })}

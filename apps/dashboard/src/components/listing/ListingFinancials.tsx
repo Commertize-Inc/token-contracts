@@ -56,17 +56,19 @@ export function ListingFinancials({
 				{metrics.map((metric) => (
 					<div
 						key={metric.label}
-						className={`p-4 rounded-lg border ${metric.highlight
+						className={`p-4 rounded-lg border ${
+							metric.highlight
 								? "bg-amber-50 border-amber-100"
 								: "bg-white border-slate-100"
-							}`}
+						}`}
 					>
 						<div className="flex items-center gap-3 mb-2">
 							<div
-								className={`p-2 rounded-md ${metric.highlight
+								className={`p-2 rounded-md ${
+									metric.highlight
 										? "bg-amber-100 text-amber-700"
 										: "bg-slate-100 text-slate-600"
-									}`}
+								}`}
 							>
 								<metric.icon className="w-5 h-5" />
 							</div>

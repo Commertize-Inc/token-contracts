@@ -109,8 +109,9 @@ export const UserMenu: React.FC<UserMenuProps> = ({
 						<span className={styles.userName}>{getUserDisplay()}</span>
 					</div>
 					<ChevronDown
-						className={`${styles.chevronIcon} ${isDropdownOpen ? styles.chevronIconOpen : ""
-							} `}
+						className={`${styles.chevronIcon} ${
+							isDropdownOpen ? styles.chevronIconOpen : ""
+						} `}
 					/>
 				</button>
 

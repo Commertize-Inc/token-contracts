@@ -8,8 +8,8 @@ export default defineConfig(({ mode }) => {
 	const env = loadEnv(mode, envDir, "");
 	const port =
 		env.NODE_ENV === "development" &&
-			(env.VITE_STAGE === "local" || env.VITE_STAGE === "development") &&
-			env.VITE_DASHBOARD_URL
+		(env.VITE_STAGE === "local" || env.VITE_STAGE === "development") &&
+		env.VITE_DASHBOARD_URL
 			? parseInt(env.VITE_DASHBOARD_URL.split(":").pop() || "3001")
 			: 3001;
 

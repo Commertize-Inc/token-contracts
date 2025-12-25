@@ -14,12 +14,17 @@ export const createListingSchema = z.object({
 	financials: z.object({
 		// Deal economics
 		purchasePrice: z.number().min(0, "Purchase price must be positive"),
-		totalCapitalization: z.number().min(0, "Total capitalization must be positive"),
+		totalCapitalization: z
+			.number()
+			.min(0, "Total capitalization must be positive"),
 
 		// Debt terms
 		loanAmount: z.number().min(0, "Loan amount must be positive"),
 		loanToValue: z.number().min(0).max(1, "LTV must be between 0 and 1"),
-		interestRate: z.number().min(0).max(1, "Interest rate must be between 0 and 1"),
+		interestRate: z
+			.number()
+			.min(0)
+			.max(1, "Interest rate must be between 0 and 1"),
 		amortizationYears: z.number().int().min(0).optional().nullable(),
 		interestOnlyYears: z.number().int().min(0).optional().nullable(),
 		loanTermYears: z.number().int().min(1, "Loan term must be at least 1 year"),
@@ -36,38 +41,85 @@ export const createListingSchema = z.object({
 		effectiveGrossIncome: z.number().min(0, "EGI must be positive"),
 		operatingExpenses: z.number().min(0, "Operating expenses must be positive"),
 		noi: z.number().min(0, "NOI must be positive"),
-		occupancyRate: z.number().min(0).max(1, "Occupancy rate must be between 0 and 1"),
+		occupancyRate: z
+			.number()
+			.min(0)
+			.max(1, "Occupancy rate must be between 0 and 1"),
 
 		// Pro forma & exit
-		annualRentGrowth: z.number().min(0).max(1, "Rent growth must be between 0 and 1"),
-		annualExpenseGrowth: z.number().min(0).max(1, "Expense growth must be between 0 and 1"),
-		holdPeriodYears: z.number().int().min(1, "Hold period must be at least 1 year"),
-		exitCapRate: z.number().min(0).max(1, "Exit cap rate must be between 0 and 1"),
+		annualRentGrowth: z
+			.number()
+			.min(0)
+			.max(1, "Rent growth must be between 0 and 1"),
+		annualExpenseGrowth: z
+			.number()
+			.min(0)
+			.max(1, "Expense growth must be between 0 and 1"),
+		holdPeriodYears: z
+			.number()
+			.int()
+			.min(1, "Hold period must be at least 1 year"),
+		exitCapRate: z
+			.number()
+			.min(0)
+			.max(1, "Exit cap rate must be between 0 and 1"),
 		exitSalePrice: z.number().min(0, "Exit sale price must be positive"),
 
 		// Investor return targets (summary)
-		targetCoCYear1: z.number().min(0).max(1, "Target CoC Year 1 must be between 0 and 1"),
-		targetAvgCoC: z.number().min(0).max(1, "Target Avg CoC must be between 0 and 1"),
+		targetCoCYear1: z
+			.number()
+			.min(0)
+			.max(1, "Target CoC Year 1 must be between 0 and 1"),
+		targetAvgCoC: z
+			.number()
+			.min(0)
+			.max(1, "Target Avg CoC must be between 0 and 1"),
 		targetIRR: z.number().min(0).max(1, "Target IRR must be between 0 and 1"),
-		targetEquityMultiple: z.number().min(1, "Target equity multiple must be at least 1"),
+		targetEquityMultiple: z
+			.number()
+			.min(1, "Target equity multiple must be at least 1"),
 
 		// Distribution policy
-		preferredReturn: z.number().min(0).max(1, "Preferred return must be between 0 and 1"),
-		sponsorPromote: z.number().min(0).max(1, "Sponsor promote must be between 0 and 1"),
-		payoutRatioOfFCF: z.number().min(0).max(1, "Payout ratio must be between 0 and 1"),
+		preferredReturn: z
+			.number()
+			.min(0)
+			.max(1, "Preferred return must be between 0 and 1"),
+		sponsorPromote: z
+			.number()
+			.min(0)
+			.max(1, "Sponsor promote must be between 0 and 1"),
+		payoutRatioOfFCF: z
+			.number()
+			.min(0)
+			.max(1, "Payout ratio must be between 0 and 1"),
 		distributionFrequency: z.enum(["MONTHLY", "QUARTERLY", "ANNUAL"]),
 	}),
 
 	// Tokenomics and fractionalization parameters
 	tokenomics: z.object({
 		// Token supply & pricing
-		totalTokenSupply: z.number().int().min(1, "Total token supply must be at least 1"),
-		tokensForInvestors: z.number().int().min(1, "Investor tokens must be at least 1"),
-		tokensForSponsor: z.number().int().min(0, "Sponsor tokens must be positive"),
-		tokensForTreasury: z.number().int().min(0, "Treasury tokens must be positive"),
+		totalTokenSupply: z
+			.number()
+			.int()
+			.min(1, "Total token supply must be at least 1"),
+		tokensForInvestors: z
+			.number()
+			.int()
+			.min(1, "Investor tokens must be at least 1"),
+		tokensForSponsor: z
+			.number()
+			.int()
+			.min(0, "Sponsor tokens must be positive"),
+		tokensForTreasury: z
+			.number()
+			.int()
+			.min(0, "Treasury tokens must be positive"),
 
 		tokenPrice: z.number().min(0, "Token price must be positive"),
-		minInvestmentTokens: z.number().int().min(1, "Min investment must be at least 1 token"),
+		minInvestmentTokens: z
+			.number()
+			.int()
+			.min(1, "Min investment must be at least 1 token"),
 		maxInvestmentTokens: z.number().int().min(1).optional().nullable(),
 
 		// Rights / constraints

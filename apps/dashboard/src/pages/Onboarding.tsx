@@ -59,7 +59,9 @@ export default function KYCPage() {
 		liquidNetWorth: "",
 		taxCountry: "US",
 		accreditationType: AccreditationType.REG_D,
-		verificationMethod: undefined as AccreditationVerificationMethod | undefined,
+		verificationMethod: undefined as
+			| AccreditationVerificationMethod
+			| undefined,
 		documents: [] as string[],
 	});
 	const [newDocUrl, setNewDocUrl] = useState("");
@@ -120,12 +122,18 @@ export default function KYCPage() {
 				if (data.investorQuestionnaire) {
 					setInvestorProfile({
 						type: data.investorQuestionnaire.type || InvestorType.INDIVIDUAL,
-						investmentExperience: data.investorQuestionnaire.investmentExperience || InvestmentExperience.NONE,
-						riskTolerance: data.investorQuestionnaire.riskTolerance || RiskTolerance.MEDIUM,
+						investmentExperience:
+							data.investorQuestionnaire.investmentExperience ||
+							InvestmentExperience.NONE,
+						riskTolerance:
+							data.investorQuestionnaire.riskTolerance || RiskTolerance.MEDIUM,
 						liquidNetWorth: data.investorQuestionnaire.liquidNetWorth || "",
 						taxCountry: data.investorQuestionnaire.taxCountry || "US",
-						accreditationType: data.investorQuestionnaire.accreditationType || AccreditationType.REG_D,
-						verificationMethod: data.investorQuestionnaire.verificationMethod || undefined,
+						accreditationType:
+							data.investorQuestionnaire.accreditationType ||
+							AccreditationType.REG_D,
+						verificationMethod:
+							data.investorQuestionnaire.verificationMethod || undefined,
 						documents: data.investorQuestionnaire.accreditationDocuments || [],
 					});
 				}
@@ -556,13 +564,16 @@ export default function KYCPage() {
 		const formData = new FormData();
 		formData.append("file", file);
 
-		const response = await fetch(`${import.meta.env.VITE_API_URL}/api/upload/document`, {
-			method: "POST",
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-			body: formData,
-		});
+		const response = await fetch(
+			`${import.meta.env.VITE_API_URL}/api/upload/document`,
+			{
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+				body: formData,
+			}
+		);
 
 		if (!response.ok) {
 			const error = await response.json();
@@ -572,7 +583,6 @@ export default function KYCPage() {
 		const data = await response.json();
 		return data.url;
 	};
-
 
 	// ----------------------------------------------------------------------
 	// 7. Render

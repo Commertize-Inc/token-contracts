@@ -18,9 +18,8 @@ import { Waitlist } from "./entities/Waitlist";
 
 // Load environment variables dynamically
 const configPromise = (async () => {
-	const { isDevelopment, loadEnv, getStage } = await import(
-		"@commertize/utils/server"
-	);
+	const { isDevelopment, loadEnv, getStage } =
+		await import("@commertize/utils/server");
 
 	// Load environment variables from monorepo root
 	// Pass __dirname to help loadEnv find the monorepo root by walking up from packages/data/src
@@ -49,15 +48,15 @@ const configPromise = (async () => {
 		clientUrl: process.env.DATABASE_URL!,
 		driverOptions:
 			process.env.DATABASE_URL?.includes("localhost") ||
-				process.env.DATABASE_URL?.includes("127.0.0.1")
+			process.env.DATABASE_URL?.includes("127.0.0.1")
 				? undefined
 				: {
-					connection: {
-						ssl: {
-							rejectUnauthorized: !isDevelopment,
+						connection: {
+							ssl: {
+								rejectUnauthorized: !isDevelopment,
+							},
 						},
 					},
-				},
 		debug: isDevelopment,
 		migrations: {
 			pathTs: "./migrations",

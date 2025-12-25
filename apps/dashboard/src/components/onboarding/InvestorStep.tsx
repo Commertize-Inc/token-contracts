@@ -71,7 +71,9 @@ export const InvestorStep: React.FC<InvestorStepProps> = ({
 			// Reset file input
 			e.target.value = "";
 		} catch (error) {
-			setUploadError(error instanceof Error ? error.message : "Failed to upload file");
+			setUploadError(
+				error instanceof Error ? error.message : "Failed to upload file"
+			);
 		} finally {
 			setIsUploading(false);
 		}
@@ -106,12 +108,12 @@ export const InvestorStep: React.FC<InvestorStepProps> = ({
 							className="w-full px-4 py-2 bg-white disabled:bg-slate-100 disabled:cursor-not-allowed disabled:text-slate-500 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
 						>
 							<option value={InvestorType.INDIVIDUAL}>Individual</option>
-							<option value={InvestorType.INSTITUTIONAL}>Institutional/Entity</option>
+							<option value={InvestorType.INSTITUTIONAL}>
+								Institutional/Entity
+							</option>
 						</select>
 						{fieldErrors.type && (
-							<p className="text-sm text-red-500 mt-1">
-								{fieldErrors.type}
-							</p>
+							<p className="text-sm text-red-500 mt-1">{fieldErrors.type}</p>
 						)}
 					</div>
 
@@ -321,7 +323,9 @@ export const InvestorStep: React.FC<InvestorStepProps> = ({
 								<span className="text-sm font-medium text-slate-600">
 									{isUploading ? "Uploading..." : "Choose PDF File"}
 								</span>
-								{isUploading && <Loader2 className="w-4 h-4 animate-spin text-blue-600" />}
+								{isUploading && (
+									<Loader2 className="w-4 h-4 animate-spin text-blue-600" />
+								)}
 								<input
 									type="file"
 									accept="application/pdf"

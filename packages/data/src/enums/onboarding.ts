@@ -49,7 +49,6 @@ export enum OnboardingStep {
 	SPONSOR_KYB = "sponsor_kyb",
 }
 
-
 /**
  * Status of Know Your Customer (KYC) verification.
  */
@@ -80,7 +79,6 @@ export enum KycStatus {
 	DOCUMENTS_REQUIRED = "documents_required",
 }
 
-
 /**
  * Roles a user can have within the platform.
  */
@@ -105,7 +103,6 @@ export enum UserRole {
 	 */
 	SPONSOR_INVESTOR = "sponsor_investor",
 }
-
 
 /**
  * Generic verification status used for various checks (e.g., email, phone).

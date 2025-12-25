@@ -45,10 +45,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 				{toasts.map((t) => (
 					<div
 						key={t.id}
-						className={`rounded-lg px-4 py-3 shadow-lg ${t.variant === "destructive"
+						className={`rounded-lg px-4 py-3 shadow-lg ${
+							t.variant === "destructive"
 								? "bg-red-500 text-white"
 								: "bg-white border border-gray-200 text-gray-900"
-							}`}
+						}`}
 					>
 						<p className="font-medium text-sm"> {t.title} </p>
 						{t.description && (
@@ -65,9 +66,9 @@ export function useToast() {
 	const context = useContext(ToastContext);
 	if (!context) {
 		return {
-			toast: () => { },
+			toast: () => {},
 			toasts: [],
-			dismiss: () => { },
+			dismiss: () => {},
 		};
 	}
 	return context;

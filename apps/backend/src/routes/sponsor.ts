@@ -295,10 +295,7 @@ sponsor.post("/profile/update-request", authMiddleware, async (c) => {
 
 		// Ensure at least one critical field is being updated
 		if (Object.keys(requestedChanges).length === 0) {
-			return c.json(
-				{ error: "No critical fields provided for update" },
-				400
-			);
+			return c.json({ error: "No critical fields provided for update" }, 400);
 		}
 
 		// Check if there's already a pending request
@@ -389,10 +386,7 @@ sponsor.delete("/update-requests/:id", authMiddleware, async (c) => {
 		}
 
 		if (updateRequest.status !== SponsorUpdateRequestStatus.PENDING) {
-			return c.json(
-				{ error: "Only pending requests can be cancelled" },
-				400
-			);
+			return c.json({ error: "Only pending requests can be cancelled" }, 400);
 		}
 
 		updateRequest.status = SponsorUpdateRequestStatus.CANCELLED;

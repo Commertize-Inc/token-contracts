@@ -30,7 +30,10 @@ export function SubmissionDetails({ type, details }: SubmissionDetailsProps) {
 		);
 	};
 
-	const renderDocumentList = (documents: string[] | undefined, label = "Documents") => {
+	const renderDocumentList = (
+		documents: string[] | undefined,
+		label = "Documents"
+	) => {
 		if (!documents || documents.length === 0) return null;
 
 		return (
@@ -59,19 +62,27 @@ export function SubmissionDetails({ type, details }: SubmissionDetailsProps) {
 	const renderInvestorDetails = () => {
 		return (
 			<div className="space-y-4">
-				<h4 className="font-semibold text-sm border-b pb-2">Investor Information</h4>
+				<h4 className="font-semibold text-sm border-b pb-2">
+					Investor Information
+				</h4>
 
 				<div className="grid grid-cols-2 gap-4">
 					{renderField("Investor Type", details.type)}
 					{renderField("Investment Experience", details.investmentExperience)}
 					{renderField("Risk Tolerance", details.riskTolerance)}
-					{renderField("Liquid Net Worth", details.liquidNetWorth ? `$${details.liquidNetWorth}` : null)}
+					{renderField(
+						"Liquid Net Worth",
+						details.liquidNetWorth ? `$${details.liquidNetWorth}` : null
+					)}
 					{renderField("Tax Country", details.taxCountry)}
 					{renderField("Accreditation Type", details.accreditationType)}
 					{renderField("Verification Method", details.verificationMethod)}
 				</div>
 
-				{renderDocumentList(details.accreditationDocuments, "Accreditation Documents")}
+				{renderDocumentList(
+					details.accreditationDocuments,
+					"Accreditation Documents"
+				)}
 			</div>
 		);
 	};
@@ -79,7 +90,9 @@ export function SubmissionDetails({ type, details }: SubmissionDetailsProps) {
 	const renderSponsorDetails = () => {
 		return (
 			<div className="space-y-4">
-				<h4 className="font-semibold text-sm border-b pb-2">Sponsor Information</h4>
+				<h4 className="font-semibold text-sm border-b pb-2">
+					Sponsor Information
+				</h4>
 
 				<div className="grid grid-cols-2 gap-4">
 					{renderField("Business Name", details.businessName)}
@@ -107,7 +120,9 @@ export function SubmissionDetails({ type, details }: SubmissionDetailsProps) {
 	const renderListingDetails = () => {
 		return (
 			<div className="space-y-4">
-				<h4 className="font-semibold text-sm border-b pb-2">Property Information</h4>
+				<h4 className="font-semibold text-sm border-b pb-2">
+					Property Information
+				</h4>
 
 				<div className="grid grid-cols-2 gap-4">
 					{renderField("Name", details.name)}
@@ -146,18 +161,47 @@ export function SubmissionDetails({ type, details }: SubmissionDetailsProps) {
 
 				{details.financials && (
 					<>
-						<h4 className="font-semibold text-sm border-b pb-2 mt-4">Financials</h4>
+						<h4 className="font-semibold text-sm border-b pb-2 mt-4">
+							Financials
+						</h4>
 						<div className="grid grid-cols-2 gap-4">
-							{renderField("Target Raise", details.financials.targetRaise ? `$${details.financials.targetRaise.toLocaleString()}` : null)}
-							{renderField("Token Price", details.financials.tokenPrice ? `$${details.financials.tokenPrice}` : null)}
-							{renderField("Cap Rate", details.financials.capRate ? `${details.financials.capRate}%` : null)}
-							{renderField("NOI", details.financials.noi ? `$${details.financials.noi.toLocaleString()}` : null)}
-							{renderField("Occupancy Rate", details.financials.occupancyRate ? `${details.financials.occupancyRate}%` : null)}
+							{renderField(
+								"Target Raise",
+								details.financials.targetRaise
+									? `$${details.financials.targetRaise.toLocaleString()}`
+									: null
+							)}
+							{renderField(
+								"Token Price",
+								details.financials.tokenPrice
+									? `$${details.financials.tokenPrice}`
+									: null
+							)}
+							{renderField(
+								"Cap Rate",
+								details.financials.capRate
+									? `${details.financials.capRate}%`
+									: null
+							)}
+							{renderField(
+								"NOI",
+								details.financials.noi
+									? `$${details.financials.noi.toLocaleString()}`
+									: null
+							)}
+							{renderField(
+								"Occupancy Rate",
+								details.financials.occupancyRate
+									? `${details.financials.occupancyRate}%`
+									: null
+							)}
 						</div>
 					</>
 				)}
 
-				<h4 className="font-semibold text-sm border-b pb-2 mt-4">Offering Details</h4>
+				<h4 className="font-semibold text-sm border-b pb-2 mt-4">
+					Offering Details
+				</h4>
 				<div className="grid grid-cols-2 gap-4">
 					{renderField("Offering Type", details.offeringType)}
 					{renderField("Entity Structure", details.entityStructure)}
@@ -186,7 +230,11 @@ export function SubmissionDetails({ type, details }: SubmissionDetailsProps) {
 					onClick={() => setShowRaw(!showRaw)}
 					className="flex items-center gap-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider hover:text-foreground transition-colors"
 				>
-					{showRaw ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+					{showRaw ? (
+						<ChevronUp className="h-3 w-3" />
+					) : (
+						<ChevronDown className="h-3 w-3" />
+					)}
 					{showRaw ? "Hide" : "Show"} Raw Data
 				</button>
 

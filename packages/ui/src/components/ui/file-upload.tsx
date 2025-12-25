@@ -68,14 +68,19 @@ export function FileUpload({
 
 			// NOTE: This component assumes the API is reachable at `endpoint`
 
-			const res = await fetch(endpoint.startsWith("http") ? endpoint : `${import.meta.env.VITE_API_URL || "http://localhost:3000"}${endpoint}`, {
-				method: "POST",
-				body: formData,
-				headers: {
-					// Try to get token from storage if available, generic way
-					...(token ? { "Authorization": `Bearer ${token}` } : {})
+			const res = await fetch(
+				endpoint.startsWith("http")
+					? endpoint
+					: `${import.meta.env.VITE_API_URL || "http://localhost:3000"}${endpoint}`,
+				{
+					method: "POST",
+					body: formData,
+					headers: {
+						// Try to get token from storage if available, generic way
+						...(token ? { Authorization: `Bearer ${token}` } : {}),
+					},
 				}
-			});
+			);
 
 			if (!res.ok) {
 				const data = await res.json().catch(() => ({}));

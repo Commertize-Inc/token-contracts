@@ -59,7 +59,6 @@ export const StatusModal: React.FC<StatusModalProps> = ({
 
 	if (!isPending && !isRejected) return null;
 
-
 	const defaultTitle = isPending
 		? "Verification Pending"
 		: "Verification Failed";

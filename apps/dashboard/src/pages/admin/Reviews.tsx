@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../lib/api";
-import { Button, Badge, DataTable, DataTableColumnHeader } from "@commertize/ui";
+import {
+	Button,
+	Badge,
+	DataTable,
+	DataTableColumnHeader,
+} from "@commertize/ui";
 import { ColumnDef } from "@tanstack/react-table";
 import {
 	Loader2,
@@ -107,7 +112,6 @@ export default function AdminReviews() {
 		return () => document.removeEventListener("keydown", handleEscape);
 	}, [selectedSubmission]);
 
-
 	const handleSubmitReview = () => {
 		if (selectedSubmission && reviewAction) {
 			const payload: any = {
@@ -207,7 +211,9 @@ export default function AdminReviews() {
 				<DataTableColumnHeader column={column} title="Title" />
 			),
 			cell: ({ row }) => (
-				<div className="text-foreground font-medium">{row.getValue("title")}</div>
+				<div className="text-foreground font-medium">
+					{row.getValue("title")}
+				</div>
 			),
 		},
 		{
@@ -291,7 +297,8 @@ export default function AdminReviews() {
 									<select
 										className="bg-transparent border-none text-sm focus:ring-0 outline-none"
 										value={
-											(table.getColumn("type")?.getFilterValue() as string) ?? "ALL"
+											(table.getColumn("type")?.getFilterValue() as string) ??
+											"ALL"
 										}
 										onChange={(e) =>
 											table.getColumn("type")?.setFilterValue(e.target.value)
@@ -473,7 +480,7 @@ export default function AdminReviews() {
 												className="w-full min-h-[120px] p-3 border rounded-md text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-none"
 												placeholder={
 													reviewAction === "APPROVE" ||
-														reviewAction === "TOKENIZE"
+													reviewAction === "TOKENIZE"
 														? "Optional comment"
 														: `Reason for ${reviewAction === "REJECT" ? "rejection" : "action"}...`
 												}
@@ -497,7 +504,10 @@ export default function AdminReviews() {
 										disabled={
 											!reviewAction ||
 											reviewMutation.isPending ||
-											(reviewAction !== "APPROVE" && reviewAction !== "TOKENIZE" && reviewAction !== "UPDATE_STATUS" && !comment.trim())
+											(reviewAction !== "APPROVE" &&
+												reviewAction !== "TOKENIZE" &&
+												reviewAction !== "UPDATE_STATUS" &&
+												!comment.trim())
 										}
 										variant="primary"
 										className={

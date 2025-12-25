@@ -219,7 +219,10 @@ export default function ListingDetails() {
 									Financials
 								</h3>
 								<div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-									<ListingFinancials financials={listing.financials} tokenomics={listing.tokenomics} />
+									<ListingFinancials
+										financials={listing.financials}
+										tokenomics={listing.tokenomics}
+									/>
 								</div>
 							</section>
 

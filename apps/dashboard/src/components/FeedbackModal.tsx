@@ -33,7 +33,6 @@ export function FeedbackModal({
 
 	if (!isOpen) return null;
 
-
 	return createPortal(
 		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
 			<div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200">

@@ -264,10 +264,11 @@ export default function Marketplace() {
 								<div className="flex gap-2">
 									<button
 										onClick={() => setShowFilters(!showFilters)}
-										className={`flex items-center gap-2 px-6 py-3 border rounded-xl transition-colors ${showFilters
-											? "bg-[#D4A024] text-white border-[#D4A024]"
-											: "border-gray-200 hover:bg-gray-50"
-											}`}
+										className={`flex items-center gap-2 px-6 py-3 border rounded-xl transition-colors ${
+											showFilters
+												? "bg-[#D4A024] text-white border-[#D4A024]"
+												: "border-gray-200 hover:bg-gray-50"
+										}`}
 									>
 										<Filter className="w-4 h-4" />
 										Filters

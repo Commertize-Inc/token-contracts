@@ -16,10 +16,7 @@ import {
 	X,
 	Info,
 } from "lucide-react";
-import {
-	KycStatus,
-	VerificationStatus,
-} from "@commertize/data/enums";
+import { KycStatus, VerificationStatus } from "@commertize/data/enums";
 
 import { VerificationStatusCard } from "../components/VerificationStatusCard";
 
@@ -95,8 +92,6 @@ export default function ProfilePage() {
 		null
 	);
 	const [isCheckingUsername, setIsCheckingUsername] = useState(false);
-
-
 
 	// Sync edit form with profile data when profile loads
 	useEffect(() => {
@@ -588,11 +583,7 @@ export default function ProfilePage() {
 						className="space-y-6"
 					>
 						{/* Verification Card */}
-						{profile && (
-							<VerificationStatusCard
-								profile={profile}
-							/>
-						)}
+						{profile && <VerificationStatusCard profile={profile} />}
 					</motion.div>
 				</div>
 
@@ -858,7 +849,6 @@ export default function ProfilePage() {
 					</motion.div>
 				</div>
 			)}
-
 
 			<Alert
 				isOpen={alertState.isOpen}

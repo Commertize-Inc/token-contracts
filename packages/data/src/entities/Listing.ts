@@ -18,13 +18,13 @@ import { Sponsor } from "./Sponsor";
 
 type ListingFinancials = {
 	// Deal economics
-	purchasePrice: number;          // total acquisition price
-	totalCapitalization: number;    // equity + debt, incl. fees
+	purchasePrice: number; // total acquisition price
+	totalCapitalization: number; // equity + debt, incl. fees
 
 	// Debt terms
 	loanAmount: number;
-	loanToValue: number;            // 0–1
-	interestRate: number;           // 0–1
+	loanToValue: number; // 0–1
+	interestRate: number; // 0–1
 	amortizationYears?: number | null;
 	interestOnlyYears?: number | null;
 	loanTermYears: number;
@@ -40,37 +40,37 @@ type ListingFinancials = {
 	// Operating history (current stabilized year)
 	effectiveGrossIncome: number;
 	operatingExpenses: number;
-	noi: number;                    // can be derived but kept as input for now
-	occupancyRate: number;          // 0–1
+	noi: number; // can be derived but kept as input for now
+	occupancyRate: number; // 0–1
 
 	// Pro forma & exit
-	annualRentGrowth: number;       // 0–1
-	annualExpenseGrowth: number;    // 0–1
+	annualRentGrowth: number; // 0–1
+	annualExpenseGrowth: number; // 0–1
 	holdPeriodYears: number;
-	exitCapRate: number;            // 0–1
+	exitCapRate: number; // 0–1
 	exitSalePrice: number;
 
 	// Investor return targets (summary)
-	targetCoCYear1: number;         // cash‑on‑cash, 0–1
-	targetAvgCoC: number;           // 0–1
-	targetIRR: number;              // 0–1
+	targetCoCYear1: number; // cash‑on‑cash, 0–1
+	targetAvgCoC: number; // 0–1
+	targetIRR: number; // 0–1
 	targetEquityMultiple: number;
 
 	// Distribution policy
-	preferredReturn: number;        // 0–1
-	sponsorPromote: number;         // 0–1 of upside above pref
-	payoutRatioOfFCF: number;       // 0–1 of distributable CF paid out
+	preferredReturn: number; // 0–1
+	sponsorPromote: number; // 0–1 of upside above pref
+	payoutRatioOfFCF: number; // 0–1 of distributable CF paid out
 	distributionFrequency: "MONTHLY" | "QUARTERLY" | "ANNUAL";
 };
 
 type Tokenomics = {
 	// Token supply & pricing (inputs)
-	totalTokenSupply: number;       // total tokens minted
-	tokensForInvestors: number;     // tokens in this offering
-	tokensForSponsor: number;       // sponsor/GP tokens
-	tokensForTreasury: number;      // platform/treasury tokens
+	totalTokenSupply: number; // total tokens minted
+	tokensForInvestors: number; // tokens in this offering
+	tokensForSponsor: number; // sponsor/GP tokens
+	tokensForTreasury: number; // platform/treasury tokens
 
-	tokenPrice: number;             // price per token in raise currency
+	tokenPrice: number; // price per token in raise currency
 	minInvestmentTokens: number;
 	maxInvestmentTokens?: number | null;
 
@@ -210,12 +210,7 @@ export class Listing {
 	@Property({ persist: false, type: "number" })
 	get year1CashOnCash(): number | null {
 		if (!this.financials) return null;
-		const {
-			noi,
-			interestRate,
-			loanAmount,
-			equityRequired,
-		} = this.financials;
+		const { noi, interestRate, loanAmount, equityRequired } = this.financials;
 		if (!equityRequired) return null;
 		// Very rough: interest‑only debt service = rate * loanAmount.
 		const annualDebtService = interestRate * loanAmount;

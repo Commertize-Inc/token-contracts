@@ -54,7 +54,9 @@ export const SponsorFormFields: React.FC<SponsorFormFieldsProps> = ({
 			// Reset file input
 			e.target.value = "";
 		} catch (error) {
-			setUploadError(error instanceof Error ? error.message : "Failed to upload file");
+			setUploadError(
+				error instanceof Error ? error.message : "Failed to upload file"
+			);
 		} finally {
 			setIsUploading(false);
 		}
@@ -212,7 +214,9 @@ export const SponsorFormFields: React.FC<SponsorFormFieldsProps> = ({
 									<span className="text-sm font-medium text-slate-600">
 										{isUploading ? "Uploading..." : "Choose PDF File"}
 									</span>
-									{isUploading && <Loader2 className="w-4 h-4 animate-spin text-blue-600" />}
+									{isUploading && (
+										<Loader2 className="w-4 h-4 animate-spin text-blue-600" />
+									)}
 									<input
 										type="file"
 										accept="application/pdf"
