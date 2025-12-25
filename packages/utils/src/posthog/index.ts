@@ -6,7 +6,7 @@ import {
 	useFeatureFlagEnabled,
 	usePostHog,
 } from "posthog-js/react";
-import { useEffect } from "react";
+import { useEffect, createElement } from "react";
 import { STAGE } from "../env-client";
 
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
@@ -39,7 +39,7 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
 		}
 	}, []);
 
-	return <PHProvider client={posthog}> {children} </PHProvider>;
+	return createElement(PHProvider, { client: posthog }, children);
 }
 
 export function useFeatureFlag(name: string) {
