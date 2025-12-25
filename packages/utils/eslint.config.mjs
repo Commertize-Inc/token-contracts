@@ -20,4 +20,7 @@ export default [
 			},
 		},
 	},
+	{
+		ignores: ["src/vite-env-plugin.d.ts"],
+	},
 ];

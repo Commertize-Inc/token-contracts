@@ -1,7 +1,13 @@
-'use client';
-import posthog from 'posthog-js';
-import { PostHogProvider as PHProvider, useFeatureFlagEnabled, usePostHog } from 'posthog-js/react'
-import { useEffect } from 'react';
+"use client";
+
+import posthog from "posthog-js";
+import {
+	PostHogProvider as PHProvider,
+	useFeatureFlagEnabled,
+	usePostHog,
+} from "posthog-js/react";
+import { useEffect } from "react";
+import { STAGE } from "../env-client";
 
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
 	useEffect(() => {
@@ -13,16 +19,17 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
 
 			try {
 				posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
-					api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com",
+					api_host:
+						process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com",
 					person_profiles: "identified_only",
 					bootstrap: {
 						distinctID: undefined,
 						featureFlags: {},
 					},
 					loaded: (posthog) => {
-						// Set global super properties for all events
+						// Set global super listings for all events
 						posthog.register({
-							NODE_ENV: process.env.NODE_ENV || 'development',
+							STAGE,
 						});
 					},
 				});
@@ -36,10 +43,9 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useFeatureFlag(name: string) {
-	const env = process.env.NODE_ENV || 'development';
-	const ffName = `commertize-${env}-${name}`;
+	const ffName = `commertize-${STAGE}-${name}`;
 
-	if (env === 'development' && typeof window !== 'undefined') {
+	if (STAGE === "development" && typeof window !== "undefined") {
 		console.debug(`[PostHog] Checking flag: ${ffName}`);
 	}
 
@@ -47,3 +53,4 @@ export function useFeatureFlag(name: string) {
 }
 
 export { usePostHog };
+export * from "./constants";
