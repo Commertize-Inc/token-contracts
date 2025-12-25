@@ -1,7 +1,6 @@
 import { Entity, PrimaryKey, Property, ManyToOne } from "@mikro-orm/core";
 import { v4 } from "uuid";
 import { User } from "./User";
-import { encrypt, decrypt } from "../utils/encryption";
 
 /**
  * PlaidItem entity represents a connection to a financial institution via Plaid
@@ -50,19 +49,6 @@ export class PlaidItem {
 	@Property({ type: "date", onUpdate: () => new Date() })
 	updatedAt: Date = new Date();
 
-	// Encryption helper methods
-	/**
-	 * Set the access token (automatically encrypts)
-	 */
-	setAccessToken(plaintext: string): void {
-		this.accessToken = encrypt(plaintext);
-	}
-
-	/**
-	 * Get the decrypted access token
-	 * Use this method instead of accessing accessToken directly
-	 */
-	getDecryptedAccessToken(): string {
-		return decrypt(this.accessToken);
-	}
+	// Encryption helper methods have been removed to prevent server-side dependencies in the shared package.
+	// Services must encrypt/decrypt the access token explicitly.
 }

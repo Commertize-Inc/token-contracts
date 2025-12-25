@@ -9,10 +9,10 @@
  */
 
 import crypto from "crypto";
-import { loadEnv } from "@commertize/utils/env";
+import { isDevelopment, loadEnv } from "@commertize/utils/server";
 
 // Ensure env is loaded
-loadEnv(process.cwd());
+loadEnv();
 
 const ALGORITHM = "aes-256-gcm";
 const IV_LENGTH = 16; // For AES, this is always 16 bytes
@@ -27,20 +27,18 @@ function getEncryptionKey(): Buffer {
 	const envKey = process.env.AES_KEY;
 
 	if (!envKey) {
-		if (process.env.NODE_ENV === "production") {
+		if (!isDevelopment) {
 			throw new Error(
 				"AES_KEY environment variable is required in production. " +
-				"Generate with: openssl rand -hex 32"
+					"Generate with: openssl rand -hex 32"
 			);
 		}
 
 		// Silence warning in test/build if needed, or keep for dev awareness
-		if (process.env.NODE_ENV !== "test") {
-			console.warn(
-				"[Security] Using default encryption key in development. " +
+		console.warn(
+			"[Security] Using default encryption key in development. " +
 				"Set AES_KEY environment variable for production."
-			);
-		}
+		);
 
 		// Default key for development only (32 bytes)
 		return Buffer.from(
@@ -54,7 +52,7 @@ function getEncryptionKey(): Buffer {
 	if (key.length !== 32) {
 		throw new Error(
 			"AES_KEY must be a 32-byte (64 character) hex string. " +
-			"Generate with: openssl rand -hex 32"
+				"Generate with: openssl rand -hex 32"
 		);
 	}
 

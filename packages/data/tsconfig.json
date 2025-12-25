@@ -2,9 +2,9 @@
 	"extends": "../utils/tsconfig.json",
 	"compilerOptions": {
 		"outDir": "./dist",
-		"rootDir": "./src",
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
+		"useDefineForClassFields": false,
 		"declaration": true,
 		"types": ["node", "reflect-metadata"]
 	},
