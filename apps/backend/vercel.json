@@ -5,7 +5,7 @@
 			"destination": "/api/index"
 		}
 	],
-	"buildCommand": "pnpm build",
-	"installCommand": "pnpm install",
+	"buildCommand": "cd ../.. && pnpm install && cd packages/utils && pnpm build && cd ../data && pnpm build && cd ../../apps/backend && pnpm exec tsup",
+	"installCommand": "cd ../.. && pnpm install",
 	"framework": null
 }
