@@ -743,6 +743,7 @@ export default function KYCPage() {
 						updateViewState({ submissionIntent: intent })
 					}
 					onSkipToSponsor={() => setStep(OnboardingStep.SPONSOR_KYB)}
+					onSkip={handleFinishOnboarding}
 					onUploadFile={handleFileUpload}
 				/>
 			)}

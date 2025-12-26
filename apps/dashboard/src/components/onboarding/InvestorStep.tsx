@@ -34,6 +34,7 @@ interface InvestorStepProps {
 	submissionIntent: "finish" | "continue";
 	setSubmissionIntent: (intent: "finish" | "continue") => void;
 	onSkipToSponsor?: () => void;
+	onSkip: () => void;
 	onUploadFile?: (file: File) => Promise<string>; // Returns URL of uploaded file
 }
 
@@ -51,6 +52,7 @@ export const InvestorStep: React.FC<InvestorStepProps> = ({
 	submissionIntent,
 	setSubmissionIntent,
 	onSkipToSponsor,
+	onSkip,
 	onUploadFile,
 }) => {
 	const [isUploading, setIsUploading] = useState(false);
@@ -364,16 +366,12 @@ export const InvestorStep: React.FC<InvestorStepProps> = ({
 						)}
 					</button>
 					<button
-						type="submit"
-						onClick={() => setSubmissionIntent("finish")}
+						type="button"
+						onClick={onSkip}
 						disabled={loading}
 						className="w-full bg-white border border-slate-200 text-slate-700 py-3 rounded-lg font-medium hover:bg-slate-50 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
 					>
-						{loading && submissionIntent === "finish" ? (
-							<Loader2 className="w-5 h-5 animate-spin" />
-						) : (
-							"Save & Finish"
-						)}
+						Skip & Finish
 					</button>
 				</div>
 			</form>
