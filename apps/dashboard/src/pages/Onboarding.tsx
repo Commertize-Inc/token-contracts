@@ -185,19 +185,30 @@ export default function KYCPage() {
 				// 3. Check Investor Status
 				if (
 					!data.investorQuestionnaire ||
-					investorStatus === VerificationStatus.REJECTED
+					investorStatus === VerificationStatus.REJECTED ||
+					investorStatus === VerificationStatus.ACTION_REQUIRED
 				) {
 					setStep(OnboardingStep.INVESTOR_PROFILE);
-					if (investorStatus === VerificationStatus.REJECTED) {
+					if (
+						investorStatus === VerificationStatus.REJECTED ||
+						investorStatus === VerificationStatus.ACTION_REQUIRED
+					) {
 						updateViewState({ modalOpen: true });
 					}
 					return;
 				}
 
 				// 4. Check Sponsor Status
-				if (!data.sponsor || sponsorStatus === VerificationStatus.REJECTED) {
+				if (
+					!data.sponsor ||
+					sponsorStatus === VerificationStatus.REJECTED ||
+					sponsorStatus === VerificationStatus.ACTION_REQUIRED
+				) {
 					setStep(OnboardingStep.SPONSOR_KYB);
-					if (sponsorStatus === VerificationStatus.REJECTED) {
+					if (
+						sponsorStatus === VerificationStatus.REJECTED ||
+						sponsorStatus === VerificationStatus.ACTION_REQUIRED
+					) {
 						updateViewState({ modalOpen: true });
 					}
 					return;
@@ -636,16 +647,24 @@ export default function KYCPage() {
 				}
 				title={
 					viewState.step.current === OnboardingStep.INVESTOR_PROFILE
-						? "Investor Profile Rejected"
+						? viewState.investorStatus === VerificationStatus.ACTION_REQUIRED
+							? "Action Required on Investor Profile"
+							: "Investor Profile Rejected"
 						: viewState.step.current === OnboardingStep.SPONSOR_KYB
-							? "Sponsor Verification Rejected"
+							? viewState.sponsorStatus === VerificationStatus.ACTION_REQUIRED
+								? "Action Required on Sponsor Application"
+								: "Sponsor Verification Rejected"
 							: undefined
 				}
 				message={
 					viewState.step.current === OnboardingStep.INVESTOR_PROFILE
-						? "Your investor profile needs attention. Please view the feedback and update your information."
+						? viewState.investorStatus === VerificationStatus.ACTION_REQUIRED
+							? "Your investor profile requires additional information. Please view the feedback."
+							: "Your investor profile needs attention. Please view the feedback and update your information."
 						: viewState.step.current === OnboardingStep.SPONSOR_KYB
-							? "Your sponsor application was not approved. Please review the feedback and make necessary changes."
+							? viewState.sponsorStatus === VerificationStatus.ACTION_REQUIRED
+								? "Your sponsor application requires additional information. Please view the feedback."
+								: "Your sponsor application was not approved. Please review the feedback and make necessary changes."
 							: undefined
 				}
 				onClose={() => updateViewState({ modalOpen: false })}

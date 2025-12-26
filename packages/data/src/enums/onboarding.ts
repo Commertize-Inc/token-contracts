@@ -132,4 +132,9 @@ export enum VerificationStatus {
 	 * Verification process has not started.
 	 */
 	NOT_STARTED = "NOT_STARTED",
+
+	/**
+	 * Verification requires user action (e.g. resubmit documents).
+	 */
+	ACTION_REQUIRED = "action_required",
 }

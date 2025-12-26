@@ -43,10 +43,12 @@ export const StatusModal: React.FC<StatusModalProps> = ({
 	const isRejected =
 		status === KycStatus.REJECTED || status === VerificationStatus.REJECTED;
 
+	const isActionRequired = status === VerificationStatus.ACTION_REQUIRED;
+
 	// ESC key handler for closing modal (only when not pending)
 	useEffect(() => {
 		const handleEscape = (e: KeyboardEvent) => {
-			if (e.key === "Escape" && isOpen && !isPending) {
+			if (e.key === "Escape" && isOpen && !isPending && !isActionRequired) {
 				onClose();
 			}
 		};
@@ -57,15 +59,19 @@ export const StatusModal: React.FC<StatusModalProps> = ({
 
 	if (!isOpen) return null;
 
-	if (!isPending && !isRejected) return null;
+	if (!isPending && !isRejected && !isActionRequired) return null;
 
 	const defaultTitle = isPending
 		? "Verification Pending"
-		: "Verification Failed";
+		: isActionRequired
+			? "Action Required"
+			: "Verification Failed";
 
 	const defaultMessage = isPending
 		? "Your verification is currently pending manual review. Please check back later."
-		: "We were unable to verify your information. Please check the feedback or contact support.";
+		: isActionRequired
+			? "Your verification requires attention. Please check the feedback below."
+			: "We were unable to verify your information. Please check the feedback or contact support.";
 
 	return (
 		<div className="fixed inset-0 z-[50] flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm pt-20">
@@ -87,6 +93,8 @@ export const StatusModal: React.FC<StatusModalProps> = ({
 							<Clock
 								className={`w-8 h-8 ${isPending ? "text-orange-600" : "text-red-600"} `}
 							/>
+						) : isActionRequired ? (
+							<AlertTriangle className="w-8 h-8 text-orange-600" />
 						) : (
 							<AlertTriangle className="w-8 h-8 text-red-600" />
 						)}
@@ -99,17 +107,17 @@ export const StatusModal: React.FC<StatusModalProps> = ({
 					<p className="text-slate-600 mb-6">{message || defaultMessage}</p>
 
 					<div className="flex flex-col space-y-3 w-full">
-						{isRejected && onViewFeedback && (
+						{(isRejected || isActionRequired) && onViewFeedback && (
 							<button
 								onClick={onViewFeedback}
-								className="w-full bg-red-50 text-red-700 border border-red-200 py-2.5 rounded-lg font-medium hover:bg-red-100 transition-colors flex items-center justify-center"
+								className={`w-full ${isActionRequired ? "bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100" : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100"} border py-2.5 rounded-lg font-medium transition-colors flex items-center justify-center`}
 							>
 								<MessageSquare className="w-4 h-4 mr-2" />
-								View Admin Feedback
+								View Feedback
 							</button>
 						)}
 
-						{isRejected && onEdit && (
+						{(isRejected || isActionRequired) && onEdit && (
 							<button
 								onClick={onEdit}
 								className="w-full bg-blue-600 text-white py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center"
