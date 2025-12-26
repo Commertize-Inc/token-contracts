@@ -12,7 +12,6 @@ export default function PostHogClient() {
 
 	// Intercept capture to add STAGE to all events
 	const originalCapture = posthogClient.capture.bind(posthogClient);
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	posthogClient.capture = (event: any) => {
 		if (typeof event === "object" && event.listings) {
 			event.listings.STAGE = stage;

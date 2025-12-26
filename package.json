@@ -9,8 +9,6 @@
 	},
 	"scripts": {
 		"dev": "turbo run dev",
-		"dev:landing": "turbo run dev --filter=@commertize/landing",
-		"dev:dashboard": "turbo run dev --filter=@commertize/dashboard",
 		"docker:up": "docker compose up --build -d && pnpm migration:up",
 		"docker:down": "docker compose down",
 		"build": "turbo run build",

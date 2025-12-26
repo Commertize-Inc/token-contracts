@@ -185,7 +185,7 @@ export default function CreateListing() {
 			console.error("Submission error:", error);
 			setServerError(
 				error.response?.data?.error ||
-				"Failed to create listing. Please try again."
+					"Failed to create listing. Please try again."
 			);
 		} finally {
 			setIsSubmitting(false);

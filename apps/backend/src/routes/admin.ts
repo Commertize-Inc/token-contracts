@@ -167,9 +167,9 @@ admin.get("/submissions", async (c) => {
 					"propertyType",
 					"status",
 					"createdAt",
-					"sponsor.firstName",
-					"sponsor.lastName",
-					"sponsor.email",
+					"sponsor.id",
+					"sponsor.businessName",
+					"sponsor.members:ref",
 				],
 			}
 		);
@@ -238,10 +238,9 @@ admin.get("/submissions", async (c) => {
 				status: l.status,
 				submittedAt: l.createdAt,
 				title: `Listing: ${l.name}`,
-				user: {
+				sponsor: {
 					id: l.sponsor.id,
-					email: l.sponsor.email,
-					name: `${l.sponsor.firstName} ${l.sponsor.lastName}`,
+					businessName: l.sponsor.businessName,
 				},
 			})),
 		];
@@ -383,9 +382,8 @@ admin.post("/submissions/:type/:id/review", async (c) => {
 				targetEntity.investor?.status ||
 				targetEntity.sponsor?.status,
 		});
-	} catch (error) {
+	} catch (error: any) {
 		console.error("Error submitting review:", error);
-		// @ts-ignore
 		return c.json(
 			{
 				error: "Internal Server Error",

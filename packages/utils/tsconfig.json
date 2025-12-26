@@ -4,17 +4,10 @@
 		// Generate declaration files for published package
 		"declaration": true,
 		"declarationMap": true,
-		"lib": [
-			"dom",
-			"dom.iterable",
-			"esnext"
-		],
+		"lib": ["dom", "dom.iterable", "esnext"],
 		"jsx": "react-jsx",
 		"allowImportingTsExtensions": true,
 		"noEmit": true
 	},
-	"include": [
-		"./src/**/*",
-		"tsup.config.ts"
-	]
+	"include": ["./src/**/*", "tsup.config.ts"]
 }

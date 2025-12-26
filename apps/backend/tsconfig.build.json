@@ -4,9 +4,7 @@
 		"target": "ES2022",
 		"module": "ESNext",
 		"moduleResolution": "bundler",
-		"lib": [
-			"ES2022"
-		],
+		"lib": ["ES2022"],
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
 		"strict": true,
@@ -16,44 +14,27 @@
 		"noResolve": false,
 		"baseUrl": ".",
 		"paths": {
-			"@commertize/utils/client": [
-				"../../packages/utils/dist/client.d.ts"
-			],
-			"@commertize/utils/server": [
-				"../../packages/utils/dist/server.d.ts"
-			],
+			"@commertize/utils/client": ["../../packages/utils/dist/client.d.ts"],
+			"@commertize/utils/server": ["../../packages/utils/dist/server.d.ts"],
 			"@commertize/utils/env-server": [
 				"../../packages/utils/dist/env-server.d.ts"
 			],
-			"@commertize/utils": [
-				"../../packages/utils/dist/index.d.ts"
-			],
+			"@commertize/utils": ["../../packages/utils/dist/index.d.ts"],
 			"@commertize/data/config": [
 				"../../packages/data/dist/mikro-orm.config.d.ts"
 			],
-			"@commertize/data/enums": [
-				"../../packages/data/dist/enums/index.d.ts"
-			],
+			"@commertize/data/enums": ["../../packages/data/dist/enums/index.d.ts"],
 			"@commertize/data/schemas": [
 				"../../packages/data/dist/schemas/index.d.ts"
 			],
 			"@commertize/data/encryption": [
 				"../../packages/data/dist/utils/encryption.d.ts"
 			],
-			"@commertize/data": [
-				"../../packages/data/dist/index.d.ts"
-			]
+			"@commertize/data": ["../../packages/data/dist/index.d.ts"]
 		},
-		"typeRoots": [
-			"../../node_modules/@types",
-			"node_modules/@types"
-		]
+		"typeRoots": ["../../node_modules/@types", "node_modules/@types"]
 	},
-	"include": [
-		"src/**/*.ts",
-		"api/**/*.mts",
-		"vercel-env.d.ts"
-	],
+	"include": ["src/**/*.ts", "api/**/*.mts", "vercel-env.d.ts"],
 	"exclude": [
 		"node_modules",
 		"dist",

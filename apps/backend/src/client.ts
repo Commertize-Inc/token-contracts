@@ -43,7 +43,9 @@ export const createApi = (baseUrl: string) => {
 					const errorJson = JSON.parse(errorText);
 					if (errorJson.error) errorMessage = errorJson.error;
 					if (errorJson.details) errorMessage += `: ${errorJson.details}`;
-				} catch { /* empty */ }
+				} catch {
+					/* empty */
+				}
 				throw new Error(`API Error: ${errorMessage}`);
 			}
 			return res.json();
