@@ -27,9 +27,7 @@ const FlippingText = () => {
 		if (!hasMounted) return;
 		const interval = setInterval(() => {
 			setAnimationKey((prev) => prev + 1);
-			setTimeout(() => {
-				setCurrentIndex((prev) => (prev + 1) % prefixes.length);
-			}, 400);
+			setCurrentIndex((prev) => (prev + 1) % prefixes.length);
 		}, 2500);
 		return () => clearInterval(interval);
 	}, [hasMounted, prefixes.length]);
