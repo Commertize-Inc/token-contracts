@@ -1,31 +1,33 @@
-import { useEffect, useState, useCallback } from "react";
-import { Navbar } from "../components/Navbar";
-import { Button, Alert, Input } from "@commertize/ui";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { KycStatus, VerificationStatus } from "@commertize/data/enums";
+import { Alert, Button, Input } from "@commertize/ui";
 import { motion } from "framer-motion";
 import {
-	ShieldCheck,
+	AlertTriangle,
 	Building2,
 	CheckCircle,
-	XCircle,
+	Edit2,
+	Info,
 	Loader2,
 	Plus,
-	AlertTriangle,
-	User as UserIcon,
-	Edit2,
 	Save,
+	ShieldCheck,
+	User as UserIcon,
 	X,
-	Info,
+	XCircle,
 } from "lucide-react";
-import { KycStatus, VerificationStatus } from "@commertize/data/enums";
+import { useCallback, useEffect, useState } from "react";
+import { Navbar } from "../components/Navbar";
 
 import { VerificationStatusCard } from "../components/VerificationStatusCard";
 
-import {
-	usePlaidLink,
-	PlaidLinkOptions,
-	PlaidLinkOnSuccess,
-} from "react-plaid-link";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
+import {
+	PlaidLinkOnSuccess,
+	PlaidLinkOptions,
+	usePlaidLink,
+} from "react-plaid-link";
 import { api } from "../lib/api";
 
 interface ProfileData {
@@ -36,7 +38,6 @@ interface ProfileData {
 	email?: string;
 	privyId: string;
 	stripeCustomerId?: string;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	bankAccounts: any[];
 	isAdmin: boolean;
 	isInvestor?: boolean;
@@ -204,8 +205,7 @@ export default function ProfilePage() {
 	}, [user, createLinkToken]);
 
 	const onSuccess = useCallback<PlaidLinkOnSuccess>(
-		// eslint-disable-next-line no-unused-vars
-		async (public_token: string, _metadata: any) => {
+		async (public_token: string, _metadata: unknown) => {
 			setIsConnecting(true);
 			try {
 				const token = await getAccessToken();

@@ -1,9 +1,13 @@
 {
-	"extends": "../../tsconfig.frontend.json",
+	"extends": "../../packages/utils/tsconfig.frontend.json",
 	"compilerOptions": {
 		"target": "ES2020",
 		"useDefineForClassFields": false,
-		"lib": ["ES2020", "DOM", "DOM.Iterable"],
+		"lib": [
+			"ES2020",
+			"DOM",
+			"DOM.Iterable"
+		],
 		"module": "ESNext",
 		"skipLibCheck": true,
 		"moduleResolution": "bundler",
@@ -17,17 +21,35 @@
 		"noUnusedParameters": true,
 		"noFallthroughCasesInSwitch": true,
 		"baseUrl": ".",
+		"ignoreDeprecations": "6.0",
 		"paths": {
-			"@/*": ["./src/*"],
-			"@commertize/utils/*": ["../../packages/utils/src/*"],
-			"@commertize/utils": ["../../packages/utils/src/index.ts"],
-			"@commertize/data/*": ["../../packages/data/src/*"],
-			"@commertize/data": ["../../packages/data/src/index.ts"],
-			"@commertize/ui/*": ["../../packages/ui/src/*"],
-			"@commertize/ui": ["../../packages/ui/src/index.ts"]
+			"@/*": [
+				"./src/*"
+			],
+			"@commertize/utils/*": [
+				"../../packages/utils/src/*"
+			],
+			"@commertize/utils": [
+				"../../packages/utils/src/index.ts"
+			],
+			"@commertize/data/*": [
+				"../../packages/data/src/*"
+			],
+			"@commertize/data": [
+				"../../packages/data/src/index.ts"
+			],
+			"@commertize/ui/*": [
+				"../../packages/ui/src/*"
+			],
+			"@commertize/ui": [
+				"../../packages/ui/src/index.ts"
+			]
 		},
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true
 	},
-	"include": ["src"]
+	"include": [
+		"src",
+		"vite.config.ts"
+	]
 }

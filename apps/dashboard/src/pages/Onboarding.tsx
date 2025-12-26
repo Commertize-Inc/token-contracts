@@ -453,7 +453,7 @@ export default function KYCPage() {
 				viewState.investorStatus === VerificationStatus.UNVERIFIED
 					? "post"
 					: "patch";
-			// @ts-ignore
+
 			await api[method]("onboarding/questionnaire", investorProfile, token);
 
 			if (viewState.submissionIntent === "finish") {

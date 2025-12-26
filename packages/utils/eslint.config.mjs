@@ -1,4 +1,4 @@
-import rootConfig from "../../eslint.config.mjs";
+import rootConfig from "./eslint.base.mjs";
 import tsparser from "@typescript-eslint/parser";
 import path from "node:path";
 import { fileURLToPath } from "node:url";

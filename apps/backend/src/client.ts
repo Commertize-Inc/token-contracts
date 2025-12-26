@@ -5,7 +5,6 @@ export const createApi = (baseUrl: string) => {
 			headers["Authorization"] = `Bearer ${token}`;
 		}
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const vercelProtectionBypass = (import.meta as any).env
 			.VITE_VERCEL_AUTOMATION_BYPASS_SECRET;
 		if (vercelProtectionBypass) {
@@ -28,7 +27,6 @@ export const createApi = (baseUrl: string) => {
 			if (!res.ok) throw new Error(`API Error: ${res.statusText}`);
 			return res.json();
 		},
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		post: async (endpoint: string, body: any, token?: string | null) => {
 			const headers = getHeaders(token);
 			headers["Content-Type"] = "application/json";
@@ -45,12 +43,11 @@ export const createApi = (baseUrl: string) => {
 					const errorJson = JSON.parse(errorText);
 					if (errorJson.error) errorMessage = errorJson.error;
 					if (errorJson.details) errorMessage += `: ${errorJson.details}`;
-				} catch {}
+				} catch { /* empty */ }
 				throw new Error(`API Error: ${errorMessage}`);
 			}
 			return res.json();
 		},
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		patch: async (endpoint: string, body: any, token?: string | null) => {
 			const headers = getHeaders(token);
 			headers["Content-Type"] = "application/json";
@@ -63,7 +60,6 @@ export const createApi = (baseUrl: string) => {
 			if (!res.ok) throw new Error(`API Error: ${res.statusText}`);
 			return res.json();
 		},
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		put: async (endpoint: string, body: any, token?: string | null) => {
 			const headers = getHeaders(token);
 			headers["Content-Type"] = "application/json";

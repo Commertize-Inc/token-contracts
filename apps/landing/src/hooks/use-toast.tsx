@@ -13,13 +13,11 @@ interface Toast {
 	variant?: "default" | "destructive";
 }
 
-/* eslint-disable no-unused-vars */
 interface ToastContextType {
 	toasts: Toast[];
 	toast: (props: Omit<Toast, "id">) => void;
 	dismiss: (id: string) => void;
 }
-/* eslint-enable no-unused-vars */
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 

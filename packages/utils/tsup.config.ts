@@ -10,6 +10,7 @@ export default defineConfig({
 	format: ["cjs", "esm"],
 	dts: true,
 	clean: true,
+	shims: true,
 	loader: {
 		".tsx": "tsx",
 	},

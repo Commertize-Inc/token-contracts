@@ -3,13 +3,13 @@
 
 // Mock types for Vite environment since 'next/server' is not available
 type NextRequest = any;
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 const NextResponse = {
 	json: (body: any, _init?: any) => body,
 };
 
 // Mock db for now since lib/db might also be missing or different
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 const getNewsArticles = async (_limit: number, _category?: string) => [];
 
 export async function GET(request: NextRequest) {

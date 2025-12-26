@@ -6,6 +6,7 @@ import { Input } from "./input";
 
 export interface FileUploadProps {
 	value?: string;
+
 	onChange: (url: string) => void;
 	onBlur?: () => void;
 	accept?: string;
@@ -89,9 +90,10 @@ export function FileUpload({
 
 			const data = await res.json();
 			onChange(data.url);
-		} catch (err: any) {
+		} catch (err: unknown) {
 			console.error(err);
-			setError(err.message || "Upload failed");
+			const errorMessage = err instanceof Error ? err.message : "Upload failed";
+			setError(errorMessage);
 		} finally {
 			setIsUploading(false);
 			if (fileInputRef.current) {
@@ -110,7 +112,9 @@ export function FileUpload({
 			<div className="flex gap-2">
 				<Input
 					value={value || ""}
-					onChange={(e) => onChange(e.target.value)}
+					onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+						onChange(e.target.value)
+					}
 					onBlur={onBlur}
 					placeholder={placeholder}
 					className="flex-1"

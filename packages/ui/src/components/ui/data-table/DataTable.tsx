@@ -1,8 +1,11 @@
-import * as React from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-unused-vars */
+
 import {
 	ColumnDef,
 	ColumnFiltersState,
 	SortingState,
+	Table as TableInstance,
 	VisibilityState,
 	flexRender,
 	getCoreRowModel,
@@ -12,8 +15,8 @@ import {
 	getPaginationRowModel,
 	getSortedRowModel,
 	useReactTable,
-	Table as TableInstance,
 } from "@tanstack/react-table";
+import * as React from "react";
 
 import {
 	Table,
@@ -24,24 +27,24 @@ import {
 	TableRow,
 } from "../table";
 
+import { Grid, List } from "lucide-react";
+import { Button } from "../button";
+import { Input } from "../input";
 import { DataTablePagination } from "./DataTablePagination";
 import { DataTableViewOptions } from "./DataTableViewOptions";
-import { Input } from "../input";
-import { Button } from "../button";
-import { Grid, List } from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
 	view?: "table" | "grid";
-	// eslint-disable-next-line no-unused-vars
-	renderGridItem?: (_item: TData) => React.ReactNode;
-	// eslint-disable-next-line no-unused-vars
-	renderToolbar?: (_table: TableInstance<TData>) => React.ReactNode;
+
+	renderGridItem?: (item: TData) => React.ReactNode;
+
+	renderToolbar?: (table: TableInstance<TData>) => React.ReactNode;
 	filterColumnName?: string; // For simple search
 	searchPlaceholder?: string;
-	// eslint-disable-next-line no-unused-vars
-	onRowClick?: (_row: TData) => void;
+
+	onRowClick?: (row: TData) => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -63,6 +66,7 @@ export function DataTable<TData, TValue>({
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [view, setView] = React.useState(initialView);
 
+	// eslint-disable-next-line react-hooks/incompatible-library
 	const table = useReactTable({
 		data,
 		columns,

@@ -30,7 +30,7 @@ import {
 	Plus,
 	Trash2,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ReactHTMLElement, useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
@@ -94,7 +94,7 @@ export default function CreateListing() {
 	const { data: onboardingStatus } = useOnboardingStatus();
 
 	const form = useForm<CreateListingFormData>({
-		resolver: zodResolver(formSchema as any),
+		resolver: zodResolver(formSchema),
 		defaultValues: {
 			offeringType: OfferingType.RULE_506_B,
 			images: [{ value: "" }],
@@ -109,12 +109,7 @@ export default function CreateListing() {
 		},
 	});
 
-	const {
-		control,
-		handleSubmit,
-		formState: {},
-		setValue,
-	} = form;
+	const { control, handleSubmit, setValue } = form;
 
 	// Pre-fill Offering Structure details from Sponsor info if available
 	useEffect(() => {
@@ -190,7 +185,7 @@ export default function CreateListing() {
 			console.error("Submission error:", error);
 			setServerError(
 				error.response?.data?.error ||
-					"Failed to create listing. Please try again."
+				"Failed to create listing. Please try again."
 			);
 		} finally {
 			setIsSubmitting(false);

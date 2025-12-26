@@ -6,7 +6,6 @@ const NextResponse = {
 	json: (body: any, _init?: any) => body,
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function POST(_request: NextRequest) {
 	return NextResponse.json({
 		success: true,

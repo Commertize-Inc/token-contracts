@@ -76,7 +76,7 @@ export default function News() {
 					text: data.error || "Failed to generate articles",
 				});
 			}
-		} catch (error) {
+		} catch {
 			setMessage({ type: "error", text: "Network error. Please try again." });
 		} finally {
 			setIsGenerating(false);
@@ -104,7 +104,7 @@ export default function News() {
 			} else {
 				setMessage({ type: "error", text: "Failed to save articles" });
 			}
-		} catch (error) {
+		} catch {
 			setMessage({ type: "error", text: "Network error. Please try again." });
 		} finally {
 			setIsSaving(false);
@@ -118,7 +118,7 @@ export default function News() {
 			await fetch("/api/news", { method: "DELETE" });
 			setArticles([]);
 			setMessage({ type: "success", text: "Generated articles cleared" });
-		} catch (error) {
+		} catch {
 			setMessage({ type: "error", text: "Failed to clear articles" });
 		}
 	};
@@ -278,7 +278,8 @@ export default function News() {
 						<div className="text-center py-12 text-gray-500">
 							<Sparkles className="w-12 h-12 mx-auto mb-4 opacity-30" />
 							<p className="font-light">
-								Click "Generate Articles" to create AI-powered news content
+								Click &quot;Generate Articles&quot; to create AI-powered news
+								content
 							</p>
 						</div>
 					)}
