@@ -525,8 +525,7 @@ export default function KYCPage() {
 	};
 
 	const handleFinishOnboarding = () => {
-		updateViewState({ success: true });
-		setStep(OnboardingStep.COMPLETED);
+		navigate("/");
 	};
 
 	// ----------------------------------------------------------------------
