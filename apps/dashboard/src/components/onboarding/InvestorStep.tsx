@@ -86,7 +86,16 @@ export const InvestorStep: React.FC<InvestorStepProps> = ({
 			icon={<TrendingUp className="w-8 h-8 text-blue-600" />}
 		>
 			<form onSubmit={onSubmit} className="space-y-6">
-				<div className="flex justify-end">
+				<div className="flex justify-between items-center">
+					{onSkipToSponsor && (
+						<button
+							type="button"
+							onClick={onSkipToSponsor}
+							className="text-sm text-blue-600 hover:text-blue-800"
+						>
+							I&apos;m just a sponsor, skip this step
+						</button>
+					)}
 					<button
 						type="button"
 						onClick={onClear}
@@ -354,16 +363,6 @@ export const InvestorStep: React.FC<InvestorStepProps> = ({
 							"Save & Continue to Sponsor Profile"
 						)}
 					</button>
-					{onSkipToSponsor && (
-						<button
-							type="button"
-							onClick={onSkipToSponsor}
-							disabled={loading}
-							className="w-full bg-slate-100 text-slate-700 py-3 rounded-lg font-medium hover:bg-slate-200 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-						>
-							Skip to Sponsor Verification
-						</button>
-					)}
 					<button
 						type="submit"
 						onClick={() => setSubmissionIntent("finish")}
