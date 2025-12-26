@@ -18,10 +18,23 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
 			}
 
 			try {
-				posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
-					api_host:
-						process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com",
+				const apiKey = (import.meta as any).env?.VITE_POSTHOG_KEY;
+
+				const apiHost =
+					(import.meta as any).env?.VITE_POSTHOG_HOST || "https://us.i.posthog.com";
+
+				if (!apiKey) {
+					console.warn("PostHog API key not found");
+					return;
+				}
+
+				posthog.init(apiKey, {
+					api_host: apiHost,
 					person_profiles: "identified_only",
+					session_recording: {
+						maskAllInputs: true,
+						maskTextSelector: "[data-pii]", // allow explicit masking of other elements
+					},
 					bootstrap: {
 						distinctID: undefined,
 						featureFlags: {},

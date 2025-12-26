@@ -2,6 +2,8 @@ import { PrivyProvider } from "@privy-io/react-auth";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PostHogProvider } from "@commertize/utils/client";
 
+import { PostHogIdentity } from "./components/PostHogIdentity";
+
 const queryClient = new QueryClient();
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -31,6 +33,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 					},
 				}}
 			>
+				<PostHogIdentity />
 				<QueryClientProvider client={queryClient}>
 					{children}
 				</QueryClientProvider>
