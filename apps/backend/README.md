@@ -1,27 +1,15 @@
-# Backend Application
+# @commertize/backend
 
-The core API server for the Commertize platform.
+Core API server.
 
-## Technologies
+## Tech Stack
+- Node.js
+- Hono
+- MikroORM (PostgreSQL)
 
-- **Runtime**: Node.js
-- **Framework**: Express (via custom wrapper or structure)
-- **Database**: PostgreSQL (via `@commertize/data` and MikroORM)
-- **Authentication**: JWT / Session (see `middleware/`)
-
-## Setup
+## Development
+Runs on **http://localhost:3002** by default.
 
 ```bash
 pnpm dev
 ```
-
-## Structure
-
-- `src/routes`: API route definitions.
-- `src/services`: Business logic.
-- `src/middleware`: Request processing (auth, validation).
-- `src/lib`: Integrations (Plaid, etc.).
-
-## Environment Variables
-
-Ensure `.env` matches the `env` package schemas.

@@ -1,22 +1,15 @@
-# Landing Page Application
+# @commertize/landing
 
-The public-facing marketing and landing site for Commertize.
+Public landing page for Commertize.
 
-## Technologies
+## Tech Stack
+- React
+- Vite
+- Tailwind CSS
 
-- **Framework**: React
-- **Build Tool**: Vite
-- **Styling**: Tailwind CSS
-
-## Setup
+## Development
+Runs on **http://localhost:3000** by default.
 
 ```bash
 pnpm dev
-# or from root
-pnpm dev:landing
 ```
-
-## Structure
-
-- `src/pages`: Landing pages.
-- `src/components`: Landing-specific UI.

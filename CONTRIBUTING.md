@@ -1,35 +1,47 @@
-# Contributing to Commertize
+# Contributing to Commertize Monorepo
 
-Thank you for your interest in contributing to Commertize! This guide will help you get started with our development workflow and standards.
+## Prerequisites
+- **Node.js**: >=20.0.0
+- **pnpm**: >=10.0.0
+- **Docker**: (Optional) For running local database.
 
-## Development Workflow
+## Setup
+One command to install dependencies and build packages:
 
-1.  **Branching**: Create a new branch for each feature or fix.
-    - `feature/your-feature-name`
-    - `fix/your-fix-name`
-2.  **Committing**: We use [Conventional Commits](https://www.conventionalcommits.org/).
-    - `feat: add new investment card`
-    - `fix: resolve hydration error in navbar`
-    - `docs: update readme`
-    - `chore: upgrade dependencies`
-3.  **Pull Requests**:
-    - Open a PR to `main`.
-    - Ensure all checks pass (linting, build).
-    - Request a review from a team member.
+```bash
+pnpm install
+```
 
-## Code Style
+## Running Locally
 
-- **TypeScript**: We use strict TypeScript. Avoid `any`.
-- **Formatting**: Prettier is configured. Run `pnpm format` to auto-format.
-- **Linting**: ESLint is configured. Run `pnpm lint` to check for issues.
-- **Tailwind**: Sort classes logically (though we don't strictly enforce a sorter yet, try to group layout, spacing, and visual styles).
+### 1. Environment Variables
+Local development relies on the root `.env` file. Copy the example and fill in keys:
+
+```bash
+cp .env.example .env
+```
+
+### 2. Start Development Servers
+Run all apps (Landing, Dashboard, Backend) in parallel:
+
+```bash
+pnpm dev
+# Landing: http://localhost:3000
+# Dashboard: http://localhost:3001
+# Backend: http://localhost:3002
+```
+
+### 3. Database (Optional)
+To run a local PostgreSQL instance:
+
+```bash
+pnpm docker:up
+```
 
 ## Project Structure
-
-- `apps/`: Application source code.
-- `packages/`: Shared libraries.
-- `docs/`: Project documentation.
-
-## Getting Help
-
-If you're stuck, refer to the [Development Guide](DEVELOPMENT.md) or reach out to the team.
+- `apps/backend`: Node.js/Hono API server
+- `apps/dashboard`: React/Vite admin dashboard
+- `apps/landing`: React/Vite public landing page
+- `packages/data`: Shared database schemas and entities
+- `packages/ui`: Shared UI components
+- `packages/utils`: Shared utilities and configuration

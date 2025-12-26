@@ -64,33 +64,6 @@ export function loadEnv(cwd?: string): void {
 	const nodeEnv =
 		process.env.VITE_STAGE || process.env.NODE_ENV || "development";
 
-	// #region agent log
-	console.log("[DEBUG] loadEnv: Starting", {
-		rootDir,
-		processCwd: process.cwd(),
-		nodeEnv,
-		hasDatabaseUrl: !!process.env.DATABASE_URL,
-	});
-	// #endregion
-
-	// #region agent log
-	const logData: {
-		nodeEnv: string;
-		rootDir: string;
-		processCwd: string;
-		finalDatabaseUrl?: boolean;
-		files: Array<{
-			file: string;
-			filePath: string;
-			exists: boolean;
-			override: boolean;
-			loaded?: boolean;
-			varCount?: number;
-			hasDatabaseUrl?: boolean;
-		}>;
-	} = { nodeEnv, rootDir, processCwd: process.cwd(), files: [] };
-	// #endregion
-
 	// Load order: base files first, then .local files last (highest priority)
 	// dotenv.config() by default doesn't override, so we load .local files with override: true
 	// IMPORTANT: Only load the .local file for the current stage (e.g., .env.preview.local when VITE_STAGE=preview)
@@ -103,11 +76,7 @@ export function loadEnv(cwd?: string): void {
 
 	for (const { path: file, override } of envFiles) {
 		const filePath = path.resolve(rootDir, file);
-		const exists = fs.existsSync(filePath);
-		// #region agent log
-		logData.files.push({ file, filePath, exists, override });
-		// #endregion
-		if (exists) {
+		if (fs.existsSync(filePath)) {
 			const env = dotenv.config({ path: filePath, override });
 			if (env.parsed) {
 				// dotenv.config() automatically sets process.env, but we expand for variable substitution
@@ -118,52 +87,9 @@ export function loadEnv(cwd?: string): void {
 						process.env[key] = value as string;
 					}
 				}
-				// #region agent log
-				logData.files[logData.files.length - 1].loaded = true;
-				logData.files[logData.files.length - 1].varCount = Object.keys(
-					env.parsed
-				).length;
-				// Check if DATABASE_URL was loaded from this file
-				if (env.parsed.DATABASE_URL) {
-					logData.files[logData.files.length - 1].hasDatabaseUrl = true;
-					console.log("[DEBUG] loadEnv: DATABASE_URL loaded from", file);
-				}
-				// #endregion
-			} else if (env.error) {
-				// #region agent log
-				console.error("[DEBUG] loadEnv: Error loading", file, env.error);
-				// #endregion
 			}
 		}
 	}
-
-	// #region agent log
-	logData.finalDatabaseUrl = !!process.env.DATABASE_URL;
-	console.log("[DEBUG] loadEnv execution:", JSON.stringify(logData, null, 2));
-	console.log(
-		"[DEBUG] loadEnv: After loading, DATABASE_URL exists:",
-		!!process.env.DATABASE_URL
-	);
-	if (process.env.DATABASE_URL) {
-		console.log(
-			"[DEBUG] loadEnv: DATABASE_URL value:",
-			process.env.DATABASE_URL.substring(0, 20) + "..."
-		);
-	}
-	fetch("http://127.0.0.1:7242/ingest/33a5e0cb-8aef-450e-9dc8-dd37fc55b1ba", {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({
-			location: "env-server.ts:loadEnv",
-			message: "Environment files loaded",
-			data: logData,
-			timestamp: Date.now(),
-			sessionId: "debug-session",
-			runId: "run1",
-			hypothesisId: "env-prec",
-		}),
-	}).catch(() => {});
-	// #endregion
 }
 
 export function getStage(): string {

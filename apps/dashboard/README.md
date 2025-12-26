@@ -1,28 +1,15 @@
-# Dashboard Application
+# @commertize/dashboard
 
-The Investor Dashboard for Commertize.
+Admin and User Dashboard application.
 
-## Technologies
+## Tech Stack
+- React
+- Vite
+- Tailwind CSS
 
-- **Framework**: React
-- **Build Tool**: Vite
-- **Styling**: Tailwind CSS
-- **State Management**: React Query (TanStack Query)
-
-## Setup
+## Development
+Runs on **http://localhost:3001** by default.
 
 ```bash
 pnpm dev
-# or from root
-pnpm dev:dashboard
 ```
-
-## Key Components
-
-- `src/pages`: Route pages (Onboarding, Listings, etc.).
-- `src/components`: Dashboard-specific components.
-- `src/providers.tsx`: React Context providers.
-
-## Development
-
-This app relies on `@commertize/ui` for shared components.
