@@ -4,7 +4,7 @@ import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import FAQ from "./pages/FAQ";
 import Landing from "./pages/Landing";
-import Marketplace from "./pages/Marketplace";
+
 import News from "./pages/News";
 import NewsArticle from "./pages/NewsArticle";
 import Nexus from "./pages/Nexus";
@@ -56,7 +56,7 @@ function App() {
 					<Suspense fallback={<LoadingFallback />}>
 						<Routes>
 							<Route path="/" element={<Landing />} />
-							<Route path="/marketplace" element={<Marketplace />} />
+
 							<Route path="/nexus" element={<Nexus />} />
 							{isAiNewsEnabled && (
 								<>

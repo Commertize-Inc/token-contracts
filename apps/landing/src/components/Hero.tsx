@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+
 import CookieConsent from "./CookieConsent";
 
 const FlippingText = () => {
@@ -136,12 +136,7 @@ const Hero = () => (
 					transition={{ duration: 0.8, delay: 0.4 }}
 					className="flex gap-3 sm:gap-4 justify-center mt-4"
 				>
-					<Link
-						to="/marketplace"
-						className="px-6 sm:px-8 py-2.5 sm:py-3 bg-white text-[#D4A024] rounded-[0.75rem] text-sm sm:text-base font-light border-2 border-[#D4A024] hover:bg-[#D4A024]/5 transition-colors hover:scale-[1.02] active:scale-[0.98]"
-					>
-						Explore Marketplace
-					</Link>
+
 					<a
 						href="/waitlist"
 						className="px-6 sm:px-8 py-2.5 sm:py-3 bg-[#D4A024] text-white rounded-[0.75rem] text-sm sm:text-base font-light hover:bg-[#B8881C] transition-colors hover:scale-[1.02] active:scale-[0.98]"

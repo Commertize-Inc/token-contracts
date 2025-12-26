@@ -6,7 +6,7 @@ import ComparisonSection from "../components/ComparisonSection";
 // CommertizeCollection import removed
 import TokenizationInfo from "../components/TokenizationInfo";
 import SubmitProperty from "../components/SubmitProperty";
-import LatestNews from "../components/LatestNews";
+
 import ChatGPTWidget from "../components/ChatGPTWidget";
 import ContactForm from "../components/ContactForm";
 import { motion } from "framer-motion";
@@ -38,7 +38,7 @@ export default function Landing() {
 			{/* CommertizeCollection removed */}
 			<TokenizationInfo />
 			<SubmitProperty />
-			<LatestNews />
+
 
 			{/* How It Works Section - Enhanced */}
 			<section className="relative py-24 bg-gradient-to-b from-gray-50 to-white overflow-hidden">
