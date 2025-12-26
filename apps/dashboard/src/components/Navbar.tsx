@@ -8,7 +8,7 @@ import { VerificationStatus } from "@commertize/data/enums";
 import { NotificationsDropdown } from "./NotificationsDropdown";
 
 // Wrapper to adapt standard href to react-router-dom's to prop
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 const LinkWrapper = ({ href, children, ...props }: any) => {
 	return (
 		<Link to={href} {...props}>

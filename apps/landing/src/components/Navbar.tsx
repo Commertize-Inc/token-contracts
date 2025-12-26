@@ -8,7 +8,7 @@ import { PostHogFeatureFlags } from "@commertize/utils/client";
 
 // Wrapper to adapt standard href to react-router-dom's to prop
 // Handles both 'to' (internal) and 'href' (external/anchor)
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 const LinkWrapper = ({ href, children, ...props }: any) => {
 	// If it starts with /#, it's an anchor on the home page usually,
 	// but here we just check if it's an anchor link

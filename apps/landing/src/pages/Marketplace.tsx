@@ -58,7 +58,7 @@ function SkeletonCard() {
 
 export default function Marketplace() {
 	const [status, setStatus] = useState<string>("all");
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 	const [listings, setlistings] = useState<any[]>([]);
 	const [propertyType, setPropertyType] = useState<string>("all");
 	const [propertyClass, setPropertyClass] = useState<string>("all");
@@ -75,7 +75,7 @@ export default function Marketplace() {
 				const data = await api.get("/listings");
 
 				// Map API data to Shared ListingCard Props
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 				const mappedlistings: any[] = data.map((p: any) => ({
 					id: p.id,
 					name: p.name,

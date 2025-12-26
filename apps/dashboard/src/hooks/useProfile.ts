@@ -10,7 +10,7 @@ export interface ProfileData {
 	email?: string;
 	privyId: string;
 	stripeCustomerId?: string;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 	bankAccounts: any[]; // Define specific type if needed shared
 	isAdmin: boolean;
 	sponsor?: {

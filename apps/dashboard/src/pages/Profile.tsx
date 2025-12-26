@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { KycStatus, VerificationStatus } from "@commertize/data/enums";
 import { Alert, Button, Input } from "@commertize/ui";
 import { motion } from "framer-motion";

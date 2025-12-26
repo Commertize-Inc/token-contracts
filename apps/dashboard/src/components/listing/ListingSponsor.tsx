@@ -35,7 +35,7 @@ export function ListingSponsor({ sponsor }: { sponsor: Listing["sponsor"] }) {
 				<div className="p-4 bg-slate-50 rounded-lg border border-slate-100 text-center">
 					<Trophy className="w-6 h-6 text-amber-500 mx-auto mb-2" />
 					<p className="text-2xl font-bold text-slate-900">
-						{/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+						{}
 						{(sponsor as any).stats?.activeDeals !== undefined
 							? (sponsor as any).stats.activeDeals
 							: ""}

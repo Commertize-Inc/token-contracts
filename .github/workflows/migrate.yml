@@ -39,7 +39,6 @@ jobs:
             echo "environments=[]" >> "$GITHUB_OUTPUT"
           fi
 
-
   migrate:
     name: Run Migrations (${{ matrix.environment }})
     needs: [setup]

@@ -240,7 +240,7 @@ export default function SponsorDashboard() {
 			[ListingStatus.WITHDRAWN]: "bg-gray-100 text-gray-500",
 		};
 		// fallback
-		/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+
 		const style = (styles as any)[status] || "bg-slate-100 text-slate-700";
 
 		return (

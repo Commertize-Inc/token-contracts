@@ -9,7 +9,7 @@ import { Progress } from "@commertize/ui";
 export default function Invest() {
 	const { id } = useParams<{ id: string }>();
 	const navigate = useNavigate();
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 	const [listing, setListing] = useState<any>(null);
 	const [loading, setLoading] = useState(true);
 	const [investAmount, setInvestAmount] = useState<string>("");
@@ -61,7 +61,6 @@ export default function Invest() {
 			const result = await res.json();
 
 			if (!res.ok) {
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				throw new Error((result as any).error || "Investment failed");
 			}
 

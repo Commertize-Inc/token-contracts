@@ -15,7 +15,7 @@ import { Investment, InvestmentStatus } from "@commertize/data";
 const listings = new Hono<HonoEnv>();
 
 // Stub function for RPC call
-// eslint-disable-next-line no-unused-vars
+
 const mintPropertyToken = async (_listing: Listing) => {
 	// STUB: Minting Property Token via RPC (No-op for now)
 };

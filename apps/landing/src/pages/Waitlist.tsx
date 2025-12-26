@@ -33,12 +33,10 @@ export default function Waitlist() {
 	const [submitSuccess, setSubmitSuccess] = useState(false);
 
 	const investorForm = useForm<InvestorFormData>({
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		resolver: zodResolver(investorSchema as any),
 	});
 
 	const sponsorForm = useForm<SponsorFormData>({
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		resolver: zodResolver(sponsorSchema as any),
 	});
 
