@@ -61,6 +61,17 @@ export function loadEnv(cwd?: string): void {
 	// In development, load from .env files in monorepo root
 	const rootDir = cwd || findMonorepoRoot();
 	console.log("rootDir: ", rootDir);
+
+	// 1. Load base .env file first to get VITE_STAGE
+	// This allows .env to define which stage we are in (e.g. VITE_STAGE=production)
+	const baseEnvPath = path.resolve(rootDir, ".env");
+	if (fs.existsSync(baseEnvPath)) {
+		const env = dotenv.config({ path: baseEnvPath });
+		if (env.parsed) {
+			dotenvExpand.expand(env);
+		}
+	}
+
 	const nodeEnv =
 		process.env.VITE_STAGE || process.env.NODE_ENV || "development";
 
