@@ -55,7 +55,7 @@ export const SponsorStep: React.FC<SponsorStepProps> = ({
 						onClick={onSkip}
 						className="text-sm text-blue-600 hover:text-blue-800"
 					>
-						I&apos;m just an investor, skip this step
+						Skip verification for now
 					</button>
 					<button
 						type="button"
