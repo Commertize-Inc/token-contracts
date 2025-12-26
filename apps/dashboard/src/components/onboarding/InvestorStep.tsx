@@ -311,6 +311,14 @@ export const InvestorStep: React.FC<InvestorStepProps> = ({
 								onChange={(e) => setNewDocUrl(e.target.value)}
 								placeholder="https://..."
 								className="mb-0"
+								onKeyDown={(e) => {
+									if (e.key === "Enter") {
+										e.preventDefault();
+										if (newDocUrl) {
+											onAddDocument();
+										}
+									}
+								}}
 							/>
 						</div>
 						<button
