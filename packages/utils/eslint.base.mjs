@@ -88,6 +88,12 @@ export default [
 				Node: "readonly",
 				Element: "readonly",
 
+				// Standard Web APIs available in Node 20+
+				File: "readonly",
+				HeadersInit: "readonly",
+				Blob: "readonly",
+				FormData: "readonly",
+
 				// React globals (for JSX transform)
 				React: "readonly",
 				JSX: "readonly",
