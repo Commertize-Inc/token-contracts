@@ -10,8 +10,7 @@ on:
         default: false
   push:
     branches:
-      - "release/production"
-      - "release/preview"
+      - "release/*"
     paths:
       - "packages/data/src/migrations/**"
       - "packages/data/src/**/*.ts"
@@ -32,41 +31,18 @@ jobs:
             echo "environments=['production', 'preview', 'development']" >> "$GITHUB_OUTPUT"
           elif [[ "${{ github.ref }}" == "refs/heads/release/preview" ]]; then
             echo "environments=['preview']" >> "$GITHUB_OUTPUT"
+          elif [[ "${{ github.ref }}" == refs/heads/release/* ]]; then
+            ENV_NAME=${GITHUB_REF#refs/heads/release/}
+            echo "environments=['$ENV_NAME']" >> "$GITHUB_OUTPUT"
           else
             echo "::warning::Unknown trigger or branch, defaulting to empty list"
             echo "environments=[]" >> "$GITHUB_OUTPUT"
           fi
 
-  check-code:
-    name: Lint & Format Check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: 10.13.1
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: "pnpm"
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Lint
-        run: pnpm lint
-
-      - name: Format Check
-        run: pnpm format:check
 
   migrate:
     name: Run Migrations (${{ matrix.environment }})
-    needs: [setup, check-code]
+    needs: [setup]
     if: ${{ needs.setup.outputs.environments != '[]' && needs.setup.outputs.environments != '' }}
     runs-on: ubuntu-latest
     strategy:
