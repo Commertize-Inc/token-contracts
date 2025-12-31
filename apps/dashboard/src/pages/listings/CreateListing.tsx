@@ -17,6 +17,7 @@ import {
 	FormMessage,
 	FormDescription,
 	FileUpload,
+	ErrorModal,
 } from "@commertize/ui";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getAccessToken } from "@privy-io/react-auth";
@@ -30,7 +31,7 @@ import {
 	Plus,
 	Trash2,
 } from "lucide-react";
-import { ReactHTMLElement, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
@@ -74,6 +75,7 @@ export default function CreateListing() {
 	const navigate = useNavigate();
 	const [serverError, setServerError] = useState<string | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [errorModalOpen, setErrorModalOpen] = useState(false);
 
 	// SubNavbar configuration
 	const navItems: SubNavbarItem[] = [
@@ -187,6 +189,7 @@ export default function CreateListing() {
 				error.response?.data?.error ||
 					"Failed to create listing. Please try again."
 			);
+			setErrorModalOpen(true);
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -207,6 +210,12 @@ export default function CreateListing() {
 
 	return (
 		<div className="min-h-screen bg-slate-50">
+			<ErrorModal
+				isOpen={errorModalOpen}
+				onClose={() => setErrorModalOpen(false)}
+				title="Creation Failed"
+				message={serverError || "An unexpected error occurred."}
+			/>
 			<Navbar />
 			<div className="flex gap-8 max-w-[90rem] mx-auto py-10 px-4 sm:px-6 lg:px-8">
 				{/* Vertical SubNavbar Sidebar */}

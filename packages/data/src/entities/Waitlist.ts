@@ -1,4 +1,4 @@
-import { Entity, PrimaryKey, Property, Enum } from "@mikro-orm/core";
+import { Entity, PrimaryKey, Property, Enum, Index } from "@mikro-orm/core";
 import { v4 } from "uuid";
 
 export enum WaitlistType {
@@ -15,7 +15,8 @@ export class Waitlist {
 	@PrimaryKey()
 	id: string = v4();
 
-	@Property({ type: "string", unique: true })
+	@Index()
+	@Property({ type: "string" })
 	email!: string;
 
 	/** Type of user joining the waitlist (Investor or Sponsor). */

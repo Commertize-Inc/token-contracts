@@ -31,3 +31,4 @@ export * from "./StepView";
 
 export { default as Alert } from "./Alert";
 export type * from "./Alert";
+export * from "./components/ErrorModal";

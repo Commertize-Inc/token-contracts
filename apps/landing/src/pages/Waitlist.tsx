@@ -19,6 +19,7 @@ import {
 	waitlistInvestorSchema,
 	waitlistSponsorSchema,
 } from "@commertize/data/schemas/waitlist";
+import { ErrorModal } from "@commertize/ui";
 
 const investorSchema = waitlistInvestorSchema;
 const sponsorSchema = waitlistSponsorSchema;
@@ -31,6 +32,8 @@ export default function Waitlist() {
 	const [selectedForm, setSelectedForm] = useState<FormType>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [submitSuccess, setSubmitSuccess] = useState(false);
+	const [errorModalOpen, setErrorModalOpen] = useState(false);
+	const [errorMessage, setErrorMessage] = useState("");
 
 	const investorForm = useForm<InvestorFormData>({
 		resolver: zodResolver(investorSchema as any),
@@ -39,6 +42,18 @@ export default function Waitlist() {
 	const sponsorForm = useForm<SponsorFormData>({
 		resolver: zodResolver(sponsorSchema as any),
 	});
+
+	const handleApiError = (error: any) => {
+		console.error("Error submitting form:", error);
+		let message = "Something went wrong. Please try again later.";
+		if (error?.response?.data?.message) {
+			message = error.response.data.message;
+		} else if (error?.message) {
+			message = error.message;
+		}
+		setErrorMessage(message);
+		setErrorModalOpen(true);
+	};
 
 	const onInvestorSubmit = async (data: InvestorFormData) => {
 		setIsSubmitting(true);
@@ -49,7 +64,7 @@ export default function Waitlist() {
 			setSubmitSuccess(true);
 			investorForm.reset();
 		} catch (error) {
-			console.error("Error submitting form:", error);
+			handleApiError(error);
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -64,7 +79,7 @@ export default function Waitlist() {
 			setSubmitSuccess(true);
 			sponsorForm.reset();
 		} catch (error) {
-			console.error("Error submitting form:", error);
+			handleApiError(error);
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -323,6 +338,12 @@ export default function Waitlist() {
 
 	return (
 		<>
+			<ErrorModal
+				isOpen={errorModalOpen}
+				onClose={() => setErrorModalOpen(false)}
+				message={errorMessage}
+				title="Submission Failed"
+			/>
 			<SEO
 				title="Join the Waitlist"
 				description="Join the Commertize waitlist for exclusive access to tokenized commercial real estate investments. For investors and sponsors."
