@@ -188,7 +188,7 @@ const Navbar = () => {
 	);
 
 	const RightContent = (
-		<div className="flex items-center gap-4">
+		<div className="hidden lg:flex items-center gap-4">
 			<a
 				href="/waitlist"
 				className="inline-flex items-center justify-center px-5 py-2 border border-[#D4A024] text-[#D4A024] text-sm font-light rounded-lg hover:bg-[#D4A024] hover:text-white transition-colors"
@@ -217,7 +217,7 @@ const Navbar = () => {
 
 			{/* Use Cases Mobile */}
 			<div className="py-2 border-b border-gray-100">
-				<div className="text-xs text-gray-500 uppercase tracking-wider mb-2 pl-4">
+				<div className="text-xs text-gray-500 uppercase tracking-wider mb-2">
 					Use Cases
 				</div>
 				<Link to="/nexus" className="block py-1 pl-8 text-gray-600 text-sm">
@@ -245,7 +245,7 @@ const Navbar = () => {
 
 			{/* Company Mobile */}
 			<div className="py-2 border-b border-gray-100">
-				<div className="text-xs text-gray-500 uppercase tracking-wider mb-2 pl-4">
+				<div className="text-xs text-gray-500 uppercase tracking-wider mb-2">
 					Company
 				</div>
 				<Link to="/team" className="block py-1 pl-8 text-gray-600 text-sm">
