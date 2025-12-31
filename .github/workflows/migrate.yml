@@ -11,6 +11,7 @@ on:
   push:
     branches:
       - "release/*"
+      - "main"
     paths:
       - "packages/data/src/migrations/**"
       - "packages/data/src/**/*.ts"
@@ -25,12 +26,16 @@ jobs:
     steps:
       - id: set-envs
         run: |
+          # Workflow Dispatch
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             echo "environments=['development']" >> "$GITHUB_OUTPUT"
+          # Main Branch
+          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "environments=['preview', 'development']" >> "$GITHUB_OUTPUT"
+          # Production Release
           elif [[ "${{ github.ref }}" == "refs/heads/release/production" ]]; then
             echo "environments=['production', 'preview', 'development']" >> "$GITHUB_OUTPUT"
-          elif [[ "${{ github.ref }}" == "refs/heads/release/preview" ]]; then
-            echo "environments=['preview']" >> "$GITHUB_OUTPUT"
+          # Preview Release
           elif [[ "${{ github.ref }}" == refs/heads/release/* ]]; then
             ENV_NAME=${GITHUB_REF#refs/heads/release/}
             echo "environments=['$ENV_NAME']" >> "$GITHUB_OUTPUT"
