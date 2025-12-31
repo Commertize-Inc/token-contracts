@@ -39,7 +39,6 @@ export default function Landing() {
 			<TokenizationInfo />
 			<SubmitProperty />
 
-
 			{/* How It Works Section - Enhanced */}
 			<section className="relative py-24 bg-gradient-to-b from-gray-50 to-white overflow-hidden">
 				<div className="absolute inset-0 opacity-30 pointer-events-none">

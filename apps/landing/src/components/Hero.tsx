@@ -136,7 +136,6 @@ const Hero = () => (
 					transition={{ duration: 0.8, delay: 0.4 }}
 					className="flex gap-3 sm:gap-4 justify-center mt-4"
 				>
-
 					<a
 						href="/waitlist"
 						className="px-6 sm:px-8 py-2.5 sm:py-3 bg-[#D4A024] text-white rounded-[0.75rem] text-sm sm:text-base font-light hover:bg-[#B8881C] transition-colors hover:scale-[1.02] active:scale-[0.98]"

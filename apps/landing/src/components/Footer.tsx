@@ -113,7 +113,6 @@ export default function Footer() {
 					<div>
 						<h4 className="font-semibold mb-4 text-[#D4A024]">Quick Links</h4>
 						<ul className="space-y-2">
-
 							<li>
 								<Link
 									to="/nexus"
@@ -144,7 +143,6 @@ export default function Footer() {
 					<div>
 						<h4 className="font-semibold mb-4 text-[#D4A024]">Divisions</h4>
 						<ul className="space-y-2">
-
 							<li>
 								<Link
 									to="/nexus"

@@ -21,7 +21,8 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
 				const apiKey = (import.meta as any).env?.VITE_POSTHOG_KEY;
 
 				const apiHost =
-					(import.meta as any).env?.VITE_POSTHOG_HOST || "https://us.i.posthog.com";
+					(import.meta as any).env?.VITE_POSTHOG_HOST ||
+					"https://us.i.posthog.com";
 
 				if (!apiKey) {
 					console.warn("PostHog API key not found");
