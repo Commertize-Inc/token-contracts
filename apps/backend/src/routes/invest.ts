@@ -91,7 +91,7 @@ invest.post("/intent", async (c) => {
 					if (
 						!investor.verificationMethod ||
 						investor.verificationMethod ===
-							AccreditationVerificationMethod.SELF_CERTIFICATION
+						AccreditationVerificationMethod.SELF_CERTIFICATION
 					) {
 						throw new Error(
 							"Regulatory Compliance: This offering (Reg D 506c) requires third-party verification of accreditation. Self-certification is insufficient."
@@ -123,7 +123,7 @@ invest.post("/intent", async (c) => {
 					(sum: number, inv: Investment) => sum + parseFloat(inv.amountUsdc),
 					0
 				);
-				const targetRaise = property.financials.targetRaise;
+				const targetRaise = property.financials.equityRequired;
 				const remaining = targetRaise - currentFunding;
 
 				if (amount > remaining) {
@@ -137,7 +137,7 @@ invest.post("/intent", async (c) => {
 					user,
 					property,
 					amountUsdc: amount.toString(),
-					tokenCount: Math.floor(amount / property.financials.tokenPrice),
+					tokenCount: Math.floor(amount / property.tokenomics.tokenPrice),
 					status: InvestmentStatus.PENDING,
 					agreedToTermsAt: new Date(),
 					createdAt: new Date(),

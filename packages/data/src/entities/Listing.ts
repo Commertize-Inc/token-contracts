@@ -16,7 +16,7 @@ import {
 } from "../enums/entities";
 import { Sponsor } from "./Sponsor";
 
-type ListingFinancials = {
+export type ListingFinancials = {
 	// Deal economics
 	purchasePrice: number; // total acquisition price
 	totalCapitalization: number; // equity + debt, incl. fees
@@ -60,10 +60,14 @@ type ListingFinancials = {
 	preferredReturn: number; // 0–1
 	sponsorPromote: number; // 0–1 of upside above pref
 	payoutRatioOfFCF: number; // 0–1 of distributable CF paid out
-	distributionFrequency: "MONTHLY" | "QUARTERLY" | "ANNUAL";
+	distributionFrequency:
+	| "MONTHLY"
+	| "QUARTERLY"
+	| "SEMI_ANNUALLY"
+	| "ANNUALLY";
 };
 
-type Tokenomics = {
+export type Tokenomics = {
 	// Token supply & pricing (inputs)
 	totalTokenSupply: number; // total tokens minted
 	tokensForInvestors: number; // tokens in this offering

@@ -320,6 +320,8 @@ sponsor.post("/profile/update-request", authMiddleware, async (c) => {
 			requestedChanges,
 			documents: documents || [],
 			status: SponsorUpdateRequestStatus.PENDING,
+			createdAt: new Date(),
+			updatedAt: new Date(),
 		});
 
 		await em.persistAndFlush(updateRequest);

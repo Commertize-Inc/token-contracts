@@ -4,6 +4,7 @@ import {
 	User,
 	UserRole,
 	VerificationStatus,
+	createDividendSchema,
 } from "@commertize/data";
 import { Hono } from "hono";
 import { getEM } from "../db";
@@ -12,13 +13,6 @@ import { HonoEnv } from "../types";
 import { z } from "zod";
 
 const dividends = new Hono<HonoEnv>();
-
-// Schema for creating a dividend
-const createDividendSchema = z.object({
-	listingId: z.string(),
-	amount: z.number().positive(),
-	distributionDate: z.string().transform((str) => new Date(str)),
-});
 
 dividends.use("*", authMiddleware);
 

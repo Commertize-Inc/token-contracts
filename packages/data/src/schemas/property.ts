@@ -92,7 +92,12 @@ export const createListingSchema = z.object({
 			.number()
 			.min(0)
 			.max(1, "Payout ratio must be between 0 and 1"),
-		distributionFrequency: z.enum(["MONTHLY", "QUARTERLY", "ANNUAL"]),
+		distributionFrequency: z.enum([
+			"MONTHLY",
+			"QUARTERLY",
+			"SEMI_ANNUALLY",
+			"ANNUALLY",
+		]),
 	}),
 
 	// Tokenomics and fractionalization parameters

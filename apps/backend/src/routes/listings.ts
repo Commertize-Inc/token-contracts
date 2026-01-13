@@ -209,6 +209,7 @@ listings.post("/", authMiddleware, async (c) => {
 		listing.financials = data.financials;
 		listing.offeringType = data.offeringType;
 		listing.entityStructure = data.entityStructure;
+		listing.tokenomics = data.tokenomics;
 		listing.description = data.description;
 		listing.constructionYear = data.constructionYear;
 		listing.totalUnits = data.totalUnits;
