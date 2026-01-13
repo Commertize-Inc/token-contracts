@@ -1,4 +1,4 @@
-import { MapPin } from "lucide-react";
+import { MapView } from "./MapView";
 
 export function ListingLocation({
 	address,
@@ -13,16 +13,14 @@ export function ListingLocation({
 }) {
 	return (
 		<div className="space-y-4">
-			{/* Placeholder Map */}
-			<div className="h-64 bg-slate-200 rounded-xl rounded-b-none overflow-hidden relative flex items-center justify-center">
-				<div className="absolute inset-0 bg-slate-300 opacity-20 bg-[url('https://upload.wikimedia.org/wikipedia/commons/e/ec/World_map_blank_without_borders.svg')] bg-cover"></div>
-				<div className="text-center z-10">
-					<MapPin className="w-12 h-12 text-slate-400 mx-auto mb-2" />
-					<p className="text-slate-500 font-medium">Map View Unavailable</p>
-					<p className="text-xs text-slate-400">
-						{address}, {city}, {state} {zipCode}
-					</p>
-				</div>
+			{/* Map View */}
+			<div className="h-64 bg-slate-200 rounded-xl rounded-b-none overflow-hidden relative z-0">
+				<MapView
+					address={address}
+					city={city}
+					state={state}
+					zipCode={zipCode}
+				/>
 			</div>
 
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-8">

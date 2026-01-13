@@ -21,11 +21,21 @@ import { ListingDocuments } from "../components/listing/ListingDocuments";
 import { ListingSponsor } from "../components/listing/ListingSponsor";
 import { InvestmentCard } from "../components/listing/InvestmentCard";
 import { SupportOptions } from "../components/SupportOptions";
+import { Listing } from '@commertize/data';
+
+interface ListingWithStats extends Listing {
+	stats?: {
+		currentFunding: number;
+		targetRaise: number;
+		percentageFunded: number;
+		investorsCount: number;
+	};
+}
 
 export default function ListingDetails() {
 	const { id } = useParams();
 	const navigate = useNavigate();
-	const [listing, setListing] = useState<any>(null);
+	const [listing, setListing] = useState<ListingWithStats | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const { getAccessToken } = usePrivy();
@@ -39,6 +49,8 @@ export default function ListingDetails() {
 					api.get(`/listings/${id}`),
 					token ? api.get("onboarding/status", token) : Promise.resolve(null),
 				]);
+
+				console.log(`Listing Data: `, listingData);
 
 				setListing(listingData);
 
@@ -60,7 +72,7 @@ export default function ListingDetails() {
 		if (id) {
 			fetchListingAndUserStatus();
 		}
-	}, [id]);
+	}, [id, getAccessToken]);
 
 	if (loading) {
 		return (
@@ -186,7 +198,9 @@ export default function ListingDetails() {
 											<div className="bg-white p-4 rounded-lg border border-slate-100 shadow-sm">
 												<p className="text-sm text-slate-500">Target Raise</p>
 												<p className="font-semibold text-slate-900">
-													${listing.financials?.equityRequired.toLocaleString()}
+													$
+													{listing.financials?.equityRequired?.toLocaleString() ||
+														"0"}
 												</p>
 											</div>
 											<div className="bg-white p-4 rounded-lg border border-slate-100 shadow-sm">
@@ -199,9 +213,13 @@ export default function ListingDetails() {
 												<p className="text-sm text-slate-500">Min Investment</p>
 												<p className="font-semibold text-slate-900">
 													$
-													{listing.tokenomics?.tokenPrice
-														? listing.tokenomics.tokenPrice * 10
-														: ""}
+													{listing.tokenomics?.minInvestmentTokens &&
+														listing.tokenomics?.tokenPrice
+														? (
+															listing.tokenomics.minInvestmentTokens *
+															listing.tokenomics.tokenPrice
+														).toLocaleString()
+														: "—"}
 												</p>
 											</div>
 											<div className="bg-white p-4 rounded-lg border border-slate-100 shadow-sm">
@@ -221,10 +239,16 @@ export default function ListingDetails() {
 									Financials
 								</h3>
 								<div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-									<ListingFinancials
-										financials={listing.financials}
-										tokenomics={listing.tokenomics}
-									/>
+									{listing.financials ? (
+										<ListingFinancials
+											financials={listing.financials}
+											tokenomics={listing.tokenomics}
+										/>
+									) : (
+										<p className="text-slate-500 italic">
+											Financial details not available.
+										</p>
+									)}
 								</div>
 							</section>
 
@@ -269,11 +293,14 @@ export default function ListingDetails() {
 					<div className="hidden lg:block w-96 shrink-0 space-y-8 sticky top-24 self-start">
 						<InvestmentCard
 							listingId={listing.id}
-							minInvestment={listing.minInvestment}
-							targetReturn={listing.targetReturn}
-							holdPeriod={listing.holdPeriod}
-							raisedAmount={listing.raisedAmount}
-							targetAmount={listing.targetAmount}
+							minInvestment={
+								(listing.tokenomics?.minInvestmentTokens || 0) *
+								(listing.tokenomics?.tokenPrice || 0)
+							}
+							targetReturn={listing.financials?.targetIRR || 0}
+							holdPeriod={listing.financials?.holdPeriodYears || 0}
+							raisedAmount={listing.stats?.currentFunding}
+							targetAmount={listing.financials?.equityRequired}
 							status={
 								listing.status === "ACTIVE"
 									? ListingStatus.ACTIVE
