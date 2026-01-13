@@ -35,19 +35,24 @@ interface DataTableProps<TData, TValue> {
 	data: TData[];
 	view?: "table" | "grid";
 
-	renderGridItem?: (item: TData) => React.ReactNode;
+	renderGridItem?: (item: TData, table: TableInstance<TData>) => React.ReactNode;
 
 	renderToolbar?: (table: TableInstance<TData>) => React.ReactNode;
 	filterColumnName?: string; // For simple search
 	searchPlaceholder?: string;
 
 	onRowClick?: (row: TData) => void;
+	// Controlled View State
+	currentView?: "table" | "grid";
+	onViewChange?: (view: "table" | "grid") => void;
 }
 
 export function DataTable<TData, TValue>({
 	columns,
 	data,
 	view: initialView = "table",
+	currentView,
+	onViewChange,
 	renderGridItem,
 	renderToolbar,
 	filterColumnName,
@@ -61,7 +66,10 @@ export function DataTable<TData, TValue>({
 		[]
 	);
 	const [sorting, setSorting] = React.useState<SortingState>([]);
-	const [view, setView] = React.useState(initialView);
+	const [internalView, setInternalView] = React.useState(initialView);
+
+	const view = currentView !== undefined ? currentView : internalView;
+	const setView = onViewChange || setInternalView;
 
 	// eslint-disable-next-line react-hooks/incompatible-library
 	const table = useReactTable({
@@ -109,7 +117,7 @@ export function DataTable<TData, TValue>({
 					{renderToolbar && renderToolbar(table as any)}
 				</div>
 				<div className="flex items-center space-x-2">
-					{renderGridItem && (
+					{renderGridItem && !onViewChange && ( // Only show internal toggle if not controlled
 						<div className="flex items-center border rounded-md p-1 bg-muted/20">
 							<Button
 								variant={view === "table" ? "secondary" : "ghost"}
@@ -145,9 +153,9 @@ export function DataTable<TData, TValue>({
 												{header.isPlaceholder
 													? null
 													: flexRender(
-															header.column.columnDef.header,
-															header.getContext()
-														)}
+														header.column.columnDef.header,
+														header.getContext()
+													)}
 											</TableHead>
 										);
 									})}
@@ -187,10 +195,10 @@ export function DataTable<TData, TValue>({
 					</Table>
 				</div>
 			) : (
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
 					{table.getRowModel().rows.map((row) => (
-						<div key={row.id}>
-							{renderGridItem && renderGridItem(row.original)}
+						<div key={row.id} className="flex w-full">
+							{renderGridItem && renderGridItem(row.original, table)}
 						</div>
 					))}
 				</div>

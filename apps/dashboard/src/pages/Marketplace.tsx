@@ -1,23 +1,20 @@
 import { useState } from "react";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
-	Search,
-	Filter,
 	BarChart3,
 	Globe,
 	Users,
-	X,
 	AlertTriangle,
 } from "lucide-react";
 import { Navbar } from "../components/Navbar";
 import { ListingCard, PageHeader } from "@commertize/ui";
 // Keep UI button for specific uses if needed, or replace
-import { ListingStatus } from "@commertize/data/enums";
+import { ListingStatus, PropertyType } from "@commertize/data/enums";
 import { useListings } from "../hooks/useListings";
 
-import { DataTable } from "@commertize/ui";
+import { DataTable, DataTableToolbar } from "@commertize/ui";
 import { ColumnDef } from "@tanstack/react-table";
 import type { Listing } from "@commertize/data"; // Import Listing type
 
@@ -42,13 +39,24 @@ function SkeletonCard() {
 	);
 }
 
+import { Badge } from "@commertize/ui";
+
+// Helper to capital case enum strings
+const toTitleCase = (str: string) => {
+	if (!str) return "";
+	return str
+		.replace(/_/g, " ")
+		.toLowerCase()
+		.replace(/\b\w/g, (c) => c.toUpperCase());
+};
+
 export default function MarketplacePage() {
 	const navigate = useNavigate();
 
 	const { data: listings = [], isLoading: loading } = useListings();
 
-	const [showFilters, setShowFilters] = useState<boolean>(false);
 	const [userName] = useState<string>("Investor");
+	const [view, setView] = useState<"table" | "grid">("grid");
 
 	const columns: ColumnDef<Listing>[] = [
 		{
@@ -59,20 +67,58 @@ export default function MarketplacePage() {
 		{
 			accessorKey: "propertyType",
 			header: "Type",
-			filterFn: "equals",
+			filterFn: "arrIncludesSome",
+			cell: ({ row }) => {
+				const type = row.getValue("propertyType") as string;
+				return (
+					<Badge variant="outline" className="font-medium bg-white">
+						{toTitleCase(type)}
+					</Badge>
+				);
+			},
 		},
 		{
 			accessorKey: "status",
 			header: "Status",
-			filterFn: "equals",
+			filterFn: "arrIncludesSome",
 			cell: ({ row }) => {
 				const status = row.getValue("status") as string;
+				let variant: "default" | "secondary" | "destructive" | "outline" =
+					"default";
+				let className = "";
+
+				switch (status) {
+					case ListingStatus.ACTIVE:
+						variant = "default";
+						className = "bg-green-600 hover:bg-green-700";
+						break;
+					case ListingStatus.DRAFT:
+					case ListingStatus.PENDING_REVIEW:
+					case ListingStatus.APPROVED: // Maybe amber/orange?
+						variant = "secondary";
+						className = "bg-amber-100 text-amber-800 hover:bg-amber-200";
+						break;
+					case ListingStatus.REJECTED:
+					case ListingStatus.WITHDRAWN:
+					case ListingStatus.FROZEN:
+						variant = "destructive";
+						break;
+					case ListingStatus.FULLY_FUNDED:
+						variant = "secondary";
+						className = "bg-blue-100 text-blue-800 hover:bg-blue-200";
+						break;
+					case ListingStatus.TOKENIZING:
+						variant = "secondary";
+						className = "bg-purple-100 text-purple-800 hover:bg-purple-200";
+						break;
+					default:
+						variant = "outline";
+				}
+
 				return (
-					<span className="text-sm">
-						{status === "ACTIVE"
-							? "Live"
-							: status.replace(/_/g, " ").toLowerCase()}
-					</span>
+					<Badge variant={variant} className={className}>
+						{status === "ACTIVE" ? "Live" : toTitleCase(status)}
+					</Badge>
 				);
 			},
 		},
@@ -169,173 +215,137 @@ export default function MarketplacePage() {
 								<SkeletonCard key={i} />
 							))}
 						</div>
+
 					) : (
-						<DataTable
-							columns={columns}
-							data={listings}
-							view="grid"
-							onRowClick={(listing) => navigate(`/listing/${listing.id}`)}
-							renderGridItem={(listing) => (
-								<motion.div
-									initial={{ opacity: 0, y: 20 }}
-									animate={{ opacity: 1, y: 0 }}
-								>
-									<ListingCard
-										listing={listing as Listing}
-										currentFunding={0} // Marketplace items don't have amountFunded on Listing type usually, but checking implementation.
-										// Listing type in @commertize/data might not have amountFunded.
-										// But SponsorDashboard had ListingWithFunding.
-										// Helper: (listing as any).amountFunded || 0
-										onViewDetails={() => navigate(`/listing/${listing.id}`)}
-									/>
-								</motion.div>
-							)}
-							renderToolbar={(table) => (
-								<div className="mb-8">
-									{/* Search Bar */}
-									<div className="flex flex-col lg:flex-row gap-4 mb-4">
-										<div className="relative flex-1">
-											<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-											<input
-												type="text"
-												placeholder="Search listings..."
-												value={
-													(table
-														.getColumn("name")
-														?.getFilterValue() as string) ?? ""
-												}
-												onChange={(e) =>
-													table
-														.getColumn("name")
-														?.setFilterValue(e.target.value)
-												}
-												className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 pl-9 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-											/>
-										</div>
-										<div className="flex gap-2">
-											<button
-												onClick={() => setShowFilters(!showFilters)}
-												className={`flex items-center gap-2 px-4 py-2 border rounded-md h-10 transition-colors text-sm font-medium ${
-													showFilters
-														? "bg-[#D4A024] text-white border-[#D4A024]"
-														: "border-input hover:bg-accent hover:text-accent-foreground text-slate-700"
-												}`}
+						<div className="space-y-4">
+							{/* Notion-style Toolbar */}
+							<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-200 pb-4">
+								{/* Left: View Tabs */}
+								<div className="flex items-center space-x-1 bg-gray-100 p-1 rounded-lg">
+									<button
+										onClick={() => setView("table")}
+										className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${view === "table"
+											? "bg-white text-gray-900 shadow-sm"
+											: "text-gray-500 hover:text-gray-900 hover:bg-gray-200/50"
+											}`}
+									>
+										<span className="w-4 h-4">
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												strokeWidth="2"
+												strokeLinecap="round"
+												strokeLinejoin="round"
 											>
-												<Filter className="w-4 h-4" />
-												Filters
-											</button>
-											{table.getState().columnFilters.length > 0 && (
-												<button
-													onClick={() => table.resetColumnFilters()}
-													className="flex items-center gap-2 px-4 py-2 border border-input rounded-md h-10 hover:bg-accent hover:text-accent-foreground transition-colors text-sm font-medium text-slate-700"
-												>
-													<X className="w-4 h-4" />
-													Clear All
-												</button>
-											)}
-										</div>
-									</div>
-
-									{/* Advanced Filters */}
-									<AnimatePresence>
-										{showFilters && (
-											<motion.div
-												initial={{ opacity: 0, height: 0 }}
-												animate={{ opacity: 1, height: "auto" }}
-												exit={{ opacity: 0, height: 0 }}
-												transition={{ duration: 0.3 }}
-												className="border-t border-gray-100 pt-6"
+												<path d="M3 3h18v18H3z" />
+												<path d="M21 9H3" />
+												<path d="M21 15H3" />
+												<path d="M12 3v18" />
+											</svg>
+										</span>
+										Table
+									</button>
+									<button
+										onClick={() => setView("grid")}
+										className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${view === "grid"
+											? "bg-white text-gray-900 shadow-sm"
+											: "text-gray-500 hover:text-gray-900 hover:bg-gray-200/50"
+											}`}
+									>
+										<span className="w-4 h-4">
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												strokeWidth="2"
+												strokeLinecap="round"
+												strokeLinejoin="round"
 											>
-												<div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-													<select
-														value={
-															(table
-																.getColumn("status")
-																?.getFilterValue() as string) ?? "all"
-														}
-														onChange={(e) =>
-															table
-																.getColumn("status")
-																?.setFilterValue(
-																	e.target.value === "all"
-																		? undefined
-																		: e.target.value
-																)
-														}
-														className="px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D4A024]/50 text-slate-700"
-													>
-														<option value="all">All Status</option>
-														{Object.values(ListingStatus).map((s) => {
-															let label = s
-																.replace(/_/g, " ")
-																.toLowerCase()
-																.replace(/\b\w/g, (c) => c.toUpperCase());
-															if (s === ListingStatus.ACTIVE) label = "Live";
-															return (
-																<option key={s} value={s}>
-																	{label}
-																</option>
-															);
-														})}
-													</select>
-
-													<select
-														value={
-															(table
-																.getColumn("propertyType")
-																?.getFilterValue() as string) ?? "all"
-														}
-														onChange={(e) =>
-															table
-																.getColumn("propertyType")
-																?.setFilterValue(
-																	e.target.value === "all"
-																		? undefined
-																		: e.target.value
-																)
-														}
-														className="px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D4A024]/50 text-slate-700"
-													>
-														<option value="all">All Types</option>
-														<option value="Commercial">Commercial</option>
-														<option value="Multi-Family">Multi-Family</option>
-														<option value="Office">Office</option>
-														<option value="Industrial">Industrial</option>
-														<option value="Retail">Retail</option>
-														<option value="Hospitality">Hospitality</option>
-														<option value="Mixed Use">Mixed Use</option>
-													</select>
-
-													{/* Sorting using setSorting */}
-													{/* Note: DataTable manages sorting state. We need to interact with it. */}
-													<select
-														onChange={(e) => {
-															const val = e.target.value;
-															if (val === "name")
-																table.setSorting([{ id: "name", desc: false }]);
-															else if (val === "price")
-																table.setSorting([
-																	{ id: "tokenPrice", desc: false },
-																]);
-															// Asc?
-															else if (val === "capRate")
-																table.setSorting([
-																	{ id: "capRate", desc: true },
-																]); // Desc for Cap Rate?
-														}}
-														className="px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D4A024]/50 text-slate-700"
-													>
-														<option value="name">Sort by Name</option>
-														<option value="price">Sort by Tok. Price</option>
-														<option value="capRate">Sort by Cap Rate</option>
-													</select>
-												</div>
-											</motion.div>
-										)}
-									</AnimatePresence>
+												<rect width="7" height="7" x="3" y="3" rx="1" />
+												<rect width="7" height="7" x="14" y="3" rx="1" />
+												<rect width="7" height="7" x="14" y="14" rx="1" />
+												<rect width="7" height="7" x="3" y="14" rx="1" />
+											</svg>
+										</span>
+										Gallery
+									</button>
 								</div>
-							)}
-						/>
+							</div>
+
+							<DataTable
+								columns={columns}
+								data={listings}
+								currentView={view}
+								onViewChange={setView}
+								onRowClick={(listing) => navigate(`/listing/${listing.id}`)}
+								renderGridItem={(listing, table) => (
+									<motion.div
+										initial={{ opacity: 0, y: 20 }}
+										animate={{ opacity: 1, y: 0 }}
+										className="h-full w-full"
+									>
+										<ListingCard
+											listing={listing as Listing}
+											currentFunding={0}
+											visibleColumns={table.getState().columnVisibility}
+											onViewDetails={() => navigate(`/listing/${listing.id}`)}
+										/>
+									</motion.div>
+								)}
+								renderToolbar={(table) => (
+									<div className="mb-4">
+										<DataTableToolbar
+											table={table}
+											filterColumn="name"
+											searchPlaceholder="Search listings..."
+											filters={[
+												{
+													column: "status",
+													title: "Status",
+													options: Object.values(ListingStatus).map((s) => ({
+														label:
+															s === ListingStatus.ACTIVE
+																? "Live"
+																: toTitleCase(s),
+														value: s,
+													})),
+												},
+												{
+													column: "propertyType",
+													title: "Type",
+													options: Object.values(PropertyType).map((t) => ({
+														label: toTitleCase(t),
+														value: t,
+													})),
+												},
+											]}
+											sortOptions={[
+												{ label: "Name (A-Z)", value: "name-asc" },
+												{ label: "Name (Z-A)", value: "name-desc" },
+												{ label: "Price (Low-High)", value: "price-asc" },
+												{ label: "Price (High-Low)", value: "price-desc" },
+												{ label: "Cap Rate (High-Low)", value: "cap-desc" },
+											]}
+											onSortChange={(val) => {
+												if (val === "name-asc")
+													table.setSorting([{ id: "name", desc: false }]);
+												else if (val === "name-desc")
+													table.setSorting([{ id: "name", desc: true }]);
+												else if (val === "price-asc")
+													table.setSorting([{ id: "tokenPrice", desc: false }]);
+												else if (val === "price-desc")
+													table.setSorting([{ id: "tokenPrice", desc: true }]);
+												else if (val === "cap-desc")
+													table.setSorting([{ id: "capRate", desc: true }]);
+											}}
+										/>
+									</div>
+								)}
+							/>
+						</div>
 					)}
 
 					{/* Disclaimer */}
@@ -365,6 +375,6 @@ export default function MarketplacePage() {
 					</motion.div>
 				</div>
 			</div>
-		</div>
+		</div >
 	);
 }
