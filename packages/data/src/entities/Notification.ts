@@ -9,6 +9,7 @@ export enum NotificationType {
 	ERROR = "error",
 	ACTION_REQUIRED = "action_required",
 	SPONSOR_UPDATE = "sponsor_update",
+	SPONSOR_DELETE_REQUEST = "sponsor_delete_request",
 }
 
 /**

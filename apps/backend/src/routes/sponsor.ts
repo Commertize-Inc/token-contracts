@@ -444,4 +444,90 @@ sponsor.delete("/update-requests/:id", authMiddleware, async (c) => {
 	}
 });
 
+// Request to delete the sponsor organization
+sponsor.delete("/", authMiddleware, async (c) => {
+	try {
+		const privyId = c.get("userId");
+		const em = await getEM();
+		const user = await em.findOne(User, { privyId }, { populate: ["sponsor"] });
+
+		if (!user || !user.sponsor) {
+			return c.json({ error: "Sponsor profile not found" }, 404);
+		}
+
+		// Check if user is an owner/admin of the sponsor (assuming all voting members have rights for now, or check organizationRole)
+		// For stricter control, we could check if user.id is in user.sponsor.votingMembers
+		if (!user.sponsor.votingMembers.includes(user.id)) {
+			return c.json({ error: "You do not have permission to delete this organization." }, 403);
+		}
+
+		// Check for active listings
+		const activeListingsCount = await em.count("Listing", {
+			sponsor: user.sponsor,
+			status: {
+				$in: [
+					"ACTIVE",
+					"FULLY_FUNDED",
+					"PENDING_REVIEW",
+					"APPROVED",
+				],
+			},
+		});
+
+		if (activeListingsCount > 0) {
+			return c.json(
+				{
+					error:
+						"Cannot delete organization with active, approved, or pending listings. Please withdraw or transfer them first.",
+				},
+				400
+			);
+		}
+
+		// Check if there is already a pending deletion request
+		const existingNotifications = await em.find(Notification, {
+			user: user,
+			type: NotificationType.SPONSOR_DELETE_REQUEST,
+		});
+
+		const pendingRequest = existingNotifications.find(
+			(n) => n.metadata?.status === "PENDING"
+		);
+
+		if (pendingRequest) {
+			return c.json(
+				{
+					error: "A deletion request is already pending.",
+				},
+				409
+			);
+		}
+
+		// Create deletion request notification
+		const notification = em.create(Notification, {
+			user: user,
+			type: NotificationType.SPONSOR_DELETE_REQUEST,
+			title: `Sponsor Deletion Request`,
+			message: `Request to delete organization: ${user.sponsor.businessName}`,
+			metadata: {
+				status: "PENDING",
+				sponsorId: user.sponsor.id,
+				reason: "User requested deletion",
+			},
+			isRead: false,
+			createdAt: new Date(),
+		});
+
+		await em.persistAndFlush(notification);
+
+		return c.json({
+			success: true,
+			message: "Deletion request submitted to admins.",
+		});
+	} catch (error) {
+		console.error("Error requesting sponsor deletion:", error);
+		return c.json({ error: "Internal server error" }, 500);
+	}
+});
+
 export default sponsor;

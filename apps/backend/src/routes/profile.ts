@@ -47,9 +47,9 @@ profile.get("/", async (c) => {
 			businessName: user.sponsor?.businessName,
 			sponsor: user.sponsor
 				? {
-						businessName: user.sponsor.businessName,
-						status: user.sponsor.status,
-					}
+					businessName: user.sponsor.businessName,
+					status: user.sponsor.status,
+				}
 				: undefined,
 			walletAddress: user.walletAddress,
 			email: user.email,
@@ -194,7 +194,22 @@ profile.delete("/", async (c) => {
 
 		// 3. Delete from Database
 		// Cascade delete will remove PlaidItem, BankAccount, Investor, Sponsor, etc.
-		await em.removeAndFlush(user);
+		try {
+			await em.removeAndFlush(user);
+		} catch (dbError: any) {
+			console.error("Database deletion error:", dbError);
+			if (dbError.message?.includes("Cannot delete the last user of a sponsor")) {
+				return c.json(
+					{
+						error:
+							"You are the last user of this sponsor organization. You must delete the organization first.",
+						code: "LAST_SPONSOR_USER",
+					},
+					409
+				);
+			}
+			throw dbError;
+		}
 
 		return c.json({ message: "User deleted successfully" });
 	} catch (error) {

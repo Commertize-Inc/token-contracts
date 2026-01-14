@@ -602,6 +602,58 @@ export default function SponsorDashboard() {
 										</div>
 									</div>
 								)}
+
+								{/* Danger Zone */}
+								<div className="mt-12 pt-12 border-t border-slate-200">
+									<h3 className="text-lg font-medium text-red-600 mb-4 flex items-center">
+										<AlertCircle className="w-5 h-5 mr-2" />
+										Danger Zone
+									</h3>
+									<div className="bg-red-50 border border-red-100 rounded-lg p-6 flex items-center justify-between">
+										<div>
+											<h4 className="text-sm font-medium text-red-900">Delete Organization</h4>
+											<p className="text-sm text-red-700 mt-1">
+												Request to permanently delete this organization.
+												<br className="hidden sm:block" />
+												Active listings must be withdrawn first.
+											</p>
+										</div>
+										<Button
+											onClick={() => {
+												setAlertState({
+													isOpen: true,
+													title: "Delete Organization?",
+													message: "This will submit a request to delete your organization. This action cannot be undone and requires admin approval.",
+													type: "error",
+													confirmText: "Request Deletion",
+													onConfirm: async () => {
+														try {
+															const token = await getAccessToken();
+															await api.delete("/sponsor", token);
+															setAlertState({
+																isOpen: true,
+																title: "Request Submitted",
+																message: "Your deletion request has been submitted to the admins.",
+																type: "success"
+															});
+														} catch (err: any) {
+															console.error("Error deleting sponsor:", err);
+															setAlertState({
+																isOpen: true,
+																title: "Deletion Failed",
+																message: err.message || "Failed to submit deletion request.",
+																type: "error"
+															});
+														}
+													}
+												});
+											}}
+											className="bg-white border border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
+										>
+											Delete Organization
+										</Button>
+									</div>
+								</div>
 							</div>
 						</div>
 					)}
@@ -716,7 +768,8 @@ export default function SponsorDashboard() {
 				</div>
 			</div>
 
-			{openActionMenuId &&
+			{
+				openActionMenuId &&
 				(() => {
 					const listing = listings.find((l) => l.id === openActionMenuId);
 					if (!listing) return null;
@@ -867,7 +920,8 @@ export default function SponsorDashboard() {
 						</div>,
 						document.body
 					);
-				})()}
+				})()
+			}
 			<DividendModal
 				isOpen={dividendModalOpen}
 				onClose={() => setDividendModalOpen(false)}
@@ -900,6 +954,6 @@ export default function SponsorDashboard() {
 				confirmText={alertState.confirmText}
 				cancelText={alertState.cancelText}
 			/>
-		</div>
+		</div >
 	);
 }

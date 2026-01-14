@@ -1,5 +1,6 @@
 import { KycStatus, VerificationStatus } from "@commertize/data/enums";
 import { Alert, Button, Input, PageHeader } from "@commertize/ui";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
 	AlertTriangle,
@@ -73,7 +74,7 @@ export default function ProfilePage() {
 		unlinkWallet,
 	} = usePrivy();
 	const { wallets } = useWallets();
-	// Navigate removed as it is unused
+	const navigate = useNavigate();
 	const [loading, setLoading] = useState(true);
 	const [profile, setProfile] = useState<ProfileData | null>(null);
 	const [linkToken, setLinkToken] = useState<string | null>(null);
@@ -334,6 +335,7 @@ export default function ProfilePage() {
 				setIsDeleting(true);
 				const token = await getAccessToken();
 				await api.delete("/profile", token);
+
 				await logout();
 				window.location.href = "/";
 			} catch (error: any) {
@@ -345,6 +347,16 @@ export default function ProfilePage() {
 						title: "Verification Cancelled",
 						message: "Account deletion cancelled.",
 						type: "info",
+					});
+				} else if (error?.status === 409 && error?.code === "LAST_SPONSOR_USER") {
+					setAlertState({
+						isOpen: true,
+						title: "Cannot Delete Account",
+						message: "You are the last user in your sponsor organization. You must delete the organization first.",
+						type: "error",
+						confirmText: "Go to Sponsor Dashboard",
+						onConfirm: () => navigate("/sponsor"),
+						cancelText: "Cancel"
 					});
 				} else {
 					setAlertState({
