@@ -27,12 +27,13 @@ import { StatusModal } from "../components/onboarding/StatusModal";
 
 import { useOnboardingState } from "../hooks/useOnboardingState";
 import { FeedbackModal } from "../components/FeedbackModal";
+import { Alert } from "@commertize/ui";
 import { EntityType } from "@commertize/data/enums";
 
 export default function KYCPage() {
 	const { user, getAccessToken } = usePrivy();
 	const navigate = useNavigate();
-	const { viewState, updateViewState, setStep } = useOnboardingState();
+	const { viewState, updateViewState, setStep, closeAlert } = useOnboardingState();
 
 	const [userId, setUserId] = useState<string | null>(null);
 
@@ -800,6 +801,13 @@ export default function KYCPage() {
 					onUploadFile={handleFileUpload}
 				/>
 			)}
+			<Alert
+				isOpen={viewState.alert.isOpen}
+				onClose={closeAlert}
+				title={viewState.alert.title}
+				message={viewState.alert.message}
+				type={viewState.alert.type}
+			/>
 		</OnboardingLayout>
 	);
 }
