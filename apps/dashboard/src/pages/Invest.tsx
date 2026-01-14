@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { api } from "../lib/api";
 import { useParams, useNavigate } from "react-router-dom";
 import { Navbar } from "../components/Navbar";
-import { Button } from "@commertize/ui";
+import { Button, Alert } from "@commertize/ui";
 import { Loader2, ArrowLeft, ShieldCheck, Info } from "lucide-react";
 import { Progress } from "@commertize/ui";
 
@@ -15,6 +15,17 @@ export default function Invest() {
 	const [investAmount, setInvestAmount] = useState<string>("");
 	const [submitting, setSubmitting] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [alertState, setAlertState] = useState<{
+		isOpen: boolean;
+		title: string;
+		message: string;
+		type: "success" | "error" | "info" | "warning";
+	}>({
+		isOpen: false,
+		title: "",
+		message: "",
+		type: "info",
+	});
 
 	useEffect(() => {
 		const fetchListing = async () => {
@@ -64,14 +75,14 @@ export default function Invest() {
 				throw new Error((result as any).error || "Investment failed");
 			}
 
-			// Redirect to holdings or success page (for now, maybe back to listing with success toast?)
-			// Or maybe the backend returns payment instructions we should show?
-			// The backend returns: { investmentId, status, paymentInstructions }
-			// For MVP, lets alert and go back.
-			alert(
-				"Investment intent registered! Check your email for payment instructions."
-			);
-			navigate("/marketplace");
+			// Success
+			setAlertState({
+				isOpen: true,
+				title: "Investment Intent Registered",
+				message:
+					"Investment intent registered! Check your email for payment instructions.",
+				type: "success",
+			});
 		} catch (err: any) {
 			console.error(err);
 			setError(err.message || "An error occurred.");
@@ -142,8 +153,8 @@ export default function Invest() {
 								{listing.highlights?.map((h: string, i: number) => (
 									<li key={i}>{h}</li>
 								)) || (
-									<li>Detailed property financials available in data room.</li>
-								)}
+										<li>Detailed property financials available in data room.</li>
+									)}
 							</ul>
 						</div>
 
@@ -239,6 +250,19 @@ export default function Invest() {
 					</div>
 				</div>
 			</main>
+
+			<Alert
+				isOpen={alertState.isOpen}
+				onClose={() => {
+					setAlertState((prev) => ({ ...prev, isOpen: false }));
+					if (alertState.type === "success") {
+						navigate("/marketplace");
+					}
+				}}
+				title={alertState.title}
+				message={alertState.message}
+				type={alertState.type}
+			/>
 		</div>
 	);
 }
