@@ -115,3 +115,51 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           NODE_ENV: ${{ matrix.environment }}
+
+  rollback:
+    needs: migrate
+    if: ${{ failure() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
+      - name: Rollback Production Deployments
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          P_DASHBOARD: ${{ secrets.VERCEL_PROJECT_ID_DASHBOARD }}
+          P_BACKEND: ${{ secrets.VERCEL_PROJECT_ID_BACKEND }}
+          P_LANDING: ${{ secrets.VERCEL_PROJECT_ID_LANDING }}
+        run: |
+          APP_IDS=("$P_DASHBOARD" "$P_BACKEND" "$P_LANDING")
+          APP_NAMES=("dashboard" "backend" "landing")
+
+          for i in "${!APP_IDS[@]}"; do
+            PID="${APP_IDS[$i]}"
+            NAME="${APP_NAMES[$i]}"
+
+            if [ -z "$PID" ]; then
+              echo "Skipping $NAME: No Project ID found."
+              continue
+            fi
+
+            echo "Processing rollback for $NAME ($PID)..."
+
+            # Fetch last 2 production deployments to find the previous one
+            RESPONSE=$(curl -s "https://api.vercel.com/v6/deployments?projectId=$PID&target=production&limit=2&teamId=$VERCEL_ORG_ID" \
+              -H "Authorization: Bearer $VERCEL_TOKEN")
+
+            # Extract the 2nd deployment ID (index 1) which represents the previous successful state
+            PREV_ID=$(echo "$RESPONSE" | jq -r '.deployments[1].uid')
+
+            if [ "$PREV_ID" == "null" ] || [ -z "$PREV_ID" ]; then
+              echo "Could not find a previous deployment to rollback to for $NAME."
+              continue
+            fi
+
+            echo "Found previous deployment: $PREV_ID. initiating rollback..."
+
+            # Execute rollback
+            vercel rollback "$PREV_ID" --scope "$VERCEL_ORG_ID" --token "$VERCEL_TOKEN" --yes
+          done
