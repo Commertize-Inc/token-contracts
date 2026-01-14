@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Button, Alert } from "@commertize/ui";
+import { Button, Alert, PageHeader } from "@commertize/ui";
 // import {
 // 	Table,
 // 	TableBody,
@@ -74,6 +74,21 @@ export default function SponsorDashboard() {
 	const [newMemberEmail, setNewMemberEmail] = useState("");
 	const [memberActionLoading, setMemberActionLoading] = useState(false);
 	const [memberError, setMemberError] = useState<string | null>(null);
+
+	const [alertState, setAlertState] = useState<{
+		isOpen: boolean;
+		title: string;
+		message: string;
+		type: "success" | "error" | "info" | "warning";
+		onConfirm?: () => void;
+		confirmText?: string;
+		cancelText?: string;
+	}>({
+		isOpen: false,
+		title: "",
+		message: "",
+		type: "info",
+	});
 
 	const [feedbackModal, setFeedbackModal] = useState({
 		isOpen: false,
@@ -165,20 +180,28 @@ export default function SponsorDashboard() {
 	};
 
 	const handleRemoveMember = async (id: string) => {
-		if (!confirm("Are you sure you want to remove this member?")) return;
-		setMemberActionLoading(true);
-		setMemberError(null);
-		try {
-			const token = await getAccessToken();
-			if (!token) return;
-			await api.delete(`sponsor/members/${id}`, token);
-			setMembers((prev) => prev.filter((m) => m.id !== id));
-		} catch (err: any) {
-			console.error("Error removing member", err);
-			setMemberError(err.message || "Failed to remove member.");
-		} finally {
-			setMemberActionLoading(false);
-		}
+		setAlertState({
+			isOpen: true,
+			title: "Remove Member",
+			message: "Are you sure you want to remove this member?",
+			type: "warning",
+			confirmText: "Remove",
+			onConfirm: async () => {
+				setMemberActionLoading(true);
+				setMemberError(null);
+				try {
+					const token = await getAccessToken();
+					if (!token) return;
+					await api.delete(`sponsor/members/${id}`, token);
+					setMembers((prev) => prev.filter((m) => m.id !== id));
+				} catch (err: any) {
+					console.error("Error removing member", err);
+					setMemberError(err.message || "Failed to remove member.");
+				} finally {
+					setMemberActionLoading(false);
+				}
+			},
+		});
 	};
 
 	// Close dropdown when clicking outside
@@ -289,9 +312,9 @@ export default function SponsorDashboard() {
 				prev.map((l) =>
 					l.id === listingId
 						? ({
-								...l,
-								status: ListingStatus.PENDING_REVIEW,
-							} as ListingWithFunding)
+							...l,
+							status: ListingStatus.PENDING_REVIEW,
+						} as ListingWithFunding)
 						: l
 				)
 			);
@@ -393,7 +416,7 @@ export default function SponsorDashboard() {
 										100,
 										((listing.amountFunded || 0) /
 											listing.financials.equityRequired) *
-											100
+										100
 									)}%`,
 								}}
 							/>
@@ -449,50 +472,44 @@ export default function SponsorDashboard() {
 		<div className="min-h-screen bg-slate-50">
 			<Navbar />
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-				<div className="flex justify-between items-center mb-8">
-					<div>
-						<h1 className="text-3xl font-bold text-slate-900">
-							Sponsor Dashboard
-						</h1>
-						<p className="mt-2 text-slate-600">
-							Manage your property listings and offerings.
-						</p>
-					</div>
-					<Button onClick={() => navigate("/listings/new")} icon={Plus}>
-						Create Listing
-					</Button>
-				</div>
+				<PageHeader
+					title="Sponsor Dashboard"
+					subtitle="Manage your property listings and offerings."
+					actions={
+						<Button onClick={() => navigate("/listings/new")} icon={Plus}>
+							Create Listing
+						</Button>
+					}
+					className="mb-8"
+				/>
 
 				<div className="bg-white shadow-sm rounded-lg border border-slate-200 overflow-hidden min-h-[600px]">
 					<div className="border-b border-slate-200 px-6">
 						<div className="flex gap-6">
 							<button
 								onClick={() => setActiveTab("listings")}
-								className={`px-0 py-4 text-sm font-medium border-b-2 transition-colors ${
-									activeTab === "listings"
-										? "border-blue-600 text-blue-600"
-										: "border-transparent text-slate-500 hover:text-slate-700"
-								}`}
+								className={`px-0 py-4 text-sm font-medium border-b-2 transition-colors ${activeTab === "listings"
+									? "border-blue-600 text-blue-600"
+									: "border-transparent text-slate-500 hover:text-slate-700"
+									}`}
 							>
 								Sponsor
 							</button>
 							<button
 								onClick={() => setActiveTab("profile")}
-								className={`px-0 py-4 text-sm font-medium border-b-2 transition-colors ${
-									activeTab === "profile"
-										? "border-blue-600 text-blue-600"
-										: "border-transparent text-slate-500 hover:text-slate-700"
-								}`}
+								className={`px-0 py-4 text-sm font-medium border-b-2 transition-colors ${activeTab === "profile"
+									? "border-blue-600 text-blue-600"
+									: "border-transparent text-slate-500 hover:text-slate-700"
+									}`}
 							>
 								Sponsor Profile
 							</button>
 							<button
 								onClick={() => setActiveTab("team")}
-								className={`px-0 py-4 text-sm font-medium border-b-2 transition-colors ${
-									activeTab === "team"
-										? "border-blue-600 text-blue-600"
-										: "border-transparent text-slate-500 hover:text-slate-700"
-								}`}
+								className={`px-0 py-4 text-sm font-medium border-b-2 transition-colors ${activeTab === "team"
+									? "border-blue-600 text-blue-600"
+									: "border-transparent text-slate-500 hover:text-slate-700"
+									}`}
 							>
 								Team
 							</button>
@@ -735,44 +752,47 @@ export default function SponsorDashboard() {
 
 							{(listing.status === ListingStatus.ACTIVE ||
 								listing.status === ListingStatus.FULLY_FUNDED) && (
-								<button
-									className="w-full px-4 py-2 text-sm text-green-700 hover:bg-green-50 flex items-center gap-2"
-									onClick={(e) => {
-										e.stopPropagation();
-										setOpenActionMenuId(null);
-										setSelectedListing(listing);
-										setDividendModalOpen(true);
-									}}
-								>
-									<DollarSign className="w-4 h-4" /> Issue Dividend
-								</button>
-							)}
+									<button
+										className="w-full px-4 py-2 text-sm text-green-700 hover:bg-green-50 flex items-center gap-2"
+										onClick={(e) => {
+											e.stopPropagation();
+											setOpenActionMenuId(null);
+											setSelectedListing(listing);
+											setDividendModalOpen(true);
+										}}
+									>
+										<DollarSign className="w-4 h-4" /> Issue Dividend
+									</button>
+								)}
 
 							{(listing.status === ListingStatus.PENDING_REVIEW ||
 								listing.status === ListingStatus.APPROVED ||
 								listing.status === ListingStatus.DRAFT) && (
-								<button
-									className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
-									disabled={actionId === listing.id}
-									onClick={(e) => {
-										e.stopPropagation();
-										setOpenActionMenuId(null);
-										if (
-											confirm("Are you sure you want to withdraw this listing?")
-										) {
-											handleWithdraw(listing.id);
-										}
-									}}
-								>
-									{actionId === listing.id ? (
-										<Loader2 className="w-4 h-4 animate-spin" />
-									) : (
-										<div className="flex items-center gap-2">
-											<AlertCircle className="w-4 h-4" /> Withdraw
-										</div>
-									)}
-								</button>
-							)}
+									<button
+										className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+										disabled={actionId === listing.id}
+										onClick={(e) => {
+											e.stopPropagation();
+											setOpenActionMenuId(null);
+											setAlertState({
+												isOpen: true,
+												title: "Withdraw Listing",
+												message: "Are you sure you want to withdraw this listing?",
+												type: "warning",
+												confirmText: "Withdraw",
+												onConfirm: () => handleWithdraw(listing.id),
+											});
+										}}
+									>
+										{actionId === listing.id ? (
+											<Loader2 className="w-4 h-4 animate-spin" />
+										) : (
+											<div className="flex items-center gap-2">
+												<AlertCircle className="w-4 h-4" /> Withdraw
+											</div>
+										)}
+									</button>
+								)}
 
 							{listing.status === ListingStatus.WITHDRAWN && (
 								<button
@@ -781,11 +801,14 @@ export default function SponsorDashboard() {
 									onClick={(e) => {
 										e.stopPropagation();
 										setOpenActionMenuId(null);
-										if (
-											confirm("Are you sure you want to resubmit this listing?")
-										) {
-											handleResubmit(listing.id);
-										}
+										setAlertState({
+											isOpen: true,
+											title: "Resubmit Listing",
+											message: "Are you sure you want to resubmit this listing?",
+											type: "info",
+											confirmText: "Resubmit",
+											onConfirm: () => handleResubmit(listing.id),
+										});
 									}}
 								>
 									{actionId === listing.id ? (
@@ -801,44 +824,46 @@ export default function SponsorDashboard() {
 							{(listing.status === ListingStatus.DRAFT ||
 								listing.status === ListingStatus.WITHDRAWN ||
 								listing.status === ListingStatus.REJECTED) && (
-								<>
-									{listing.status === ListingStatus.REJECTED && (
+									<>
+										{listing.status === ListingStatus.REJECTED && (
+											<button
+												className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+												onClick={(e) => {
+													e.stopPropagation();
+													setOpenActionMenuId(null);
+													openFeedback(listing.id, "Listing Feedback");
+												}}
+											>
+												<AlertCircle className="w-4 h-4" /> View Feedback
+											</button>
+										)}
 										<button
-											className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+											className="w-full px-4 py-2 text-sm text-slate-500 hover:bg-red-50 hover:text-red-700 flex items-center gap-2 border-t border-slate-100"
+											disabled={actionId === listing.id}
 											onClick={(e) => {
 												e.stopPropagation();
 												setOpenActionMenuId(null);
-												openFeedback(listing.id, "Listing Feedback");
+												setAlertState({
+													isOpen: true,
+													title: "Delete Listing",
+													message:
+														"Are you sure you want to delete this listing? This action cannot be undone.",
+													type: "warning",
+													confirmText: "Delete",
+													onConfirm: () => handleDelete(listing.id),
+												});
 											}}
 										>
-											<AlertCircle className="w-4 h-4" /> View Feedback
+											{actionId === listing.id ? (
+												<Loader2 className="w-4 h-4 animate-spin" />
+											) : (
+												<div className="flex items-center gap-2">
+													<Trash2 className="w-4 h-4" /> Delete
+												</div>
+											)}
 										</button>
-									)}
-									<button
-										className="w-full px-4 py-2 text-sm text-slate-500 hover:bg-red-50 hover:text-red-700 flex items-center gap-2 border-t border-slate-100"
-										disabled={actionId === listing.id}
-										onClick={(e) => {
-											e.stopPropagation();
-											setOpenActionMenuId(null);
-											if (
-												confirm(
-													"Are you sure you want to delete this listing? This action cannot be undone."
-												)
-											) {
-												handleDelete(listing.id);
-											}
-										}}
-									>
-										{actionId === listing.id ? (
-											<Loader2 className="w-4 h-4 animate-spin" />
-										) : (
-											<div className="flex items-center gap-2">
-												<Trash2 className="w-4 h-4" /> Delete
-											</div>
-										)}
-									</button>
-								</>
-							)}
+									</>
+								)}
 						</div>,
 						document.body
 					);
@@ -848,7 +873,7 @@ export default function SponsorDashboard() {
 				onClose={() => setDividendModalOpen(false)}
 				listingId={selectedListing?.id || ""}
 				listingName={selectedListing?.name || ""}
-				onSuccess={() => {}}
+				onSuccess={() => { }}
 			/>
 			<FeedbackModal
 				isOpen={feedbackModal.isOpen}
@@ -864,6 +889,16 @@ export default function SponsorDashboard() {
 				message="Your listing has been successfully submitted and is pending review. It will be live once approved by an administrator."
 				type="success"
 				duration={8000}
+			/>
+			<Alert
+				isOpen={alertState.isOpen}
+				onClose={() => setAlertState({ ...alertState, isOpen: false })}
+				title={alertState.title}
+				message={alertState.message}
+				type={alertState.type}
+				onConfirm={alertState.onConfirm}
+				confirmText={alertState.confirmText}
+				cancelText={alertState.cancelText}
 			/>
 		</div>
 	);
