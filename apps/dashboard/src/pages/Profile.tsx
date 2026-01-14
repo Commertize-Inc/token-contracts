@@ -1,5 +1,5 @@
 import { KycStatus, VerificationStatus } from "@commertize/data/enums";
-import { Alert, Button, Input } from "@commertize/ui";
+import { Alert, Button, Input, PageHeader } from "@commertize/ui";
 import { motion } from "framer-motion";
 import {
 	AlertTriangle,
@@ -86,6 +86,9 @@ export default function ProfilePage() {
 		title: string;
 		message: string;
 		type: "success" | "error" | "info" | "warning";
+		onConfirm?: () => void;
+		confirmText?: string;
+		cancelText?: string;
 	}>({
 		isOpen: false,
 		title: "",
@@ -246,106 +249,134 @@ export default function ProfilePage() {
 	);
 
 	const handleDisconnect = async (accountId: string) => {
-		if (!confirm("Are you sure you want to disconnect this account?")) return;
-
-		setDisconnectingId(accountId);
-		try {
-			const token = await getAccessToken();
-			// Fix: api.delete was not available before, now it is in our utility
-			await api.delete(`/plaid/accounts/${accountId}`, token);
-			await fetchProfile();
-		} catch (error) {
-			console.error("Error disconnecting account:", error);
-		} finally {
-			setDisconnectingId(null);
-		}
+		setAlertState({
+			isOpen: true,
+			title: "Disconnect Account",
+			message: "Are you sure you want to disconnect this bank account?",
+			type: "warning",
+			confirmText: "Disconnect",
+			onConfirm: async () => {
+				setDisconnectingId(accountId);
+				try {
+					const token = await getAccessToken();
+					await api.delete(`/plaid/accounts/${accountId}`, token);
+					await fetchProfile();
+				} catch (error) {
+					console.error("Error disconnecting account:", error);
+				} finally {
+					setDisconnectingId(null);
+				}
+			},
+		});
 	};
 
 	const handleTestCharge = async (accountId: string) => {
-		if (!confirm("This will simulate a $1.00 charge. Proceed?")) return;
+		setAlertState({
+			isOpen: true,
+			title: "Test Stripe Charge",
+			message:
+				"This will simulate a $1.00 charge to your connected account. Proceed?",
+			type: "info",
+			confirmText: "Charge",
+			onConfirm: async () => {
+				try {
+					const token = await getAccessToken();
 
-		try {
-			const token = await getAccessToken();
+					const data = await api.post(
+						"/stripe/test-charge",
+						{ accountId, type: "charge", amount: 100 },
+						token
+					);
 
-			const data = await api.post(
-				"/stripe/test-charge",
-				{ accountId, type: "charge", amount: 100 },
-				token
-			);
-
-			if (data) {
-				setAlertState({
-					isOpen: true,
-					title: "Test Charge Successful",
-					message: "Test charge successful! Check Stripe dashboard.",
-					type: "success",
-				});
-			} else {
-				setAlertState({
-					isOpen: true,
-					title: "Charge Failed",
-					message: `Charge failed: ${data.error}`,
-					type: "error",
-				});
-			}
-		} catch (error) {
-			console.error("Test charge error:", error);
-			setAlertState({
-				isOpen: true,
-				title: "Error",
-				message: "Failed to execute test charge",
-				type: "error",
-			});
-		}
+					if (data) {
+						setAlertState({
+							isOpen: true,
+							title: "Test Charge Successful",
+							message: "Test charge successful! Check Stripe dashboard.",
+							type: "success",
+						});
+					} else {
+						setAlertState({
+							isOpen: true,
+							title: "Charge Failed",
+							message: `Charge failed: ${data.error}`,
+							type: "error",
+						});
+					}
+				} catch (error) {
+					console.error("Test charge error:", error);
+					setAlertState({
+						isOpen: true,
+						title: "Error",
+						message: "Failed to execute test charge",
+						type: "error",
+					});
+				}
+			},
+		});
 	};
 
 	const handleDeleteAccount = async () => {
-		const confirmText =
-			"Are you absolutely sure?\n\nThis will permanently delete your account, wallet connection, and all associated data. This action cannot be undone.";
-		if (!confirm(confirmText)) return;
+		const deleteLogic = async () => {
+			try {
+				const wallet =
+					wallets.find((w) => w.walletClientType === "privy") || wallets[0];
 
-		// Double confirmation
-		if (!confirm("Please confirm again to permanently DELETE your account."))
-			return;
+				if (!wallet) {
+					throw new Error(
+						"No connected wallet found. Please verify your account setup."
+					);
+				}
 
-		try {
-			const wallet =
-				wallets.find((w) => w.walletClientType === "privy") || wallets[0];
+				const message = `I confirm that I want to permanently delete my account. Timestamp: ${Date.now()}`;
+				await wallet.sign(message);
 
-			if (!wallet) {
-				throw new Error(
-					"No connected wallet found. Please verify your account setup."
-				);
+				setIsDeleting(true);
+				const token = await getAccessToken();
+				await api.delete("/profile", token);
+				await logout();
+				window.location.href = "/";
+			} catch (error: any) {
+				console.error("Error deleting account:", error);
+				// Check if error is user rejection
+				if (error?.message?.includes("User rejected")) {
+					setAlertState({
+						isOpen: true,
+						title: "Verification Cancelled",
+						message: "Account deletion cancelled.",
+						type: "info",
+					});
+				} else {
+					setAlertState({
+						isOpen: true,
+						title: "Error Deleting Account",
+						message: `Failed to delete account: ${error.message || "Unknown error"}`,
+						type: "error",
+					});
+				}
+				setIsDeleting(false);
 			}
+		};
 
-			const message = `I confirm that I want to permanently delete my account. Timestamp: ${Date.now()}`;
-			await wallet.sign(message);
-
-			setIsDeleting(true);
-			const token = await getAccessToken();
-			await api.delete("/profile", token);
-			await logout();
-			window.location.href = "/";
-		} catch (error: any) {
-			console.error("Error deleting account:", error);
-			// Check if error is user rejection
-			if (error?.message?.includes("User rejected")) {
+		setAlertState({
+			isOpen: true,
+			title: "Delete Account?",
+			message:
+				"Are you absolutely sure?\n\nThis will permanently delete your account, wallet connection, and all associated data. This action cannot be undone.",
+			type: "error",
+			confirmText: "Delete Forever",
+			onConfirm: () => {
+				// Double confirmation (chained)
 				setAlertState({
 					isOpen: true,
-					title: "Verification Cancelled",
-					message: "Account deletion cancelled.",
-					type: "info",
-				});
-			} else {
-				setAlertState({
-					isOpen: true,
-					title: "Error Deleting Account",
-					message: `Failed to delete account: ${error.message || "Unknown error"}`,
+					title: "Final Confirmation",
+					message: "Please confirm again to PERMANENTLY DELETE your account.",
 					type: "error",
+					confirmText: "YES, DELETE IT",
+					onConfirm: deleteLogic,
 				});
-			}
-			setIsDeleting(false);
-		}
+			},
+		});
 	};
 
 	const config: PlaidLinkOptions = {
@@ -406,15 +437,16 @@ export default function ProfilePage() {
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 0.6, ease: "easeOut" }}
-					className="mb-8 text-center"
 				>
-					<h1 className="text-3xl sm:text-4xl font-light text-gray-900 mb-2 tracking-tight">
-						Your <span className="text-[#D4A024]">Profile</span>
-					</h1>
-					<p className="text-base text-gray-500 font-light max-w-2xl mx-auto">
-						Manage your account connections, verification status, and payment
-						methods.
-					</p>
+					<PageHeader
+						title={
+							<>
+								Your <span className="text-[#D4A024]">Profile</span>
+							</>
+						}
+						subtitle="Manage your account connections, verification status, and payment methods."
+						className="mb-8"
+					/>
 				</motion.div>
 
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -595,9 +627,14 @@ export default function ProfilePage() {
 															});
 															return;
 														}
-														if (confirm("Disconnect this email?")) {
-															unlinkEmail(user.email!.address);
-														}
+														setAlertState({
+															isOpen: true,
+															title: "Disconnect Email",
+															message: "Are you sure you want to disconnect this email?",
+															type: "warning",
+															confirmText: "Disconnect",
+															onConfirm: () => unlinkEmail(user.email!.address),
+														});
 													}}
 													disabled={
 														user.wallet?.address === user.email.address // specific case if wallet is treated as email? unlikely but good check
@@ -652,9 +689,15 @@ export default function ProfilePage() {
 															});
 															return;
 														}
-														if (confirm("Disconnect this phone number?")) {
-															unlinkPhone(user.phone!.number);
-														}
+														setAlertState({
+															isOpen: true,
+															title: "Disconnect Phone",
+															message:
+																"Are you sure you want to disconnect this phone number?",
+															type: "warning",
+															confirmText: "Disconnect",
+															onConfirm: () => unlinkPhone(user.phone!.number),
+														});
 													}}
 													title="Disconnect"
 												>
@@ -704,9 +747,14 @@ export default function ProfilePage() {
 															});
 															return;
 														}
-														if (confirm("Disconnect this wallet?")) {
-															unlinkWallet(user.wallet!.address);
-														}
+														setAlertState({
+															isOpen: true,
+															title: "Disconnect Wallet",
+															message: "Are you sure you want to disconnect this wallet?",
+															type: "warning",
+															confirmText: "Disconnect",
+															onConfirm: () => unlinkWallet(user.wallet!.address),
+														});
 													}}
 													title="Disconnect"
 												>
@@ -889,6 +937,9 @@ export default function ProfilePage() {
 				title={alertState.title}
 				message={alertState.message}
 				type={alertState.type}
+				onConfirm={alertState.onConfirm}
+				confirmText={alertState.confirmText}
+				cancelText={alertState.cancelText}
 			/>
 
 			{/* Edit Profile Modal */}
@@ -1011,6 +1062,9 @@ export default function ProfilePage() {
 				title={alertState.title}
 				message={alertState.message}
 				type={alertState.type}
+				onConfirm={alertState.onConfirm}
+				confirmText={alertState.confirmText}
+				cancelText={alertState.cancelText}
 			/>
 		</div>
 	);
