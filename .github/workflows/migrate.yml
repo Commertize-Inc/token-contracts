@@ -16,13 +16,16 @@ on:
       - "packages/data/src/migrations/**"
       - "packages/data/src/**/*.ts"
       - ".github/workflows/migrate.yml"
-  release:
-    types: [published]
+  workflow_run:
+    workflows: ["Deploy to Vercel on release"]
+    types:
+      - completed
 
 jobs:
   setup:
     name: Determine Environments
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     outputs:
       environments: ${{ steps.set-envs.outputs.environments }}
     steps:
@@ -34,8 +37,8 @@ jobs:
           # Main Branch
           elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
             echo "environments=['preview', 'development']" >> "$GITHUB_OUTPUT"
-          # Production Release (via release event)
-          elif [[ "${{ github.event_name }}" == "release" ]]; then
+          # Production Release (via workflow_run from successful deploy)
+          elif [[ "${{ github.event_name }}" == "workflow_run" ]]; then
             echo "environments=['production', 'preview', 'development']" >> "$GITHUB_OUTPUT"
           # Production Release (via branch push - deprecated but kept for safety)
           elif [[ "${{ github.ref }}" == "refs/heads/release/production" ]]; then
