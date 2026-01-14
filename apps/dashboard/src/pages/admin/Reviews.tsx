@@ -6,6 +6,8 @@ import {
 	Badge,
 	DataTable,
 	DataTableColumnHeader,
+	Alert,
+	PageHeader,
 } from "@commertize/ui";
 import { ColumnDef } from "@tanstack/react-table";
 import {
@@ -51,6 +53,17 @@ export default function AdminReviews() {
 		| null
 	>(null);
 	const [comment, setComment] = useState("");
+	const [alertState, setAlertState] = useState<{
+		isOpen: boolean;
+		title: string;
+		message: string;
+		type: "success" | "error" | "info" | "warning";
+	}>({
+		isOpen: false,
+		title: "",
+		message: "",
+		type: "info",
+	});
 
 	const { data: response, isLoading } = useQuery({
 		queryKey: ["adminSubmissions", showAll],
@@ -88,7 +101,12 @@ export default function AdminReviews() {
 			);
 		},
 		onSuccess: () => {
-			alert("Review submitted successfully");
+			setAlertState({
+				isOpen: true,
+				title: "Review Submitted",
+				message: "Review submitted successfully",
+				type: "success",
+			});
 			queryClient.invalidateQueries({ queryKey: ["adminSubmissions"] });
 			setSelectedSubmission(null);
 			setReviewAction(null);
@@ -96,7 +114,12 @@ export default function AdminReviews() {
 		},
 		onError: (err: any) => {
 			console.error(err);
-			alert(`Failed to submit review: ${err.message || "Unknown error"}`);
+			setAlertState({
+				isOpen: true,
+				title: "Review Failed",
+				message: `Failed to submit review: ${err.message || "Unknown error"}`,
+				type: "error",
+			});
 		},
 	});
 
@@ -263,26 +286,29 @@ export default function AdminReviews() {
 		<div className="min-h-screen bg-slate-50 pb-20">
 			<Navbar />
 			<div className="container mx-auto py-8">
-				<div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
-					<h1 className="text-3xl font-bold">Review Queue</h1>
-					<div className="mt-4 md:mt-0 flex items-center gap-4">
-						<div className="flex items-center gap-2">
-							<input
-								type="checkbox"
-								id="showAll"
-								checked={showAll}
-								onChange={(e) => setShowAll(e.target.checked)}
-								className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4"
-							/>
-							<label
-								htmlFor="showAll"
-								className="text-sm text-slate-700 cursor-pointer select-none"
-							>
-								Show All History
-							</label>
+				<PageHeader
+					title="Review Queue"
+					actions={
+						<div className="flex items-center gap-4">
+							<div className="flex items-center gap-2">
+								<input
+									type="checkbox"
+									id="showAll"
+									checked={showAll}
+									onChange={(e) => setShowAll(e.target.checked)}
+									className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4"
+								/>
+								<label
+									htmlFor="showAll"
+									className="text-sm text-slate-700 cursor-pointer select-none"
+								>
+									Show All History
+								</label>
+							</div>
 						</div>
-					</div>
-				</div>
+					}
+					className="mb-8"
+				/>
 
 				<div className="bg-white rounded-lg shadow-sm border p-4">
 					<DataTable
@@ -480,7 +506,7 @@ export default function AdminReviews() {
 												className="w-full min-h-[120px] p-3 border rounded-md text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-none"
 												placeholder={
 													reviewAction === "APPROVE" ||
-													reviewAction === "TOKENIZE"
+														reviewAction === "TOKENIZE"
 														? "Optional comment"
 														: `Reason for ${reviewAction === "REJECT" ? "rejection" : "action"}...`
 												}
@@ -528,6 +554,14 @@ export default function AdminReviews() {
 						</div>
 					</div>
 				)}
+
+				<Alert
+					isOpen={alertState.isOpen}
+					onClose={() => setAlertState((prev) => ({ ...prev, isOpen: false }))}
+					title={alertState.title}
+					message={alertState.message}
+					type={alertState.type}
+				/>
 			</div>
 		</div>
 	);
