@@ -5,6 +5,8 @@ import {
 	Enum,
 	Embedded,
 	ManyToOne,
+	BeforeDelete,
+	type EventArgs,
 } from "@mikro-orm/core";
 import { v4 } from "uuid";
 import { KycStatus, UserRole } from "../enums/onboarding";
@@ -20,7 +22,7 @@ export class User {
 	@PrimaryKey()
 	id: string = v4();
 
-	constructor() {}
+	constructor() { }
 
 	/** Unique identifier from the authentication provider (Privy). */
 	@Property({ type: "string", unique: true, index: true })
@@ -103,4 +105,17 @@ export class User {
 
 	@Embedded(() => Investor, { prefix: "investor_", nullable: true })
 	investor?: Investor;
+
+	@BeforeDelete()
+	async checkLastSponsorUser(args: EventArgs<User>) {
+		if (this.sponsor) {
+			const userCount = await args.em.count(User, {
+				sponsor: this.sponsor,
+			});
+
+			if (userCount === 1) {
+				throw new Error("Cannot delete the last user of a sponsor.");
+			}
+		}
+	}
 }
