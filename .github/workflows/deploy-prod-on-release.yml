@@ -1,8 +1,9 @@
-name: Deploy to Vercel on release
+name: Deploy to Vercel
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - 'v*'
 
 jobs:
   deploy:

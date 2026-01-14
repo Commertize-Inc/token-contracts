@@ -17,7 +17,7 @@ on:
       - "packages/data/src/**/*.ts"
       - ".github/workflows/migrate.yml"
   workflow_run:
-    workflows: ["Deploy to Vercel on release"]
+    workflows: ["Deploy to Vercel"]
     types:
       - completed
 
