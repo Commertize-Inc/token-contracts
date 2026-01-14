@@ -15,6 +15,7 @@ interface AlertProps {
 	onConfirm?: () => void | Promise<void>;
 	confirmText?: string;
 	cancelText?: string;
+	autoClose?: boolean;
 }
 
 const getIcon = (type: AlertType) => {
@@ -55,6 +56,7 @@ const Alert: React.FC<AlertProps> = ({
 	onConfirm,
 	confirmText = "Confirm",
 	cancelText = "Cancel",
+	autoClose = true,
 }) => {
 	const [isLoading, setIsLoading] = React.useState(false);
 
@@ -88,7 +90,9 @@ const Alert: React.FC<AlertProps> = ({
 		try {
 			setIsLoading(true);
 			await onConfirm();
-			onClose();
+			if (autoClose) {
+				onClose();
+			}
 		} catch (error) {
 			console.error("Error in alert confirmation:", error);
 			// Optionally keep open or show error? For now, we rely on the caller to handle errors or close.

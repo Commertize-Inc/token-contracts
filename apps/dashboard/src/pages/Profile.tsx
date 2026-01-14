@@ -90,6 +90,7 @@ export default function ProfilePage() {
 		onConfirm?: () => void;
 		confirmText?: string;
 		cancelText?: string;
+		autoClose?: boolean;
 	}>({
 		isOpen: false,
 		title: "",
@@ -377,6 +378,7 @@ export default function ProfilePage() {
 				"Are you absolutely sure?\n\nThis will permanently delete your account, wallet connection, and all associated data. This action cannot be undone.",
 			type: "error",
 			confirmText: "Delete Forever",
+			autoClose: false,
 			onConfirm: () => {
 				// Double confirmation (chained)
 				setAlertState({
@@ -1077,6 +1079,7 @@ export default function ProfilePage() {
 				onConfirm={alertState.onConfirm}
 				confirmText={alertState.confirmText}
 				cancelText={alertState.cancelText}
+				autoClose={alertState.autoClose}
 			/>
 		</div>
 	);
