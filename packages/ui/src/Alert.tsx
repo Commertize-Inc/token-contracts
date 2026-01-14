@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, AlertCircle, CheckCircle, Info, AlertTriangle } from "lucide-react";
+import { X, AlertCircle, CheckCircle, Info, AlertTriangle, Loader2 } from "lucide-react";
 import { createPortal } from "react-dom";
 
 export type AlertType = "success" | "error" | "info" | "warning";
@@ -12,7 +12,7 @@ interface AlertProps {
 	message: string;
 	type?: AlertType;
 	duration?: number; // Auto close after duration (ms) - automatically disabled if onConfirm is present
-	onConfirm?: () => void;
+	onConfirm?: () => void | Promise<void>;
 	confirmText?: string;
 	cancelText?: string;
 }
@@ -56,12 +56,19 @@ const Alert: React.FC<AlertProps> = ({
 	confirmText = "Confirm",
 	cancelText = "Cancel",
 }) => {
+	const [isLoading, setIsLoading] = React.useState(false);
+
 	useEffect(() => {
 		if (isOpen && duration && !onConfirm) {
 			const timer = setTimeout(onClose, duration);
 			return () => clearTimeout(timer);
 		}
 	}, [isOpen, duration, onClose, onConfirm]);
+
+	// Reset loading state when closed/opened
+	useEffect(() => {
+		if (isOpen) setIsLoading(false);
+	}, [isOpen]);
 
 	// Prevent scrolling when alert is open
 	useEffect(() => {
@@ -75,6 +82,24 @@ const Alert: React.FC<AlertProps> = ({
 		};
 	}, [isOpen]);
 
+	const handleConfirm = async () => {
+		if (!onConfirm) return;
+
+		try {
+			setIsLoading(true);
+			await onConfirm();
+			onClose();
+		} catch (error) {
+			console.error("Error in alert confirmation:", error);
+			// Optionally keep open or show error? For now, we rely on the caller to handle errors or close.
+			// If we close here, the user might miss the error.
+			// But if we don't close, we need to stop loading.
+			// Let's stop loading so they can try again or cancel.
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
 	if (!isOpen) return null;
 
 	return createPortal(
@@ -86,8 +111,8 @@ const Alert: React.FC<AlertProps> = ({
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
-						onClick={onClose}
-						className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+						onClick={!isLoading ? onClose : undefined}
+						className="absolute inset-0 bg-black/20 backdrop-blur-sm cursor-pointer"
 					/>
 
 					{/* Modal */}
@@ -111,7 +136,8 @@ const Alert: React.FC<AlertProps> = ({
 							</div>
 							<button
 								onClick={onClose}
-								className="text-gray-400 hover:text-gray-500 transition-colors"
+								disabled={isLoading}
+								className="text-gray-400 hover:text-gray-500 transition-colors disabled:opacity-50"
 							>
 								<X size={20} />
 							</button>
@@ -126,20 +152,20 @@ const Alert: React.FC<AlertProps> = ({
 								<>
 									<button
 										onClick={onClose}
-										className="px-4 py-2 text-gray-600 text-sm font-medium hover:bg-gray-50 rounded-lg transition-colors"
+										disabled={isLoading}
+										className="px-4 py-2 text-gray-600 text-sm font-medium hover:bg-gray-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
 									>
 										{cancelText}
 									</button>
 									<button
-										onClick={() => {
-											onConfirm();
-											onClose();
-										}}
-										className={`px-4 py-2 text-white text-sm font-medium rounded-lg transition-colors ${type === "error" || type === "warning"
-												? "bg-red-600 hover:bg-red-700"
-												: "bg-gray-900 hover:bg-gray-800"
-											}`}
+										onClick={handleConfirm}
+										disabled={isLoading}
+										className={`px-4 py-2 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2 ${type === "error" || type === "warning"
+											? "bg-red-600 hover:bg-red-700"
+											: "bg-gray-900 hover:bg-gray-800"
+											} disabled:opacity-70 disabled:cursor-not-allowed`}
 									>
+										{isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
 										{confirmText}
 									</button>
 								</>

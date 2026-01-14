@@ -285,7 +285,7 @@ export default function AdminReviews() {
 	return (
 		<div className="min-h-screen bg-slate-50 pb-20">
 			<Navbar />
-			<div className="container mx-auto py-8">
+			<div className="container mx-auto pb-8">
 				<PageHeader
 					title="Review Queue"
 					actions={

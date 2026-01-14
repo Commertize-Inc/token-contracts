@@ -35,5 +35,6 @@ export type { BentoBoxProps } from "./BentoBox";
 export * from "./StepView";
 
 export { default as Alert } from "./Alert";
+export { default as Tooltip } from "./Tooltip";
 export type * from "./Alert";
 export * from "./components/ErrorModal";

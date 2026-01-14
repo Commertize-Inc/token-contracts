@@ -471,7 +471,7 @@ export default function SponsorDashboard() {
 	return (
 		<div className="min-h-screen bg-slate-50">
 			<Navbar />
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
 				<PageHeader
 					title="Sponsor Dashboard"
 					subtitle="Manage your property listings and offerings."

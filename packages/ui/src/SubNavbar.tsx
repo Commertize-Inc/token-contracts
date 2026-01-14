@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { cn } from "./lib/utils";
 import { ChevronLeft, Menu } from "lucide-react";
+import Tooltip from "./Tooltip";
 
 export interface SubNavbarItem {
 	id: string;
@@ -125,7 +126,8 @@ const SubNavbar: React.FC<SubNavbarProps> = ({
 					const isActive = activeId === item.id;
 					const Icon = item.icon;
 
-					return (
+
+					const button = (
 						<button
 							key={item.id}
 							onClick={() => scrollToSection(item.id)}
@@ -136,7 +138,7 @@ const SubNavbar: React.FC<SubNavbarProps> = ({
 									: "text-slate-500 hover:bg-slate-100 hover:text-slate-900",
 								isCollapsed ? "justify-center px-2" : ""
 							)}
-							title={isCollapsed ? item.label : undefined}
+							title={undefined} // handled by tooltip
 						>
 							{Icon && (
 								<Icon
@@ -169,6 +171,17 @@ const SubNavbar: React.FC<SubNavbarProps> = ({
 							)}
 						</button>
 					);
+
+					if (isCollapsed) {
+						return (
+							<Tooltip key={item.id} content={item.label} side="right" className="w-full justify-center">
+								{button}
+							</Tooltip>
+						);
+					}
+
+					return button;
+
 				})}
 			</div>
 		</motion.div>

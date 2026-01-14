@@ -22,14 +22,23 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getAccessToken } from "@privy-io/react-auth";
 import {
+	Activity,
 	Building2,
 	CheckCircle2,
+	Coins,
 	DollarSign, // Used in SectionTitle icon
 	FileText,
+	Flag,
+	FolderOpen,
 	Image as ImageIcon,
+	Landmark,
 	Loader2,
+	PieChart,
 	Plus,
+	Scroll,
+	Share2,
 	Trash2,
+	TrendingUp,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -79,18 +88,18 @@ export default function CreateListing() {
 
 	// SubNavbar configuration
 	const navItems: SubNavbarItem[] = [
-		{ id: "listing-details", label: "Details" },
-		{ id: "deal-economics", label: "Economics" },
-		{ id: "debt-terms", label: "Debt" },
-		{ id: "sources-uses", label: "Sources" },
-		{ id: "operating-history", label: "Operating" },
-		{ id: "pro-forma-exit", label: "Exit" },
-		{ id: "return-targets", label: "Returns" },
-		{ id: "distribution-policy", label: "Distribution" },
-		{ id: "tokenomics", label: "Tokenomics" },
-		{ id: "offering-structure", label: "Offering" },
-		{ id: "images-highlights", label: "Media" },
-		{ id: "documents", label: "Documents" },
+		{ id: "listing-details", label: "Details", icon: FileText },
+		{ id: "deal-economics", label: "Economics", icon: DollarSign },
+		{ id: "debt-terms", label: "Debt", icon: Landmark },
+		{ id: "sources-uses", label: "Sources", icon: PieChart },
+		{ id: "operating-history", label: "Operating", icon: Activity },
+		{ id: "pro-forma-exit", label: "Exit", icon: Flag },
+		{ id: "return-targets", label: "Returns", icon: TrendingUp },
+		{ id: "distribution-policy", label: "Distribution", icon: Share2 },
+		{ id: "tokenomics", label: "Tokenomics", icon: Coins },
+		{ id: "offering-structure", label: "Offering", icon: Scroll },
+		{ id: "images-highlights", label: "Media", icon: ImageIcon },
+		{ id: "documents", label: "Documents", icon: FolderOpen },
 	];
 
 	const { data: onboardingStatus } = useOnboardingStatus();
@@ -187,7 +196,7 @@ export default function CreateListing() {
 			console.error("Submission error:", error);
 			setServerError(
 				error.response?.data?.error ||
-					"Failed to create listing. Please try again."
+				"Failed to create listing. Please try again."
 			);
 			setErrorModalOpen(true);
 		} finally {

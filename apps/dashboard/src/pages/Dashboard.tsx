@@ -62,7 +62,7 @@ export default function DashboardHome() {
 		<div className="min-h-screen bg-slate-50 pb-20">
 			<Navbar />
 
-			<main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+			<main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
 				{/* Global KYC Banner for Unverified Users */}
 				{!isKycApproved && (
 					<div className="mb-8 rounded-lg bg-red-50 p-4 border border-red-200 flex items-start sm:items-center justify-between gap-4">
@@ -168,7 +168,7 @@ export default function DashboardHome() {
 							</Button>
 						</div>
 						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-							{}
+							{ }
 							{listings.slice(0, 3).map((listing: any, index: number) => (
 								<ListingCard
 									key={listing.id}
