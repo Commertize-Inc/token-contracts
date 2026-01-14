@@ -21,7 +21,7 @@ export class Investment {
 	id: string = v4();
 
 	/** The Investor who made the purchase. */
-	@ManyToOne(() => User)
+	@ManyToOne(() => User, { deleteRule: "cascade" })
 	user!: User;
 
 	/** The Property being invested in. */

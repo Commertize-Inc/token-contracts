@@ -7,10 +7,10 @@ import {
 	User,
 	VerificationStatus,
 	EntityType,
-	SponsorUpdateRequest,
-	SponsorUpdateRequestStatus,
-	adminReviewSchema,
+	Notification,
+	NotificationType,
 } from "@commertize/data";
+import { z } from "zod";
 import { Hono } from "hono";
 import { getEM } from "../db";
 import { authMiddleware } from "../middleware/auth";
@@ -394,38 +394,54 @@ admin.post("/submissions/:type/:id/review", async (c) => {
 	}
 });
 
+// Local schema for admin review
+const adminReviewSchema = z.object({
+	adminNotes: z.string().optional(),
+});
+
 // GET /admin/sponsor-update-requests
 admin.get("/sponsor-update-requests", async (c) => {
 	try {
 		const em = await getEM();
 
-		const requests = await em.find(
-			SponsorUpdateRequest,
-			{ status: SponsorUpdateRequestStatus.PENDING },
+		const notifications = await em.find(
+			Notification,
 			{
-				populate: ["sponsor", "requestedBy"],
+				type: NotificationType.SPONSOR_UPDATE,
+			},
+			{
+				populate: ["user", "user.sponsor"], // populate the user and their sponsor
 				orderBy: { createdAt: "ASC" },
 			}
 		);
 
-		const formattedRequests = requests.map((req) => ({
-			id: req.id,
-			sponsorName: req.sponsor.businessName,
-			requestedBy: {
-				name: `${req.requestedBy.firstName} ${req.requestedBy.lastName}`,
-				email: req.requestedBy.email,
-			},
-			currentValues: {
-				businessName: req.sponsor.businessName,
-				businessType: req.sponsor.kybData?.businessType,
-				ein: req.sponsor.ein,
-				address: req.sponsor.address,
-			},
-			requestedChanges: req.requestedChanges,
-			documents: req.documents,
-			createdAt: req.createdAt,
-			status: req.status,
-		}));
+		// Filter for pending only (in-memory if JSONB query is hard, or use QB)
+		// Assuming low volume, filter in memory
+		const pendingRequests = notifications.filter(
+			(n) => n.metadata?.status === "PENDING"
+		);
+
+		const formattedRequests = pendingRequests.map((req) => {
+			const sponsor = req.user.sponsor;
+			return {
+				id: req.id,
+				sponsorName: sponsor?.businessName || "Unknown",
+				requestedBy: {
+					name: `${req.user.firstName} ${req.user.lastName}`,
+					email: req.user.email,
+				},
+				currentValues: {
+					businessName: sponsor?.businessName,
+					businessType: sponsor?.kybData?.businessType,
+					ein: sponsor?.ein,
+					address: sponsor?.address,
+				},
+				requestedChanges: req.metadata?.requestedChanges,
+				documents: req.metadata?.documents,
+				createdAt: req.createdAt,
+				status: req.metadata?.status,
+			};
+		});
 
 		return c.json({ requests: formattedRequests });
 	} catch (error) {
@@ -437,7 +453,7 @@ admin.get("/sponsor-update-requests", async (c) => {
 // POST /admin/sponsor-update-requests/:id/approve
 admin.post("/sponsor-update-requests/:id/approve", async (c) => {
 	try {
-		const requestId = c.req.param("id");
+		const requestId = c.req.param("id"); // Notification ID
 		const body = await c.req.json();
 		const result = adminReviewSchema.safeParse(body);
 
@@ -451,44 +467,54 @@ admin.post("/sponsor-update-requests/:id/approve", async (c) => {
 		const { adminNotes } = result.data;
 		const em = await getEM();
 
-		const updateRequest = await em.findOne(
-			SponsorUpdateRequest,
+		const notification = await em.findOne(
+			Notification,
 			{ id: requestId },
-			{ populate: ["sponsor", "requestedBy"] }
+			{ populate: ["user", "user.sponsor"] }
 		);
 
-		if (!updateRequest) {
+		if (!notification) {
 			return c.json({ error: "Update request not found" }, 404);
 		}
 
-		if (updateRequest.status !== SponsorUpdateRequestStatus.PENDING) {
+		if (notification.type !== NotificationType.SPONSOR_UPDATE) {
+			return c.json({ error: "Invalid request type" }, 400);
+		}
+
+		if (notification.metadata?.status !== "PENDING") {
 			return c.json({ error: "Only pending requests can be approved" }, 400);
+		}
+
+		const sponsor = notification.user.sponsor;
+		if (!sponsor) {
+			return c.json({ error: "Sponsor profile not found" }, 404);
 		}
 
 		// Apply the requested changes to the sponsor
 		const { businessName, businessType, ein, address } =
-			updateRequest.requestedChanges;
+			notification.metadata.requestedChanges || {};
 
-		if (businessName) updateRequest.sponsor.businessName = businessName;
-		if (ein) updateRequest.sponsor.ein = ein;
-		if (address) updateRequest.sponsor.address = address;
+		if (businessName) sponsor.businessName = businessName;
+		if (ein) sponsor.ein = ein;
+		if (address) sponsor.address = address;
 		if (businessType) {
-			updateRequest.sponsor.kybData = {
-				...updateRequest.sponsor.kybData,
+			sponsor.kybData = {
+				...sponsor.kybData,
 				businessType,
 			};
 		}
 
-		// Update request status
-		updateRequest.status = SponsorUpdateRequestStatus.APPROVED;
-		if (adminNotes) updateRequest.adminNotes = adminNotes;
-		updateRequest.updatedAt = new Date();
+		// Update request status in metadata
+		notification.metadata = {
+			...notification.metadata,
+			status: "APPROVED",
+			adminNotes,
+		};
 
-		await em.flush();
 
 		// TODO: Send notification to sponsor about approval
 
-		return c.json({ success: true, request: updateRequest });
+		return c.json({ success: true, request: { id: notification.id, status: "APPROVED" } });
 	} catch (error) {
 		console.error("Error approving update request:", error);
 		return c.json({ error: "Internal server error" }, 500);
@@ -512,30 +538,38 @@ admin.post("/sponsor-update-requests/:id/reject", async (c) => {
 		const { adminNotes } = result.data;
 		const em = await getEM();
 
-		const updateRequest = await em.findOne(
-			SponsorUpdateRequest,
+		const notification = await em.findOne(
+			Notification,
 			{ id: requestId },
-			{ populate: ["sponsor", "requestedBy"] }
+			{ populate: ["user"] }
 		);
 
-		if (!updateRequest) {
+		if (!notification) {
 			return c.json({ error: "Update request not found" }, 404);
 		}
 
-		if (updateRequest.status !== SponsorUpdateRequestStatus.PENDING) {
+		if (notification.type !== NotificationType.SPONSOR_UPDATE) {
+			return c.json({ error: "Invalid request type" }, 400);
+		}
+
+		if (notification.metadata?.status !== "PENDING") {
 			return c.json({ error: "Only pending requests can be rejected" }, 400);
 		}
 
 		// Update request status
-		updateRequest.status = SponsorUpdateRequestStatus.REJECTED;
-		if (adminNotes) updateRequest.adminNotes = adminNotes;
-		updateRequest.updatedAt = new Date();
+		notification.metadata = {
+			...notification.metadata,
+			status: "REJECTED",
+			adminNotes
+		};
+
+
 
 		await em.flush();
 
 		// TODO: Send notification to sponsor about rejection with feedback
 
-		return c.json({ success: true, request: updateRequest });
+		return c.json({ success: true, request: { id: notification.id, status: "REJECTED" } });
 	} catch (error) {
 		console.error("Error rejecting update request:", error);
 		return c.json({ error: "Internal server error" }, 500);

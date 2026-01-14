@@ -9,7 +9,7 @@ export * from "./Notification";
 export * from "./PlaidItem";
 export * from "./ReviewComment";
 export * from "./Sponsor";
-export * from "./SponsorUpdateRequest";
+
 export * from "./User";
-export * from "./VerificationRequest";
+
 export * from "./Waitlist";

@@ -3,10 +3,10 @@ import {
 	Sponsor,
 	User,
 	VerificationStatus,
-	SponsorUpdateRequest,
-	SponsorUpdateRequestStatus,
-	sponsorUpdateRequestSchema,
+	Notification,
+	NotificationType,
 } from "@commertize/data";
+import { z } from "zod";
 import { Hono } from "hono";
 import { getEM } from "../db";
 import { authMiddleware } from "../middleware/auth";
@@ -269,7 +269,16 @@ sponsor.delete("/members/:id", authMiddleware, async (c) => {
 	}
 });
 
-// Create a sponsor update request for critical fields
+// Local schema for sponsor update
+const sponsorUpdateRequestSchema = z.object({
+	businessName: z.string().optional(),
+	businessType: z.string().optional(),
+	ein: z.string().optional(),
+	address: z.string().optional(),
+	documents: z.array(z.string()).optional(),
+});
+
+// Create a sponsor update request (as a Notification)
 sponsor.post("/profile/update-request", authMiddleware, async (c) => {
 	try {
 		const privyId = c.get("userId");
@@ -298,13 +307,19 @@ sponsor.post("/profile/update-request", authMiddleware, async (c) => {
 			return c.json({ error: "No critical fields provided for update" }, 400);
 		}
 
-		// Check if there's already a pending request
-		const existingRequest = await em.findOne(SponsorUpdateRequest, {
-			sponsor: user.sponsor,
-			status: SponsorUpdateRequestStatus.PENDING,
+		// Check if there's already a *pending* request (Notification)
+		// We can't easily query JSONB metadata safely across all drivers/versions in one go via criteria,
+		// but we can find all SPONSOR_UPDATE notifications for this user and filter in memory since volume is low.
+		const existingNotifications = await em.find(Notification, {
+			user: user,
+			type: NotificationType.SPONSOR_UPDATE,
 		});
 
-		if (existingRequest) {
+		const pendingRequest = existingNotifications.find(
+			(n) => n.metadata?.status === "PENDING"
+		);
+
+		if (pendingRequest) {
 			return c.json(
 				{
 					error:
@@ -314,24 +329,31 @@ sponsor.post("/profile/update-request", authMiddleware, async (c) => {
 			);
 		}
 
-		const updateRequest = em.create(SponsorUpdateRequest, {
-			sponsor: user.sponsor,
-			requestedBy: user,
+		const metadata = {
+			status: "PENDING",
+			sponsorId: user.sponsor.id,
 			requestedChanges,
 			documents: documents || [],
-			status: SponsorUpdateRequestStatus.PENDING,
+		};
+
+		const notification = em.create(Notification, {
+			user: user,
+			type: NotificationType.SPONSOR_UPDATE,
+			title: `Sponsor Profile Update Request`,
+			message: `Request to update profile for ${user.sponsor.businessName}`,
+			metadata,
+			isRead: false,
 			createdAt: new Date(),
-			updatedAt: new Date(),
 		});
 
-		await em.persistAndFlush(updateRequest);
+		await em.persistAndFlush(notification);
 
-		// TODO: Send notification to admins
+		// TODO: Real-time alert to admins?
 
 		return c.json({
 			success: true,
-			requestId: updateRequest.id,
-			status: updateRequest.status,
+			requestId: notification.id,
+			status: "PENDING",
 		});
 	} catch (error) {
 		console.error("Error creating update request:", error);
@@ -345,17 +367,30 @@ sponsor.get("/update-requests", authMiddleware, async (c) => {
 		const privyId = c.get("userId");
 		const em = await getEM();
 
-		const user = await em.findOne(User, { privyId }, { populate: ["sponsor"] });
+		const user = await em.findOne(User, { privyId }); // user is the requester
 
-		if (!user || !user.sponsor) {
-			return c.json({ error: "Sponsor profile not found" }, 404);
+		if (!user) {
+			return c.json({ error: "User not found" }, 404);
 		}
 
-		const requests = await em.find(
-			SponsorUpdateRequest,
-			{ sponsor: user.sponsor },
-			{ populate: ["requestedBy"], orderBy: { createdAt: "DESC" } }
+		const notifications = await em.find(
+			Notification,
+			{
+				user: user,
+				type: NotificationType.SPONSOR_UPDATE,
+			},
+			{ orderBy: { createdAt: "DESC" } }
 		);
+
+		// Format them to look like requests
+		const requests = notifications.map((n) => ({
+			id: n.id,
+			status: n.metadata?.status || "UNKNOWN",
+			requestedChanges: n.metadata?.requestedChanges || {},
+			documents: n.metadata?.documents || [],
+			adminNotes: n.metadata?.adminNotes,
+			createdAt: n.createdAt,
+		}));
 
 		return c.json(requests);
 	} catch (error) {
@@ -368,30 +403,38 @@ sponsor.get("/update-requests", authMiddleware, async (c) => {
 sponsor.delete("/update-requests/:id", authMiddleware, async (c) => {
 	try {
 		const privyId = c.get("userId");
-		const requestId = c.req.param("id");
+		const requestId = c.req.param("id"); // This is now the Notification ID
 		const em = await getEM();
 
-		const user = await em.findOne(User, { privyId }, { populate: ["sponsor"] });
+		const user = await em.findOne(User, { privyId });
 
-		if (!user || !user.sponsor) {
-			return c.json({ error: "Sponsor profile not found" }, 404);
+		if (!user) {
+			return c.json({ error: "User not found" }, 404);
 		}
 
-		const updateRequest = await em.findOne(
-			SponsorUpdateRequest,
-			{ id: requestId, sponsor: user.sponsor },
-			{ populate: ["sponsor"] }
-		);
+		const notification = await em.findOne(Notification, {
+			id: requestId,
+			user: user,
+			type: NotificationType.SPONSOR_UPDATE,
+		});
 
-		if (!updateRequest) {
+		if (!notification) {
 			return c.json({ error: "Update request not found" }, 404);
 		}
 
-		if (updateRequest.status !== SponsorUpdateRequestStatus.PENDING) {
+		if (notification.metadata?.status !== "PENDING") {
 			return c.json({ error: "Only pending requests can be cancelled" }, 400);
 		}
 
-		updateRequest.status = SponsorUpdateRequestStatus.CANCELLED;
+		// Update status to CANCELLED in metadata
+		notification.metadata = {
+			...notification.metadata,
+			status: "CANCELLED",
+		};
+
+		// Optionally mark read
+		notification.isRead = true;
+
 		await em.flush();
 
 		return c.json({ success: true });

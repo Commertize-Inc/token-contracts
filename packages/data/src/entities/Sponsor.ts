@@ -58,8 +58,7 @@ export class Sponsor {
 	@OneToMany(() => Listing, (listing) => listing.sponsor)
 	listings = new Collection<Listing>(this);
 
-	@OneToMany("SponsorUpdateRequest", "sponsor")
-	updateRequests = new Collection<any>(this);
+
 
 	@Property({ type: "date" })
 	createdAt: Date = new Date();

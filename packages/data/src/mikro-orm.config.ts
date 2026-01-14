@@ -14,10 +14,10 @@ import {
 	PlaidItem,
 	ReviewComment,
 	Sponsor,
-	SponsorUpdateRequest,
+
 	User,
 	Waitlist,
-	VerificationRequest,
+
 } from "./entities";
 
 // Load environment variables dynamically
@@ -44,9 +44,9 @@ const configPromise = (async () => {
 			PlaidItem,
 			ReviewComment,
 			Sponsor,
-			SponsorUpdateRequest,
+
 			User,
-			VerificationRequest,
+
 			Waitlist,
 		],
 		driver: PostgreSqlDriver,
@@ -54,15 +54,15 @@ const configPromise = (async () => {
 		clientUrl: process.env.DATABASE_URL!,
 		driverOptions:
 			process.env.DATABASE_URL?.includes("localhost") ||
-			process.env.DATABASE_URL?.includes("127.0.0.1")
+				process.env.DATABASE_URL?.includes("127.0.0.1")
 				? undefined
 				: {
-						connection: {
-							ssl: {
-								rejectUnauthorized: !isDevelopment,
-							},
+					connection: {
+						ssl: {
+							rejectUnauthorized: !isDevelopment,
 						},
 					},
+				},
 		debug: isDevelopment,
 		migrations: {
 			pathTs: "./migrations",

@@ -18,7 +18,7 @@ export class ReviewComment {
 	@Property({ type: "string" })
 	entityId!: string;
 
-	@ManyToOne(() => User)
+	@ManyToOne(() => User, { deleteRule: "cascade" })
 	author!: User;
 
 	/** Content of the comment. */

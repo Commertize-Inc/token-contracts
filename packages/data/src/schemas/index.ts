@@ -1,7 +1,7 @@
 export * from "./investment";
 export * from "./property";
 export * from "./sponsor";
-export * from "./sponsor-update";
+
 export * from "./user";
 export * from "./news";
 export * from "./reviews";

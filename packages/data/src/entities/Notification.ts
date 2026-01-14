@@ -8,6 +8,7 @@ export enum NotificationType {
 	WARNING = "warning",
 	ERROR = "error",
 	ACTION_REQUIRED = "action_required",
+	SPONSOR_UPDATE = "sponsor_update",
 }
 
 /**
@@ -18,7 +19,7 @@ export class Notification {
 	@PrimaryKey()
 	id: string = v4();
 
-	@ManyToOne(() => User)
+	@ManyToOne(() => User, { deleteRule: "cascade" })
 	user!: User;
 
 	/** Title of the notification. */
@@ -37,6 +38,9 @@ export class Notification {
 
 	@Property({ type: "string", nullable: true })
 	link?: string;
+
+	@Property({ type: "jsonb", nullable: true })
+	metadata?: any;
 
 	@Property({ type: "date" })
 	createdAt: Date = new Date();
