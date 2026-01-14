@@ -11,7 +11,10 @@ interface AlertProps {
 	title: string;
 	message: string;
 	type?: AlertType;
-	duration?: number; // Auto close after duration (ms)
+	duration?: number; // Auto close after duration (ms) - automatically disabled if onConfirm is present
+	onConfirm?: () => void;
+	confirmText?: string;
+	cancelText?: string;
 }
 
 const getIcon = (type: AlertType) => {
@@ -49,13 +52,16 @@ const Alert: React.FC<AlertProps> = ({
 	message,
 	type = "info",
 	duration,
+	onConfirm,
+	confirmText = "Confirm",
+	cancelText = "Cancel",
 }) => {
 	useEffect(() => {
-		if (isOpen && duration) {
+		if (isOpen && duration && !onConfirm) {
 			const timer = setTimeout(onClose, duration);
 			return () => clearTimeout(timer);
 		}
-	}, [isOpen, duration, onClose]);
+	}, [isOpen, duration, onClose, onConfirm]);
 
 	// Prevent scrolling when alert is open
 	useEffect(() => {
@@ -115,13 +121,36 @@ const Alert: React.FC<AlertProps> = ({
 							{message}
 						</p>
 
-						<div className="flex justify-end pt-2">
-							<button
-								onClick={onClose}
-								className="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors"
-							>
-								Dismiss
-							</button>
+						<div className="flex justify-end pt-2 gap-3">
+							{onConfirm ? (
+								<>
+									<button
+										onClick={onClose}
+										className="px-4 py-2 text-gray-600 text-sm font-medium hover:bg-gray-50 rounded-lg transition-colors"
+									>
+										{cancelText}
+									</button>
+									<button
+										onClick={() => {
+											onConfirm();
+											onClose();
+										}}
+										className={`px-4 py-2 text-white text-sm font-medium rounded-lg transition-colors ${type === "error" || type === "warning"
+												? "bg-red-600 hover:bg-red-700"
+												: "bg-gray-900 hover:bg-gray-800"
+											}`}
+									>
+										{confirmText}
+									</button>
+								</>
+							) : (
+								<button
+									onClick={onClose}
+									className="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors"
+								>
+									Dismiss
+								</button>
+							)}
 						</div>
 					</motion.div>
 				</div>
