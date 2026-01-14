@@ -10,6 +10,12 @@ import {
 	Loader2,
 	Plus,
 	Save,
+	Mail,
+	Phone,
+	Wallet,
+	Globe,
+	Trash2,
+	PlusCircle,
 	ShieldCheck,
 	User as UserIcon,
 	X,
@@ -57,7 +63,19 @@ interface ProfileData {
 }
 
 export default function ProfilePage() {
-	const { user, logout, getAccessToken } = usePrivy();
+	const {
+		user,
+		logout,
+		getAccessToken,
+		linkEmail,
+		linkGoogle,
+		linkPhone,
+		linkWallet,
+		unlinkEmail,
+		unlinkGoogle,
+		unlinkPhone,
+		unlinkWallet,
+	} = usePrivy();
 	const { wallets } = useWallets();
 	// Navigate removed as it is unused
 	const [loading, setLoading] = useState(true);
@@ -545,29 +563,222 @@ export default function ProfilePage() {
 								</div>
 
 								<div>
-									<p className="text-xs text-gray-400 font-light mb-1">
-										Wallet Address
+									<p className="text-xs text-gray-400 font-light mb-3">
+										Linked Login Methods
 									</p>
-									{user?.wallet?.address ? (
-										<div className="flex items-center justify-between bg-gray-50 p-2 rounded-lg">
-											<span className="text-xs font-mono text-gray-600 truncate max-w-[140px]">
-												{user.wallet.address}
-											</span>
-											<Button
-												variant="text"
-												className="!p-0 !h-auto text-[#D4A024] text-xs"
-												onClick={() =>
-													navigator.clipboard.writeText(user.wallet!.address)
-												}
-											>
-												Copy
-											</Button>
+									<div className="space-y-2">
+										{/* Email */}
+										<div className="flex items-center justify-between bg-gray-50 p-2.5 rounded-lg border border-gray-100">
+											<div className="flex items-center space-x-3 overflow-hidden">
+												<div className="w-8 h-8 rounded-full bg-white flex items-center justify-center border border-gray-100 shrink-0">
+													<Mail className="w-4 h-4 text-gray-500" />
+												</div>
+												<div className="truncate">
+													<p className="text-sm font-medium text-gray-900">Email</p>
+													{user?.email?.address ? (
+														<p className="text-xs text-gray-500 truncate">
+															{user.email.address}
+														</p>
+													) : (
+														<p className="text-xs text-gray-400">Not connected</p>
+													)}
+												</div>
+											</div>
+											{user?.email?.address ? (
+												<Button
+													variant="text"
+													className="!p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50"
+													onClick={() => {
+														if (confirm("Disconnect this email?")) {
+															unlinkEmail(user.email!.address);
+														}
+													}}
+													disabled={
+														user.linkedAccounts.length <= 1 ||
+														user.wallet?.address === user.email.address // specific case if wallet is treated as email? unlikely but good check
+													}
+													title={
+														user.linkedAccounts.length <= 1
+															? "Cannot remove last login method"
+															: "Disconnect"
+													}
+												>
+													<Trash2 className="w-4 h-4" />
+												</Button>
+											) : (
+												<Button
+													variant="text"
+													className="!px-3 !py-1 text-xs font-medium text-[#D4A024] hover:bg-[#D4A024]/5"
+													onClick={linkEmail}
+												>
+													Connect
+												</Button>
+											)}
 										</div>
-									) : (
-										<p className="text-sm text-gray-400 italic">
-											No wallet connected
-										</p>
-									)}
+
+										{/* Google */}
+										<div className="flex items-center justify-between bg-gray-50 p-2.5 rounded-lg border border-gray-100">
+											<div className="flex items-center space-x-3 overflow-hidden">
+												<div className="w-8 h-8 rounded-full bg-white flex items-center justify-center border border-gray-100 shrink-0">
+													<Globe className="w-4 h-4 text-gray-500" />
+												</div>
+												<div className="truncate">
+													<p className="text-sm font-medium text-gray-900">Google</p>
+													{user?.google?.email ? (
+														<p className="text-xs text-gray-500 truncate">
+															{user.google.email}
+														</p>
+													) : (
+														<p className="text-xs text-gray-400">Not connected</p>
+													)}
+												</div>
+											</div>
+											{user?.google?.email ? (
+												<Button
+													variant="text"
+													className="!p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50"
+													onClick={() => {
+														if (confirm("Disconnect Google account?")) {
+															unlinkGoogle(user.google!.subject);
+														}
+													}}
+													disabled={user.linkedAccounts.length <= 1}
+													title={
+														user.linkedAccounts.length <= 1
+															? "Cannot remove last login method"
+															: "Disconnect"
+													}
+												>
+													<Trash2 className="w-4 h-4" />
+												</Button>
+											) : (
+												<Button
+													variant="text"
+													className="!px-3 !py-1 text-xs font-medium text-[#D4A024] hover:bg-[#D4A024]/5"
+													onClick={linkGoogle}
+												>
+													Connect
+												</Button>
+											)}
+										</div>
+
+										{/* Phone */}
+										<div className="flex items-center justify-between bg-gray-50 p-2.5 rounded-lg border border-gray-100">
+											<div className="flex items-center space-x-3 overflow-hidden">
+												<div className="w-8 h-8 rounded-full bg-white flex items-center justify-center border border-gray-100 shrink-0">
+													<Phone className="w-4 h-4 text-gray-500" />
+												</div>
+												<div className="truncate">
+													<p className="text-sm font-medium text-gray-900">Phone</p>
+													{user?.phone?.number ? (
+														<p className="text-xs text-gray-500 truncate">
+															{user.phone.number}
+														</p>
+													) : (
+														<p className="text-xs text-gray-400">Not connected</p>
+													)}
+												</div>
+											</div>
+											{user?.phone?.number ? (
+												<Button
+													variant="text"
+													className="!p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50"
+													onClick={() => {
+														if (confirm("Disconnect this phone number?")) {
+															unlinkPhone(user.phone!.number);
+														}
+													}}
+													disabled={user.linkedAccounts.length <= 1}
+													title={
+														user.linkedAccounts.length <= 1
+															? "Cannot remove last login method"
+															: "Disconnect"
+													}
+												>
+													<Trash2 className="w-4 h-4" />
+												</Button>
+											) : (
+												<Button
+													variant="text"
+													className="!px-3 !py-1 text-xs font-medium text-[#D4A024] hover:bg-[#D4A024]/5"
+													onClick={linkPhone}
+												>
+													Connect
+												</Button>
+											)}
+										</div>
+
+										{/* Wallet */}
+										<div className="flex items-center justify-between bg-gray-50 p-2.5 rounded-lg border border-gray-100">
+											<div className="flex items-center space-x-3 overflow-hidden">
+												<div className="w-8 h-8 rounded-full bg-white flex items-center justify-center border border-gray-100 shrink-0">
+													<Wallet className="w-4 h-4 text-gray-500" />
+												</div>
+												<div className="truncate">
+													<p className="text-sm font-medium text-gray-900">Wallet</p>
+													{user?.wallet?.address ? (
+														<p className="text-xs text-gray-500 truncate font-mono">
+															{user.wallet.address.slice(0, 6)}...
+															{user.wallet.address.slice(-4)}
+														</p>
+													) : (
+														<p className="text-xs text-gray-400">Not connected</p>
+													)}
+												</div>
+											</div>
+											{user?.wallet?.address ? (
+												<Button
+													variant="text"
+													className="!p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50"
+													onClick={() => {
+														if (confirm("Disconnect this wallet?")) {
+															unlinkWallet(user.wallet!.address);
+														}
+													}}
+													disabled={
+														user.linkedAccounts.length <= 1 ||
+														// Prevent unlinking if it's the only active wallet and we might rely on it elsewhere
+														false
+													}
+													title={
+														user.linkedAccounts.length <= 1
+															? "Cannot remove last login method"
+															: "Disconnect"
+													}
+												>
+													<Trash2 className="w-4 h-4" />
+												</Button>
+											) : (
+												<Button
+													variant="text"
+													className="!px-3 !py-1 text-xs font-medium text-[#D4A024] hover:bg-[#D4A024]/5"
+													onClick={linkWallet}
+												>
+													Connect
+												</Button>
+											)}
+										</div>
+									</div>
+								</div>
+
+								<div className="pt-2 border-t border-gray-100">
+									<p className="text-xs text-gray-400 font-light mb-1">
+										Privy ID
+									</p>
+									<div className="flex items-center justify-between bg-gray-50 p-2 rounded-lg">
+										<span className="text-xs font-mono text-gray-600 truncate max-w-[140px]">
+											{profile.privyId}
+										</span>
+										<Button
+											variant="text"
+											className="!p-0 !h-auto text-[#D4A024] text-xs"
+											onClick={() =>
+												navigator.clipboard.writeText(profile.privyId)
+											}
+										>
+											Copy
+										</Button>
+									</div>
 								</div>
 							</div>
 						</div>
