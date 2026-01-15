@@ -141,6 +141,97 @@ export default function CreateListing() {
 		}
 	}, [onboardingStatus, setValue]);
 
+	// Auto-calculation logic
+	const [
+		loanAmount,
+		purchasePrice,
+		effectiveGrossIncome,
+		operatingExpenses,
+		annualRentGrowth,
+		annualExpenseGrowth,
+		holdPeriodYears,
+		exitCapRate,
+	] = form.watch([
+		"financials.loanAmount",
+		"financials.purchasePrice",
+		"financials.effectiveGrossIncome",
+		"financials.operatingExpenses",
+		"financials.annualRentGrowth",
+		"financials.annualExpenseGrowth",
+		"financials.holdPeriodYears",
+		"financials.exitCapRate",
+	]);
+
+	// Calculate LTV
+	useEffect(() => {
+		if (purchasePrice && purchasePrice > 0 && loanAmount !== undefined) {
+			const ltv = loanAmount / purchasePrice;
+			// Only update if difference is significant to avoid loops
+			const currentLTV = form.getValues("financials.loanToValue");
+			if (!currentLTV || Math.abs(currentLTV - ltv) > 0.0001) {
+				setValue("financials.loanToValue", ltv, {
+					shouldValidate: true,
+					shouldDirty: true,
+				});
+			}
+		}
+	}, [loanAmount, purchasePrice, setValue, form]);
+
+	// Calculate NOI
+	useEffect(() => {
+		if (
+			effectiveGrossIncome !== undefined &&
+			operatingExpenses !== undefined
+		) {
+			const noi = Math.max(0, effectiveGrossIncome - operatingExpenses);
+			const currentNOI = form.getValues("financials.noi");
+			if (currentNOI !== noi) {
+				setValue("financials.noi", noi, {
+					shouldValidate: true,
+					shouldDirty: true,
+				});
+			}
+		}
+	}, [effectiveGrossIncome, operatingExpenses, setValue, form]);
+
+	// Calculate Exit Sale Price
+	useEffect(() => {
+		if (
+			effectiveGrossIncome !== undefined &&
+			operatingExpenses !== undefined &&
+			annualRentGrowth !== undefined &&
+			annualExpenseGrowth !== undefined &&
+			holdPeriodYears &&
+			exitCapRate &&
+			exitCapRate > 0
+		) {
+			// Simple compound growth model
+			const futureIncome =
+				effectiveGrossIncome * Math.pow(1 + annualRentGrowth, holdPeriodYears);
+			const futureExpense =
+				operatingExpenses * Math.pow(1 + annualExpenseGrowth, holdPeriodYears);
+			const futureNOI = Math.max(0, futureIncome - futureExpense);
+			const projectedSalePrice = Math.round(futureNOI / exitCapRate);
+
+			const currentSalePrice = form.getValues("financials.exitSalePrice");
+			if (currentSalePrice !== projectedSalePrice) {
+				setValue("financials.exitSalePrice", projectedSalePrice, {
+					shouldValidate: true,
+					shouldDirty: true,
+				});
+			}
+		}
+	}, [
+		effectiveGrossIncome,
+		operatingExpenses,
+		annualRentGrowth,
+		annualExpenseGrowth,
+		holdPeriodYears,
+		exitCapRate,
+		setValue,
+		form,
+	]);
+
 	useEffect(() => {
 		if (posthog) {
 			posthog.capture("listing_creation_started");
@@ -210,7 +301,7 @@ export default function CreateListing() {
 			console.error("Submission error:", error);
 			setServerError(
 				error.response?.data?.error ||
-					"Failed to create listing. Please try again."
+				"Failed to create listing. Please try again."
 			);
 			setErrorModalOpen(true);
 		} finally {
@@ -518,17 +609,20 @@ export default function CreateListing() {
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel required className="flex items-center gap-1">
-												Loan-to-Value (LTV)
-												<Tooltip content="Loan amount as a fraction of property value (0-1, e.g., 0.70 for 70%)." />
+												Loan-to-Value (LTV %)
+												<Tooltip content="Loan amount as a fraction of property value. Calculated automatically." />
 											</FormLabel>
 											<FormControl>
 												<Input
 													type="number"
-													step="0.01"
-													placeholder="0.70"
-													value={field.value ?? ""}
-													onChange={(e) =>
-														field.onChange(e.target.valueAsNumber)
+													placeholder="70.0"
+													readOnly
+													className="bg-slate-100"
+													{...field}
+													value={
+														field.value !== undefined && field.value !== null
+															? (field.value * 100).toFixed(2)
+															: ""
 													}
 												/>
 											</FormControl>
@@ -543,18 +637,24 @@ export default function CreateListing() {
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel required className="flex items-center gap-1">
-												Interest Rate
-												<Tooltip content="Annual interest rate as a decimal (e.g., 0.045 for 4.5%)." />
+												Interest Rate (%)
+												<Tooltip content="Annual interest rate." />
 											</FormLabel>
 											<FormControl>
 												<Input
 													type="number"
-													step="0.001"
-													placeholder="0.045"
-													value={field.value ?? ""}
-													onChange={(e) =>
-														field.onChange(e.target.valueAsNumber)
+													step="0.01"
+													placeholder="4.5"
+													{...field}
+													value={
+														field.value !== undefined && field.value !== null
+															? field.value * 100
+															: ""
 													}
+													onChange={(e) => {
+														const val = parseFloat(e.target.value);
+														field.onChange(isNaN(val) ? undefined : val / 100);
+													}}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -847,17 +947,16 @@ export default function CreateListing() {
 										<FormItem>
 											<FormLabel required className="flex items-center gap-1">
 												NOI ($)
-												<Tooltip content="Net Operating Income: Annual income after operating expenses." />
+												<Tooltip content="Net Operating Income: Annual income after operating expenses. Calculated automatically." />
 											</FormLabel>
 											<FormControl>
 												<Input
 													type="number"
 													placeholder="300000"
+													readOnly
+													className="bg-slate-100"
 													{...field}
 													value={field.value ?? ""}
-													onChange={(e) =>
-														field.onChange(e.target.valueAsNumber)
-													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -871,19 +970,24 @@ export default function CreateListing() {
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel required className="flex items-center gap-1">
-												Occupancy Rate
-												<Tooltip content="Percentage of units/space currently occupied (0-1, e.g., 0.95 for 95%)." />
+												Occupancy Rate (%)
+												<Tooltip content="Percentage of units/space currently occupied." />
 											</FormLabel>
 											<FormControl>
 												<Input
 													type="number"
-													step="0.01"
-													placeholder="0.95"
+													step="0.1"
+													placeholder="95.0"
 													{...field}
-													value={field.value ?? ""}
-													onChange={(e) =>
-														field.onChange(e.target.valueAsNumber)
+													value={
+														field.value !== undefined && field.value !== null
+															? field.value * 100
+															: ""
 													}
+													onChange={(e) => {
+														const val = parseFloat(e.target.value);
+														field.onChange(isNaN(val) ? undefined : val / 100);
+													}}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -906,18 +1010,24 @@ export default function CreateListing() {
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel required className="flex items-center gap-1">
-												Annual Rent Growth
-												<Tooltip content="Expected annual rent growth rate (0-1, e.g., 0.03 for 3%)." />
+												Annual Rent Growth (%)
+												<Tooltip content="Expected annual rent growth rate." />
 											</FormLabel>
 											<FormControl>
 												<Input
 													type="number"
-													step="0.001"
-													placeholder="0.03"
-													value={field.value ?? ""}
-													onChange={(e) =>
-														field.onChange(e.target.valueAsNumber)
+													step="0.1"
+													placeholder="3.0"
+													{...field}
+													value={
+														field.value !== undefined && field.value !== null
+															? field.value * 100
+															: ""
 													}
+													onChange={(e) => {
+														const val = parseFloat(e.target.value);
+														field.onChange(isNaN(val) ? undefined : val / 100);
+													}}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -931,18 +1041,24 @@ export default function CreateListing() {
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel required className="flex items-center gap-1">
-												Annual Expense Growth
-												<Tooltip content="Expected annual expense growth rate (0-1, e.g., 0.02 for 2%)." />
+												Annual Expense Growth (%)
+												<Tooltip content="Expected annual expense growth rate." />
 											</FormLabel>
 											<FormControl>
 												<Input
 													type="number"
-													step="0.001"
-													placeholder="0.02"
-													value={field.value ?? ""}
-													onChange={(e) =>
-														field.onChange(e.target.valueAsNumber)
+													step="0.1"
+													placeholder="2.0"
+													{...field}
+													value={
+														field.value !== undefined && field.value !== null
+															? field.value * 100
+															: ""
 													}
+													onChange={(e) => {
+														const val = parseFloat(e.target.value);
+														field.onChange(isNaN(val) ? undefined : val / 100);
+													}}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -980,18 +1096,24 @@ export default function CreateListing() {
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel required className="flex items-center gap-1">
-												Exit Cap Rate
-												<Tooltip content="Expected capitalization rate at exit (0-1, e.g., 0.055 for 5.5%)." />
+												Exit Cap Rate (%)
+												<Tooltip content="Expected capitalization rate at exit." />
 											</FormLabel>
 											<FormControl>
 												<Input
 													type="number"
-													step="0.001"
-													placeholder="0.055"
-													value={field.value ?? ""}
-													onChange={(e) =>
-														field.onChange(e.target.valueAsNumber)
+													step="0.1"
+													placeholder="5.5"
+													{...field}
+													value={
+														field.value !== undefined && field.value !== null
+															? field.value * 100
+															: ""
 													}
+													onChange={(e) => {
+														const val = parseFloat(e.target.value);
+														field.onChange(isNaN(val) ? undefined : val / 100);
+													}}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -1006,16 +1128,16 @@ export default function CreateListing() {
 										<FormItem>
 											<FormLabel required className="flex items-center gap-1">
 												Exit Sale Price ($)
-												<Tooltip content="Projected sale price at exit." />
+												<Tooltip content="Projected sale price at exit. Calculated automatically." />
 											</FormLabel>
 											<FormControl>
 												<Input
 													type="number"
 													placeholder="6500000"
+													readOnly
+													className="bg-slate-100"
+													{...field}
 													value={field.value ?? ""}
-													onChange={(e) =>
-														field.onChange(e.target.valueAsNumber)
-													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -1035,18 +1157,24 @@ export default function CreateListing() {
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel required className="flex items-center gap-1">
-												Target CoC Year 1
-												<Tooltip content="Target cash-on-cash return for year 1 (0-1, e.g., 0.08 for 8%)." />
+												Target CoC Year 1 (%)
+												<Tooltip content="Target cash-on-cash return for year 1." />
 											</FormLabel>
 											<FormControl>
 												<Input
 													type="number"
-													step="0.001"
-													placeholder="0.08"
-													value={field.value ?? ""}
-													onChange={(e) =>
-														field.onChange(e.target.valueAsNumber)
+													step="0.1"
+													placeholder="8.0"
+													{...field}
+													value={
+														field.value !== undefined && field.value !== null
+															? field.value * 100
+															: ""
 													}
+													onChange={(e) => {
+														const val = parseFloat(e.target.value);
+														field.onChange(isNaN(val) ? undefined : val / 100);
+													}}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -1060,18 +1188,24 @@ export default function CreateListing() {
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel required className="flex items-center gap-1">
-												Target Average CoC
-												<Tooltip content="Target average cash-on-cash return over hold period (0-1)." />
+												Target Average CoC (%)
+												<Tooltip content="Target average cash-on-cash return over hold period." />
 											</FormLabel>
 											<FormControl>
 												<Input
 													type="number"
-													step="0.001"
-													placeholder="0.09"
-													value={field.value ?? ""}
-													onChange={(e) =>
-														field.onChange(e.target.valueAsNumber)
+													step="0.1"
+													placeholder="9.0"
+													{...field}
+													value={
+														field.value !== undefined && field.value !== null
+															? field.value * 100
+															: ""
 													}
+													onChange={(e) => {
+														const val = parseFloat(e.target.value);
+														field.onChange(isNaN(val) ? undefined : val / 100);
+													}}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -1085,18 +1219,24 @@ export default function CreateListing() {
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel required className="flex items-center gap-1">
-												Target IRR
-												<Tooltip content="Target internal rate of return (0-1, e.g., 0.15 for 15%)." />
+												Target IRR (%)
+												<Tooltip content="Target internal rate of return." />
 											</FormLabel>
 											<FormControl>
 												<Input
 													type="number"
-													step="0.001"
-													placeholder="0.15"
-													value={field.value ?? ""}
-													onChange={(e) =>
-														field.onChange(e.target.valueAsNumber)
+													step="0.1"
+													placeholder="15.0"
+													{...field}
+													value={
+														field.value !== undefined && field.value !== null
+															? field.value * 100
+															: ""
 													}
+													onChange={(e) => {
+														const val = parseFloat(e.target.value);
+														field.onChange(isNaN(val) ? undefined : val / 100);
+													}}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -1141,19 +1281,24 @@ export default function CreateListing() {
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel required className="flex items-center gap-1">
-												Preferred Return
-												<Tooltip content="Annual preferred return to investors (0-1, e.g., 0.08 for 8%)." />
+												Preferred Return (%)
+												<Tooltip content="Annual preferred return to investors." />
 											</FormLabel>
 											<FormControl>
 												<Input
 													type="number"
-													step="0.001"
-													placeholder="0.08"
+													step="0.1"
+													placeholder="8.0"
 													{...field}
-													value={field.value ?? ""}
-													onChange={(e) =>
-														field.onChange(e.target.valueAsNumber)
+													value={
+														field.value !== undefined && field.value !== null
+															? field.value * 100
+															: ""
 													}
+													onChange={(e) => {
+														const val = parseFloat(e.target.value);
+														field.onChange(isNaN(val) ? undefined : val / 100);
+													}}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -1167,19 +1312,24 @@ export default function CreateListing() {
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel required className="flex items-center gap-1">
-												Sponsor Promote
-												<Tooltip content="Sponsor's share of profits after preferred return (0-1, e.g., 0.20 for 20%)." />
+												Sponsor Promote (%)
+												<Tooltip content="Sponsor's share of profits after preferred return." />
 											</FormLabel>
 											<FormControl>
 												<Input
 													type="number"
-													step="0.001"
-													placeholder="0.20"
+													step="0.1"
+													placeholder="20.0"
 													{...field}
-													value={field.value ?? ""}
-													onChange={(e) =>
-														field.onChange(e.target.valueAsNumber)
+													value={
+														field.value !== undefined && field.value !== null
+															? field.value * 100
+															: ""
 													}
+													onChange={(e) => {
+														const val = parseFloat(e.target.value);
+														field.onChange(isNaN(val) ? undefined : val / 100);
+													}}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -1193,19 +1343,24 @@ export default function CreateListing() {
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel required className="flex items-center gap-1">
-												Payout Ratio of FCF
-												<Tooltip content="Percentage of Free Cash Flow to be distributed (0-1, e.g., 1.0 for 100%)." />
+												Payout Ratio of FCF (%)
+												<Tooltip content="Percentage of Free Cash Flow to be distributed." />
 											</FormLabel>
 											<FormControl>
 												<Input
 													type="number"
-													step="0.01"
-													placeholder="1.0"
+													step="1"
+													placeholder="100"
 													{...field}
-													value={field.value ?? ""}
-													onChange={(e) =>
-														field.onChange(e.target.valueAsNumber)
+													value={
+														field.value !== undefined && field.value !== null
+															? field.value * 100
+															: ""
 													}
+													onChange={(e) => {
+														const val = parseFloat(e.target.value);
+														field.onChange(isNaN(val) ? undefined : val / 100);
+													}}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -1299,16 +1454,16 @@ export default function CreateListing() {
 										<FormItem>
 											<FormLabel required className="flex items-center gap-1">
 												NOI ($)
-												<Tooltip content="Net Operating Income: Annual income after operating expenses." />
+												<Tooltip content="Net Operating Income: Annual income after operating expenses. Calculated automatically." />
 											</FormLabel>
 											<FormControl>
 												<Input
 													type="number"
 													placeholder="300000"
+													readOnly
+													className="bg-slate-100"
+													{...field}
 													value={field.value ?? ""}
-													onChange={(e) =>
-														field.onChange(e.target.valueAsNumber)
-													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -1322,18 +1477,24 @@ export default function CreateListing() {
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel required className="flex items-center gap-1">
-												Occupancy Rate
-												<Tooltip content="Percentage of units/space currently occupied (0-1, e.g., 0.95 for 95%)." />
+												Occupancy Rate (%)
+												<Tooltip content="Percentage of units/space currently occupied." />
 											</FormLabel>
 											<FormControl>
 												<Input
 													type="number"
-													step="0.01"
-													placeholder="0.95"
-													value={field.value ?? ""}
-													onChange={(e) =>
-														field.onChange(e.target.valueAsNumber)
+													step="0.1"
+													placeholder="95.0"
+													{...field}
+													value={
+														field.value !== undefined && field.value !== null
+															? field.value * 100
+															: ""
 													}
+													onChange={(e) => {
+														const val = parseFloat(e.target.value);
+														field.onChange(isNaN(val) ? undefined : val / 100);
+													}}
 												/>
 											</FormControl>
 											<FormMessage />
