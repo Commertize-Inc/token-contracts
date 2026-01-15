@@ -285,7 +285,7 @@ export default function AdminReviews() {
 	return (
 		<div className="min-h-screen bg-slate-50 pb-20">
 			<Navbar />
-			<div className="container mx-auto pb-8">
+			<div className="container mx-auto px-4 pb-8">
 				<PageHeader
 					title="Review Queue"
 					actions={
@@ -506,7 +506,7 @@ export default function AdminReviews() {
 												className="w-full min-h-[120px] p-3 border rounded-md text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-none"
 												placeholder={
 													reviewAction === "APPROVE" ||
-													reviewAction === "TOKENIZE"
+														reviewAction === "TOKENIZE"
 														? "Optional comment"
 														: `Reason for ${reviewAction === "REJECT" ? "rejection" : "action"}...`
 												}

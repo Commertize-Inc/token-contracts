@@ -74,12 +74,46 @@ export function Navbar() {
 		</div>
 	);
 
+	const mobileContent = (
+		<div className="flex flex-col space-y-4 py-2">
+			<Link
+				to="/"
+				className="text-base font-medium text-slate-600 hover:text-slate-900 transition-colors"
+			>
+				Dashboard
+			</Link>
+			<Link
+				to="/marketplace"
+				className="text-base font-medium text-slate-600 hover:text-slate-900 transition-colors"
+			>
+				Marketplace
+			</Link>
+			{canList && (
+				<Link
+					to="/sponsor/dashboard"
+					className="text-base font-medium text-slate-600 hover:text-slate-900 transition-colors"
+				>
+					Sponsor Dashboard
+				</Link>
+			)}
+			{profile?.isAdmin && (
+				<Link
+					to="/admin/reviews"
+					className="text-base font-medium text-purple-600 hover:text-purple-800 transition-colors"
+				>
+					Admin Reviews
+				</Link>
+			)}
+		</div>
+	);
+
 	return (
 		<SharedNavbar
 			logoHref="/"
 			logoSrc="/assets/logo.png"
 			rightContent={rightContent}
 			centerContent={centerContent}
+			mobileContent={mobileContent}
 			LinkComponent={LinkWrapper}
 		/>
 	);

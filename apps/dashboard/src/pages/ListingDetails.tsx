@@ -96,6 +96,34 @@ export default function ListingDetails() {
 		);
 	}
 
+	const SIDEBAR_ITEMS = [
+		{
+			id: "overview",
+			label: "Overview",
+			icon: LayoutDashboard,
+		},
+		{
+			id: "financials",
+			label: "Financials",
+			icon: DollarSign,
+		},
+		{
+			id: "location",
+			label: "Location",
+			icon: MapPin,
+		},
+		{
+			id: "documents",
+			label: "Documents",
+			icon: FileText,
+		},
+		{
+			id: "sponsor",
+			label: "Sponsor",
+			icon: Building2,
+		},
+	];
+
 	return (
 		<div className="min-h-screen bg-slate-50 text-slate-900 font-sans">
 			<Navbar />
@@ -104,35 +132,15 @@ export default function ListingDetails() {
 				<div className="flex flex-col lg:flex-row gap-8 relative">
 					{/* Left Sidebar: SubNavbar (Vertical) */}
 					<SubNavbar
-						items={[
-							{
-								id: "overview",
-								label: "Overview",
-								icon: LayoutDashboard,
-							},
-							{
-								id: "financials",
-								label: "Financials",
-								icon: DollarSign,
-							},
-							{
-								id: "location",
-								label: "Location",
-								icon: MapPin,
-							},
-							{
-								id: "documents",
-								label: "Documents",
-								icon: FileText,
-							},
-							{
-								id: "sponsor",
-								label: "Sponsor",
-								icon: Building2,
-							},
-						]}
+						items={SIDEBAR_ITEMS}
 						offset={100}
 						className="hidden lg:flex"
+					/>
+					{/* Mobile SubNavbar (Horizontal) */}
+					<SubNavbar
+						items={SIDEBAR_ITEMS}
+						orientation="horizontal"
+						className="lg:hidden px-4"
 					/>
 
 					{/* Middle Column: Main Content */}
@@ -186,7 +194,7 @@ export default function ListingDetails() {
 						{/* Sections */}
 						<div className="space-y-12 pb-12">
 							{/* Overview */}
-							<section className="scroll-mt-32">
+							<section id="overview" className="scroll-mt-32">
 								<div className="prose prose-slate max-w-none">
 									<p className="text-slate-700 leading-relaxed text-lg">
 										{listing.description}
@@ -214,11 +222,11 @@ export default function ListingDetails() {
 												<p className="font-semibold text-slate-900">
 													$
 													{listing.tokenomics?.minInvestmentTokens &&
-													listing.tokenomics?.tokenPrice
+														listing.tokenomics?.tokenPrice
 														? (
-																listing.tokenomics.minInvestmentTokens *
-																listing.tokenomics.tokenPrice
-															).toLocaleString()
+															listing.tokenomics.minInvestmentTokens *
+															listing.tokenomics.tokenPrice
+														).toLocaleString()
 														: "—"}
 												</p>
 											</div>

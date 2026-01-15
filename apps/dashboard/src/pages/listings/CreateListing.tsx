@@ -298,7 +298,7 @@ export default function CreateListing() {
 			console.error("Submission error:", error);
 			setServerError(
 				error.response?.data?.error ||
-					"Failed to create listing. Please try again."
+				"Failed to create listing. Please try again."
 			);
 			setErrorModalOpen(true);
 		} finally {
@@ -331,6 +331,13 @@ export default function CreateListing() {
 			<div className="flex gap-8 max-w-[90rem] mx-auto py-10 px-4 sm:px-6 lg:px-8">
 				{/* Vertical SubNavbar Sidebar */}
 				<SubNavbar items={navItems} offset={80} className="hidden lg:flex" />
+				{/* Mobile SubNavbar (Horizontal) */}
+				<SubNavbar
+					items={navItems}
+					offset={80}
+					orientation="horizontal"
+					className="lg:hidden px-4"
+				/>
 
 				<div className="flex-1 max-w-4xl">
 					<div className="mb-10 text-center">
