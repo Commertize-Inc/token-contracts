@@ -65,6 +65,27 @@ sponsor.post("/kyb/submit", async (c) => {
 			}
 		}
 
+		// Check for duplicate EIN
+		if (kybData.ein) {
+			const existingSponsorWithEin = await em.findOne(Sponsor, {
+				ein: kybData.ein,
+			});
+
+			// If a sponsor exists with this EIN, and it's NOT the current user's sponsor (in case of re-submission/update of same draft)
+			if (
+				existingSponsorWithEin &&
+				existingSponsorWithEin.id !== user.sponsor?.id
+			) {
+				return c.json(
+					{
+						error:
+							"This EIN is already registered. Please ask the organization owner to add you as a member.",
+					},
+					409
+				);
+			}
+		}
+
 		let sponsor: Sponsor;
 		if (!user.sponsor) {
 			sponsor = em.create(Sponsor, {
