@@ -55,7 +55,7 @@ export const ProfileStep: React.FC<ProfileStepProps> = ({
 				<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 					<div>
 						<label className="block text-sm font-medium text-slate-700 mb-1">
-							First Name
+							First Name <span className="text-red-500">*</span>
 						</label>
 						<Input
 							name="firstName"
@@ -63,7 +63,8 @@ export const ProfileStep: React.FC<ProfileStepProps> = ({
 							onChange={onChange}
 							placeholder="Jane"
 							required
-							disabled
+							readOnly
+							className="bg-slate-100"
 						/>
 						{fieldErrors.firstName && (
 							<p className="text-sm text-red-500 mt-1">
@@ -73,7 +74,7 @@ export const ProfileStep: React.FC<ProfileStepProps> = ({
 					</div>
 					<div>
 						<label className="block text-sm font-medium text-slate-700 mb-1">
-							Last Name
+							Last Name <span className="text-red-500">*</span>
 						</label>
 						<Input
 							name="lastName"
@@ -81,7 +82,8 @@ export const ProfileStep: React.FC<ProfileStepProps> = ({
 							onChange={onChange}
 							placeholder="Doe"
 							required
-							disabled
+							readOnly
+							className="bg-slate-100"
 						/>
 						{fieldErrors.lastName && (
 							<p className="text-sm text-red-500 mt-1">
@@ -93,7 +95,7 @@ export const ProfileStep: React.FC<ProfileStepProps> = ({
 
 				<div>
 					<label className="block text-sm font-medium text-slate-700 mb-1">
-						Username
+						Username <span className="text-red-500">*</span>
 					</label>
 					<div className="relative">
 						<Input
@@ -127,7 +129,7 @@ export const ProfileStep: React.FC<ProfileStepProps> = ({
 
 				<div>
 					<label className="block text-sm font-medium text-slate-700 mb-1">
-						Phone Number
+						Phone Number <span className="text-red-500">*</span>
 					</label>
 					<Input
 						name="phoneNumber"
@@ -136,7 +138,8 @@ export const ProfileStep: React.FC<ProfileStepProps> = ({
 						placeholder="+1 (555) 000-0000"
 						type="tel"
 						required
-						disabled
+						readOnly
+						className="bg-slate-100"
 					/>
 					{fieldErrors.phoneNumber && (
 						<p className="text-sm text-red-500 mt-1">

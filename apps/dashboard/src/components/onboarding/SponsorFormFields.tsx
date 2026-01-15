@@ -66,7 +66,7 @@ export const SponsorFormFields: React.FC<SponsorFormFieldsProps> = ({
 		<div className="space-y-6">
 			<div className="space-y-2">
 				<label className="block text-sm font-medium text-slate-700">
-					Business Legal Name
+					Business Legal Name <span className="text-red-500">*</span>
 				</label>
 				<Input
 					name="businessName"
@@ -86,7 +86,7 @@ export const SponsorFormFields: React.FC<SponsorFormFieldsProps> = ({
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 				<div className="space-y-2">
 					<label className="block text-sm font-medium text-slate-700">
-						Business Type
+						Business Type <span className="text-red-500">*</span>
 					</label>
 					<select
 						name="businessType"
@@ -105,7 +105,7 @@ export const SponsorFormFields: React.FC<SponsorFormFieldsProps> = ({
 
 				<div className="space-y-2">
 					<label className="block text-sm font-medium text-slate-700">
-						EIN / Tax ID
+						EIN / Tax ID <span className="text-red-500">*</span>
 					</label>
 					<Input
 						name="ein"
@@ -123,7 +123,7 @@ export const SponsorFormFields: React.FC<SponsorFormFieldsProps> = ({
 
 			<div className="space-y-2">
 				<label className="block text-sm font-medium text-slate-700">
-					Registered Address
+					Registered Address <span className="text-red-500">*</span>
 				</label>
 				<Input
 					name="address"

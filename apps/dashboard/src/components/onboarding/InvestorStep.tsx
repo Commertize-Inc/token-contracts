@@ -110,7 +110,7 @@ export const InvestorStep: React.FC<InvestorStepProps> = ({
 				<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 					<div className="space-y-2">
 						<label className="block text-sm font-medium text-slate-700">
-							Investor Type
+							Investor Type <span className="text-red-500">*</span>
 						</label>
 						<select
 							name="type"
@@ -130,7 +130,7 @@ export const InvestorStep: React.FC<InvestorStepProps> = ({
 
 					<div className="space-y-2">
 						<label className="block text-sm font-medium text-slate-700">
-							Investment Experience
+							Investment Experience <span className="text-red-500">*</span>
 						</label>
 						<select
 							name="investmentExperience"
@@ -158,7 +158,7 @@ export const InvestorStep: React.FC<InvestorStepProps> = ({
 
 					<div className="space-y-2">
 						<label className="block text-sm font-medium text-slate-700">
-							Risk Tolerance
+							Risk Tolerance <span className="text-red-500">*</span>
 						</label>
 						<select
 							name="riskTolerance"
@@ -179,7 +179,7 @@ export const InvestorStep: React.FC<InvestorStepProps> = ({
 
 					<div className="space-y-2">
 						<label className="block text-sm font-medium text-slate-700">
-							Liquid Net Worth (USD)
+							Liquid Net Worth (USD) <span className="text-red-500">*</span>
 						</label>
 						<Input
 							name="liquidNetWorth"
@@ -199,7 +199,7 @@ export const InvestorStep: React.FC<InvestorStepProps> = ({
 
 					<div className="space-y-2">
 						<label className="block text-sm font-medium text-slate-700">
-							Tax Country
+							Tax Country <span className="text-red-500">*</span>
 						</label>
 						<Input
 							name="taxCountry"
@@ -218,7 +218,7 @@ export const InvestorStep: React.FC<InvestorStepProps> = ({
 
 				<div className="space-y-2">
 					<label className="block text-sm font-medium text-slate-700">
-						Accreditation Status
+						Accreditation Status <span className="text-red-500">*</span>
 					</label>
 					<select
 						name="accreditationType"
