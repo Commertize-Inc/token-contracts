@@ -10,8 +10,9 @@ on:
         default: false
   push:
     branches:
-      - "release/*"
       - "main"
+    tags:
+      - "v*"
     paths:
       - "packages/data/src/migrations/**"
       - "packages/data/src/**/*.ts"
@@ -40,13 +41,9 @@ jobs:
           # Production Release (via workflow_run from successful deploy)
           elif [[ "${{ github.event_name }}" == "workflow_run" ]]; then
             echo "environments=['production', 'preview', 'development']" >> "$GITHUB_OUTPUT"
-          # Production Release (via branch push - deprecated but kept for safety)
-          elif [[ "${{ github.ref }}" == "refs/heads/release/production" ]]; then
+          # Tagged Release
+          elif [[ "${{ github.ref }}" == refs/tags/v* ]]; then
             echo "environments=['production', 'preview', 'development']" >> "$GITHUB_OUTPUT"
-          # Preview Release
-          elif [[ "${{ github.ref }}" == refs/heads/release/* ]]; then
-            ENV_NAME=${GITHUB_REF#refs/heads/release/}
-            echo "environments=['$ENV_NAME']" >> "$GITHUB_OUTPUT"
           else
             echo "::warning::Unknown trigger or branch, defaulting to empty list"
             echo "environments=[]" >> "$GITHUB_OUTPUT"
