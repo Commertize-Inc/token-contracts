@@ -4,9 +4,18 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@commertize/ui";
 import BackgroundSlider from "../components/BackgroundSlider";
 
+import { usePostHog } from "@commertize/utils/client";
+
 export default function AuthPage() {
 	const { login, ready, authenticated } = usePrivy();
 	const navigate = useNavigate();
+	const posthog = usePostHog();
+
+	useEffect(() => {
+		if (posthog) {
+			posthog.capture("auth_page_viewed");
+		}
+	}, [posthog]);
 
 	useEffect(() => {
 		if (ready && authenticated) {
