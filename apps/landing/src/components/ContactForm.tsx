@@ -198,11 +198,10 @@ export default function ContactForm() {
 			<div className="flex border-b border-gray-100 relative z-10">
 				<button
 					onClick={() => setActiveTab("general")}
-					className={`flex-1 py-6 text-sm md:text-base font-medium transition-all duration-300 relative ${
-						activeTab === "general"
+					className={`flex-1 py-6 text-sm md:text-base font-medium transition-all duration-300 relative ${activeTab === "general"
 							? "text-[#DDB35F] bg-white"
 							: "text-gray-500 bg-gray-50 hover:bg-gray-100"
-					}`}
+						}`}
 				>
 					<span className="flex items-center justify-center gap-2">
 						<MessageSquare size={18} />
@@ -217,11 +216,10 @@ export default function ContactForm() {
 				</button>
 				<button
 					onClick={() => setActiveTab("investor")}
-					className={`flex-1 py-6 text-sm md:text-base font-medium transition-all duration-300 relative ${
-						activeTab === "investor"
+					className={`flex-1 py-6 text-sm md:text-base font-medium transition-all duration-300 relative ${activeTab === "investor"
 							? "text-[#DDB35F] bg-white"
 							: "text-gray-500 bg-gray-50 hover:bg-gray-100"
-					}`}
+						}`}
 				>
 					<span className="flex items-center justify-center gap-2">
 						<UserPlus size={18} />
@@ -236,11 +234,10 @@ export default function ContactForm() {
 				</button>
 				<button
 					onClick={() => setActiveTab("sponsor")}
-					className={`flex-1 py-6 text-sm md:text-base font-medium transition-all duration-300 relative ${
-						activeTab === "sponsor"
+					className={`flex-1 py-6 text-sm md:text-base font-medium transition-all duration-300 relative ${activeTab === "sponsor"
 							? "text-[#DDB35F] bg-white"
 							: "text-gray-500 bg-gray-50 hover:bg-gray-100"
-					}`}
+						}`}
 				>
 					<span className="flex items-center justify-center gap-2">
 						<Building2 size={18} />
@@ -366,10 +363,10 @@ export default function ContactForm() {
 						>
 							<div className="text-center mb-8">
 								<h3 className="text-2xl font-light text-gray-800 mb-2">
-									Join as Investor
+									Investor Inquiry
 								</h3>
 								<p className="text-gray-500">
-									Get early access to premium tokenized commercial real estate.
+									Contact our team regarding investment opportunities.
 								</p>
 							</div>
 
@@ -645,7 +642,7 @@ export default function ContactForm() {
 									disabled={isSubmitting}
 									className="w-full py-4 text-base font-medium bg-[#DDB35F] hover:bg-[#B8860B] text-white rounded-xl shadow-lg shadow-[#DDB35F]/20 transition-all hover:shadow-[#DDB35F]/30"
 								>
-									{isSubmitting ? "Submitting..." : "Join Investor Waitlist"}
+									{isSubmitting ? "Submitting..." : "Send Message"}
 								</Button>
 							</form>
 						</motion.div>
@@ -661,10 +658,10 @@ export default function ContactForm() {
 						>
 							<div className="text-center mb-8">
 								<h3 className="text-2xl font-light text-gray-800 mb-2">
-									Join as Sponsor
+									Sponsor Inquiry
 								</h3>
 								<p className="text-gray-500">
-									Tokenize your property and access global capital.
+									Contact us to tokenize your property and access global capital.
 								</p>
 							</div>
 
@@ -917,7 +914,7 @@ export default function ContactForm() {
 									disabled={isSubmitting}
 									className="w-full py-4 text-base font-medium bg-[#DDB35F] hover:bg-[#B8860B] text-white rounded-xl shadow-lg shadow-[#DDB35F]/20 transition-all hover:shadow-[#DDB35F]/30"
 								>
-									{isSubmitting ? "Submitting..." : "Join Sponsor Waitlist"}
+									{isSubmitting ? "Submitting..." : "Send Message"}
 								</Button>
 							</form>
 						</motion.div>
