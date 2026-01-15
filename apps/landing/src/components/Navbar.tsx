@@ -60,10 +60,7 @@ const Navbar = () => {
 	const companyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
 	// feature flags to control whats visible in the nav
-	const ffLogin = useFeatureFlag(PostHogFeatureFlags.LANDING_LOGIN);
 	const isAiNewsEnabled = useFeatureFlag(PostHogFeatureFlags.NEWS_GENERATION);
-	// show login by defualt if feature flag isnt loaded yet
-	const showLogin = ffLogin === undefined ? true : ffLogin;
 
 	// handle scroll to add background blur when user scrolls down
 	useEffect(() => {
@@ -223,7 +220,7 @@ const Navbar = () => {
 			</div>
 			{/* desktop version - sign in button only */}
 			<div className="hidden sm:flex items-center gap-4">
-				{isMounted && showLogin && (
+				{isMounted && (
 					<a
 						href={import.meta.env.VITE_DASHBOARD_URL || "http://localhost:3003"}
 						className="inline-flex items-center justify-center px-5 py-2 bg-[#DDB35F] text-white text-sm font-light rounded-lg hover:bg-[#C9A84E] transition-colors"
@@ -297,7 +294,7 @@ const Navbar = () => {
 
 			{/* cta button at the bottom of mobile menu */}
 			<div className="pt-4 border-t border-gray-100 space-y-3">
-				{isMounted && showLogin && (
+				{isMounted && (
 					<a
 						href={import.meta.env.VITE_DASHBOARD_URL || "http://localhost:3003"}
 						className="block w-full text-center px-5 py-3 bg-[#DDB35F] text-white font-light rounded-lg"

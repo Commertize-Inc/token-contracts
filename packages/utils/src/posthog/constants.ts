@@ -4,7 +4,6 @@ export enum PostHogEvents {
 }
 
 export enum PostHogFeatureFlags {
-	LANDING_LOGIN = "landing_login",
 
 	NEWS_GENERATION = "news-generation",
 }
