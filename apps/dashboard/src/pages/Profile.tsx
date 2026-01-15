@@ -482,7 +482,7 @@ export default function ProfilePage() {
 						className="space-y-6"
 					>
 						{/* Personal Details Card */}
-						<div className="p-6 h-full flex flex-col" style={cardStyle}>
+						<div className="p-6 h-full flex flex-col relative" style={cardStyle}>
 							<div className="flex items-center space-x-4 mb-6">
 								<div
 									className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
@@ -498,7 +498,7 @@ export default function ProfilePage() {
 										Identity Information
 									</p>
 								</div>
-								<div className="ml-auto">
+								<div className="absolute top-6 right-6">
 									<Button
 										variant="text"
 										className="!p-2 text-gray-400 hover:text-[#D4A024]"

@@ -75,15 +75,15 @@ export const VerificationStatusCard: React.FC<VerificationStatusCardProps> = ({
 					)}
 					{(profile.kycStatus === KycStatus.NOT_STARTED ||
 						profile.kycStatus === KycStatus.REJECTED) && (
-						<Button
-							variant="outlined"
-							className="!py-1.5 !px-3 !text-xs border-blue-200 text-blue-600 hover:bg-blue-50"
-							onClick={() => navigate("/onboarding")}
-						>
-							<XCircle className="w-3 h-3 mr-1.5" />
-							Verify
-						</Button>
-					)}
+							<Button
+								variant="outlined"
+								className="!py-1.5 !px-3 !text-xs border-blue-200 text-blue-600 hover:bg-blue-50"
+								onClick={() => navigate("/onboarding")}
+							>
+								<XCircle className="w-3 h-3 mr-1.5" />
+								Verify
+							</Button>
+						)}
 				</div>
 
 				{/* Investor */}
@@ -160,7 +160,7 @@ export const VerificationStatusCard: React.FC<VerificationStatusCardProps> = ({
 							className="!bg-amber-50 !text-amber-700 !border-amber-200 uppercase text-[10px] font-bold tracking-wider px-3"
 						>
 							<span className="flex items-center">
-								<Clock className="w-3 h-3 mr-1.5" /> IN REVIEW
+								<Clock className="w-3 h-3 mr-1.5" /> PENDING
 							</span>
 						</Chip>
 					) : profile.sponsorStatus === VerificationStatus.REJECTED ? (
