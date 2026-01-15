@@ -205,6 +205,9 @@ jobs:
       - name: Deploy ${{ matrix.app }} to production
         run: vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }}
 
+      - name: Promote to Production
+        run: vercel promote --yes --token=${{ secrets.VERCEL_TOKEN }}
+
   rollback:
     needs: [migrate, deploy]
     if: ${{ failure() }}
