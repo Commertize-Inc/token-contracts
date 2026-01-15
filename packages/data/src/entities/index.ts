@@ -12,4 +12,4 @@ export * from "./Sponsor";
 
 export * from "./User";
 
-export * from "./Waitlist";
+export * from "./Contact";

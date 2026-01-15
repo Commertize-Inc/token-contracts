@@ -16,15 +16,15 @@ import {
 import { Button, ErrorModal } from "@commertize/ui";
 import { api } from "../lib/api";
 import {
-	waitlistInvestorSchema,
-	waitlistSponsorSchema,
-} from "@commertize/data/schemas/waitlist";
+	contactInvestorSchema,
+	contactSponsorSchema,
+} from "@commertize/data/schemas/contact";
 import { useLocation } from "react-router-dom";
 import { usePostHog } from "@commertize/utils/client";
 
 // Schema types
-type InvestorFormData = z.infer<typeof waitlistInvestorSchema>;
-type SponsorFormData = z.infer<typeof waitlistSponsorSchema>;
+type InvestorFormData = z.infer<typeof contactInvestorSchema>;
+type SponsorFormData = z.infer<typeof contactSponsorSchema>;
 
 type TabType = "general" | "investor" | "sponsor";
 
@@ -66,12 +66,12 @@ export default function ContactForm() {
 
 	// Investor Form
 	const investorForm = useForm<InvestorFormData>({
-		resolver: zodResolver(waitlistInvestorSchema),
+		resolver: zodResolver(contactInvestorSchema),
 	});
 
 	// Sponsor Form
 	const sponsorForm = useForm<SponsorFormData>({
-		resolver: zodResolver(waitlistSponsorSchema),
+		resolver: zodResolver(contactSponsorSchema),
 	});
 
 	const handleGeneralChange = (
@@ -123,7 +123,7 @@ export default function ContactForm() {
 	const onInvestorSubmit = async (data: InvestorFormData) => {
 		setIsSubmitting(true);
 		try {
-			await api.post("/waitlist", { ...data, type: "investor" });
+			await api.post("/contact", { ...data, type: "investor" });
 			if (posthog) {
 				posthog.capture("waitlist_form_submitted", {
 					form_type: "investor",
@@ -143,7 +143,7 @@ export default function ContactForm() {
 	const onSponsorSubmit = async (data: SponsorFormData) => {
 		setIsSubmitting(true);
 		try {
-			await api.post("/waitlist", { ...data, type: "sponsor" });
+			await api.post("/contact", { ...data, type: "sponsor" });
 			if (posthog) {
 				posthog.capture("waitlist_form_submitted", {
 					form_type: "sponsor",
@@ -198,11 +198,10 @@ export default function ContactForm() {
 			<div className="flex border-b border-gray-100 relative z-10">
 				<button
 					onClick={() => setActiveTab("general")}
-					className={`flex-1 py-6 text-sm md:text-base font-medium transition-all duration-300 relative ${
-						activeTab === "general"
+					className={`flex-1 py-6 text-sm md:text-base font-medium transition-all duration-300 relative ${activeTab === "general"
 							? "text-[#DDB35F] bg-white"
 							: "text-gray-500 bg-gray-50 hover:bg-gray-100"
-					}`}
+						}`}
 				>
 					<span className="flex items-center justify-center gap-2">
 						<MessageSquare size={18} />
@@ -217,11 +216,10 @@ export default function ContactForm() {
 				</button>
 				<button
 					onClick={() => setActiveTab("investor")}
-					className={`flex-1 py-6 text-sm md:text-base font-medium transition-all duration-300 relative ${
-						activeTab === "investor"
+					className={`flex-1 py-6 text-sm md:text-base font-medium transition-all duration-300 relative ${activeTab === "investor"
 							? "text-[#DDB35F] bg-white"
 							: "text-gray-500 bg-gray-50 hover:bg-gray-100"
-					}`}
+						}`}
 				>
 					<span className="flex items-center justify-center gap-2">
 						<UserPlus size={18} />
@@ -236,11 +234,10 @@ export default function ContactForm() {
 				</button>
 				<button
 					onClick={() => setActiveTab("sponsor")}
-					className={`flex-1 py-6 text-sm md:text-base font-medium transition-all duration-300 relative ${
-						activeTab === "sponsor"
+					className={`flex-1 py-6 text-sm md:text-base font-medium transition-all duration-300 relative ${activeTab === "sponsor"
 							? "text-[#DDB35F] bg-white"
 							: "text-gray-500 bg-gray-50 hover:bg-gray-100"
-					}`}
+						}`}
 				>
 					<span className="flex items-center justify-center gap-2">
 						<Building2 size={18} />

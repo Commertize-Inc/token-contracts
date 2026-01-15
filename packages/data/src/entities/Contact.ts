@@ -1,17 +1,17 @@
 import { Entity, PrimaryKey, Property, Enum, Index } from "@mikro-orm/core";
 import { v4 } from "uuid";
 
-export enum WaitlistType {
+export enum ContactType {
 	INVESTOR = "investor",
 	SPONSOR = "sponsor",
 }
 
 /**
- * Entity representing a user on the waitlist.
+ * Entity representing a contact inquiry.
  * capturing interest from potential investors or sponsors.
  */
-@Entity({ tableName: "waitlist" })
-export class Waitlist {
+@Entity({ tableName: "contact" })
+export class Contact {
 	@PrimaryKey()
 	id: string = v4();
 
@@ -19,9 +19,9 @@ export class Waitlist {
 	@Property({ type: "string" })
 	email!: string;
 
-	/** Type of user joining the waitlist (Investor or Sponsor). */
-	@Enum(() => WaitlistType)
-	type!: WaitlistType;
+	/** Type of user joining (Investor or Sponsor). */
+	@Enum(() => ContactType)
+	type!: ContactType;
 
 	// Common fields
 	@Property({ type: "string", nullable: true })

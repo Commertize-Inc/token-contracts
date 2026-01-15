@@ -1,15 +1,15 @@
 import { Hono } from "hono";
-import { Waitlist, WaitlistType } from "@commertize/data";
+import { Contact, ContactType } from "@commertize/data";
 import {
-	waitlistInvestorSchema,
-	waitlistSponsorSchema,
+	contactInvestorSchema,
+	contactSponsorSchema,
 } from "@commertize/data/schemas";
 import { getEM } from "../db";
 
-const waitlist = new Hono();
+const contact = new Hono();
 
-// POST /waitlist - Add a new waitlist entry
-waitlist.post("/", async (c) => {
+// POST /contact - Add a new contact entry
+contact.post("/", async (c) => {
 	const em = await getEM();
 	const body = await c.req.json();
 
@@ -17,7 +17,7 @@ waitlist.post("/", async (c) => {
 
 	// Validate based on type
 	if (type === "investor") {
-		const result = waitlistInvestorSchema.safeParse(data);
+		const result = contactInvestorSchema.safeParse(data);
 		if (!result.success) {
 			return c.json(
 				{ error: "Invalid investor data", details: result.error.flatten() },
@@ -26,21 +26,21 @@ waitlist.post("/", async (c) => {
 		}
 
 		// Check if email already exists
-		const existing = await em.findOne(Waitlist, { email: result.data.email });
+		const existing = await em.findOne(Contact, { email: result.data.email });
 		if (existing) {
-			return c.json({ error: "This email is already on the waitlist" }, 409);
+			return c.json({ error: "This email is already in our contact list" }, 409);
 		}
 
-		const entry = em.create(Waitlist, {
+		const entry = em.create(Contact, {
 			...result.data,
-			type: WaitlistType.INVESTOR,
+			type: ContactType.INVESTOR,
 			createdAt: new Date(),
 		});
 
 		await em.persist(entry).flush();
 		return c.json({ success: true, id: entry.id }, 201);
 	} else if (type === "sponsor") {
-		const result = waitlistSponsorSchema.safeParse(data);
+		const result = contactSponsorSchema.safeParse(data);
 		if (!result.success) {
 			return c.json(
 				{ error: "Invalid sponsor data", details: result.error.flatten() },
@@ -49,14 +49,14 @@ waitlist.post("/", async (c) => {
 		}
 
 		// Check if email already exists
-		const existing = await em.findOne(Waitlist, { email: result.data.email });
+		const existing = await em.findOne(Contact, { email: result.data.email });
 		if (existing) {
-			return c.json({ error: "This email is already on the waitlist" }, 409);
+			return c.json({ error: "This email is already in our contact list" }, 409);
 		}
 
-		const entry = em.create(Waitlist, {
+		const entry = em.create(Contact, {
 			...result.data,
-			type: WaitlistType.SPONSOR,
+			type: ContactType.SPONSOR,
 			createdAt: new Date(),
 		});
 
@@ -70,20 +70,20 @@ waitlist.post("/", async (c) => {
 	}
 });
 
-// GET /waitlist - Get all waitlist entries (admin only - can add auth later)
-waitlist.get("/", async (c) => {
+// GET /contact - Get all contact entries (admin only - can add auth later)
+contact.get("/", async (c) => {
 	const em = await getEM();
-	const entries = await em.findAll(Waitlist, {
+	const entries = await em.findAll(Contact, {
 		orderBy: { createdAt: "desc" },
 	});
 	return c.json(entries);
 });
 
-// GET /waitlist/stats - Get waitlist statistics
-waitlist.get("/stats", async (c) => {
+// GET /contact/stats - Get contact statistics
+contact.get("/stats", async (c) => {
 	const em = await getEM();
-	const investors = await em.count(Waitlist, { type: WaitlistType.INVESTOR });
-	const sponsors = await em.count(Waitlist, { type: WaitlistType.SPONSOR });
+	const investors = await em.count(Contact, { type: ContactType.INVESTOR });
+	const sponsors = await em.count(Contact, { type: ContactType.SPONSOR });
 	return c.json({
 		total: investors + sponsors,
 		investors,
@@ -91,4 +91,4 @@ waitlist.get("/stats", async (c) => {
 	});
 });
 
-export default waitlist;
+export default contact;

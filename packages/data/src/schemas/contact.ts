@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const waitlistInvestorSchema = z.object({
+export const contactInvestorSchema = z.object({
 	firstName: z.string().min(2, "First name must be at least 2 characters"),
 	lastName: z.string().min(2, "Last name must be at least 2 characters"),
 	email: z.string().email("Please enter a valid email address"),
@@ -19,7 +19,7 @@ export const waitlistInvestorSchema = z.object({
 	message: z.string().optional(),
 });
 
-export const waitlistSponsorSchema = z.object({
+export const contactSponsorSchema = z.object({
 	fullName: z.string().min(2, "Full name must be at least 2 characters"),
 	company: z.string().min(2, "Company/Ownership Entity is required"),
 	email: z.string().email("Please enter a valid email address"),

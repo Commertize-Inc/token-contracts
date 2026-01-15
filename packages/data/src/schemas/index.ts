@@ -7,4 +7,4 @@ export * from "./news";
 export * from "./reviews";
 export * from "./notifications";
 export * from "./dividends";
-export * from "./waitlist";
+export * from "./contact";

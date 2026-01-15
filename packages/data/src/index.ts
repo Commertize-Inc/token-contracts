@@ -3,7 +3,7 @@ export * from "./entities/Listing";
 export * from "./entities/Investment";
 export * from "./entities/PlaidItem";
 export * from "./entities/BankAccount";
-export * from "./entities/Waitlist";
+export * from "./entities/Contact";
 export * from "./entities/Investor";
 export * from "./entities/Sponsor";
 export * from "./entities/NewsArticle";
