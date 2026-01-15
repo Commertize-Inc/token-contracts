@@ -6,6 +6,7 @@ import React, { useRef, forwardRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import { usePostHog } from "@commertize/utils/client";
 import { OFF_WHITE, GOLD } from "../constants/layout";
 
 const GOLD_GRADIENT = `linear-gradient(135deg, ${GOLD} 0%, #C9A84E 100%)`;
@@ -567,6 +568,8 @@ const Information = forwardRef<HTMLElement, object>(
 			clamp: true,
 		});
 
+		const posthog = usePostHog();
+
 		return (
 			<section
 				ref={mergeRefs}
@@ -730,6 +733,14 @@ const Information = forwardRef<HTMLElement, object>(
 												e.currentTarget.style.backgroundColor = "transparent";
 												e.currentTarget.style.color = GOLD;
 											}}
+											onClick={() => {
+												if (posthog) {
+													posthog.capture("landing_cta_click", {
+														label: "Launch an Offering",
+														destination: `${import.meta.env.VITE_DASHBOARD_URL || "http://localhost:3003"}/listings/new`,
+													});
+												}
+											}}
 										>
 											Launch an Offering
 										</a>
@@ -744,6 +755,14 @@ const Information = forwardRef<HTMLElement, object>(
 											onMouseLeave={(e) => {
 												e.currentTarget.style.backgroundColor = "transparent";
 												e.currentTarget.style.color = GOLD;
+											}}
+											onClick={() => {
+												if (posthog) {
+													posthog.capture("landing_cta_click", {
+														label: "View Live Assets",
+														destination: `${import.meta.env.VITE_DASHBOARD_URL || "http://localhost:3003"}/marketplace`,
+													});
+												}
 											}}
 										>
 											View Live Assets

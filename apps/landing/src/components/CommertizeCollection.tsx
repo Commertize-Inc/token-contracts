@@ -4,10 +4,12 @@ import { motion } from "framer-motion";
 import { Building2 } from "lucide-react";
 import type { Listing } from "@commertize/data";
 import { ListingCard } from "@commertize/ui";
+import { usePostHog } from "@commertize/utils/client";
 
 const CommertizeCollection = () => {
 	const [listings, setListings] = useState<Listing[]>([]);
 	const [loading, setLoading] = useState(true);
+	const posthog = usePostHog();
 
 	useEffect(() => {
 		const fetchListings = async () => {
@@ -103,6 +105,15 @@ const CommertizeCollection = () => {
 									const dashboardUrl =
 										import.meta.env.VITE_DASHBOARD_URL ||
 										"http://localhost:3000";
+
+									if (posthog) {
+										posthog.capture("landing_listing_click", {
+											listing_id: property.id,
+											listing_name: property.name,
+											destination: `${dashboardUrl}/auth?redirect=/property/${property.id}`,
+										});
+									}
+
 									window.location.href = `${dashboardUrl}/auth?redirect=/property/${property.id}`;
 								}}
 							/>

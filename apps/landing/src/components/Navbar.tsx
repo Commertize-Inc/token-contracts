@@ -227,12 +227,13 @@ const Navbar = () => {
 					<a
 						href={import.meta.env.VITE_DASHBOARD_URL || "http://localhost:3003"}
 						className="inline-flex items-center justify-center px-5 py-2 bg-[#DDB35F] text-white text-sm font-light rounded-lg hover:bg-[#C9A84E] transition-colors"
-						onClick={() =>
-							trackNav(
-								"Sign In",
-								import.meta.env.VITE_DASHBOARD_URL || "http://localhost:3003"
-							)
-						}
+						onClick={() => {
+							if (posthog) {
+								posthog.capture("landing_signin_click", {
+									destination: import.meta.env.VITE_DASHBOARD_URL || "http://localhost:3003",
+								});
+							}
+						}}
 					>
 						Sign In
 					</a>
@@ -300,6 +301,14 @@ const Navbar = () => {
 					<a
 						href={import.meta.env.VITE_DASHBOARD_URL || "http://localhost:3003"}
 						className="block w-full text-center px-5 py-3 bg-[#DDB35F] text-white font-light rounded-lg"
+						onClick={() => {
+							if (posthog) {
+								posthog.capture("landing_signin_click", {
+									destination: import.meta.env.VITE_DASHBOARD_URL || "http://localhost:3003",
+									source: "mobile_menu",
+								});
+							}
+						}}
 					>
 						Sign In
 					</a>
