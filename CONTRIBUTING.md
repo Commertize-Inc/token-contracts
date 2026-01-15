@@ -18,11 +18,7 @@ pnpm install
 
 ### 1. Environment Variables
 
-Local development relies on the root `.env` file. Copy the example and fill in keys:
-
-```bash
-cp .env.example .env
-```
+Local development relies on the root `.env` file. Please fetch the required environment variables from the project's Notion workspace.
 
 ### 2. Start Development Servers
 

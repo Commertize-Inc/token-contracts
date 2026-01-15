@@ -1,12 +1,10 @@
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
-import L from "leaflet";
+import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 
 // Fix Leaflet generic marker icon issue in React
-// @ts-ignore
 import icon from "leaflet/dist/images/marker-icon.png";
-// @ts-ignore
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
 
 let DefaultIcon = L.icon({
@@ -28,7 +26,9 @@ interface MapViewProps {
 export function MapView({ address, city, state, zipCode }: MapViewProps) {
 	// Default to generic US coordinates (center of US roughly) if geocoding not implemented yet
 	// Or maybe New York as a default
-	const [position, setPosition] = useState<[number, number]>([40.7128, -74.006]);
+	const [position, setPosition] = useState<[number, number]>([
+		40.7128, -74.006,
+	]);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {

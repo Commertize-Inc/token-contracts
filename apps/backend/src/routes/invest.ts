@@ -91,7 +91,7 @@ invest.post("/intent", async (c) => {
 					if (
 						!investor.verificationMethod ||
 						investor.verificationMethod ===
-						AccreditationVerificationMethod.SELF_CERTIFICATION
+							AccreditationVerificationMethod.SELF_CERTIFICATION
 					) {
 						throw new Error(
 							"Regulatory Compliance: This offering (Reg D 506c) requires third-party verification of accreditation. Self-certification is insufficient."

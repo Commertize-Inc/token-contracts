@@ -58,8 +58,6 @@ export class Sponsor {
 	@OneToMany(() => Listing, (listing) => listing.sponsor)
 	listings = new Collection<Listing>(this);
 
-
-
 	@Property({ type: "date" })
 	createdAt: Date = new Date();
 

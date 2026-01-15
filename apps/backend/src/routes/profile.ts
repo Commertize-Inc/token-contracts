@@ -47,9 +47,9 @@ profile.get("/", async (c) => {
 			businessName: user.sponsor?.businessName,
 			sponsor: user.sponsor
 				? {
-					businessName: user.sponsor.businessName,
-					status: user.sponsor.status,
-				}
+						businessName: user.sponsor.businessName,
+						status: user.sponsor.status,
+					}
 				: undefined,
 			walletAddress: user.walletAddress,
 			email: user.email,
@@ -198,7 +198,9 @@ profile.delete("/", async (c) => {
 			await em.removeAndFlush(user);
 		} catch (dbError: any) {
 			console.error("Database deletion error:", dbError);
-			if (dbError.message?.includes("Cannot delete the last user of a sponsor")) {
+			if (
+				dbError.message?.includes("Cannot delete the last user of a sponsor")
+			) {
 				return c.json(
 					{
 						error:

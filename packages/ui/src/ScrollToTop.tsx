@@ -2,12 +2,31 @@ import React, { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUp } from "lucide-react";
 import { cn } from "./lib/utils";
+import { useLocation } from "react-router-dom";
 
 export interface ScrollToTopProps {
 	className?: string;
 	threshold?: number;
 }
 
+/**
+ * ScrollToTop component that automatically scrolls to top on route change
+ * This should be placed inside the Router component
+ */
+export const ScrollToTop: React.FC = () => {
+	const { pathname } = useLocation();
+
+	useEffect(() => {
+		window.scrollTo(0, 0);
+	}, [pathname]);
+
+	return null;
+};
+
+/**
+ * ScrollToTopButton - A floating button that appears when user scrolls down
+ * Allows manual scroll to top
+ */
 export const ScrollToTopButton: React.FC<ScrollToTopProps> = ({
 	className,
 	threshold = 300,

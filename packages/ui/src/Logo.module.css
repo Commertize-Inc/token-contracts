@@ -32,4 +32,12 @@
 .logoImage {
 	display: block;
 	height: auto;
+	max-width: 120px;
+}
+
+/* bigger logo on larger screens */
+@media (min-width: 640px) {
+	.logoImage {
+		max-width: 180px;
+	}
 }

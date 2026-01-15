@@ -511,10 +511,12 @@ admin.post("/sponsor-update-requests/:id/approve", async (c) => {
 			adminNotes,
 		};
 
-
 		// TODO: Send notification to sponsor about approval
 
-		return c.json({ success: true, request: { id: notification.id, status: "APPROVED" } });
+		return c.json({
+			success: true,
+			request: { id: notification.id, status: "APPROVED" },
+		});
 	} catch (error) {
 		console.error("Error approving update request:", error);
 		return c.json({ error: "Internal server error" }, 500);
@@ -560,16 +562,17 @@ admin.post("/sponsor-update-requests/:id/reject", async (c) => {
 		notification.metadata = {
 			...notification.metadata,
 			status: "REJECTED",
-			adminNotes
+			adminNotes,
 		};
-
-
 
 		await em.flush();
 
 		// TODO: Send notification to sponsor about rejection with feedback
 
-		return c.json({ success: true, request: { id: notification.id, status: "REJECTED" } });
+		return c.json({
+			success: true,
+			request: { id: notification.id, status: "REJECTED" },
+		});
 	} catch (error) {
 		console.error("Error rejecting update request:", error);
 		return c.json({ error: "Internal server error" }, 500);

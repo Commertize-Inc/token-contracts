@@ -34,27 +34,9 @@ Commertize is a monorepo built with Next.js 16, featuring a public landing page 
 
 2.  **Configure Environment**
 
-    Commertize uses a cascading environment variable system. Start by copying the root template:
-
-    ```bash
-    cp .env.example .env
-    ```
-
-    Then navigate to the dashboard app and configure its specific environment:
-
-    ```bash
-    cd apps/dashboard
-    cp .env.example .env.local
-    ```
-
-    Update `apps/dashboard/.env.local` with your credentials:
-
-    ```env
-    NEXT_PUBLIC_PRIVY_APP_ID=your_app_id
-    NEXT_PUBLIC_PRIVY_CLIENT_ID=your_client_id
-    PRIVY_APP_SECRET=your_secret
-    DATABASE_URL=postgresql://user:pass@host/dbname?sslmode=require
-    ```
+    Commertize uses a cascading environment variable system. Please fetch the required environment variables from the project's [Notion workspace](https://www.notion.so/Secrets-2c4f8b6f93a580c29f11d40ac7c0749f).
+    1. Create a `.env` file in the root directory.
+    2. Populate both files with the values from Notion.
 
 3.  **Initialize Database**
 

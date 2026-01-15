@@ -23,8 +23,10 @@ export const Tooltip: React.FC<TooltipProps> = ({
 
 	const arrowClasses = {
 		top: "top-full left-1/2 -translate-x-1/2 -mt-1 border-t-slate-800 border-l-transparent border-r-transparent border-b-transparent",
-		right: "right-full top-1/2 -translate-y-1/2 -mr-1 border-r-slate-800 border-t-transparent border-b-transparent border-l-transparent",
-		bottom: "bottom-full left-1/2 -translate-x-1/2 -mb-1 border-b-slate-800 border-l-transparent border-r-transparent border-t-transparent",
+		right:
+			"right-full top-1/2 -translate-y-1/2 -mr-1 border-r-slate-800 border-t-transparent border-b-transparent border-l-transparent",
+		bottom:
+			"bottom-full left-1/2 -translate-x-1/2 -mb-1 border-b-slate-800 border-l-transparent border-r-transparent border-t-transparent",
 		left: "left-full top-1/2 -translate-y-1/2 -ml-1 border-l-slate-800 border-t-transparent border-b-transparent border-r-transparent",
 	};
 
@@ -38,12 +40,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
 				)}
 			>
 				{content}
-				<div
-					className={cn(
-						"absolute border-4",
-						arrowClasses[side]
-					)}
-				/>
+				<div className={cn("absolute border-4", arrowClasses[side])} />
 			</div>
 		</div>
 	);

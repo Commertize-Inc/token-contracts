@@ -32,6 +32,7 @@ import {
 	usePlaidLink,
 } from "react-plaid-link";
 import { api } from "../lib/api";
+import { usePostHog } from "@commertize/utils/client";
 
 interface ProfileData {
 	id: string;
@@ -79,6 +80,7 @@ export default function ProfilePage() {
 	const [profile, setProfile] = useState<ProfileData | null>(null);
 	const [linkToken, setLinkToken] = useState<string | null>(null);
 	const [isConnecting, setIsConnecting] = useState(false);
+	const posthog = usePostHog();
 
 	const [disconnectingId, setDisconnectingId] = useState<string | null>(null);
 	const [isDeleting, setIsDeleting] = useState(false);
@@ -171,6 +173,10 @@ export default function ProfilePage() {
 				message: "Your profile has been successfully updated.",
 				type: "success",
 			});
+
+			if (posthog) {
+				posthog.capture("profile_updated");
+			}
 		} catch (error: any) {
 			console.error("Error updating profile:", error);
 			setAlertState({
@@ -349,15 +355,19 @@ export default function ProfilePage() {
 						message: "Account deletion cancelled.",
 						type: "info",
 					});
-				} else if (error?.status === 409 && error?.code === "LAST_SPONSOR_USER") {
+				} else if (
+					error?.status === 409 &&
+					error?.code === "LAST_SPONSOR_USER"
+				) {
 					setAlertState({
 						isOpen: true,
 						title: "Cannot Delete Account",
-						message: "You are the last user in your sponsor organization. You must delete the organization first.",
+						message:
+							"You are the last user in your sponsor organization. You must delete the organization first.",
 						type: "error",
 						confirmText: "Go to Sponsor Dashboard",
 						onConfirm: () => navigate("/sponsor"),
-						cancelText: "Cancel"
+						cancelText: "Cancel",
 					});
 				} else {
 					setAlertState({
@@ -616,13 +626,17 @@ export default function ProfilePage() {
 													<Mail className="w-4 h-4 text-gray-500" />
 												</div>
 												<div className="truncate">
-													<p className="text-sm font-medium text-gray-900">Email</p>
+													<p className="text-sm font-medium text-gray-900">
+														Email
+													</p>
 													{user?.email?.address ? (
 														<p className="text-xs text-gray-500 truncate">
 															{user.email.address}
 														</p>
 													) : (
-														<p className="text-xs text-gray-400">Not connected</p>
+														<p className="text-xs text-gray-400">
+															Not connected
+														</p>
 													)}
 												</div>
 											</div>
@@ -644,7 +658,8 @@ export default function ProfilePage() {
 														setAlertState({
 															isOpen: true,
 															title: "Disconnect Email",
-															message: "Are you sure you want to disconnect this email?",
+															message:
+																"Are you sure you want to disconnect this email?",
 															type: "warning",
 															confirmText: "Disconnect",
 															onConfirm: () => unlinkEmail(user.email!.address),
@@ -670,7 +685,6 @@ export default function ProfilePage() {
 
 										{/* Google - Removed as per request */}
 
-
 										{/* Phone */}
 										<div className="flex items-center justify-between bg-gray-50 p-2.5 rounded-lg border border-gray-100">
 											<div className="flex items-center space-x-3 overflow-hidden">
@@ -678,13 +692,17 @@ export default function ProfilePage() {
 													<Phone className="w-4 h-4 text-gray-500" />
 												</div>
 												<div className="truncate">
-													<p className="text-sm font-medium text-gray-900">Phone</p>
+													<p className="text-sm font-medium text-gray-900">
+														Phone
+													</p>
 													{user?.phone?.number ? (
 														<p className="text-xs text-gray-500 truncate">
 															{user.phone.number}
 														</p>
 													) : (
-														<p className="text-xs text-gray-400">Not connected</p>
+														<p className="text-xs text-gray-400">
+															Not connected
+														</p>
 													)}
 												</div>
 											</div>
@@ -735,14 +753,18 @@ export default function ProfilePage() {
 													<Wallet className="w-4 h-4 text-gray-500" />
 												</div>
 												<div className="truncate">
-													<p className="text-sm font-medium text-gray-900">Wallet</p>
+													<p className="text-sm font-medium text-gray-900">
+														Wallet
+													</p>
 													{user?.wallet?.address ? (
 														<p className="text-xs text-gray-500 truncate font-mono">
 															{user.wallet.address.slice(0, 6)}...
 															{user.wallet.address.slice(-4)}
 														</p>
 													) : (
-														<p className="text-xs text-gray-400">Not connected</p>
+														<p className="text-xs text-gray-400">
+															Not connected
+														</p>
 													)}
 												</div>
 											</div>
@@ -764,10 +786,12 @@ export default function ProfilePage() {
 														setAlertState({
 															isOpen: true,
 															title: "Disconnect Wallet",
-															message: "Are you sure you want to disconnect this wallet?",
+															message:
+																"Are you sure you want to disconnect this wallet?",
 															type: "warning",
 															confirmText: "Disconnect",
-															onConfirm: () => unlinkWallet(user.wallet!.address),
+															onConfirm: () =>
+																unlinkWallet(user.wallet!.address),
 														});
 													}}
 													title="Disconnect"
@@ -786,8 +810,6 @@ export default function ProfilePage() {
 										</div>
 									</div>
 								</div>
-
-
 							</div>
 						</div>
 					</motion.div>

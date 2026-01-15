@@ -32,8 +32,8 @@ const CookieConsent = () => {
 					<X size={14} />
 				</button>
 				<div className="flex items-center gap-3 mb-3">
-					<div className="w-8 h-8 bg-[#D4A024]/10 rounded-full flex items-center justify-center">
-						<Cookie size={16} className="text-[#D4A024]" />
+					<div className="w-8 h-8 bg-[#DDB35F]/10 rounded-full flex items-center justify-center">
+						<Cookie size={16} className="text-[#DDB35F]" />
 					</div>
 					<h4 className="font-medium text-gray-900">Cookie Preferences</h4>
 				</div>
@@ -49,7 +49,7 @@ const CookieConsent = () => {
 						Reject All
 					</button>
 					<button
-						className="flex-1 px-4 py-2 text-sm font-medium text-white bg-[#D4A024] hover:bg-[#B8881C] rounded-lg transition-colors shadow-sm"
+						className="flex-1 px-4 py-2 text-sm font-medium text-white bg-[#DDB35F] hover:bg-[#C9A84E] rounded-lg transition-colors shadow-sm"
 						onClick={() => setIsVisible(false)}
 					>
 						Accept All

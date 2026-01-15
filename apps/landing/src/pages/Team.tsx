@@ -186,7 +186,7 @@ export default function Team() {
 									{/* Profile Image */}
 									<div className="mb-6">
 										<div
-											className={`w-48 h-48 mx-auto rounded-full overflow-hidden shadow-lg shadow-[#D4A024]/20 ring-4 ring-[#D4A024] ${
+											className={`w-48 h-48 mx-auto rounded-full overflow-hidden shadow-lg shadow-[#DDB35F]/20 ring-4 ring-[#DDB35F] ${
 												hasWhiteCircleInImage(member.name)
 													? ""
 													: "border-4 border-white"
@@ -217,7 +217,7 @@ export default function Team() {
 													href={member.linkedin}
 													target="_blank"
 													rel="noopener noreferrer"
-													className="p-3 bg-[#D4A024] hover:bg-[#B8881C] text-white rounded-full transition-colors shadow-md"
+													className="p-3 bg-[#DDB35F] hover:bg-[#C9A84E] text-white rounded-full transition-colors shadow-md"
 												>
 													<Linkedin className="w-5 h-5" />
 												</a>
@@ -270,7 +270,7 @@ export default function Team() {
 							>
 								<Link
 									to="/waitlist"
-									className="inline-flex items-center justify-center rounded-lg bg-[#D4A024] px-8 py-4 text-sm font-light text-white hover:bg-[#B8881C] transition-colors shadow-lg"
+									className="inline-flex items-center justify-center rounded-lg bg-[#DDB35F] px-8 py-4 text-sm font-light text-white hover:bg-[#C9A84E] transition-colors shadow-lg"
 								>
 									Join Waitlist
 								</Link>

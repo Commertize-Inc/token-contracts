@@ -21,7 +21,7 @@ import { ListingDocuments } from "../components/listing/ListingDocuments";
 import { ListingSponsor } from "../components/listing/ListingSponsor";
 import { InvestmentCard } from "../components/listing/InvestmentCard";
 import { SupportOptions } from "../components/SupportOptions";
-import { Listing } from '@commertize/data';
+import { Listing } from "@commertize/data";
 
 interface ListingWithStats extends Listing {
 	stats?: {
@@ -214,11 +214,11 @@ export default function ListingDetails() {
 												<p className="font-semibold text-slate-900">
 													$
 													{listing.tokenomics?.minInvestmentTokens &&
-														listing.tokenomics?.tokenPrice
+													listing.tokenomics?.tokenPrice
 														? (
-															listing.tokenomics.minInvestmentTokens *
-															listing.tokenomics.tokenPrice
-														).toLocaleString()
+																listing.tokenomics.minInvestmentTokens *
+																listing.tokenomics.tokenPrice
+															).toLocaleString()
 														: "—"}
 												</p>
 											</div>

@@ -1,4 +1,4 @@
-import { ScrollToTopButton } from "@commertize/ui";
+import { ScrollToTop, ScrollToTopButton } from "@commertize/ui";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
@@ -8,7 +8,6 @@ import Landing from "./pages/Landing";
 import News from "./pages/News";
 import NewsArticle from "./pages/NewsArticle";
 import Nexus from "./pages/Nexus";
-import Waitlist from "./pages/Waitlist";
 import { Providers } from "./providers";
 
 // Lazy load other pages to reduce initial bundle size
@@ -50,6 +49,7 @@ function App() {
 	return (
 		<Providers>
 			<BrowserRouter>
+				<ScrollToTop />
 				<div className="min-h-screen bg-[#FAFAF9]">
 					<Navbar />
 					<ScrollToTopButton />
@@ -66,7 +66,6 @@ function App() {
 								</>
 							)}
 							<Route path="/team" element={<Team />} />
-							<Route path="/waitlist" element={<Waitlist />} />
 							<Route path="/omnigrid" element={<OmniGrid />} />
 							<Route path="/analytics" element={<Analytics />} />
 							<Route path="/faq" element={<FAQ />} />

@@ -48,6 +48,7 @@ import { Navbar } from "../../components/Navbar";
 import { Tooltip } from "../../components/Tooltip";
 import { api } from "../../lib/api";
 import { useOnboardingStatus } from "../../hooks/useOnboardingStatus";
+import { usePostHog } from "@commertize/utils/client";
 
 // Extend shared schema for form-specific structures (RHF generic field arrays prefer objects)
 const formSchema = createListingSchema.extend({
@@ -85,6 +86,7 @@ export default function CreateListing() {
 	const [serverError, setServerError] = useState<string | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [errorModalOpen, setErrorModalOpen] = useState(false);
+	const posthog = usePostHog();
 
 	// SubNavbar configuration
 	const navItems: SubNavbarItem[] = [
@@ -139,6 +141,12 @@ export default function CreateListing() {
 		}
 	}, [onboardingStatus, setValue]);
 
+	useEffect(() => {
+		if (posthog) {
+			posthog.capture("listing_creation_started");
+		}
+	}, [posthog]);
+
 	// Field arrays for dynamic inputs
 	const {
 		fields: imageFields,
@@ -188,6 +196,12 @@ export default function CreateListing() {
 			const token = await getAccessToken();
 			const response = await api.post("/listings", cleanData, token);
 			if (response.success) {
+				if (posthog) {
+					posthog.capture("listing_created", {
+						listing_name: cleanData.name,
+						property_type: cleanData.propertyType,
+					});
+				}
 				// Redirect to a success page or the new listing
 				// For now, let's go back to the dashboard or listings list
 				navigate("/sponsor/dashboard", { state: { listingCreated: true } });
@@ -196,7 +210,7 @@ export default function CreateListing() {
 			console.error("Submission error:", error);
 			setServerError(
 				error.response?.data?.error ||
-				"Failed to create listing. Please try again."
+					"Failed to create listing. Please try again."
 			);
 			setErrorModalOpen(true);
 		} finally {

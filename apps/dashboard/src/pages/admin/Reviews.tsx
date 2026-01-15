@@ -506,7 +506,7 @@ export default function AdminReviews() {
 												className="w-full min-h-[120px] p-3 border rounded-md text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-none"
 												placeholder={
 													reviewAction === "APPROVE" ||
-														reviewAction === "TOKENIZE"
+													reviewAction === "TOKENIZE"
 														? "Optional comment"
 														: `Reason for ${reviewAction === "REJECT" ? "rejection" : "action"}...`
 												}

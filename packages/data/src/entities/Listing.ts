@@ -60,11 +60,7 @@ export type ListingFinancials = {
 	preferredReturn: number; // 0–1
 	sponsorPromote: number; // 0–1 of upside above pref
 	payoutRatioOfFCF: number; // 0–1 of distributable CF paid out
-	distributionFrequency:
-	| "MONTHLY"
-	| "QUARTERLY"
-	| "SEMI_ANNUALLY"
-	| "ANNUALLY";
+	distributionFrequency: "MONTHLY" | "QUARTERLY" | "SEMI_ANNUALLY" | "ANNUALLY";
 };
 
 export type Tokenomics = {

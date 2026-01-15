@@ -22,7 +22,7 @@ export class User {
 	@PrimaryKey()
 	id: string = v4();
 
-	constructor() { }
+	constructor() {}
 
 	/** Unique identifier from the authentication provider (Privy). */
 	@Property({ type: "string", unique: true, index: true })

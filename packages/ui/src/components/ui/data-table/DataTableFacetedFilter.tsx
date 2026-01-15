@@ -90,7 +90,9 @@ export function DataTableFacetedFilter<TData, TValue>({
 										value={option.value}
 										onSelect={() => {
 											// Read fresh state from column
-											const currentValues = new Set(column?.getFilterValue() as string[]);
+											const currentValues = new Set(
+												column?.getFilterValue() as string[]
+											);
 											if (currentValues.has(option.value)) {
 												currentValues.delete(option.value);
 											} else {

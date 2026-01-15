@@ -2,12 +2,7 @@ import { useState } from "react";
 
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import {
-	BarChart3,
-	Globe,
-	Users,
-	AlertTriangle,
-} from "lucide-react";
+import { BarChart3, Globe, Users, AlertTriangle } from "lucide-react";
 import { Navbar } from "../components/Navbar";
 import { ListingCard, PageHeader } from "@commertize/ui";
 // Keep UI button for specific uses if needed, or replace
@@ -17,6 +12,7 @@ import { useListings } from "../hooks/useListings";
 import { DataTable, DataTableToolbar } from "@commertize/ui";
 import { ColumnDef } from "@tanstack/react-table";
 import type { Listing } from "@commertize/data"; // Import Listing type
+import { usePostHog } from "@commertize/utils/client";
 
 // Skeleton Component equivalent
 function SkeletonCard() {
@@ -52,11 +48,18 @@ const toTitleCase = (str: string) => {
 
 export default function MarketplacePage() {
 	const navigate = useNavigate();
+	const posthog = usePostHog();
 
 	const { data: listings = [], isLoading: loading } = useListings();
 
 	const [userName] = useState<string>("Investor");
 	const [view, setView] = useState<"table" | "grid">("grid");
+
+	useEffect(() => {
+		if (posthog) {
+			posthog.capture("marketplace_viewed");
+		}
+	}, [posthog]);
 
 	const columns: ColumnDef<Listing>[] = [
 		{
@@ -215,7 +218,6 @@ export default function MarketplacePage() {
 								<SkeletonCard key={i} />
 							))}
 						</div>
-
 					) : (
 						<div className="space-y-4">
 							{/* Notion-style Toolbar */}
@@ -224,10 +226,11 @@ export default function MarketplacePage() {
 								<div className="flex items-center space-x-1 bg-gray-100 p-1 rounded-lg">
 									<button
 										onClick={() => setView("table")}
-										className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${view === "table"
-											? "bg-white text-gray-900 shadow-sm"
-											: "text-gray-500 hover:text-gray-900 hover:bg-gray-200/50"
-											}`}
+										className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
+											view === "table"
+												? "bg-white text-gray-900 shadow-sm"
+												: "text-gray-500 hover:text-gray-900 hover:bg-gray-200/50"
+										}`}
 									>
 										<span className="w-4 h-4">
 											<svg
@@ -249,10 +252,11 @@ export default function MarketplacePage() {
 									</button>
 									<button
 										onClick={() => setView("grid")}
-										className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${view === "grid"
-											? "bg-white text-gray-900 shadow-sm"
-											: "text-gray-500 hover:text-gray-900 hover:bg-gray-200/50"
-											}`}
+										className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
+											view === "grid"
+												? "bg-white text-gray-900 shadow-sm"
+												: "text-gray-500 hover:text-gray-900 hover:bg-gray-200/50"
+										}`}
 									>
 										<span className="w-4 h-4">
 											<svg
@@ -330,6 +334,12 @@ export default function MarketplacePage() {
 												{ label: "Cap Rate (High-Low)", value: "cap-desc" },
 											]}
 											onSortChange={(val) => {
+												if (posthog) {
+													posthog.capture("marketplace_filter", {
+														filter_type: "sort",
+														value: val,
+													});
+												}
 												if (val === "name-asc")
 													table.setSorting([{ id: "name", desc: false }]);
 												else if (val === "name-desc")
@@ -375,6 +385,6 @@ export default function MarketplacePage() {
 					</motion.div>
 				</div>
 			</div>
-		</div >
+		</div>
 	);
 }

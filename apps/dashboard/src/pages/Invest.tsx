@@ -5,10 +5,12 @@ import { Navbar } from "../components/Navbar";
 import { Button, Alert } from "@commertize/ui";
 import { Loader2, ArrowLeft, ShieldCheck, Info } from "lucide-react";
 import { Progress } from "@commertize/ui";
+import { usePostHog } from "@commertize/utils/client";
 
 export default function Invest() {
 	const { id } = useParams<{ id: string }>();
 	const navigate = useNavigate();
+	const posthog = usePostHog();
 
 	const [listing, setListing] = useState<any>(null);
 	const [loading, setLoading] = useState(true);
@@ -50,6 +52,15 @@ export default function Invest() {
 		if (id) fetchListing();
 	}, [id]);
 
+	useEffect(() => {
+		if (listing && id && posthog) {
+			posthog.capture("investment_started", {
+				listing_id: id,
+				listing_name: listing.name,
+			});
+		}
+	}, [listing, id, posthog]);
+
 	const handleInvest = async () => {
 		if (!listing || !id) return;
 		setError(null);
@@ -83,6 +94,14 @@ export default function Invest() {
 					"Investment intent registered! Check your email for payment instructions.",
 				type: "success",
 			});
+
+			if (posthog) {
+				posthog.capture("investment_completed", {
+					listing_id: id,
+					amount: amount,
+					currency: "USDC", // Defaulted for now based on UI
+				});
+			}
 		} catch (err: any) {
 			console.error(err);
 			setError(err.message || "An error occurred.");
@@ -153,8 +172,8 @@ export default function Invest() {
 								{listing.highlights?.map((h: string, i: number) => (
 									<li key={i}>{h}</li>
 								)) || (
-										<li>Detailed property financials available in data room.</li>
-									)}
+									<li>Detailed property financials available in data room.</li>
+								)}
 							</ul>
 						</div>
 

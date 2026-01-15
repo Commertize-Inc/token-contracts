@@ -458,19 +458,17 @@ sponsor.delete("/", authMiddleware, async (c) => {
 		// Check if user is an owner/admin of the sponsor (assuming all voting members have rights for now, or check organizationRole)
 		// For stricter control, we could check if user.id is in user.sponsor.votingMembers
 		if (!user.sponsor.votingMembers.includes(user.id)) {
-			return c.json({ error: "You do not have permission to delete this organization." }, 403);
+			return c.json(
+				{ error: "You do not have permission to delete this organization." },
+				403
+			);
 		}
 
 		// Check for active listings
 		const activeListingsCount = await em.count("Listing", {
 			sponsor: user.sponsor,
 			status: {
-				$in: [
-					"ACTIVE",
-					"FULLY_FUNDED",
-					"PENDING_REVIEW",
-					"APPROVED",
-				],
+				$in: ["ACTIVE", "FULLY_FUNDED", "PENDING_REVIEW", "APPROVED"],
 			},
 		});
 

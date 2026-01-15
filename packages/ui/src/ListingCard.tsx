@@ -45,7 +45,6 @@ export const ListingCard = ({
 		}
 	};
 
-
 	const targetRaise =
 		listing.impliedEquityValuation ??
 		(listing.tokenomics?.tokensForInvestors && listing.tokenomics?.tokenPrice
@@ -65,13 +64,15 @@ export const ListingCard = ({
 	switch (listing.status) {
 		case ListingStatus.ACTIVE:
 			statusVariant = "default";
-			statusClassName = "bg-green-600 hover:bg-green-700 border-transparent text-white";
+			statusClassName =
+				"bg-green-600 hover:bg-green-700 border-transparent text-white";
 			break;
 		case ListingStatus.DRAFT:
 		case ListingStatus.PENDING_REVIEW:
 		case ListingStatus.APPROVED:
 			statusVariant = "secondary";
-			statusClassName = "bg-amber-100 text-amber-800 hover:bg-amber-200 border-transparent";
+			statusClassName =
+				"bg-amber-100 text-amber-800 hover:bg-amber-200 border-transparent";
 			break;
 		case ListingStatus.REJECTED:
 		case ListingStatus.WITHDRAWN:
@@ -80,11 +81,13 @@ export const ListingCard = ({
 			break;
 		case ListingStatus.FULLY_FUNDED:
 			statusVariant = "secondary";
-			statusClassName = "bg-blue-100 text-blue-800 hover:bg-blue-200 border-transparent";
+			statusClassName =
+				"bg-blue-100 text-blue-800 hover:bg-blue-200 border-transparent";
 			break;
 		case ListingStatus.TOKENIZING:
 			statusVariant = "secondary";
-			statusClassName = "bg-purple-100 text-purple-800 hover:bg-purple-200 border-transparent";
+			statusClassName =
+				"bg-purple-100 text-purple-800 hover:bg-purple-200 border-transparent";
 			break;
 		default:
 			statusVariant = "outline";
@@ -136,8 +139,13 @@ export const ListingCard = ({
 						</div>
 					</div>
 					{isColumnVisible("propertyType") && (
-						<Badge variant="outline" className="text-xs font-normal text-gray-600 bg-gray-50/50">
-							{listing.propertyType ? toTitleCase(listing.propertyType) : "Commercial"}
+						<Badge
+							variant="outline"
+							className="text-xs font-normal text-gray-600 bg-gray-50/50"
+						>
+							{listing.propertyType
+								? toTitleCase(listing.propertyType)
+								: "Commercial"}
 						</Badge>
 					)}
 				</div>
@@ -173,7 +181,9 @@ export const ListingCard = ({
 				<div className="mt-5 pt-4 border-t border-gray-100">
 					<div className="flex justify-between text-xs text-gray-600 mb-1.5">
 						<span>Funded</span>
-						<span className="font-medium text-gray-900">{fundingProgress.toFixed(0)}%</span>
+						<span className="font-medium text-gray-900">
+							{fundingProgress.toFixed(0)}%
+						</span>
 					</div>
 					<div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
 						<div

@@ -1,3 +1,7 @@
+// shared navbar component used across different apps
+// provides basic layout with logo, center content, right content and mobile menu
+// the actual content is passed in as props so each app can customize it
+
 "use client";
 
 import { Menu, X } from "lucide-react";
@@ -15,11 +19,12 @@ export interface NavbarProps {
 	centerContent?: ReactNode;
 	rightContent?: ReactNode;
 	mobileContent?: ReactNode;
-	className?: string; // New
-	style?: React.CSSProperties; // New
+	className?: string;
+	style?: React.CSSProperties;
 }
 
-// Default link component
+// fallback link component if none is provided
+// just renders a regular anchor tag
 const DefaultLink: React.FC<{
 	href: string;
 	className?: string;
@@ -30,6 +35,7 @@ const DefaultLink: React.FC<{
 	</a>
 );
 
+// the actual navbar component
 const Navbar: React.FC<NavbarProps> = ({
 	logoHref = "/",
 	logoSrc,
@@ -42,6 +48,7 @@ const Navbar: React.FC<NavbarProps> = ({
 }) => {
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+	// use custom link component if provided, otherwise defualt to anchor
 	const LogoLink = LinkComponent || DefaultLink;
 
 	return (
@@ -51,6 +58,7 @@ const Navbar: React.FC<NavbarProps> = ({
 		>
 			<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 				<div className="flex h-16 items-center justify-between">
+					{/* logo on the left side */}
 					<div className="flex items-center gap-8">
 						<LogoLink
 							href={logoHref}
@@ -60,6 +68,7 @@ const Navbar: React.FC<NavbarProps> = ({
 						</LogoLink>
 					</div>
 
+					{/* center content only shows on larger screens */}
 					{centerContent && (
 						<div className="hidden md:flex items-center gap-8">
 							{centerContent}
@@ -69,7 +78,7 @@ const Navbar: React.FC<NavbarProps> = ({
 					<div className="flex items-center gap-4">
 						{rightContent}
 
-						{/* Mobile Menu Toggle */}
+						{/* hamburger button for mobile - only shows if theres mobile content */}
 						{mobileContent && (
 							<button
 								onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -83,12 +92,13 @@ const Navbar: React.FC<NavbarProps> = ({
 				</div>
 			</div>
 
-			{/* Mobile Menu */}
+			{/* mobile menu overlay - covers the screen when open */}
 			{isMobileMenuOpen && mobileContent && (
 				<div
 					className="fixed inset-0 top-16 z-40 bg-black/50"
 					onClick={() => setIsMobileMenuOpen(false)}
 				>
+					{/* actual menu content - stops click propogation so it doesnt close when clicking inside */}
 					<div
 						className="bg-white p-4 shadow-md border-t border-slate-100"
 						onClick={(e) => e.stopPropagation()}

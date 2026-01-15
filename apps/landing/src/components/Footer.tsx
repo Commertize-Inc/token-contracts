@@ -1,6 +1,15 @@
 import { Link } from "react-router-dom";
+import { usePostHog } from "@commertize/utils/client";
 
 export default function Footer() {
+	const posthog = usePostHog();
+
+	const trackSocial = (platform: string) => {
+		if (posthog) {
+			posthog.capture("social_link_clicked", { platform });
+		}
+	};
+
 	return (
 		<footer className="bg-white relative z-20" id="contact">
 			<div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -21,13 +30,13 @@ export default function Footer() {
 						<div className="mb-4">
 							<a
 								href="mailto:support@commertize.com"
-								className="text-sm text-[#D4A024] hover:text-[#D4A024]/80 transition-colors"
+								className="text-sm text-[#DDB35F] hover:text-[#DDB35F]/80 transition-colors"
 							>
 								support@commertize.com
 							</a>
 						</div>
 						<div className="mb-6">
-							<h4 className="font-semibold mb-3 text-sm text-[#D4A024]">
+							<h4 className="font-semibold mb-3 text-sm text-[#DDB35F]">
 								Social Links
 							</h4>
 							<div className="flex flex-wrap gap-3">
@@ -35,8 +44,9 @@ export default function Footer() {
 									href="https://linkedin.com/company/commertize"
 									target="_blank"
 									rel="noopener noreferrer"
-									className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors"
+									className="text-[#DDB35F] hover:text-[#DDB35F]/80 transition-colors"
 									title="LinkedIn"
+									onClick={() => trackSocial("linkedin")}
 								>
 									<svg
 										className="h-5 w-5"
@@ -50,8 +60,9 @@ export default function Footer() {
 									href="https://x.com/commertize"
 									target="_blank"
 									rel="noopener noreferrer"
-									className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors"
+									className="text-[#DDB35F] hover:text-[#DDB35F]/80 transition-colors"
 									title="X"
+									onClick={() => trackSocial("twitter")}
 								>
 									<svg
 										className="h-5 w-5"
@@ -65,8 +76,9 @@ export default function Footer() {
 									href="https://instagram.com/commertize"
 									target="_blank"
 									rel="noopener noreferrer"
-									className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors"
+									className="text-[#DDB35F] hover:text-[#DDB35F]/80 transition-colors"
 									title="Instagram"
+									onClick={() => trackSocial("instagram")}
 								>
 									<svg
 										className="h-5 w-5"
@@ -77,11 +89,12 @@ export default function Footer() {
 									</svg>
 								</a>
 								<a
-									href="https://discord.gg/DqBGD2vq"
+									href="https://discord.gg/RDpkUWyff4"
 									target="_blank"
 									rel="noopener noreferrer"
-									className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors"
+									className="text-[#DDB35F] hover:text-[#DDB35F]/80 transition-colors"
 									title="Discord"
+									onClick={() => trackSocial("discord")}
 								>
 									<svg
 										className="h-5 w-5"
@@ -95,8 +108,9 @@ export default function Footer() {
 									href="https://t.me/commertize"
 									target="_blank"
 									rel="noopener noreferrer"
-									className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors"
+									className="text-[#DDB35F] hover:text-[#DDB35F]/80 transition-colors"
 									title="Telegram"
+									onClick={() => trackSocial("telegram")}
 								>
 									<svg
 										className="h-5 w-5"
@@ -111,12 +125,12 @@ export default function Footer() {
 					</div>
 
 					<div>
-						<h4 className="font-semibold mb-4 text-[#D4A024]">Quick Links</h4>
+						<h4 className="font-semibold mb-4 text-[#DDB35F]">Quick Links</h4>
 						<ul className="space-y-2">
 							<li>
 								<Link
 									to="/nexus"
-									className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors"
+									className="text-[#DDB35F] hover:text-[#DDB35F]/80 transition-colors"
 								>
 									Nexus DeFi
 								</Link>
@@ -124,7 +138,7 @@ export default function Footer() {
 							<li>
 								<Link
 									to="/news"
-									className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors"
+									className="text-[#DDB35F] hover:text-[#DDB35F]/80 transition-colors"
 								>
 									News
 								</Link>
@@ -132,7 +146,7 @@ export default function Footer() {
 							<li>
 								<a
 									href="#contact"
-									className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors"
+									className="text-[#DDB35F] hover:text-[#DDB35F]/80 transition-colors"
 								>
 									Contact
 								</a>
@@ -141,12 +155,12 @@ export default function Footer() {
 					</div>
 
 					<div>
-						<h4 className="font-semibold mb-4 text-[#D4A024]">Divisions</h4>
+						<h4 className="font-semibold mb-4 text-[#DDB35F]">Divisions</h4>
 						<ul className="space-y-2">
 							<li>
 								<Link
 									to="/nexus"
-									className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors"
+									className="text-[#DDB35F] hover:text-[#DDB35F]/80 transition-colors"
 								>
 									DeFi & Nexus
 								</Link>
@@ -154,7 +168,7 @@ export default function Footer() {
 							<li>
 								<a
 									href="#"
-									className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors"
+									className="text-[#DDB35F] hover:text-[#DDB35F]/80 transition-colors"
 								>
 									OmniGrid
 								</a>
@@ -163,12 +177,12 @@ export default function Footer() {
 					</div>
 
 					<div>
-						<h4 className="font-semibold mb-4 text-[#D4A024]">Legal</h4>
+						<h4 className="font-semibold mb-4 text-[#DDB35F]">Legal</h4>
 						<ul className="space-y-2">
 							<li>
 								<a
 									href="/privacy"
-									className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors"
+									className="text-[#DDB35F] hover:text-[#DDB35F]/80 transition-colors"
 								>
 									Privacy Policy
 								</a>
@@ -176,7 +190,7 @@ export default function Footer() {
 							<li>
 								<a
 									href="/terms"
-									className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors"
+									className="text-[#DDB35F] hover:text-[#DDB35F]/80 transition-colors"
 								>
 									Terms of Service
 								</a>
@@ -184,7 +198,7 @@ export default function Footer() {
 							<li>
 								<a
 									href="/disclaimer"
-									className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors"
+									className="text-[#DDB35F] hover:text-[#DDB35F]/80 transition-colors"
 								>
 									Disclaimer
 								</a>
@@ -192,7 +206,7 @@ export default function Footer() {
 							<li>
 								<a
 									href="/aml-policy"
-									className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors"
+									className="text-[#DDB35F] hover:text-[#DDB35F]/80 transition-colors"
 								>
 									AML Policy
 								</a>
@@ -200,7 +214,7 @@ export default function Footer() {
 							<li>
 								<a
 									href="/cookie-policy"
-									className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors"
+									className="text-[#DDB35F] hover:text-[#DDB35F]/80 transition-colors"
 								>
 									Cookie Policy
 								</a>
@@ -208,7 +222,7 @@ export default function Footer() {
 							<li>
 								<a
 									href="/kyb-policy"
-									className="text-[#D4A024] hover:text-[#D4A024]/80 transition-colors"
+									className="text-[#DDB35F] hover:text-[#DDB35F]/80 transition-colors"
 								>
 									KYB Policy
 								</a>
@@ -217,19 +231,19 @@ export default function Footer() {
 					</div>
 
 					<div>
-						<h4 className="font-semibold mb-4 text-[#D4A024]">Newsletter</h4>
-						<p className="text-sm mb-4 text-[#D4A024]">
+						<h4 className="font-semibold mb-4 text-[#DDB35F]">Newsletter</h4>
+						<p className="text-sm mb-4 text-[#DDB35F]">
 							Stay updated with our latest listings and news
 						</p>
 						<form className="flex gap-2" id="subscribe">
 							<input
 								type="email"
 								placeholder="Enter your email"
-								className="flex-1 px-3 py-2 text-black placeholder:text-black bg-[#D4A024]/10 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4A024]/50"
+								className="flex-1 px-3 py-2 text-black placeholder:text-black bg-[#DDB35F]/10 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#DDB35F]/50"
 							/>
 							<button
 								type="submit"
-								className="px-4 py-2 bg-[#D4A024] text-white font-medium rounded-lg hover:bg-[#D4A024]/90 transition-colors"
+								className="px-4 py-2 bg-[#DDB35F] text-white font-medium rounded-lg hover:bg-[#DDB35F]/90 transition-colors"
 							>
 								Subscribe
 							</button>

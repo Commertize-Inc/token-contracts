@@ -69,7 +69,7 @@ export default function MarketAnalytics() {
 					<div className="mb-16">
 						<PageHeader
 							breadcrumbs={
-								<div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-[#D4A024] to-[#B8860B] mb-4 shadow-lg shadow-[#D4A024]/20">
+								<div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-[#DDB35F] to-[#B8860B] mb-4 shadow-lg shadow-[#DDB35F]/20">
 									<BarChart3 className="w-6 h-6 text-white" />
 								</div>
 							}
@@ -90,10 +90,10 @@ export default function MarketAnalytics() {
 					</div>
 
 					{/* Coming Soon Banner */}
-					<div className="bg-gradient-to-r from-[#D4A024]/10 to-[#E6BE8A]/10 rounded-3xl p-8 md:p-12 border border-[#D4A024]/20 mb-16">
+					<div className="bg-gradient-to-r from-[#DDB35F]/10 to-[#E6BE8A]/10 rounded-3xl p-8 md:p-12 border border-[#DDB35F]/20 mb-16">
 						<div className="flex flex-col md:flex-row items-center gap-8">
 							<div className="flex-1 text-center md:text-left">
-								<div className="inline-flex items-center gap-2 bg-[#D4A024]/20 text-[#B8860B] px-4 py-2 rounded-full text-sm mb-4">
+								<div className="inline-flex items-center gap-2 bg-[#DDB35F]/20 text-[#B8860B] px-4 py-2 rounded-full text-sm mb-4">
 									<Bell className="w-4 h-4" />
 									Coming Soon
 								</div>
@@ -108,17 +108,17 @@ export default function MarketAnalytics() {
 								</p>
 								<Link
 									to="/waitlist"
-									className="inline-flex items-center gap-2 bg-[#D4A024] hover:bg-[#B8860B] text-white px-6 py-3 rounded-xl transition-colors"
+									className="inline-flex items-center gap-2 bg-[#DDB35F] hover:bg-[#B8860B] text-white px-6 py-3 rounded-xl transition-colors"
 								>
 									Join Waitlist
 									<ArrowRight className="w-4 h-4" />
 								</Link>
 							</div>
 							<div className="flex-shrink-0">
-								<div className="w-48 h-48 md:w-56 md:h-56 rounded-2xl bg-white/50 border border-[#D4A024]/20 flex items-center justify-center">
+								<div className="w-48 h-48 md:w-56 md:h-56 rounded-2xl bg-white/50 border border-[#DDB35F]/20 flex items-center justify-center">
 									<div className="text-center">
 										<div className="w-16 h-16 mx-auto mb-3 rounded-xl bg-[#FDF8F3] flex items-center justify-center">
-											<BarChart3 className="w-8 h-8 text-[#D4A024]" />
+											<BarChart3 className="w-8 h-8 text-[#DDB35F]" />
 										</div>
 										<div className="text-sm text-gray-500">Analytics</div>
 										<div className="text-xs text-gray-400">In Development</div>
@@ -143,10 +143,10 @@ export default function MarketAnalytics() {
 							{upcomingFeatures.map((feature, index) => (
 								<div
 									key={index}
-									className="bg-white rounded-2xl p-6 border border-gray-100 hover:border-[#D4A024]/30 hover:shadow-md transition-all group"
+									className="bg-white rounded-2xl p-6 border border-gray-100 hover:border-[#DDB35F]/30 hover:shadow-md transition-all group"
 								>
-									<div className="w-12 h-12 rounded-xl bg-[#FDF8F3] group-hover:bg-[#D4A024]/20 flex items-center justify-center mb-4 transition-colors">
-										<feature.icon className="w-6 h-6 text-[#D4A024]" />
+									<div className="w-12 h-12 rounded-xl bg-[#FDF8F3] group-hover:bg-[#DDB35F]/20 flex items-center justify-center mb-4 transition-colors">
+										<feature.icon className="w-6 h-6 text-[#DDB35F]" />
 									</div>
 									<h4 className="text-lg text-gray-900 mb-2">
 										{feature.title}
@@ -235,7 +235,7 @@ export default function MarketAnalytics() {
 
 					{/* CTA */}
 					<div className="text-center bg-[#FDF8F3] rounded-2xl p-8 md:p-12">
-						<Coins className="w-12 h-12 text-[#D4A024] mx-auto mb-4" />
+						<Coins className="w-12 h-12 text-[#DDB35F] mx-auto mb-4" />
 						<h3 className="text-2xl font-light text-gray-900 mb-3">
 							Be the First to Know
 						</h3>
@@ -245,7 +245,7 @@ export default function MarketAnalytics() {
 						</p>
 						<Link
 							to="/waitlist"
-							className="inline-flex items-center gap-2 bg-[#D4A024] hover:bg-[#B8860B] text-white px-8 py-3 rounded-xl transition-colors"
+							className="inline-flex items-center gap-2 bg-[#DDB35F] hover:bg-[#B8860B] text-white px-8 py-3 rounded-xl transition-colors"
 						>
 							Join the Waitlist
 							<ArrowRight className="w-4 h-4" />

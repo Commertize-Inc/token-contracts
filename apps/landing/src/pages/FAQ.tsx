@@ -65,6 +65,10 @@ const faqData = [
 				q: "What role does AI play in Commertize?",
 				a: "Our AI-driven tools provide property analytics, investment insights, and predictive performance models to help investors make informed decisions.",
 			},
+			{
+				q: "How does Commertize ensure compliance?",
+				a: "We use the ERC-3643 standard to embed regulatory compliance (KYC/AML) directly into each token, ensuring ownership is verified and transfers are restricted to authorized parties.",
+			},
 		],
 	},
 	{
@@ -94,8 +98,8 @@ export default function FAQ() {
 				<div className="container mx-auto px-4 sm:px-6 lg:px-8">
 					{/* Header */}
 					<div className="text-center max-w-3xl mx-auto mb-16">
-						<div className="inline-flex items-center justify-center w-16 h-16 bg-[#D4A024]/10 rounded-full mb-6 border-2 border-[#D4A024]/30">
-							<HelpCircle className="w-8 h-8 text-[#D4A024]" />
+						<div className="inline-flex items-center justify-center w-16 h-16 bg-[#DDB35F]/10 rounded-full mb-6 border-2 border-[#DDB35F]/30">
+							<HelpCircle className="w-8 h-8 text-[#DDB35F]" />
 						</div>
 						<h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">
 							Frequently Asked Questions
@@ -110,10 +114,10 @@ export default function FAQ() {
 					<div className="max-w-4xl mx-auto space-y-8">
 						{faqData.map((section, sectionIndex) => (
 							<div key={sectionIndex}>
-								<div className="bg-white rounded-2xl shadow-sm overflow-hidden border border-[#D4A024]/30">
+								<div className="bg-white rounded-2xl shadow-sm overflow-hidden border border-[#DDB35F]/30">
 									<div className="px-6 py-5 flex items-center gap-3">
-										<div className="w-10 h-10 bg-[#D4A024]/10 rounded-full flex items-center justify-center border border-[#D4A024]/20">
-											<HelpCircle className="w-5 h-5 text-[#D4A024]" />
+										<div className="w-10 h-10 bg-[#DDB35F]/10 rounded-full flex items-center justify-center border border-[#DDB35F]/20">
+											<HelpCircle className="w-5 h-5 text-[#DDB35F]" />
 										</div>
 										<h2 className="text-xl text-gray-900">
 											{section.category}
@@ -148,7 +152,7 @@ export default function FAQ() {
 						<div className="flex flex-wrap justify-center gap-4">
 							<a
 								href="mailto:support@commertize.com"
-								className="inline-flex items-center gap-2 px-6 py-3 bg-[#D4A024] text-white rounded-xl hover:bg-[#B8860B] transition-colors"
+								className="inline-flex items-center gap-2 px-6 py-3 bg-[#DDB35F] text-white rounded-xl hover:bg-[#B8860B] transition-colors"
 							>
 								Contact Support
 								<ArrowRight className="w-4 h-4" />

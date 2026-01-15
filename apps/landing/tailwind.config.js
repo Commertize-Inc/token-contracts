@@ -1,3 +1,5 @@
+import tailwindcssAnimate from "tailwindcss-animate";
+
 /** @type {import('tailwindcss').Config} */
 export default {
 	darkMode: ["class"],
@@ -50,7 +52,16 @@ export default {
 				sm: "calc(var(--radius) - 4px)",
 			},
 			fontFamily: {
-				sans: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+				sans: [
+					"system-ui",
+					"-apple-system",
+					"BlinkMacSystemFont",
+					"Segoe UI",
+					"Roboto",
+					"Helvetica",
+					"Arial",
+					"sans-serif",
+				],
 				logo: ["Playfair Display", "Georgia", "serif"],
 				mono: ["Space Mono", "monospace"],
 				grotesk: ["Space Grotesk", "sans-serif"],
@@ -58,5 +69,5 @@ export default {
 			},
 		},
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [tailwindcssAnimate],
 };

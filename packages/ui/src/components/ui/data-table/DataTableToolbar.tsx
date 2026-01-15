@@ -13,7 +13,11 @@ interface DataTableToolbarProps<TData> {
 	filters?: {
 		column: string;
 		title: string;
-		options: { label: string; value: string; icon?: React.ComponentType<{ className?: string }> }[];
+		options: {
+			label: string;
+			value: string;
+			icon?: React.ComponentType<{ className?: string }>;
+		}[];
 	}[];
 	sortOptions?: { label: string; value: string }[];
 	onSortChange?: (value: string) => void;
@@ -34,7 +38,9 @@ export function DataTableToolbar<TData>({
 			<div className="flex flex-1 items-center space-x-2">
 				<Input
 					placeholder={searchPlaceholder}
-					value={(table.getColumn(filterColumn)?.getFilterValue() as string) ?? ""}
+					value={
+						(table.getColumn(filterColumn)?.getFilterValue() as string) ?? ""
+					}
 					onChange={(event) =>
 						table.getColumn(filterColumn)?.setFilterValue(event.target.value)
 					}

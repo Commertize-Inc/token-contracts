@@ -112,7 +112,7 @@ const SectionTitle = ({
 }) => (
 	<div className="text-center mb-12">
 		<span
-			className={`inline-block px-4 py-1.5 ${light ? "bg-[#D4A024]/20" : "bg-[#D4A024]/10"} text-[#D4A024] text-xs font-bold uppercase tracking-widest rounded-full mb-4`}
+			className={`inline-block px-4 py-1.5 ${light ? "bg-[#DDB35F]/20" : "bg-[#DDB35F]/10"} text-[#DDB35F] text-xs font-bold uppercase tracking-widest rounded-full mb-4`}
 		>
 			{label}
 		</span>
@@ -171,7 +171,7 @@ export default function Nexus() {
 											height={81}
 											className="w-auto h-16 md:h-20"
 										/>
-										<span className="inline-block px-4 py-2 bg-[#D4A024] text-white text-sm font-bold uppercase tracking-wider rounded-full">
+										<span className="inline-block px-4 py-2 bg-[#DDB35F] text-white text-sm font-bold uppercase tracking-wider rounded-full">
 											DeFi Protocol
 										</span>
 									</div>
@@ -179,7 +179,7 @@ export default function Nexus() {
 								title={
 									<>
 										The Liquidity Engine for{" "}
-										<span className="text-[#D4A024]">
+										<span className="text-[#DDB35F]">
 											Tokenized Real Estate
 										</span>
 									</>
@@ -188,7 +188,7 @@ export default function Nexus() {
 								className="py-0"
 							/>
 							<div className="mt-8">
-								<ArrowDown className="w-6 h-6 text-[#D4A024] animate-bounce" />
+								<ArrowDown className="w-6 h-6 text-[#DDB35F] animate-bounce" />
 							</div>
 						</motion.div>
 					</div>
@@ -199,13 +199,13 @@ export default function Nexus() {
 					<div className="absolute inset-0 bg-white/60 backdrop-blur-sm" />
 					<div className="container mx-auto px-4 relative z-10">
 						<div className="max-w-md mx-auto text-center">
-							<div className="bg-white/95 backdrop-blur-md rounded-2xl p-8 border-2 border-[#D4A024] shadow-lg">
-								<LineChart className="w-12 h-12 text-[#D4A024] mx-auto mb-4" />
+							<div className="bg-white/95 backdrop-blur-md rounded-2xl p-8 border-2 border-[#DDB35F] shadow-lg">
+								<LineChart className="w-12 h-12 text-[#DDB35F] mx-auto mb-4" />
 								<div className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-2">
 									Protocol APY
 								</div>
 								<div
-									className="text-5xl md:text-6xl font-light text-[#D4A024]"
+									className="text-5xl md:text-6xl font-light text-[#DDB35F]"
 									style={{ fontFamily: "sans-serif" }}
 								>
 									--
@@ -239,7 +239,7 @@ export default function Nexus() {
 							{/* Key Benefits */}
 							<div className="grid md:grid-cols-3 gap-6 mt-10">
 								<div className="text-center p-6">
-									<Wallet className="w-10 h-10 text-[#D4A024] mx-auto mb-3" />
+									<Wallet className="w-10 h-10 text-[#DDB35F] mx-auto mb-3" />
 									<h3 className="font-semibold text-gray-900 mb-2">
 										Instant Liquidity
 									</h3>
@@ -248,7 +248,7 @@ export default function Nexus() {
 									</p>
 								</div>
 								<div className="text-center p-6">
-									<LineChart className="w-10 h-10 text-[#D4A024] mx-auto mb-3" />
+									<LineChart className="w-10 h-10 text-[#DDB35F] mx-auto mb-3" />
 									<h3 className="font-semibold text-gray-900 mb-2">
 										Passive Yield
 									</h3>
@@ -257,7 +257,7 @@ export default function Nexus() {
 									</p>
 								</div>
 								<div className="text-center p-6">
-									<Globe className="w-10 h-10 text-[#D4A024] mx-auto mb-3" />
+									<Globe className="w-10 h-10 text-[#DDB35F] mx-auto mb-3" />
 									<h3 className="font-semibold text-gray-900 mb-2">
 										24/7 Markets
 									</h3>
@@ -289,7 +289,7 @@ export default function Nexus() {
 										transition={{ delay: index * 0.1 }}
 										className="bg-white/95 backdrop-blur-md rounded-xl p-6 text-center border border-gray-200 shadow-lg"
 									>
-										<div className="w-10 h-10 bg-[#D4A024] text-white rounded-full flex items-center justify-center mx-auto mb-4 text-lg font-bold">
+										<div className="w-10 h-10 bg-[#DDB35F] text-white rounded-full flex items-center justify-center mx-auto mb-4 text-lg font-bold">
 											{item.step}
 										</div>
 										<h4 className="font-semibold text-gray-900 mb-2">
@@ -320,11 +320,11 @@ export default function Nexus() {
 										whileInView={{ opacity: 1, y: 0 }}
 										viewport={{ once: true }}
 										transition={{ delay: index * 0.1 }}
-										className="bg-white/95 backdrop-blur-md rounded-xl p-6 border-2 border-gray-200 hover:border-[#D4A024] transition-colors shadow-lg"
+										className="bg-white/95 backdrop-blur-md rounded-xl p-6 border-2 border-gray-200 hover:border-[#DDB35F] transition-colors shadow-lg"
 									>
 										<div className="flex items-center gap-4 mb-4">
-											<div className="w-12 h-12 bg-[#D4A024]/10 rounded-xl flex items-center justify-center">
-												<product.icon className="w-6 h-6 text-[#D4A024]" />
+											<div className="w-12 h-12 bg-[#DDB35F]/10 rounded-xl flex items-center justify-center">
+												<product.icon className="w-6 h-6 text-[#DDB35F]" />
 											</div>
 											<h3 className="text-xl font-semibold text-gray-900">
 												{product.title}
@@ -337,12 +337,12 @@ export default function Nexus() {
 													key={feature}
 													className="flex items-center text-sm text-gray-700"
 												>
-													<CheckCircle className="w-4 h-4 text-[#D4A024] mr-2 flex-shrink-0" />
+													<CheckCircle className="w-4 h-4 text-[#DDB35F] mr-2 flex-shrink-0" />
 													{feature}
 												</div>
 											))}
 										</div>
-										<button className="w-full mt-6 py-3 bg-[#D4A024] hover:bg-[#B8860B] text-white font-semibold rounded-lg transition-colors">
+										<button className="w-full mt-6 py-3 bg-[#DDB35F] hover:bg-[#B8860B] text-white font-semibold rounded-lg transition-colors">
 											Enter {product.title}
 										</button>
 									</motion.div>
@@ -375,8 +375,8 @@ export default function Nexus() {
 										transition={{ delay: index * 0.1 }}
 										className="bg-white/95 backdrop-blur-md rounded-xl p-6 border border-gray-200 flex items-start gap-4 shadow-lg"
 									>
-										<div className="w-12 h-12 bg-[#D4A024]/10 rounded-xl flex items-center justify-center flex-shrink-0">
-											<feature.icon className="w-6 h-6 text-[#D4A024]" />
+										<div className="w-12 h-12 bg-[#DDB35F]/10 rounded-xl flex items-center justify-center flex-shrink-0">
+											<feature.icon className="w-6 h-6 text-[#DDB35F]" />
 										</div>
 										<div>
 											<h4 className="font-semibold text-gray-900 mb-1">

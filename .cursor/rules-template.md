@@ -11,12 +11,13 @@ This template provides a comprehensive set of rules for Cursor AI that can be ad
 
 ---
 
-```markdown
+````markdown
 # Cursor AI Assistant Rules
 
 ## Project Documentation Standards
 
 ### Documentation Organization
+
 - All project documentation MUST be organized under a `/docs` root directory
 - Use clear subfolder structures to categorize documentation by domain:
   - `docs/features/` - Feature specifications, user stories, and requirements
@@ -29,6 +30,7 @@ This template provides a comprehensive set of rules for Cursor AI that can be ad
   - `docs/deployment/` - Deployment guides, environment setup, and operational procedures
 
 ### Documentation Requirements
+
 - Every major feature or component MUST have corresponding documentation
 - Documentation should be written in Markdown format for consistency
 - Include clear examples, code snippets, and practical use cases
@@ -40,7 +42,9 @@ This template provides a comprehensive set of rules for Cursor AI that can be ad
 ## Code Quality and Standards
 
 ### Language-Specific Standards
+
 [CUSTOMIZE - Add your project's primary languages]
+
 - **TypeScript/JavaScript**: Follow ESLint and Prettier configurations, use strict typing, implement proper error handling
 - **Python**: Follow PEP 8, use type hints, implement proper exception handling, use virtual environments
 - **Go**: Follow Go conventions, use proper error handling, implement clean interfaces
@@ -49,6 +53,7 @@ This template provides a comprehensive set of rules for Cursor AI that can be ad
 - **C#**: Follow C# conventions, use proper async/await patterns, implement proper resource management
 
 ### Design Patterns and Architecture
+
 - **SOLID Principles**: Apply Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, and Dependency Inversion
 - **DRY (Don't Repeat Yourself)**: Avoid code duplication, create reusable components and utilities
 - **KISS (Keep It Simple, Stupid)**: Prefer simple, readable solutions over complex ones
@@ -57,7 +62,9 @@ This template provides a comprehensive set of rules for Cursor AI that can be ad
 - **Dependency Injection**: Use proper dependency injection patterns for testability and maintainability
 
 ### Code Organization
+
 [CUSTOMIZE - Update for your project structure]
+
 - Use consistent file and folder naming conventions (kebab-case for files, PascalCase for components)
 - Implement proper module/package structure with clear boundaries
 - Use index files for clean imports and exports
@@ -66,6 +73,7 @@ This template provides a comprehensive set of rules for Cursor AI that can be ad
 - Use environment variables for configuration management
 
 ### Testing and Quality Assurance
+
 - Write unit tests for business logic and utility functions
 - Implement integration tests for critical user flows
 - Use proper mocking and test isolation techniques
@@ -74,6 +82,7 @@ This template provides a comprehensive set of rules for Cursor AI that can be ad
 - Use static analysis tools and linters consistently
 
 ### Performance and Security
+
 - Implement proper caching strategies where appropriate
 - Use lazy loading and code splitting for better performance
 - Implement proper input validation and sanitization
@@ -82,6 +91,7 @@ This template provides a comprehensive set of rules for Cursor AI that can be ad
 - Implement proper logging and monitoring
 
 ### Version Control and Collaboration
+
 - Use meaningful commit messages following conventional commit format
 - Implement proper branching strategies (feature branches, pull requests)
 - Use proper code review processes
@@ -92,6 +102,7 @@ This template provides a comprehensive set of rules for Cursor AI that can be ad
 ## AI Assistant Behavior
 
 ### Code Generation Guidelines
+
 - Always generate code that follows the established patterns in the codebase
 - Prefer existing components and utilities over creating new ones
 - Implement proper TypeScript types and interfaces
@@ -100,6 +111,7 @@ This template provides a comprehensive set of rules for Cursor AI that can be ad
 - Ensure generated code is production-ready and follows security best practices
 
 ### Documentation Generation
+
 - Create comprehensive documentation for any new features or components
 - Include practical examples and use cases
 - Update existing documentation when making changes
@@ -107,6 +119,7 @@ This template provides a comprehensive set of rules for Cursor AI that can be ad
 - Include diagrams or visual aids when helpful for understanding
 
 ### Refactoring and Maintenance
+
 - Identify and suggest improvements to existing code
 - Propose better architectural patterns when appropriate
 - Help maintain consistency across the codebase
@@ -114,6 +127,7 @@ This template provides a comprehensive set of rules for Cursor AI that can be ad
 - Help with dependency updates and migration strategies
 
 ### Problem Solving Approach
+
 - Understand the full context before proposing solutions
 - Consider multiple approaches and their trade-offs
 - Prioritize maintainable and scalable solutions
@@ -123,7 +137,9 @@ This template provides a comprehensive set of rules for Cursor AI that can be ad
 ## Project-Specific Context
 
 ### Current Technology Stack
+
 [CUSTOMIZE - Update for your project]
+
 - **Framework**: [Your framework - e.g., Next.js, React, Vue, Angular, Django, Flask, etc.]
 - **Language**: [Primary language - e.g., TypeScript, Python, Go, Rust, Java, C#]
 - **Styling**: [Styling solution - e.g., Tailwind CSS, CSS Modules, Styled Components]
@@ -133,7 +149,9 @@ This template provides a comprehensive set of rules for Cursor AI that can be ad
 - **Deployment**: [Deployment solution - e.g., Docker, Vercel, AWS, GCP, Azure]
 
 ### Key Architectural Patterns
+
 [CUSTOMIZE - Update for your project patterns]
+
 - Component-based architecture with clear separation of concerns
 - Custom hooks for business logic and state management
 - Context providers for global state
@@ -142,7 +160,9 @@ This template provides a comprehensive set of rules for Cursor AI that can be ad
 - Responsive design with mobile-first approach
 
 ### Development Workflow
+
 [CUSTOMIZE - Update for your project structure]
+
 - Use the established component structure in `/components`
 - Follow the existing patterns for pages in `/app` or `/src`
 - Implement proper TypeScript types in `/types`
@@ -151,7 +171,9 @@ This template provides a comprehensive set of rules for Cursor AI that can be ad
 - Maintain proper import/export patterns throughout
 
 ### Project-Specific Conventions
+
 [CUSTOMIZE - Add your project's specific conventions]
+
 - [Add any specific naming conventions]
 - [Add any specific architectural decisions]
 - [Add any specific tooling requirements]
@@ -160,18 +182,21 @@ This template provides a comprehensive set of rules for Cursor AI that can be ad
 ## Quality Gates
 
 ### Before Code Generation
+
 - Verify the request aligns with project architecture
 - Check for existing similar implementations
 - Ensure proper error handling is included
 - Validate security considerations
 
 ### After Code Generation
+
 - Verify code follows established patterns
 - Check for proper TypeScript types
 - Ensure tests are included where appropriate
 - Validate documentation is updated
 
 ### Code Review Checklist
+
 - [ ] Code follows established patterns and conventions
 - [ ] Proper error handling and edge cases covered
 - [ ] Tests are included and comprehensive
@@ -183,7 +208,9 @@ This template provides a comprehensive set of rules for Cursor AI that can be ad
 ## Common Patterns and Examples
 
 ### Component Structure
+
 [CUSTOMIZE - Add examples from your codebase]
+
 ```typescript
 // Example component structure
 interface ComponentProps {
@@ -197,6 +224,7 @@ export function Component({ prop1, prop2 }: ComponentProps) {
   );
 }
 ```
+````
 
 ### Error Handling
 
@@ -205,10 +233,10 @@ export function Component({ prop1, prop2 }: ComponentProps) {
 ```typescript
 // Example error handling
 try {
-  // Operation
+	// Operation
 } catch (error) {
-  // Error handling
-  throw new CustomError('Message', error);
+	// Error handling
+	throw new CustomError("Message", error);
 }
 ```
 
@@ -218,10 +246,10 @@ try {
 
 ```typescript
 // Example test structure
-describe('Component', () => {
-  it('should handle basic functionality', () => {
-    // Test implementation
-  });
+describe("Component", () => {
+	it("should handle basic functionality", () => {
+		// Test implementation
+	});
 });
 ```
 

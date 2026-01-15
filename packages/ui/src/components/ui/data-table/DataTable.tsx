@@ -35,7 +35,10 @@ interface DataTableProps<TData, TValue> {
 	data: TData[];
 	view?: "table" | "grid";
 
-	renderGridItem?: (item: TData, table: TableInstance<TData>) => React.ReactNode;
+	renderGridItem?: (
+		item: TData,
+		table: TableInstance<TData>
+	) => React.ReactNode;
 
 	renderToolbar?: (table: TableInstance<TData>) => React.ReactNode;
 	filterColumnName?: string; // For simple search
@@ -117,26 +120,27 @@ export function DataTable<TData, TValue>({
 					{renderToolbar && renderToolbar(table as any)}
 				</div>
 				<div className="flex items-center space-x-2">
-					{renderGridItem && !onViewChange && ( // Only show internal toggle if not controlled
-						<div className="flex items-center border rounded-md p-1 bg-muted/20">
-							<Button
-								variant={view === "table" ? "secondary" : "ghost"}
-								size="sm"
-								className="h-7 w-7 p-0"
-								onClick={() => setView("table")}
-							>
-								<List className="h-4 w-4" />
-							</Button>
-							<Button
-								variant={view === "grid" ? "secondary" : "ghost"}
-								size="sm"
-								className="h-7 w-7 p-0"
-								onClick={() => setView("grid")}
-							>
-								<Grid className="h-4 w-4" />
-							</Button>
-						</div>
-					)}
+					{renderGridItem &&
+						!onViewChange && ( // Only show internal toggle if not controlled
+							<div className="flex items-center border rounded-md p-1 bg-muted/20">
+								<Button
+									variant={view === "table" ? "secondary" : "ghost"}
+									size="sm"
+									className="h-7 w-7 p-0"
+									onClick={() => setView("table")}
+								>
+									<List className="h-4 w-4" />
+								</Button>
+								<Button
+									variant={view === "grid" ? "secondary" : "ghost"}
+									size="sm"
+									className="h-7 w-7 p-0"
+									onClick={() => setView("grid")}
+								>
+									<Grid className="h-4 w-4" />
+								</Button>
+							</div>
+						)}
 					<DataTableViewOptions table={table} />
 				</div>
 			</div>
@@ -153,9 +157,9 @@ export function DataTable<TData, TValue>({
 												{header.isPlaceholder
 													? null
 													: flexRender(
-														header.column.columnDef.header,
-														header.getContext()
-													)}
+															header.column.columnDef.header,
+															header.getContext()
+														)}
 											</TableHead>
 										);
 									})}

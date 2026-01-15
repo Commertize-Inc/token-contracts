@@ -33,7 +33,8 @@ import { EntityType } from "@commertize/data/enums";
 export default function KYCPage() {
 	const { user, getAccessToken } = usePrivy();
 	const navigate = useNavigate();
-	const { viewState, updateViewState, setStep, closeAlert } = useOnboardingState();
+	const { viewState, updateViewState, setStep, closeAlert } =
+		useOnboardingState();
 
 	const [userId, setUserId] = useState<string | null>(null);
 
@@ -289,7 +290,7 @@ export default function KYCPage() {
 			}, 2000);
 			return () => clearTimeout(timer);
 		}
-	}, [viewState.success, viewState.step.current, navigate]);
+	}, [viewState.success, viewState.step, navigate]);
 
 	// ----------------------------------------------------------------------
 	// 4. Plaid / Identity Logic
@@ -318,7 +319,7 @@ export default function KYCPage() {
 		if (user) {
 			updateViewState({ linkToken: null });
 		}
-	}, [user, viewState.step.current, updateViewState]);
+	}, [user, viewState.step, updateViewState]);
 
 	const handleStartPlaid = () => {
 		updateViewState({ loading: true });

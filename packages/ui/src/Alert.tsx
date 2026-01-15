@@ -1,6 +1,13 @@
 import React, { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, AlertCircle, CheckCircle, Info, AlertTriangle, Loader2 } from "lucide-react";
+import {
+	X,
+	AlertCircle,
+	CheckCircle,
+	Info,
+	AlertTriangle,
+	Loader2,
+} from "lucide-react";
 import { createPortal } from "react-dom";
 
 export type AlertType = "success" | "error" | "info" | "warning";
@@ -164,10 +171,11 @@ const Alert: React.FC<AlertProps> = ({
 									<button
 										onClick={handleConfirm}
 										disabled={isLoading}
-										className={`px-4 py-2 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2 ${type === "error" || type === "warning"
-											? "bg-red-600 hover:bg-red-700"
-											: "bg-gray-900 hover:bg-gray-800"
-											} disabled:opacity-70 disabled:cursor-not-allowed`}
+										className={`px-4 py-2 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2 ${
+											type === "error" || type === "warning"
+												? "bg-red-600 hover:bg-red-700"
+												: "bg-gray-900 hover:bg-gray-800"
+										} disabled:opacity-70 disabled:cursor-not-allowed`}
 									>
 										{isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
 										{confirmText}

@@ -186,17 +186,17 @@ export default function ChatGPTWidget() {
 						<div
 							className={`w-80 sm:w-96 max-w-[calc(100vw-2rem)] shadow-sm rounded-2xl ${isMinimized ? "h-16" : "h-[650px] max-h-[calc(100vh-6rem)]"} transition-all duration-300 overflow-hidden relative`}
 							style={{
-								border: "6px solid #D4A024",
+								border: "6px solid #DDB35F",
 								boxShadow: "0 0 8px rgba(212, 160, 23, 0.4)",
 								backgroundColor: "white",
 							}}
 						>
 							{/* ... (Same layout as original but ensuring no standard errors) ... */}
-							<div className="flex flex-row items-center justify-between p-3 bg-gradient-to-r from-white to-gray-100 text-[#D4A024] rounded-t-2xl">
+							<div className="flex flex-row items-center justify-between p-3 bg-gradient-to-r from-white to-gray-100 text-[#DDB35F] rounded-t-2xl">
 								<div className="flex items-center gap-3">
 									<div className="w-12 h-12 rounded-full relative">
-										<div className="w-full h-full bg-[#D4A024]/20 rounded-full flex items-center justify-center">
-											<Brain className="w-6 h-6 text-[#D4A024]" />
+										<div className="w-full h-full bg-[#DDB35F]/20 rounded-full flex items-center justify-center">
+											<Brain className="w-6 h-6 text-[#DDB35F]" />
 										</div>
 									</div>
 									<div>
@@ -211,7 +211,7 @@ export default function ChatGPTWidget() {
 
 								<div
 									onClick={() => setIsOpen(false)}
-									className="cursor-pointer h-8 w-8 bg-[#D4A024] text-white hover:bg-[#a67c00] rounded-lg flex items-center justify-center shadow-sm"
+									className="cursor-pointer h-8 w-8 bg-[#DDB35F] text-white hover:bg-[#C9A84E] rounded-lg flex items-center justify-center shadow-sm"
 								>
 									<X className="h-4 w-4" />
 								</div>
@@ -242,8 +242,8 @@ export default function ChatGPTWidget() {
 														<div
 															className={`rounded-2xl p-4 text-sm leading-relaxed relative ${
 																message.role === "user"
-																	? "bg-gradient-to-br from-[#D4A024] to-[#D4A024] text-white ml-4 sm:ml-8 shadow-sm border-2 border-[#D4A024]"
-																	: "bg-white border-2 border-[#D4A024] shadow-sm mr-4 sm:mr-8 text-black"
+																	? "bg-gradient-to-br from-[#DDB35F] to-[#DDB35F] text-white ml-4 sm:ml-8 shadow-sm border-2 border-[#DDB35F]"
+																	: "bg-white border-2 border-[#DDB35F] shadow-sm mr-4 sm:mr-8 text-black"
 															}`}
 														>
 															<div
@@ -316,7 +316,7 @@ export default function ChatGPTWidget() {
 																		(action, idx) => (
 																			<div
 																				key={idx}
-																				className="cursor-pointer bg-white hover:bg-[#D4A024] hover:text-white text-[#D4A024] border border-[#D4A024] text-xs py-2 px-3 rounded-lg transition-all duration-200 font-light text-center"
+																				className="cursor-pointer bg-white hover:bg-[#DDB35F] hover:text-white text-[#DDB35F] border border-[#DDB35F] text-xs py-2 px-3 rounded-lg transition-all duration-200 font-light text-center"
 																				onClick={() =>
 																					handleSuggestedAction(action)
 																				}
@@ -338,13 +338,13 @@ export default function ChatGPTWidget() {
 												>
 													<div className="bg-white/60 backdrop-blur-md border border-white/40 rounded-2xl p-4 mr-8 shadow-sm">
 														<div className="flex items-center gap-2">
-															<div className="w-2 h-2 bg-[#D4A024] rounded-full animate-bounce"></div>
+															<div className="w-2 h-2 bg-[#DDB35F] rounded-full animate-bounce"></div>
 															<div
-																className="w-2 h-2 bg-[#D4A024] rounded-full animate-bounce"
+																className="w-2 h-2 bg-[#DDB35F] rounded-full animate-bounce"
 																style={{ animationDelay: "0.1s" }}
 															></div>
 															<div
-																className="w-2 h-2 bg-[#D4A024] rounded-full animate-bounce"
+																className="w-2 h-2 bg-[#DDB35F] rounded-full animate-bounce"
 																style={{ animationDelay: "0.2s" }}
 															></div>
 															<span className="text-xs text-gray-500 ml-2 font-sans font-light">
@@ -358,7 +358,7 @@ export default function ChatGPTWidget() {
 										</div>
 									</div>
 
-									<div className="border-t border-[#D4A024]/30 bg-white flex-shrink-0 p-3 mt-2">
+									<div className="border-t border-[#DDB35F]/30 bg-white flex-shrink-0 p-3 mt-2">
 										<div className="flex gap-2 items-start">
 											<textarea
 												ref={inputRef}
@@ -368,7 +368,7 @@ export default function ChatGPTWidget() {
 												placeholder="Curious about tokenization? Start typing…"
 												disabled={sendMessageMutation.isPending}
 												rows={2}
-												className="flex-1 min-h-[48px] max-h-[120px] border-2 border-[#D4A024] focus:border-[#D4A024] focus:ring-1 focus:ring-[#D4A024]/20 bg-white text-sm font-light rounded-lg px-3 py-2 text-black placeholder:text-black/50 resize-none outline-none"
+												className="flex-1 min-h-[48px] max-h-[120px] border-2 border-[#DDB35F] focus:border-[#DDB35F] focus:ring-1 focus:ring-[#DDB35F]/20 bg-white text-sm font-light rounded-lg px-3 py-2 text-black placeholder:text-black/50 resize-none outline-none"
 											/>
 
 											<div className="flex gap-2">
@@ -378,7 +378,7 @@ export default function ChatGPTWidget() {
 														!sendMessageMutation.isPending &&
 														handleSendMessage()
 													}
-													className="cursor-pointer bg-[#D4A024] hover:bg-[#a67c00] text-white px-2 py-2 rounded-lg flex items-center justify-center gap-1 shadow-sm transition-all duration-200 hover:scale-105 min-w-[45px]"
+													className="cursor-pointer bg-[#DDB35F] hover:bg-[#C9A84E] text-white px-2 py-2 rounded-lg flex items-center justify-center gap-1 shadow-sm transition-all duration-200 hover:scale-105 min-w-[45px]"
 												>
 													{sendMessageMutation.isPending ? (
 														<motion.div
@@ -399,7 +399,7 @@ export default function ChatGPTWidget() {
 
 												<div
 													onClick={startNewChat}
-													className="cursor-pointer bg-[#D4A024] hover:bg-[#a67c00] text-white px-2 py-2 rounded-lg flex items-center justify-center gap-1 shadow-sm transition-all duration-200 hover:scale-105 min-w-[45px]"
+													className="cursor-pointer bg-[#DDB35F] hover:bg-[#C9A84E] text-white px-2 py-2 rounded-lg flex items-center justify-center gap-1 shadow-sm transition-all duration-200 hover:scale-105 min-w-[45px]"
 												>
 													<RefreshCw className="h-4 w-4" />
 													<span className="text-sm">New</span>
@@ -408,10 +408,10 @@ export default function ChatGPTWidget() {
 										</div>
 									</div>
 
-									<div className="bg-gradient-to-r from-white to-gray-100 border-t border-[#D4A024]/20 p-3 flex-shrink-0 rounded-b-2xl">
+									<div className="bg-gradient-to-r from-white to-gray-100 border-t border-[#DDB35F]/20 p-3 flex-shrink-0 rounded-b-2xl">
 										<div className="flex items-center justify-center gap-2 text-sm">
-											<div className="w-2 h-2 bg-[#D4A024] rounded-full animate-pulse shadow-sm"></div>
-											<span className="font-sans font-bold text-[#D4A024]">
+											<div className="w-2 h-2 bg-[#DDB35F] rounded-full animate-pulse shadow-sm"></div>
+											<span className="font-sans font-bold text-[#DDB35F]">
 												Powered by Commertize Intelligence™
 											</span>
 										</div>
@@ -426,7 +426,7 @@ export default function ChatGPTWidget() {
 			{!isOpen && (
 				<motion.button
 					onClick={() => setIsOpen(true)}
-					className="fixed bottom-4 right-4 sm:right-6 z-[60] transition-all duration-300 flex items-center justify-center group hover:scale-110 cursor-pointer"
+					className="fixed bottom-4 right-3 sm:right-6 z-[60] transition-all duration-300 flex items-center justify-center group hover:scale-110 cursor-pointer"
 					whileHover={{ scale: 1.1 }}
 					whileTap={{ scale: 0.95 }}
 					initial={{ opacity: 0, scale: 0.8 }}
@@ -434,8 +434,9 @@ export default function ChatGPTWidget() {
 					transition={{ duration: 0.3, delay: 0.5 }}
 					style={{ background: "none", border: "none", padding: 0 }}
 				>
-					<div className="w-16 h-16 rounded-full bg-gradient-to-r from-[#D4A024] via-[#D4A024] to-[#D4A024] p-1 border-2 border-[#D4A024] shadow-sm relative flex items-center justify-center">
-						<Brain className="w-8 h-8 text-white" />
+					{/* Smaller on mobile (w-12), normal on desktop (w-16) */}
+					<div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-r from-[#DDB35F] via-[#DDB35F] to-[#DDB35F] p-1 border-2 border-[#DDB35F] shadow-sm relative flex items-center justify-center">
+						<Brain className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
 					</div>
 				</motion.button>
 			)}

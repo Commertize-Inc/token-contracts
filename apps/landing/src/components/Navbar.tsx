@@ -1,17 +1,21 @@
+// navbar component for the landing page
+// wraps the shared navbar from ui package and adds landing specific stuff like dropdowns and login button
+
 import { Navbar as SharedNavbar } from "@commertize/ui";
-import { useFeatureFlag } from "@commertize/utils/client"; // Ensure this works in Vite
-import { useIsMounted } from "@commertize/utils/client"; // Ensure this works in Vite
+import {
+	PostHogFeatureFlags,
+	useFeatureFlag,
+	useIsMounted,
+	usePostHog,
+} from "@commertize/utils/client"; // Ensure this works in Vite
 import { ChevronRight } from "lucide-react";
-import { Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { PostHogFeatureFlags } from "@commertize/utils/client";
+import { Link } from "react-router-dom";
 
-// Wrapper to adapt standard href to react-router-dom's to prop
-// Handles both 'to' (internal) and 'href' (external/anchor)
-
+// this wraper handles the difference between internal links (react router) and external ones
+// basically if its a hash link or external url we use regular anchor tag, otherwise use Link
 const LinkWrapper = ({ href, children, ...props }: any) => {
-	// If it starts with /#, it's an anchor on the home page usually,
-	// but here we just check if it's an anchor link
+	// anchor links need to use regular a tag for scrolling to work properly
 	if (href.startsWith("/#") || href.includes("#")) {
 		return (
 			<a href={href} {...props}>
@@ -19,7 +23,7 @@ const LinkWrapper = ({ href, children, ...props }: any) => {
 			</a>
 		);
 	}
-	// Check if external
+	// external links also use regular a tag
 	if (href.startsWith("http")) {
 		return (
 			<a href={href} {...props}>
@@ -27,6 +31,7 @@ const LinkWrapper = ({ href, children, ...props }: any) => {
 			</a>
 		);
 	}
+	// internal links use react router Link for client side navigation
 	return (
 		<Link to={href} {...props}>
 			{children}
@@ -34,33 +39,47 @@ const LinkWrapper = ({ href, children, ...props }: any) => {
 	);
 };
 
+// main navbar compoennt
 const Navbar = () => {
 	const isMounted = useIsMounted();
 	const [scrolled, setScrolled] = useState(false);
-	// State for dropdowns
+	const posthog = usePostHog();
+
+	const trackNav = (label: string, destination: string) => {
+		if (posthog) {
+			posthog.capture("navigation_clicked", { label, destination });
+		}
+	};
+
+	// dropdown states for the nav menu items
 	const [useCasesOpen, setUseCasesOpen] = useState(false);
 	const [companyOpen, setCompanyOpen] = useState(false);
 
+	// refs for timeout cleanup when hovering dropdowns
 	const useCasesTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 	const companyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+	// feature flags to control whats visible in the nav
 	const ffLogin = useFeatureFlag(PostHogFeatureFlags.LANDING_LOGIN);
 	const isAiNewsEnabled = useFeatureFlag(PostHogFeatureFlags.NEWS_GENERATION);
-	// Fallback for dev if feature flag fails or PostHog not loaded
+	// show login by defualt if feature flag isnt loaded yet
 	const showLogin = ffLogin === undefined ? true : ffLogin;
 
+	// handle scroll to add background blur when user scrolls down
 	useEffect(() => {
 		const handleScroll = () => setScrolled(window.scrollY > 50);
 		handleScroll();
 		window.addEventListener("scroll", handleScroll);
 		return () => {
 			window.removeEventListener("scroll", handleScroll);
+			// clean up the dropdown timeouts too
 			if (companyTimeoutRef.current) clearTimeout(companyTimeoutRef.current);
 			if (useCasesTimeoutRef.current) clearTimeout(useCasesTimeoutRef.current);
 		};
 	}, []);
 
-	// Custom Styles for Landing Page (Fixed + Transparent/White)
+	// custom inline styles for the fixed navbar
+	// changes background and blur based on scroll position
 	const navbarStyle = {
 		position: "fixed" as const,
 		top: 0,
@@ -76,17 +95,19 @@ const Navbar = () => {
 		transition: "all 0.3s ease",
 	};
 
+	// center nav items with dropdowns for use cases and company
 	const CenterContent = (
 		<div className="flex items-center gap-6 lg:gap-8">
-			{/* 1. Mission */}
+			{/* mission link - just scrolls to about section */}
 			<a
 				href="/#about"
-				className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light"
+				className="text-sm text-gray-700 hover:text-[#DDB35F] transition-colors font-light"
+				onClick={() => trackNav("Mission", "/#about")}
 			>
 				Mission
 			</a>
 
-			{/* 2. Use Cases Dropdown */}
+			{/* use cases dropdown - shows on hover with a small delay before closing */}
 			<div
 				className="relative"
 				onMouseEnter={() => {
@@ -101,7 +122,7 @@ const Navbar = () => {
 					);
 				}}
 			>
-				<button className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light flex items-center gap-1 cursor-pointer bg-transparent border-none p-0">
+				<button className="text-sm text-gray-700 hover:text-[#DDB35F] transition-colors font-light flex items-center gap-1 cursor-pointer bg-transparent border-none p-0">
 					Use Cases
 					<ChevronRight
 						size={12}
@@ -112,13 +133,15 @@ const Navbar = () => {
 					<div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-2">
 						<Link
 							to="/nexus"
-							className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4A024]"
+							className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#DDB35F]"
+							onClick={() => trackNav("Nexus", "/nexus")}
 						>
 							Nexus
 						</Link>
 						<Link
 							to="/omnigrid"
-							className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4A024]"
+							className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#DDB35F]"
+							onClick={() => trackNav("OmniGrid", "/omnigrid")}
 						>
 							OmniGrid
 						</Link>
@@ -126,25 +149,27 @@ const Navbar = () => {
 				)}
 			</div>
 
-			{/* 3. News */}
+			{/* news link - only shows if feature flag is on */}
 			{isAiNewsEnabled && (
 				<Link
 					to="/news"
-					className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light"
+					className="text-sm text-gray-700 hover:text-[#DDB35F] transition-colors font-light"
+					onClick={() => trackNav("News", "/news")}
 				>
 					News
 				</Link>
 			)}
 
-			{/* 4. Analytics */}
+			{/* analytics link */}
 			<Link
 				to="/analytics"
-				className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light"
+				className="text-sm text-gray-700 hover:text-[#DDB35F] transition-colors font-light"
+				onClick={() => trackNav("Analytics", "/analytics")}
 			>
 				Analytics
 			</Link>
 
-			{/* 5. Company Dropdown */}
+			{/* company dropdown - same hover pattern as use cases */}
 			<div
 				className="relative"
 				onMouseEnter={() => {
@@ -159,7 +184,7 @@ const Navbar = () => {
 					);
 				}}
 			>
-				<button className="text-sm text-gray-700 hover:text-[#D4A024] transition-colors font-light flex items-center gap-1 cursor-pointer bg-transparent border-none p-0">
+				<button className="text-sm text-gray-700 hover:text-[#DDB35F] transition-colors font-light flex items-center gap-1 cursor-pointer bg-transparent border-none p-0">
 					Company
 					<ChevronRight
 						size={12}
@@ -170,14 +195,16 @@ const Navbar = () => {
 					<div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-2">
 						<Link
 							to="/team"
-							className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4A024]"
+							className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#DDB35F]"
+							onClick={() => trackNav("Team", "/team")}
 						>
 							Team
 						</Link>
 
 						<Link
 							to="/faq"
-							className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#D4A024]"
+							className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#DDB35F]"
+							onClick={() => trackNav("FAQ", "/faq")}
 						>
 							FAQ
 						</Link>
@@ -187,25 +214,35 @@ const Navbar = () => {
 		</div>
 	);
 
+	// right side buttons for desktop only
 	const RightContent = (
-		<div className="hidden lg:flex items-center gap-4">
-			<a
-				href="/waitlist"
-				className="inline-flex items-center justify-center px-5 py-2 border border-[#D4A024] text-[#D4A024] text-sm font-light rounded-lg hover:bg-[#D4A024] hover:text-white transition-colors"
-			>
-				Join Waitlist
-			</a>
-			{isMounted && showLogin && (
-				<a
-					href={import.meta.env.VITE_DASHBOARD_URL || "http://localhost:3003"}
-					className="inline-flex items-center justify-center px-5 py-2 bg-[#D4A024] text-white text-sm font-light rounded-lg hover:bg-[#B8881C] transition-colors"
-				>
-					Sign In
-				</a>
-			)}
-		</div>
+		<>
+			{/* mobile version - no buttons shown */}
+			<div className="flex sm:hidden items-center gap-1">
+				{/* Empty - no mobile navbar buttons */}
+			</div>
+			{/* desktop version - sign in button only */}
+			<div className="hidden sm:flex items-center gap-4">
+				{isMounted && showLogin && (
+					<a
+						href={import.meta.env.VITE_DASHBOARD_URL || "http://localhost:3003"}
+						className="inline-flex items-center justify-center px-5 py-2 bg-[#DDB35F] text-white text-sm font-light rounded-lg hover:bg-[#C9A84E] transition-colors"
+						onClick={() =>
+							trackNav(
+								"Sign In",
+								import.meta.env.VITE_DASHBOARD_URL || "http://localhost:3003"
+							)
+						}
+					>
+						Sign In
+					</a>
+				)}
+			</div>
+		</>
 	);
 
+	// mobile menu content - shows when hamburger is tapped
+	// laid out differently than desktop, more vertcal
 	const MobileContent = (
 		<div>
 			<a
@@ -215,7 +252,7 @@ const Navbar = () => {
 				Mission
 			</a>
 
-			{/* Use Cases Mobile */}
+			{/* use cases section in mobile menu */}
 			<div className="py-2 border-b border-gray-100">
 				<div className="text-xs text-gray-500 uppercase tracking-wider mb-2">
 					Use Cases
@@ -243,7 +280,7 @@ const Navbar = () => {
 				Analytics
 			</Link>
 
-			{/* Company Mobile */}
+			{/* company section in mobile menu */}
 			<div className="py-2 border-b border-gray-100">
 				<div className="text-xs text-gray-500 uppercase tracking-wider mb-2">
 					Company
@@ -257,17 +294,12 @@ const Navbar = () => {
 				</Link>
 			</div>
 
+			{/* cta button at the bottom of mobile menu */}
 			<div className="pt-4 border-t border-gray-100 space-y-3">
-				<a
-					href="/waitlist"
-					className="block w-full text-center px-5 py-3 border border-[#D4A024] text-[#D4A024] font-light rounded-lg"
-				>
-					Join Waitlist
-				</a>
 				{isMounted && showLogin && (
 					<a
 						href={import.meta.env.VITE_DASHBOARD_URL || "http://localhost:3003"}
-						className="block w-full text-center px-5 py-3 bg-[#D4A024] text-white font-light rounded-lg"
+						className="block w-full text-center px-5 py-3 bg-[#DDB35F] text-white font-light rounded-lg"
 					>
 						Sign In
 					</a>
@@ -285,11 +317,10 @@ const Navbar = () => {
 				rightContent={RightContent}
 				mobileContent={MobileContent}
 				style={navbarStyle}
-				// Override the gradient background from the shared component with !bg-none if needed,
-				// but we are using inline style background which should take precedence.
-				// Using className="!bg-none" to be safe if desired, but let's test.
+				// override the gradient bg from shared component
 				className="!bg-none"
 			/>
+			{/* spacer div so content doesnt go under the fixed navbar */}
 			<div className="h-16" aria-hidden="true" />
 		</>
 	);

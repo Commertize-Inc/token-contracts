@@ -48,7 +48,7 @@ privy_id: ${privyUserId || "Not Available"}
 				<p className="text-sm text-slate-500 text-center">
 					Faster response? Join our{" "}
 					<a
-						href="https://discord.gg/DqBGD2vq"
+						href="https://discord.gg/RDpkUWyff4"
 						target="_blank"
 						rel="noopener noreferrer"
 						className="text-blue-600 hover:underline"
@@ -76,7 +76,7 @@ privy_id: ${privyUserId || "Not Available"}
 			<p className="text-sm text-slate-500 text-center">
 				Faster response? Join our{" "}
 				<a
-					href="https://discord.gg/DqBGD2vq"
+					href="https://discord.gg/RDpkUWyff4"
 					target="_blank"
 					rel="noopener noreferrer"
 					className="text-blue-600 hover:underline"

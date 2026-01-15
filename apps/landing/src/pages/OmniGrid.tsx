@@ -177,14 +177,14 @@ export default function OmniGrid() {
 							viewport={{ once: true }}
 							className="text-center"
 						>
-							<span className="inline-block px-4 py-1.5 bg-[#D4A024]/10 text-[#D4A024] text-xs font-bold uppercase tracking-widest rounded-full mb-6">
+							<span className="inline-block px-4 py-1.5 bg-[#DDB35F]/10 text-[#DDB35F] text-xs font-bold uppercase tracking-widest rounded-full mb-6">
 								About
 							</span>
 							<h2
 								className="text-4xl md:text-5xl font-light mb-8 text-gray-800"
 								style={{ fontFamily: "Space Grotesk, sans-serif" }}
 							>
-								Physical <span className="text-[#D4A024]">Meets</span> Digital
+								Physical <span className="text-[#DDB35F]">Meets</span> Digital
 							</h2>
 							<div className="max-w-3xl mx-auto">
 								<p className="text-xl font-light text-gray-600 leading-relaxed">
@@ -208,7 +208,7 @@ export default function OmniGrid() {
 							viewport={{ once: true }}
 							className="text-center mb-16"
 						>
-							<span className="inline-block px-4 py-1.5 bg-[#D4A024]/20 text-[#D4A024] text-xs font-bold uppercase tracking-widest rounded-full mb-6">
+							<span className="inline-block px-4 py-1.5 bg-[#DDB35F]/20 text-[#DDB35F] text-xs font-bold uppercase tracking-widest rounded-full mb-6">
 								Pillars
 							</span>
 							<h2
@@ -235,16 +235,16 @@ export default function OmniGrid() {
 									transition={{ duration: 0.5, delay: index * 0.08 }}
 									viewport={{ once: true }}
 									whileHover={{ scale: 1.02, y: -5 }}
-									className="bg-white border-2 border-[#D4A024]/50 hover:border-[#D4A024] rounded-2xl p-6 transition-all duration-300 shadow-xl"
+									className="bg-white border-2 border-[#DDB35F]/50 hover:border-[#DDB35F] rounded-2xl p-6 transition-all duration-300 shadow-xl"
 								>
 									<div className="flex flex-col h-full">
-										<div className="w-14 h-14 bg-[#D4A024]/10 rounded-full flex items-center justify-center mb-4">
-											<category.icon className="w-7 h-7 text-[#D4A024]" />
+										<div className="w-14 h-14 bg-[#DDB35F]/10 rounded-full flex items-center justify-center mb-4">
+											<category.icon className="w-7 h-7 text-[#DDB35F]" />
 										</div>
 										<h3 className="text-lg font-semibold text-gray-900 mb-2">
 											{category.title}
 										</h3>
-										<p className="text-sm text-[#D4A024] font-medium mb-3">
+										<p className="text-sm text-[#DDB35F] font-medium mb-3">
 											{category.subtitle}
 										</p>
 										<p className="text-sm text-gray-600 leading-relaxed mb-4 flex-grow">
@@ -268,7 +268,7 @@ export default function OmniGrid() {
 						<div
 							className="absolute inset-0"
 							style={{
-								backgroundImage: `radial-gradient(circle at center, #D4A024 1px, transparent 1px)`,
+								backgroundImage: `radial-gradient(circle at center, #DDB35F 1px, transparent 1px)`,
 								backgroundSize: "60px 60px",
 							}}
 						/>
@@ -281,26 +281,26 @@ export default function OmniGrid() {
 							viewport={{ once: true }}
 							className="text-center"
 						>
-							<span className="inline-block px-4 py-1.5 bg-[#D4A024]/10 text-[#D4A024] text-xs font-bold uppercase tracking-widest rounded-full mb-8">
+							<span className="inline-block px-4 py-1.5 bg-[#DDB35F]/10 text-[#DDB35F] text-xs font-bold uppercase tracking-widest rounded-full mb-8">
 								Vision
 							</span>
-							<div className="border-2 border-[#D4A024] rounded-3xl p-10 md:p-14 bg-white shadow-xl">
+							<div className="border-2 border-[#DDB35F] rounded-3xl p-10 md:p-14 bg-white shadow-xl">
 								<p className="text-xl md:text-2xl font-light leading-relaxed text-gray-700">
 									OmniGrid represents Commertize&apos;s commitment to building
 									the{" "}
-									<span className="text-[#D4A024] font-medium">
+									<span className="text-[#DDB35F] font-medium">
 										physical backbone
 									</span>{" "}
 									of tomorrow&apos;s tokenized economy — integrating{" "}
-									<span className="text-[#D4A024] font-medium">
+									<span className="text-[#DDB35F] font-medium">
 										sustainability
 									</span>
 									,{" "}
-									<span className="text-[#D4A024] font-medium">
+									<span className="text-[#DDB35F] font-medium">
 										energy efficiency
 									</span>
 									, and{" "}
-									<span className="text-[#D4A024] font-medium">
+									<span className="text-[#DDB35F] font-medium">
 										digital scalability
 									</span>{" "}
 									across every layer of infrastructure.
@@ -320,14 +320,14 @@ export default function OmniGrid() {
 							viewport={{ once: true }}
 						>
 							<div className="text-center mb-12">
-								<span className="inline-block px-4 py-1.5 bg-[#D4A024]/10 text-[#D4A024] text-xs font-bold uppercase tracking-widest rounded-full mb-6">
+								<span className="inline-block px-4 py-1.5 bg-[#DDB35F]/10 text-[#DDB35F] text-xs font-bold uppercase tracking-widest rounded-full mb-6">
 									Status
 								</span>
 								<h2
 									className="text-3xl md:text-4xl font-light text-gray-800"
 									style={{ fontFamily: "Space Grotesk, sans-serif" }}
 								>
-									Current <span className="text-[#D4A024]">Progress</span>
+									Current <span className="text-[#DDB35F]">Progress</span>
 								</h2>
 							</div>
 
@@ -341,8 +341,8 @@ export default function OmniGrid() {
 										viewport={{ once: true }}
 										className="bg-white backdrop-blur-sm border border-gray-200 rounded-2xl p-8 text-center shadow-lg"
 									>
-										<div className="w-14 h-14 bg-[#D4A024]/10 rounded-full flex items-center justify-center mx-auto mb-5">
-											<status.icon className="w-7 h-7 text-[#D4A024]" />
+										<div className="w-14 h-14 bg-[#DDB35F]/10 rounded-full flex items-center justify-center mx-auto mb-5">
+											<status.icon className="w-7 h-7 text-[#DDB35F]" />
 										</div>
 										<p className="text-gray-700 font-light text-lg">
 											{status.text}

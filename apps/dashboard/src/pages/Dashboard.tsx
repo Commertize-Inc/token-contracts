@@ -168,7 +168,7 @@ export default function DashboardHome() {
 							</Button>
 						</div>
 						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-							{ }
+							{}
 							{listings.slice(0, 3).map((listing: any, index: number) => (
 								<ListingCard
 									key={listing.id}
