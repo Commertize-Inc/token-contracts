@@ -175,8 +175,38 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           NODE_ENV: ${{ matrix.environment }}
 
+  deploy:
+    name: Deploy to Production
+    needs: [migrate]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v') && needs.setup.outputs.environments != '[]'
+    strategy:
+      matrix:
+        include:
+          - app: dashboard
+            projectIdSecret: VERCEL_PROJECT_ID_DASHBOARD
+          - app: backend
+            projectIdSecret: VERCEL_PROJECT_ID_BACKEND
+          - app: landing
+            projectIdSecret: VERCEL_PROJECT_ID_LANDING
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets[matrix.projectIdSecret] }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
+      - name: Pull Vercel project config for ${{ matrix.app }}
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy ${{ matrix.app }} to production
+        run: vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }}
+
   rollback:
-    needs: migrate
+    needs: [migrate, deploy]
     if: ${{ failure() }}
     runs-on: ubuntu-latest
     steps:
