@@ -49,9 +49,59 @@ jobs:
             echo "environments=[]" >> "$GITHUB_OUTPUT"
           fi
 
+  build:
+    name: Build Dependencies
+    needs: [setup]
+    if: ${{ needs.setup.outputs.environments != '[]' && needs.setup.outputs.environments != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10.13.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('**/pnpm-lock.yaml') }}
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Cache turbo build setup
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
+      - name: Build dependencies
+        run: npx turbo run build --filter=@commertize/data^...
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-files
+          path: packages/*/dist
+          retention-days: 1
+
   migrate:
     name: Run Migrations (${{ matrix.environment }})
-    needs: [setup]
+    needs: [setup, build]
     if: ${{ needs.setup.outputs.environments != '[]' && needs.setup.outputs.environments != '' }}
     runs-on: ubuntu-latest
     strategy:
@@ -75,11 +125,23 @@ jobs:
           node-version: 20
           cache: "pnpm"
 
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('**/pnpm-lock.yaml') }}
+
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build dependencies
-        run: npx turbo run build --filter=@commertize/data^...
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-files
+          path: packages
 
       - name: Check pending migrations
         working-directory: packages/data
