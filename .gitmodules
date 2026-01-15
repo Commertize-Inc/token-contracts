@@ -1,0 +1,3 @@
+[submodule "vendor/token-contracts"]
+	path = vendor/token-contracts
+	url = github-mambattu:commertize-inc/token-contracts.git
