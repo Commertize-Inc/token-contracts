@@ -179,10 +179,7 @@ export default function CreateListing() {
 
 	// Calculate NOI
 	useEffect(() => {
-		if (
-			effectiveGrossIncome !== undefined &&
-			operatingExpenses !== undefined
-		) {
+		if (effectiveGrossIncome !== undefined && operatingExpenses !== undefined) {
 			const noi = Math.max(0, effectiveGrossIncome - operatingExpenses);
 			const currentNOI = form.getValues("financials.noi");
 			if (currentNOI !== noi) {
@@ -301,7 +298,7 @@ export default function CreateListing() {
 			console.error("Submission error:", error);
 			setServerError(
 				error.response?.data?.error ||
-				"Failed to create listing. Please try again."
+					"Failed to create listing. Please try again."
 			);
 			setErrorModalOpen(true);
 		} finally {

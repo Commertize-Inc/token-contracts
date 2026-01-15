@@ -40,15 +40,15 @@ const config: Options<PostgreSqlDriver> = {
 	clientUrl: process.env.DATABASE_URL,
 	driverOptions:
 		process.env.DATABASE_URL?.includes("localhost") ||
-			process.env.DATABASE_URL?.includes("127.0.0.1")
+		process.env.DATABASE_URL?.includes("127.0.0.1")
 			? undefined
 			: {
-				connection: {
-					ssl: {
-						rejectUnauthorized: !isDevelopment,
+					connection: {
+						ssl: {
+							rejectUnauthorized: !isDevelopment,
+						},
 					},
 				},
-			},
 	// Backend service runs as a persistent node process, so dynamic access is fine for dev,
 	// but strictly typed entities are safer.
 	discovery: {

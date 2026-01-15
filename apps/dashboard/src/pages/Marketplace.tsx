@@ -226,10 +226,11 @@ export default function MarketplacePage() {
 								<div className="flex items-center space-x-1 bg-gray-100 p-1 rounded-lg">
 									<button
 										onClick={() => setView("table")}
-										className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${view === "table"
+										className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
+											view === "table"
 												? "bg-white text-gray-900 shadow-sm"
 												: "text-gray-500 hover:text-gray-900 hover:bg-gray-200/50"
-											}`}
+										}`}
 									>
 										<span className="w-4 h-4">
 											<svg
@@ -251,10 +252,11 @@ export default function MarketplacePage() {
 									</button>
 									<button
 										onClick={() => setView("grid")}
-										className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${view === "grid"
+										className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
+											view === "grid"
 												? "bg-white text-gray-900 shadow-sm"
 												: "text-gray-500 hover:text-gray-900 hover:bg-gray-200/50"
-											}`}
+										}`}
 									>
 										<span className="w-4 h-4">
 											<svg

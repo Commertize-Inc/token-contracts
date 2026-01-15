@@ -28,7 +28,10 @@ contact.post("/", async (c) => {
 		// Check if email already exists
 		const existing = await em.findOne(Contact, { email: result.data.email });
 		if (existing) {
-			return c.json({ error: "This email is already in our contact list" }, 409);
+			return c.json(
+				{ error: "This email is already in our contact list" },
+				409
+			);
 		}
 
 		const entry = em.create(Contact, {
@@ -51,7 +54,10 @@ contact.post("/", async (c) => {
 		// Check if email already exists
 		const existing = await em.findOne(Contact, { email: result.data.email });
 		if (existing) {
-			return c.json({ error: "This email is already in our contact list" }, 409);
+			return c.json(
+				{ error: "This email is already in our contact list" },
+				409
+			);
 		}
 
 		const entry = em.create(Contact, {
