@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { MapPin, Building2, TrendingUp, DollarSign } from "lucide-react";
-import Button from "./Button";
+import { Button } from "./components/ui/button";
 import { Badge } from "./components/ui/badge";
 import { ListingStatus } from "@commertize/data/enums";
 import type { Listing } from "@commertize/data";
@@ -198,13 +198,11 @@ export const ListingCard = ({
 
 				<div className="mt-5">
 					<Button
-						width="full"
-						variant="primary"
 						onClick={(e) => {
 							e.stopPropagation();
 							handleViewDetails();
 						}}
-						className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-2 group-hover:translate-y-0"
+						className="w-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-2 group-hover:translate-y-0"
 					>
 						View Details
 					</Button>

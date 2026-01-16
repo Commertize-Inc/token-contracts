@@ -8,6 +8,7 @@ import {
 	DataTableColumnHeader,
 	Alert,
 	PageHeader,
+	PageContainer,
 } from "@commertize/ui";
 import { ColumnDef } from "@tanstack/react-table";
 import {
@@ -267,7 +268,7 @@ export default function AdminReviews() {
 			cell: ({ row }) => (
 				<div className="text-right">
 					<Button
-						variant="text"
+						variant="ghost"
 						className="text-primary hover:text-primary/80 hover:bg-primary/5 text-sm px-2 py-1"
 						onClick={() => {
 							setSelectedSubmission(row.original);
@@ -285,7 +286,7 @@ export default function AdminReviews() {
 	return (
 		<div className="min-h-screen bg-slate-50 pb-20">
 			<Navbar />
-			<div className="container mx-auto px-4 pb-8">
+			<PageContainer>
 				<PageHeader
 					title="Review Queue"
 					actions={
@@ -407,7 +408,7 @@ export default function AdminReviews() {
 											<>
 												<Button
 													variant={
-														reviewAction === "TOKENIZE" ? "primary" : "outlined"
+														reviewAction === "TOKENIZE" ? "default" : "outline"
 													}
 													className={`justify-start ${reviewAction === "TOKENIZE" ? "bg-indigo-600 hover:bg-indigo-700 border-indigo-600 text-white" : "hover:border-indigo-600 hover:text-indigo-600"}`}
 													onClick={() => setReviewAction("TOKENIZE")}
@@ -417,7 +418,7 @@ export default function AdminReviews() {
 
 												<Button
 													variant={
-														reviewAction === "FREEZE" ? "primary" : "outlined"
+														reviewAction === "FREEZE" ? "default" : "outline"
 													}
 													className={`justify-start ${reviewAction === "FREEZE" ? "bg-cyan-600 hover:bg-cyan-700 border-cyan-600 text-white" : "hover:border-cyan-600 hover:text-cyan-600"}`}
 													onClick={() => setReviewAction("FREEZE")}
@@ -458,7 +459,7 @@ export default function AdminReviews() {
 											<>
 												<Button
 													variant={
-														reviewAction === "APPROVE" ? "primary" : "outlined"
+														reviewAction === "APPROVE" ? "default" : "outline"
 													}
 													className={`justify-start ${reviewAction === "APPROVE" ? "bg-green-600 hover:bg-green-700 border-green-600 text-white" : "hover:border-green-600 hover:text-green-600"}`}
 													onClick={() => setReviewAction("APPROVE")}
@@ -470,7 +471,7 @@ export default function AdminReviews() {
 													variant={
 														reviewAction === "REQUEST_INFO"
 															? "secondary"
-															: "outlined"
+															: "outline"
 													}
 													className={`justify-start ${reviewAction === "REQUEST_INFO" ? "bg-amber-100 text-amber-900 border-amber-200" : "hover:border-amber-500 hover:text-amber-600"}`}
 													onClick={() => setReviewAction("REQUEST_INFO")}
@@ -481,7 +482,7 @@ export default function AdminReviews() {
 
 												<Button
 													variant={
-														reviewAction === "REJECT" ? "primary" : "outlined"
+														reviewAction === "REJECT" ? "destructive" : "outline"
 													}
 													className={`justify-start ${reviewAction === "REJECT" ? "bg-red-600 hover:bg-red-700 border-red-600 text-white" : "hover:border-red-600 hover:text-red-600"}`}
 													onClick={() => setReviewAction("REJECT")}
@@ -535,7 +536,7 @@ export default function AdminReviews() {
 												reviewAction !== "UPDATE_STATUS" &&
 												!comment.trim())
 										}
-										variant="primary"
+										variant="default"
 										className={
 											reviewAction === "REJECT"
 												? "bg-red-600 hover:bg-red-700"
@@ -562,7 +563,7 @@ export default function AdminReviews() {
 					message={alertState.message}
 					type={alertState.type}
 				/>
-			</div>
+			</PageContainer>
 		</div>
 	);
 }

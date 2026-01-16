@@ -1,4 +1,3 @@
-export { default as Button } from "./Button";
 export { default as Chip } from "./Chip";
 export { default as Logo } from "./Logo";
 export { default as Navbar } from "./Navbar";
@@ -38,3 +37,4 @@ export { default as Alert } from "./Alert";
 export { default as Tooltip } from "./Tooltip";
 export type * from "./Alert";
 export * from "./components/ErrorModal";
+export * from './PageContainer';
