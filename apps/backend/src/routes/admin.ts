@@ -193,7 +193,7 @@ admin.get("/submissions", async (c) => {
 					id: u.id, // User ID is the entity ID for Investor profile
 					type: EntityType.INVESTOR,
 					status: u.investor?.status,
-					submittedAt: u.investor?.createdAt, // Use verifiedAt or updatedAt?
+					submittedAt: u.investor?.createdAt || u.createdAt, // Use verifiedAt or updatedAt?
 					title: `Investor Accreditation: ${u.firstName} ${u.lastName}`,
 					user: {
 						id: u.id,
@@ -216,7 +216,7 @@ admin.get("/submissions", async (c) => {
 					id: u.id, // User ID is the entity ID for Sponsor profile
 					type: EntityType.SPONSOR,
 					status: u.sponsor?.status,
-					submittedAt: u.sponsor?.createdAt,
+					submittedAt: u.sponsor?.createdAt || u.createdAt,
 					title: `Sponsor Verification: ${u.sponsor?.businessName}`,
 					user: {
 						id: u.id,
@@ -246,10 +246,11 @@ admin.get("/submissions", async (c) => {
 		];
 
 		// usage of sort
-		submissions.sort(
-			(a: any, b: any) =>
-				new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()
-		);
+		submissions.sort((a: any, b: any) => {
+			const dateA = a.submittedAt ? new Date(a.submittedAt).getTime() : 0;
+			const dateB = b.submittedAt ? new Date(b.submittedAt).getTime() : 0;
+			return dateB - dateA;
+		});
 
 		return c.json({ submissions });
 	} catch (error) {

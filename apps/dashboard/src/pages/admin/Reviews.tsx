@@ -156,10 +156,15 @@ export default function AdminReviews() {
 	};
 
 	const formatDate = (dateString: string) => {
+		if (!dateString) return "N/A";
+		const date = new Date(dateString);
+		// Check for Invalid Date
+		if (isNaN(date.getTime())) return "Invalid Date";
+
 		return new Intl.DateTimeFormat("en-US", {
 			dateStyle: "medium",
 			timeStyle: "short",
-		}).format(new Date(dateString));
+		}).format(date);
 	};
 
 	// const filteredSubmissions = submissions.filter((sub) => {
