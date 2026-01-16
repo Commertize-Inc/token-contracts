@@ -131,9 +131,8 @@ export function NotificationsDropdown() {
 								{notifications.map((notification) => (
 									<div
 										key={notification.id}
-										className={`p-4 hover:bg-slate-50 transition-colors ${
-											notification.isRead ? "opacity-60" : "bg-blue-50/30"
-										}`}
+										className={`p-4 hover:bg-slate-50 transition-colors ${notification.isRead ? "opacity-60" : "bg-blue-50/30"
+											}`}
 									>
 										<Link
 											to={notification.link || "#"}
@@ -143,11 +142,10 @@ export function NotificationsDropdown() {
 											<div className="flex gap-3">
 												<div className="flex-1">
 													<p
-														className={`text-sm ${
-															notification.isRead
+														className={`text-sm ${notification.isRead
 																? "text-slate-700"
 																: "text-slate-900 font-medium"
-														}`}
+															}`}
 													>
 														{notification.title}
 													</p>
@@ -169,6 +167,15 @@ export function NotificationsDropdown() {
 								))}
 							</div>
 						)}
+					</div>
+					<div className="p-2 border-t border-slate-50 bg-slate-50/50 text-center">
+						<Link
+							to="/notifications"
+							onClick={() => setIsOpen(false)}
+							className="text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors"
+						>
+							Show all notifications
+						</Link>
 					</div>
 				</div>
 			)}
