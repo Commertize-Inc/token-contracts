@@ -17,7 +17,11 @@ const LinkWrapper = ({ href, children, ...props }: any) => {
 	);
 };
 
-export function Navbar() {
+interface NavbarProps {
+	className?: string;
+}
+
+export function Navbar(props: NavbarProps) {
 	const { user, logout } = usePrivy();
 	const { data: status } = useOnboardingStatus();
 	const { data: profile } = useProfile();
@@ -109,6 +113,7 @@ export function Navbar() {
 
 	return (
 		<SharedNavbar
+			className={props.className}
 			logoHref="/"
 			logoSrc="/assets/logo.png"
 			rightContent={rightContent}

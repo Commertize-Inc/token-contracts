@@ -18,7 +18,7 @@ import { KycGuard } from "./components/KycGuard";
 import { ScrollToTop } from "./components/ScrollToTop";
 import { ScrollToTopButton } from "@commertize/ui";
 import AdminReviews from "./pages/admin/Reviews";
-import Submissions from "./pages/Submissions";
+import Notifications from "./pages/Notifications";
 import { IncompleteProfileBanner } from "./components/IncompleteProfileBanner";
 
 function App() {
@@ -134,10 +134,10 @@ function App() {
 						}
 					/>
 					<Route
-						path="/submissions"
+						path="/notifications"
 						element={
 							<AuthGuard>
-								<Submissions />
+								<Notifications />
 							</AuthGuard>
 						}
 					/>

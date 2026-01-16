@@ -154,12 +154,12 @@ export default function MarketplacePage() {
 	];
 
 	return (
-		<div className="min-h-screen bg-slate-50">
-			<Navbar />
+		<div className="min-h-screen bg-white">
+			<Navbar className="!mb-0" />
 
 			{/* Main Content with Landing Styling */}
-			<div className="bg-gradient-to-br from-white via-gray-50 to-amber-50/20 pb-12">
-				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+			<div className="bg-white pb-12">
+				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
 					{/* Page Header */}
 					<motion.div
 						initial={{ opacity: 0, y: 20 }}
@@ -226,11 +226,10 @@ export default function MarketplacePage() {
 								<div className="flex items-center space-x-1 bg-gray-100 p-1 rounded-lg">
 									<button
 										onClick={() => setView("table")}
-										className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
-											view === "table"
-												? "bg-white text-gray-900 shadow-sm"
-												: "text-gray-500 hover:text-gray-900 hover:bg-gray-200/50"
-										}`}
+										className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${view === "table"
+											? "bg-white text-gray-900 shadow-sm"
+											: "text-gray-500 hover:text-gray-900 hover:bg-gray-200/50"
+											}`}
 									>
 										<span className="w-4 h-4">
 											<svg
@@ -252,11 +251,10 @@ export default function MarketplacePage() {
 									</button>
 									<button
 										onClick={() => setView("grid")}
-										className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
-											view === "grid"
-												? "bg-white text-gray-900 shadow-sm"
-												: "text-gray-500 hover:text-gray-900 hover:bg-gray-200/50"
-										}`}
+										className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${view === "grid"
+											? "bg-white text-gray-900 shadow-sm"
+											: "text-gray-500 hover:text-gray-900 hover:bg-gray-200/50"
+											}`}
 									>
 										<span className="w-4 h-4">
 											<svg
