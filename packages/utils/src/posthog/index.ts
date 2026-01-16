@@ -13,7 +13,7 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
 	useEffect(() => {
 		if (typeof window !== "undefined") {
 			// Avoid double initialization
-			if (posthog.has_opted_in_capturing() || posthog.__loaded) {
+			if (posthog.__loaded) {
 				return;
 			}
 
