@@ -23,6 +23,7 @@ import dividends from "./routes/dividends";
 import reviews from "./routes/reviews";
 import notifications from "./routes/notifications";
 import upload from "./routes/upload";
+import aiContent from "./routes/ai-content";
 
 const app = new Hono();
 
@@ -83,6 +84,7 @@ apiRoutes.route("/dividends", dividends);
 apiRoutes.route("/reviews", reviews);
 apiRoutes.route("/notifications", notifications);
 apiRoutes.route("/upload", upload);
+apiRoutes.route("/ai-content", aiContent);
 
 app.route("/", apiRoutes);
 app.route("/api", apiRoutes);
