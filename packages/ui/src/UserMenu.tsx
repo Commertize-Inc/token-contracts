@@ -109,9 +109,8 @@ export const UserMenu: React.FC<UserMenuProps> = ({
 						<span className={styles.userName}>{getUserDisplay()}</span>
 					</div>
 					<ChevronDown
-						className={`${styles.chevronIcon} ${
-							isDropdownOpen ? styles.chevronIconOpen : ""
-						} `}
+						className={`${styles.chevronIcon} ${isDropdownOpen ? styles.chevronIconOpen : ""
+							} `}
 					/>
 				</button>
 
@@ -144,9 +143,9 @@ export const UserMenu: React.FC<UserMenuProps> = ({
 						</ProfileLink>
 
 						{/* Submissions Link */}
-						<ProfileLink href="/submissions" className={styles.profileLink}>
+						<ProfileLink href="/notifications" className={styles.profileLink}>
 							<Layers className={styles.profileIcon} />
-							My Submissions
+							Notifications
 						</ProfileLink>
 
 						{/* Logout Button */}
