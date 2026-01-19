@@ -15,6 +15,7 @@
 	"dependencies": {
 		"@commertize/backend": "workspace:*",
 		"@commertize/data": "workspace:*",
+		"@commertize/nexus": "workspace:*",
 		"@commertize/ui": "workspace:*",
 		"@commertize/utils": "workspace:*",
 		"@hookform/resolvers": "^3.9.0",
@@ -31,6 +32,7 @@
 		"react-router-dom": "^6.28.0",
 		"tailwind-merge": "^2.5.5",
 		"tailwindcss-animate": "^1.0.7",
+		"viem": "^2.44.4",
 		"zod": "^3.23.8"
 	},
 	"devDependencies": {

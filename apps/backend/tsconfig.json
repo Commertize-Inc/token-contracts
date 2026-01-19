@@ -4,38 +4,64 @@
 		"target": "ES2022",
 		"module": "ESNext",
 		"moduleResolution": "bundler",
-		"lib": ["ES2022", "DOM"],
+		"lib": [
+			"ES2022",
+			"DOM"
+		],
 		"jsx": "react-jsx",
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
 		"strict": true,
+		"resolveJsonModule": true,
 		"paths": {
-			"@commertize/utils/client": ["../../packages/utils/src/client.ts"],
-			"@commertize/utils/server": ["../../packages/utils/src/server.ts"],
+			"@commertize/utils/client": [
+				"../../packages/utils/src/client.ts"
+			],
+			"@commertize/utils/server": [
+				"../../packages/utils/src/server.ts"
+			],
 			"@commertize/utils/env-server": [
 				"../../packages/utils/src/env-server.ts"
 			],
-			"@commertize/utils": ["../../packages/utils/src/index.ts"],
+			"@commertize/utils": [
+				"../../packages/utils/src/index.ts"
+			],
 			"@commertize/data/config": [
 				"../../packages/data/src/mikro-orm.config.ts"
 			],
-			"@commertize/data/enums": ["../../packages/data/src/enums/index.ts"],
-			"@commertize/data/schemas": ["../../packages/data/src/schemas/index.ts"],
+			"@commertize/data/enums": [
+				"../../packages/data/src/enums/index.ts"
+			],
+			"@commertize/data/schemas": [
+				"../../packages/data/src/schemas/index.ts"
+			],
 			"@commertize/data/encryption": [
 				"../../packages/data/src/utils/encryption.ts"
 			],
-			"@commertize/data": ["../../packages/data/src/index.ts"],
-			"@commertize/ui/*": ["../../packages/ui/src/*"],
-			"@commertize/ui": ["../../packages/ui/src/index.ts"]
+			"@commertize/data": [
+				"../../packages/data/src/index.ts"
+			],
+			"@commertize/ui/*": [
+				"../../packages/ui/src/*"
+			],
+			"@commertize/ui": [
+				"../../packages/ui/src/index.ts"
+			]
 		},
-		"types": ["@types/node"]
+		"types": [
+			"@types/node"
+		]
 	},
 	"include": [
+		"scripts",
 		"src",
 		"api",
 		"vercel-env.d.ts",
 		"../../packages/data/src",
 		"../../packages/utils/src"
 	],
-	"exclude": ["node_modules", "dist"]
+	"exclude": [
+		"node_modules",
+		"dist"
+	]
 }
