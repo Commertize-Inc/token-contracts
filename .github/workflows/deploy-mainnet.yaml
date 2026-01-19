@@ -1,0 +1,32 @@
+name: Deploy to Mainnet
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+      - uses: actions/setup-node@v4
+
+      - run: pnpm install
+
+      - run: pnpm hardhat compile
+
+      - name: Deploy to Mainnet
+        env:
+          EVM_PRIVATE_KEY: ${{ secrets.EVM_PRIVATE_KEY }}
+        run: pnpm hardhat run scripts/deploy.js --network hedera-mainnet
+
+      - name: Upload deployment artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: mainnet-deployment-artifacts
+          path: |
+            deployment.json
+            artifacts/
+          retention-days: 90
