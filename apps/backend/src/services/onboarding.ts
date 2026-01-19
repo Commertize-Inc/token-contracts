@@ -8,6 +8,7 @@ import {
 	VerificationStatus,
 	Sponsor,
 } from "@commertize/data";
+import { privyClient } from "../lib/privy";
 
 export class OnboardingService {
 	constructor(private readonly em: EntityManager) {}
@@ -18,6 +19,7 @@ export class OnboardingService {
 			{ privyId },
 			{ populate: ["sponsor", "investor"] }
 		);
+
 		if (!user) {
 			user = this.em.create(User, {
 				privyId,
@@ -26,7 +28,30 @@ export class OnboardingService {
 				kycStatus: KycStatus.NOT_STARTED,
 				isAdmin: false,
 			});
+			// Verify initial wallet sync on creation
+			try {
+				const privyUser = await privyClient.getUser(privyId);
+				if (privyUser.wallet) {
+					user.walletAddress = privyUser.wallet.address;
+				}
+			} catch (e) {
+				console.warn(
+					`Failed to fetch Privy user ${privyId} during creation`,
+					e
+				);
+			}
 			await this.em.persist(user).flush();
+		} else if (!user.walletAddress) {
+			// Sync wallet if missing
+			try {
+				const privyUser = await privyClient.getUser(privyId);
+				if (privyUser.wallet) {
+					user.walletAddress = privyUser.wallet.address;
+					await this.em.flush();
+				}
+			} catch (e) {
+				console.warn(`Failed to sync wallet for user ${user.id}`, e);
+			}
 		}
 		return user;
 	}

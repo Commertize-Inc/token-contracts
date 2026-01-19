@@ -16,6 +16,7 @@ export class NotificationService {
 		comment?: string
 	): Promise<Notification | null> {
 		let notifyUser: User | undefined;
+		let notifySponsor: any | undefined; // Sponsor type
 		let notifyTitle = "";
 		let notifyLink = "/profile";
 
@@ -33,12 +34,13 @@ export class NotificationService {
 			notifyLink = "/sponsor/dashboard";
 		} else if (type === EntityType.LISTING) {
 			// targetEntity is Listing
-			notifyUser = targetEntity.sponsor;
+			// Notify the sponsor directly
+			notifySponsor = targetEntity.sponsor;
 			notifyTitle = `Listing Update: ${targetEntity.name}`;
 			notifyLink = `/listings/${targetEntity.id}/edit`;
 		}
 
-		if (!notifyUser) return null;
+		if (!notifyUser && !notifySponsor) return null;
 
 		let notifyMessage = "";
 		let notifyType = NotificationType.INFO;
@@ -60,6 +62,7 @@ export class NotificationService {
 
 		const notification = this.em.create(Notification, {
 			user: notifyUser,
+			sponsor: notifySponsor,
 			title: notifyTitle,
 			message: notifyMessage,
 			type: notifyType,
