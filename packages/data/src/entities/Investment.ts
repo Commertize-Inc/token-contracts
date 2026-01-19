@@ -28,9 +28,13 @@ export class Investment {
 	@ManyToOne(() => Listing)
 	property!: Listing;
 
-	/** Amount invested in USDC (stored as decimal string). */
+	/** Amount invested in selected currency (stored as decimal string). */
 	@MikroProperty({ type: "decimal", precision: 20, scale: 6 })
-	amountUsdc!: string; // Decimal strings for monetary values
+	amount!: string;
+
+	/** Currency used for payment (USD, USDC, HBAR, CREUSD). */
+	@MikroProperty({ type: "string", default: "USD" })
+	currency: string = "USD";
 
 	/** Number of tokens purchased. */
 	@MikroProperty({ type: "integer" })

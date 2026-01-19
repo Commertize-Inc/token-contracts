@@ -1,6 +1,7 @@
 import { Entity, PrimaryKey, Property, ManyToOne } from "@mikro-orm/core";
 import { v4 } from "uuid";
 import { User } from "./User";
+import { Sponsor } from "./Sponsor";
 
 export enum NotificationType {
 	INFO = "info",
@@ -20,8 +21,11 @@ export class Notification {
 	@PrimaryKey()
 	id: string = v4();
 
-	@ManyToOne(() => User, { deleteRule: "cascade" })
-	user!: User;
+	@ManyToOne(() => User, { deleteRule: "cascade", nullable: true })
+	user?: User;
+
+	@ManyToOne(() => Sponsor, { deleteRule: "cascade", nullable: true })
+	sponsor?: Sponsor;
 
 	/** Title of the notification. */
 	@Property({ type: "string" })

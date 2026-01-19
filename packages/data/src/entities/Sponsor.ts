@@ -61,6 +61,9 @@ export class Sponsor {
 	@Property({ type: "date" })
 	createdAt: Date = new Date();
 
+	@Property({ type: "string", nullable: true })
+	walletAddress?: string;
+
 	@Property({ type: "date", onUpdate: () => new Date() })
 	updatedAt: Date = new Date();
 }

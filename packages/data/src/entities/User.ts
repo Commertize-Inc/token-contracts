@@ -12,6 +12,8 @@ import { v4 } from "uuid";
 import { KycStatus, UserRole } from "../enums/onboarding";
 import { Sponsor } from "./Sponsor";
 import { Investor } from "./Investor";
+import { Wallet } from "./Wallet";
+import { Collection, OneToMany } from "@mikro-orm/core";
 
 /**
  * Core user entity representing an account on the platform.
@@ -105,6 +107,9 @@ export class User {
 
 	@Embedded(() => Investor, { prefix: "investor_", nullable: true })
 	investor?: Investor;
+
+	@OneToMany(() => Wallet, (wallet) => wallet.user)
+	wallets = new Collection<Wallet>(this);
 
 	@BeforeDelete()
 	async checkLastSponsorUser(args: EventArgs<User>) {

@@ -16,4 +16,5 @@ export const kybSchema = z.object({
 			})
 		)
 		.optional(),
+	walletAddress: z.string().optional(),
 });
