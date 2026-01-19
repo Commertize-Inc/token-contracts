@@ -1,0 +1,88 @@
+name: Nexus CD
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "packages/nexus/**"
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Deployment Target (testnet/mainnet)"
+        required: true
+        default: "testnet"
+        type: choice
+        options:
+          - testnet
+          - mainnet
+
+jobs:
+  deploy-testnet:
+    name: Deploy to Testnet
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && inputs.target == 'testnet')
+    runs-on: ubuntu-latest
+    environment: testnet
+    defaults:
+      run:
+        working-directory: ./packages/nexus
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - name: Install Dependencies
+        run: pnpm install
+      - name: Compile Contracts
+        run: pnpm compile
+      - name: Deploy
+        env:
+          EVM_PRIVATE_KEY: ${{ secrets.HEDERA_TESTNET_PRIVATE_KEY || secrets.EVM_PRIVATE_KEY }}
+          CI: true
+        run: pnpm deploy:testnet
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-testnet
+          path: packages/nexus/deployment.json
+
+  deploy-mainnet:
+    name: Deploy to Mainnet (Production)
+    if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.target == 'mainnet')
+    runs-on: ubuntu-latest
+    environment: production
+    defaults:
+      run:
+        working-directory: ./packages/nexus
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - name: Install Dependencies
+        run: pnpm install
+      - name: Compile Contracts
+        run: pnpm compile
+      - name: Deploy
+        env:
+          HEDERA_MAINNET_PRIVATE_KEY: ${{ secrets.HEDERA_MAINNET_PRIVATE_KEY }}
+          CI: true
+        run: pnpm deploy:mainnet
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-mainnet
+          path: packages/nexus/deployment.json
