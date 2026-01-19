@@ -11,20 +11,30 @@ notifications.get("/", authMiddleware, async (c) => {
 	try {
 		const privyId = c.get("userId");
 		const em = await getEM();
-		const user = await em.findOne(User, { privyId });
+		const user = await em.findOne(
+			User,
+			{ privyId },
+			{ populate: ["sponsor", "sponsor.members"] }
+		);
 
 		if (!user) {
 			return c.json({ error: "User not found" }, 404);
 		}
 
-		const userNotifications = await em.find(
-			Notification,
-			{ user },
-			{
-				orderBy: { createdAt: "DESC" },
-				limit: 50, // Limit to last 50
-			}
-		);
+		// Query where user is target OR sponsor is target (if user is part of sponsor)
+		// Assuming user can only be part of ONE sponsor for now based on schema (User.sponsor)
+		// But Sponsor has members collection.
+		// Wait, User.sponsor usually means "User belongs to this Sponsor".
+
+		const query: any = { $or: [{ user }] };
+		if (user.sponsor) {
+			query.$or.push({ sponsor: user.sponsor });
+		}
+
+		const userNotifications = await em.find(Notification, query, {
+			orderBy: { createdAt: "DESC" },
+			limit: 50,
+		});
 
 		return c.json(userNotifications);
 	} catch (error) {
@@ -38,16 +48,21 @@ notifications.get("/unread-count", authMiddleware, async (c) => {
 	try {
 		const privyId = c.get("userId");
 		const em = await getEM();
-		const user = await em.findOne(User, { privyId });
+		const user = await em.findOne(User, { privyId }, { populate: ["sponsor"] });
 
 		if (!user) {
 			return c.json({ error: "User not found" }, 404);
 		}
 
-		const count = await em.count(Notification, {
-			user,
+		const query: any = {
+			$or: [{ user }],
 			isRead: false,
-		});
+		};
+		if (user.sponsor) {
+			query.$or.push({ sponsor: user.sponsor });
+		}
+
+		const count = await em.count(Notification, query);
 
 		return c.json({ count });
 	} catch (error) {
@@ -89,17 +104,27 @@ notifications.patch("/mark-all-read", authMiddleware, async (c) => {
 	try {
 		const privyId = c.get("userId");
 		const em = await getEM();
-		const user = await em.findOne(User, { privyId });
+		const user = await em.findOne(User, { privyId }, { populate: ["sponsor"] });
 
 		if (!user) {
 			return c.json({ error: "User not found" }, 404);
 		}
 
-		// Update all unread notifications for this user
-		// MikroORM native update might be efficient here but let's stick to simple
-		const unread = await em.find(Notification, { user, isRead: false });
+		const query: any = {
+			$or: [{ user }],
+			isRead: false,
+		};
+		if (user.sponsor) {
+			query.$or.push({ sponsor: user.sponsor });
+		}
+
+		// Update all unread notifications for this user or their sponsor
+		const unread = await em.find(Notification, query);
 
 		for (const n of unread) {
+			// Basic check: If it's a sponsor notification, marking it read marks it for EVERYONE?
+			// Currently yes, shared state. User requested "query for notifications... for any sponsor".
+			// Shared read state is a trade-off of this simple model.
 			n.isRead = true;
 		}
 

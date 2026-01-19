@@ -2,6 +2,7 @@ import { BankAccount, KycStatus, PlaidItem, User } from "@commertize/data";
 import { STAGE } from "@commertize/utils/server";
 import { wrap } from "@mikro-orm/postgresql";
 import { Hono } from "hono";
+import { TokenService } from "../services/token";
 import {
 	CountryCode,
 	ProcessorStripeBankAccountTokenCreateRequest,
@@ -388,6 +389,34 @@ plaid.post("/check_idv_status", async (c) => {
 		);
 
 		await em.persist<User>(user).flush();
+
+		// Sync with On-chain Identity Registry if Approved
+		if (kycStatus === KycStatus.APPROVED && user.walletAddress) {
+			try {
+				// We need investor data for country if not loaded?
+				// The route doesn't populate it initially, we fetched user above.
+				// Let's refetch if missing or rely on what we have.
+				if (!user.investor) {
+					// Quick load
+					await em.populate(user, ["investor"]);
+				}
+
+				console.log(
+					`[Plaid IDV Check] User ${user.id} approved. Registering on-chain identity...`
+				);
+				const country = user.investor?.taxCountry === "US" ? 840 : 0;
+				await TokenService.registerIdentity(
+					user.walletAddress,
+					country,
+					user.privyId
+				);
+			} catch (e) {
+				console.error(
+					`[Plaid IDV Check] Failed to register identity for ${user.id}:`,
+					e
+				);
+			}
+		}
 
 		return c.json({
 			success: kycStatus === KycStatus.APPROVED,

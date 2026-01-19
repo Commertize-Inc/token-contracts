@@ -24,6 +24,7 @@ import reviews from "./routes/reviews";
 import notifications from "./routes/notifications";
 import upload from "./routes/upload";
 import aiContent from "./routes/ai-content";
+import oracle from "./routes/oracle";
 
 const app = new Hono();
 
@@ -85,6 +86,7 @@ apiRoutes.route("/reviews", reviews);
 apiRoutes.route("/notifications", notifications);
 apiRoutes.route("/upload", upload);
 apiRoutes.route("/ai-content", aiContent);
+apiRoutes.route("/oracle", oracle);
 
 app.route("/", apiRoutes);
 app.route("/api", apiRoutes);

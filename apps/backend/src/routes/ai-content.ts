@@ -63,9 +63,7 @@ function resetTopicsIfNewWeek(): void {
 function getRandomTopic(): string {
 	resetTopicsIfNewWeek();
 
-	const availableTopics = COMMERTIZE_TOPICS.filter(
-		(t) => !usedTopics.has(t)
-	);
+	const availableTopics = COMMERTIZE_TOPICS.filter((t) => !usedTopics.has(t));
 
 	if (availableTopics.length === 0) {
 		usedTopics.clear();

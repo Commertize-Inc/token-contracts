@@ -12,7 +12,8 @@ import { Hono } from "hono";
 import { getEM } from "../db";
 import { authMiddleware, optionalAuthMiddleware } from "../middleware/auth";
 import { HonoEnv } from "../types";
-import { OnboardingService } from "../services/OnboardingService";
+import { OnboardingService } from "../services/onboarding";
+import { TokenService } from "../services/token";
 
 const onboarding = new Hono<HonoEnv>();
 
@@ -44,6 +45,7 @@ onboarding.get("/status", authMiddleware, async (c) => {
 						bio: sponsor.bio,
 						kybData: sponsor.kybData,
 						jobTitle: user.jobTitle,
+						walletAddress: sponsor.walletAddress,
 						createdAt: sponsor.createdAt,
 					}
 				: null,
@@ -119,6 +121,34 @@ onboarding.post("/submit", authMiddleware, async (c) => {
 		// Auto-approve for now
 		user.kycStatus = KycStatus.APPROVED;
 		await em.persist<User>(user).flush();
+
+		// Sync with On-chain Identity Registry
+		if (user.walletAddress) {
+			try {
+				// Default country 840 (USA)
+				const country = user.investor?.taxCountry === "US" ? 840 : 0;
+				// Use privyId as the stable platform-owned identifier
+				await TokenService.registerIdentity(
+					user.walletAddress,
+					country,
+					user.privyId
+				);
+				console.log(
+					`Registered identity for user ${user.id} (${user.walletAddress})`
+				);
+			} catch (err) {
+				console.error(
+					`Failed to register identity on-chain for ${user.id}:`,
+					err
+				);
+				// We don't fail the request, but logging is critical.
+				// In production, this should potentiall revert or queue a retry job.
+			}
+		} else {
+			console.warn(
+				`User ${user.id} approved but has no wallet address to sync on-chain.`
+			);
+		}
 
 		return c.json({ success: true });
 	} catch (error) {

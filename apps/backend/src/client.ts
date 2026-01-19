@@ -41,7 +41,12 @@ export const createApi = (baseUrl: string) => {
 				let errorMessage = res.statusText;
 				try {
 					const errorJson = JSON.parse(errorText);
-					if (errorJson.error) errorMessage = errorJson.error;
+					if (errorJson.error) {
+						errorMessage =
+							typeof errorJson.error === "object"
+								? JSON.stringify(errorJson.error)
+								: errorJson.error;
+					}
 					if (errorJson.details) errorMessage += `: ${errorJson.details}`;
 				} catch {
 					/* empty */

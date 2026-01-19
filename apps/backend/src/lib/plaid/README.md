@@ -53,7 +53,7 @@ PLAID_WEBHOOK_SECRET=your_webhook_secret
 
 # Stripe (if not already present)
 STRIPE_SECRET_KEY=sk_test_your_stripe_secret
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable
+VITE_STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable
 ```
 
 ### 2. Get Plaid Credentials

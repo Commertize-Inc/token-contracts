@@ -8,6 +8,7 @@ import {
 	KycStatus,
 	UserRole,
 	VerificationStatus,
+	Wallet,
 } from "@commertize/data";
 import { privyClient } from "../lib/privy";
 import { HonoEnv } from "../types";
@@ -23,7 +24,7 @@ profile.get("/", async (c) => {
 		const user = await em.findOne(
 			User,
 			{ privyId },
-			{ populate: ["sponsor", "investor"] }
+			{ populate: ["sponsor", "investor", "wallets"] }
 		);
 
 		if (!user) {
@@ -75,6 +76,10 @@ profile.get("/", async (c) => {
 				isPrimary: account.isPrimary,
 				status: account.status,
 				isStripeLinked: !!account.stripeBankAccountId,
+			})),
+			wallets: user.wallets.getItems().map((w) => ({
+				address: w.address,
+				name: w.name,
 			})),
 		});
 	} catch (error) {
@@ -133,6 +138,44 @@ import { getPlaidClient } from "../lib/plaid/client";
 import { PlaidItem } from "@commertize/data";
 
 // ... existing code ...
+
+profile.put("/wallet-name", async (c) => {
+	try {
+		const privyId = c.get("userId");
+		const em = await getEM();
+		const user = await em.findOne(User, { privyId });
+
+		if (!user) {
+			return c.json({ error: "User not found" }, 404);
+		}
+
+		const body = await c.req.json();
+		const { address, name } = body;
+
+		if (!address || !name) {
+			return c.json({ error: "Address and name are required" }, 400);
+		}
+
+		let wallet = await em.findOne(Wallet, { user, address });
+
+		if (wallet) {
+			wallet.name = name;
+		} else {
+			wallet = new Wallet(user, address, name);
+			em.persist(wallet);
+		}
+
+		await em.flush();
+
+		return c.json({
+			message: "Wallet name updated",
+			wallet: { address: wallet.address, name: wallet.name },
+		});
+	} catch (error) {
+		console.error("Error updating wallet name:", error);
+		return c.json({ error: "Internal server error" }, 500);
+	}
+});
 
 profile.delete("/", async (c) => {
 	try {

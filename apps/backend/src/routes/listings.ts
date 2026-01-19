@@ -14,10 +14,55 @@ import { Investment, InvestmentStatus } from "@commertize/data";
 
 const listings = new Hono<HonoEnv>();
 
-// Stub function for RPC call
+import { TokenService } from "../services/token";
 
-const mintPropertyToken = async (_listing: Listing) => {
-	// STUB: Minting Property Token via RPC (No-op for now)
+const mintPropertyToken = async (listing: Listing) => {
+	try {
+		if (!listing.tokenomics || !listing.tokenomics.totalTokenSupply) {
+			console.warn(
+				`Skipping token deployment for ${listing.id}: Missing tokenomics`
+			);
+			return;
+		}
+
+		// Deploy Property Token on-chain
+		const tokenAddress = await TokenService.deployPropertyToken(listing);
+
+		// Update Listing with new Token Address
+		const em = await getEM();
+		// We need to re-fetch or merge because 'listing' might not be managed by this EM context if passed directly or if context closed
+		// Ideally we use the ID
+		const managedListing = await em.findOne(Listing, { id: listing.id });
+		if (managedListing) {
+			managedListing.tokenContractAddress = tokenAddress;
+			// Also update escrow address if deployed (TokenService handles this on the passed 'listing' object ref)
+			// But 'listing' ref here is the argument, 'managedListing' is the fresh DB entity.
+			// We should synchronize them.
+			if (listing.escrowContractAddress) {
+				managedListing.escrowContractAddress = listing.escrowContractAddress;
+			}
+
+			// Check if we should update status?
+			// Usually happens *after* deployment, maybe we set it to 'TOKENIZING' or stay 'PENDING_REVIEW' until admin approves?
+			// "Sponsors release... till...". The prompt implies seamless flow.
+			// If the user creates listing, we deploy immediately?
+			// The route `POST /` calls this.
+			if (managedListing.status === ListingStatus.PENDING_REVIEW) {
+				// Maybe keep it pending review but with a token address ready.
+			}
+			await em.flush();
+			console.log(
+				`Updated listing ${listing.id} with token address ${tokenAddress}`
+			);
+		}
+	} catch (error) {
+		console.error(
+			`Failed to mint property token for listing ${listing.id}:`,
+			error
+		);
+		// We do NOT block the HTTP response, but we log it.
+		// Failing deployment means listing exists but no token. Admin might need to retry.
+	}
 };
 
 listings.get("/", apiKeyMiddleware, async (c) => {
@@ -56,6 +101,7 @@ listings.get("/", apiKeyMiddleware, async (c) => {
 					"sponsor.businessName",
 					"sponsor.status",
 					"sponsor.votingMembers",
+					"tokenomics",
 				],
 				populate: ["sponsor"],
 			}
@@ -72,15 +118,19 @@ listings.get("/my-listings", authMiddleware, async (c) => {
 	try {
 		const privyId = c.get("userId");
 		const em = await getEM();
-		const user = await em.findOne(User, { privyId });
+		const user = await em.findOne(User, { privyId }, { populate: ["sponsor"] });
 
 		if (!user) {
 			return c.json({ error: "User not found" }, 404);
 		}
 
+		if (!user.sponsor) {
+			return c.json([]);
+		}
+
 		const listings = await em.find(
 			Listing,
-			{ sponsor: user },
+			{ sponsor: user.sponsor },
 			{
 				orderBy: { createdAt: "DESC" },
 			}
@@ -111,11 +161,11 @@ listings.get("/:id", apiKeyMiddleware, async (c) => {
 		// Calculate funding stats
 		const investments = await em.find(Investment, {
 			property: listing,
-			status: { $in: [InvestmentStatus.PENDING, InvestmentStatus.COMPLETED] },
+			status: InvestmentStatus.COMPLETED,
 		});
 
 		const currentFunding = investments.reduce(
-			(sum: number, inv: Investment) => sum + parseFloat(inv.amountUsdc),
+			(sum: number, inv: Investment) => sum + parseFloat(inv.amount),
 			0
 		);
 
@@ -206,10 +256,12 @@ listings.post("/", authMiddleware, async (c) => {
 		listing.state = data.state;
 		listing.zipCode = data.zipCode;
 		listing.propertyType = data.propertyType;
+		listing.fundingCurrency = data.fundingCurrency;
 		listing.financials = data.financials;
 		listing.offeringType = data.offeringType;
 		listing.entityStructure = data.entityStructure;
 		listing.tokenomics = data.tokenomics;
+		listing.crossChainConfig = data.crossChainConfig;
 		listing.description = data.description;
 		listing.constructionYear = data.constructionYear;
 		listing.totalUnits = data.totalUnits;
@@ -278,6 +330,7 @@ listings.patch("/:id", authMiddleware, async (c) => {
 		if (data.state) listing.state = data.state;
 		if (data.zipCode) listing.zipCode = data.zipCode;
 		if (data.propertyType) listing.propertyType = data.propertyType;
+		if (data.fundingCurrency) listing.fundingCurrency = data.fundingCurrency;
 		if (data.financials) {
 			// Merge financials or replace? Schema implies full object replacement if provided, or we can merge.
 			// Since schema validates the whole object, replacing is safer to ensure validity.
@@ -288,6 +341,7 @@ listings.patch("/:id", authMiddleware, async (c) => {
 		}
 		if (data.offeringType) listing.offeringType = data.offeringType;
 		if (data.entityStructure) listing.entityStructure = data.entityStructure;
+		if (data.crossChainConfig) listing.crossChainConfig = data.crossChainConfig;
 		if (data.description !== undefined) listing.description = data.description;
 		if (data.constructionYear !== undefined)
 			listing.constructionYear = data.constructionYear;

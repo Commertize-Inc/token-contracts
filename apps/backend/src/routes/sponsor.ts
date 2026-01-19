@@ -104,6 +104,8 @@ sponsor.post("/kyb/submit", async (c) => {
 		if (kybData.ein) sponsor.ein = kybData.ein;
 		if (kybData.address) sponsor.address = kybData.address;
 		if (bio) sponsor.bio = bio;
+		if (result.data.walletAddress)
+			sponsor.walletAddress = result.data.walletAddress;
 		sponsor.kybData = kybData;
 		sponsor.status = VerificationStatus.PENDING;
 		sponsor.updatedAt = new Date();

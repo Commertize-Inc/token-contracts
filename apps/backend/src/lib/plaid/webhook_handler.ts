@@ -1,6 +1,7 @@
 import { KycStatus, User } from "@commertize/data";
 import { getEM } from "../../db";
 import { wrap } from "@mikro-orm/core";
+import { TokenService } from "../../services/token";
 
 export interface IdentityVerificationWebhook {
 	webhook_type: "IDENTITY_VERIFICATION";
@@ -22,9 +23,13 @@ export const handleIdentityVerificationWebhook = async (
 	const em = await getEM();
 
 	// Find user by session ID
-	const user = await em.findOne(User, {
-		plaidIdvSessionId: event.identity_verification_id,
-	});
+	const user = await em.findOne(
+		User,
+		{
+			plaidIdvSessionId: event.identity_verification_id,
+		},
+		{ populate: ["investor"] }
+	);
 
 	if (!user) {
 		console.warn(
@@ -48,6 +53,30 @@ export const handleIdentityVerificationWebhook = async (
 	if (kycStatus !== user.kycStatus) {
 		user.kycStatus = kycStatus;
 		user.updatedAt = new Date();
+
+		// Sync with On-chain Identity Registry if Approved
+		if (kycStatus === KycStatus.APPROVED && user.walletAddress) {
+			try {
+				console.log(
+					`[Plaid Webhook] User ${user.id} approved. Registering on-chain identity...`
+				);
+				const country = user.investor?.taxCountry === "US" ? 840 : 0;
+				// We don't await this to block the webhook response?
+				// Actually, we should try to ensure it happens. But if it fails, we shouldn't fail the DB update?
+				// Better to await and log error if fail.
+				await TokenService.registerIdentity(
+					user.walletAddress,
+					country,
+					user.privyId
+				);
+			} catch (e) {
+				console.error(
+					`[Plaid Webhook] Failed to register identity for ${user.id}:`,
+					e
+				);
+			}
+		}
+
 		await em.persist(user).flush();
 	}
 };

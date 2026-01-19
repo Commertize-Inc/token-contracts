@@ -15,7 +15,10 @@ import { Hono } from "hono";
 import { getEM } from "../db";
 import { authMiddleware } from "../middleware/auth";
 import { HonoEnv } from "../types";
-import { NotificationService } from "../services/NotificationService";
+import { NotificationService } from "../services/notification";
+import { CONTRACTS, HEDERA_TESTNET_RPC } from "@commertize/nexus";
+import { TokenService } from "../services/token";
+import { ifError } from "assert";
 
 const admin = new Hono<HonoEnv>();
 
@@ -164,7 +167,21 @@ admin.get("/submissions", async (c) => {
 				fields: [
 					"id",
 					"name",
+					"address",
+					"city",
+					"state",
+					"zipCode",
 					"propertyType",
+					"financials",
+					"tokenomics",
+					"offeringType",
+					"entityStructure",
+					"description",
+					"constructionYear",
+					"totalUnits",
+					"images",
+					"documents",
+					"highlights",
 					"status",
 					"createdAt",
 					"sponsor.id",
@@ -238,6 +255,21 @@ admin.get("/submissions", async (c) => {
 				status: l.status,
 				submittedAt: l.createdAt,
 				title: `Listing: ${l.name}`,
+				user: {
+					id: l.sponsor.id,
+					email: "N/A", // Sponsor entity doesn't have a single email
+					name: l.sponsor.businessName,
+				},
+				details: {
+					...l,
+					financials: {
+						...l.financials,
+						// Add missing derived fields expected by UI if any
+						targetRaise: l.tokenomics
+							? l.tokenomics.tokensForInvestors * l.tokenomics.tokenPrice
+							: 0,
+					},
+				},
 				sponsor: {
 					id: l.sponsor.id,
 					businessName: l.sponsor.businessName,
@@ -324,12 +356,30 @@ admin.post("/submissions/:type/:id/review", async (c) => {
 			else if (action === "REQUEST_INFO")
 				targetEntity.sponsor.status = VerificationStatus.PENDING;
 		} else if (type === EntityType.LISTING) {
-			const listing = await em.findOne(Listing, { id });
+			const listing = await em.findOne(
+				Listing,
+				{ id },
+				{ populate: ["sponsor", "sponsor.members"] }
+			);
 			if (!listing) return c.json({ error: "Listing not found" }, 404);
 			targetEntity = listing;
 
-			if (action === "TOKENIZE") targetEntity.status = ListingStatus.TOKENIZING;
-			else if (action === "FREEZE") targetEntity.status = ListingStatus.FROZEN;
+			if (action === "TOKENIZE") {
+				targetEntity.status = ListingStatus.TOKENIZING;
+				try {
+					const tokenAddress =
+						await TokenService.deployPropertyToken(targetEntity);
+					targetEntity.tokenContractAddress = tokenAddress;
+					targetEntity.status = ListingStatus.ACTIVE;
+				} catch (deployError: any) {
+					console.error("Deployment failed:", deployError);
+					return c.json(
+						{ error: "Deployment failed", details: deployError.message },
+						500
+					);
+				}
+			} else if (action === "FREEZE")
+				targetEntity.status = ListingStatus.FROZEN;
 			else if (action === "UPDATE_STATUS") {
 				const { newStatus } = body;
 				if (newStatus && Object.values(ListingStatus).includes(newStatus)) {
@@ -423,13 +473,17 @@ admin.get("/sponsor-update-requests", async (c) => {
 		);
 
 		const formattedRequests = pendingRequests.map((req) => {
-			const sponsor = req.user.sponsor;
+			const user = req.user;
+			if (!user || !user.sponsor) {
+				return null;
+			}
+			const sponsor = user.sponsor;
 			return {
 				id: req.id,
 				sponsorName: sponsor?.businessName || "Unknown",
 				requestedBy: {
-					name: `${req.user.firstName} ${req.user.lastName}`,
-					email: req.user.email,
+					name: `${user.firstName} ${user.lastName}`,
+					email: user.email,
 				},
 				currentValues: {
 					businessName: sponsor?.businessName,
@@ -444,7 +498,9 @@ admin.get("/sponsor-update-requests", async (c) => {
 			};
 		});
 
-		return c.json({ requests: formattedRequests });
+		return c.json({
+			requests: formattedRequests.filter((req) => req !== null),
+		});
 	} catch (error) {
 		console.error("Error fetching sponsor update requests:", error);
 		return c.json({ error: "Internal server error" }, 500);
@@ -486,7 +542,7 @@ admin.post("/sponsor-update-requests/:id/approve", async (c) => {
 			return c.json({ error: "Only pending requests can be approved" }, 400);
 		}
 
-		const sponsor = notification.user.sponsor;
+		const sponsor = notification.user?.sponsor;
 		if (!sponsor) {
 			return c.json({ error: "Sponsor profile not found" }, 404);
 		}
@@ -577,6 +633,71 @@ admin.post("/sponsor-update-requests/:id/reject", async (c) => {
 	} catch (error) {
 		console.error("Error rejecting update request:", error);
 		return c.json({ error: "Internal server error" }, 500);
+	}
+});
+
+// GET /admin/contracts
+admin.get("/contracts", async (c) => {
+	try {
+		return c.json({
+			contracts: {
+				factory: CONTRACTS.CRETokenFactory,
+				identityRegistry: CONTRACTS.CREIdentityRegistry,
+				compliance: CONTRACTS.ComplianceRegistry,
+			},
+			network: {
+				rpcUrl: HEDERA_TESTNET_RPC,
+				explorerUrl: "https://hashscan.io/testnet", // Hardcoded for now or env
+			},
+		});
+	} catch (error) {
+		console.error("Error fetching contracts:", error);
+		return c.json({ error: "Internal server error" }, 500);
+	}
+});
+
+// GET /admin/listings (All listings for management)
+admin.get("/listings", async (c) => {
+	try {
+		const em = await getEM();
+		const listings = await em.find(
+			Listing,
+			{}, // Fetch ALL listings
+			{
+				populate: ["sponsor"],
+				orderBy: { createdAt: "DESC" },
+			}
+		);
+		return c.json({ listings });
+	} catch (error) {
+		console.error("Error fetching admin listings:", error);
+		return c.json({ error: "Internal Server Error" }, 500);
+	}
+});
+
+// PATCH /admin/listings/:id (Admin update, e.g. Gas Sponsorship)
+admin.patch("/listings/:id", async (c) => {
+	try {
+		const id = c.req.param("id");
+		const body = await c.req.json();
+		const { isGasSponsored } = body;
+
+		const em = await getEM();
+		const listing = await em.findOne(Listing, { id });
+
+		if (!listing) return c.json({ error: "Listing not found" }, 404);
+
+		// Handle specific admin updates
+		if (typeof isGasSponsored === "boolean") {
+			listing.isGasSponsored = isGasSponsored;
+		}
+
+		await em.flush();
+
+		return c.json({ success: true, listing });
+	} catch (error) {
+		console.error("Error updating admin listing:", error);
+		return c.json({ error: "Internal Server Error" }, 500);
 	}
 });
 
