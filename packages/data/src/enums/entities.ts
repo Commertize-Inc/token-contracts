@@ -264,6 +264,21 @@ export enum RiskTolerance {
 }
 
 /**
+ * Supported currencies for funding and token pricing.
+ */
+export enum SupportedCurrency {
+	USD = "USD",
+	USDC = "USDC",
+	HBAR = "HBAR",
+	ETH = "ETH",
+	AVAX = "AVAX",
+	MATIC = "MATIC",
+	CREUSD = "CREUSD",
+	USDT = "USDT",
+	DAI = "DAI",
+}
+
+/**
  * Commercial real estate asset types supported by the platform.
  * Categorizes properties by their primary use case and operational characteristics.
  */
@@ -348,4 +363,15 @@ export enum EntityStructure {
 	 * Trust structure used to hold property or securities for beneficiaries, sometimes combined with tokenized representations of beneficial interests.
 	 */
 	TRUST = "TRUST",
+}
+
+/**
+ * Supported blockchain networks for cross-chain deployment.
+ */
+export enum SupportedNetwork {
+	ETHEREUM = "ETHEREUM",
+	ARBITRUM = "ARBITRUM",
+	OPTIMISM = "OPTIMISM",
+	BASE = "BASE",
+	AVALANCHE = "AVALANCHE",
 }

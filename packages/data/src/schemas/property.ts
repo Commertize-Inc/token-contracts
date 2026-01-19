@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { EntityStructure, OfferingType } from "../enums"; // Ensure enums are imported
+import { EntityStructure, OfferingType, SupportedNetwork, SupportedCurrency } from "../enums"; // Ensure enums are imported
 
 // Schema for creating/updating a property
 export const createListingSchema = z.object({
@@ -9,6 +9,8 @@ export const createListingSchema = z.object({
 	state: z.string().min(2, "State is required"),
 	zipCode: z.string().min(5, "Zip Code is required"),
 	propertyType: z.string().min(1, "Property Type is required"),
+
+	fundingCurrency: z.nativeEnum(SupportedCurrency).default(SupportedCurrency.USDC),
 
 	// Comprehensive financial inputs
 	financials: z.object({
@@ -131,6 +133,17 @@ export const createListingSchema = z.object({
 		lockupMonths: z.number().int().min(0).optional().nullable(),
 		transferRestricted: z.boolean().default(false),
 	}),
+
+	crossChainConfig: z
+		.object({
+			enabled: z.boolean().default(false),
+			subsidized: z.boolean().default(false), // Sponsor pays for cross-chain deployments?
+			targetNetworks: z
+				.array(z.nativeEnum(SupportedNetwork))
+				.default([]), // Target networks for cross-chain
+		})
+		.optional()
+		.default({ enabled: false, subsidized: false, targetNetworks: [] }),
 
 	offeringType: z.nativeEnum(OfferingType).default(OfferingType.RULE_506_B),
 	entityStructure: z.nativeEnum(EntityStructure).optional(),

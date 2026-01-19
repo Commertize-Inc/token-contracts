@@ -13,6 +13,8 @@ import {
 	EntityStructure,
 	OfferingType,
 	ListingStatus,
+	SupportedNetwork,
+	SupportedCurrency,
 } from "../enums/entities";
 import { Sponsor } from "./Sponsor";
 
@@ -135,15 +137,32 @@ export class Listing {
 	@Property({ type: "jsonb" })
 	tokenomics!: Tokenomics;
 
+	@Property({ type: "jsonb", nullable: true })
+	crossChainConfig?: {
+		enabled: boolean;
+		subsidized: boolean;
+		targetNetworks: SupportedNetwork[];
+	};
+
 	@Property({ type: "array", default: [] })
 	images: string[] = [];
 
 	@Property({ type: "jsonb", default: [] })
 	documents: string[] = [];
 
+	@Property({ type: "boolean", default: false })
+	isGasSponsored: boolean = false;
+
+	@Property({ default: SupportedCurrency.USDC })
+	fundingCurrency: SupportedCurrency = SupportedCurrency.USDC;
+
 	/** Smart contract address for the tokenized property (if applicable). */
 	@Property({ type: "string", nullable: true })
 	tokenContractAddress?: string;
+
+	/** Smart contract address for the Escrow. */
+	@Property({ type: "string", nullable: true })
+	escrowContractAddress?: string;
 
 	@Property({ type: "text", nullable: true })
 	description?: string;
