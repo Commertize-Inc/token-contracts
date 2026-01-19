@@ -11,6 +11,7 @@ export * from "./entities/LegalDocument";
 export * from "./entities/Dividend";
 export * from "./entities/ReviewComment";
 export * from "./entities/Notification";
+export * from "./entities/Wallet";
 
 export * from "./enums/onboarding";
 export * from "./enums/entities";

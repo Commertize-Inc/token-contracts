@@ -11,5 +11,6 @@ export * from "./ReviewComment";
 export * from "./Sponsor";
 
 export * from "./User";
+export * from "./Wallet";
 
 export * from "./Contact";
