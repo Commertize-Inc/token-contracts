@@ -10,7 +10,7 @@ import { Button, Alert, PageHeader } from "@commertize/ui";
 // 	TableHeader,
 // 	TableRow,
 // } from "@commertize/ui";
-import { Navbar } from "../components/Navbar";
+import { DashboardLayout } from "../components/DashboardLayout";
 import { api } from "../lib/api";
 import { SponsorFormFields } from "../components/onboarding/SponsorFormFields";
 import { usePrivy } from "@privy-io/react-auth";
@@ -442,7 +442,19 @@ export default function SponsorDashboard() {
 			cell: ({ row }) => {
 				const listing = row.original;
 				return (
-					<div className="relative flex justify-end">
+					<div className="relative flex justify-end gap-2 items-center">
+						{listing.tokenContractAddress && (
+							<a
+								href={`https://hashscan.io/testnet/address/${listing.tokenContractAddress}`}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="text-slate-400 hover:text-blue-600"
+								title="View Token Contract"
+								onClick={(e) => e.stopPropagation()}
+							>
+								<ExternalLink className="w-4 h-4" />
+							</a>
+						)}
 						<Button
 							variant="text"
 							className="text-slate-400 hover:text-slate-600 action-menu-trigger"
@@ -469,8 +481,7 @@ export default function SponsorDashboard() {
 	];
 
 	return (
-		<div className="min-h-screen bg-slate-50">
-			<Navbar />
+		<DashboardLayout>
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
 				<PageHeader
 					title="Sponsor Dashboard"
@@ -963,6 +974,6 @@ export default function SponsorDashboard() {
 				confirmText={alertState.confirmText}
 				cancelText={alertState.cancelText}
 			/>
-		</div>
+		</DashboardLayout>
 	);
 }

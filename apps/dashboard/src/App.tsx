@@ -6,7 +6,6 @@ import AuthPage from "./pages/Auth";
 import Marketplace from "./pages/Marketplace";
 import Onboarding from "./pages/Onboarding";
 import Profile from "./pages/Profile";
-import AdminNews from "./pages/AdminNews";
 import ListingDetails from "./pages/ListingDetails";
 import CreateListing from "./pages/listings/CreateListing";
 import EditListing from "./pages/listings/EditListing";
@@ -17,7 +16,7 @@ import { SponsorGuard } from "./components/SponsorGuard";
 import { KycGuard } from "./components/KycGuard";
 import { ScrollToTop } from "./components/ScrollToTop";
 import { ScrollToTopButton } from "@commertize/ui";
-import AdminReviews from "./pages/admin/Reviews";
+import AdminDashboard from "./pages/AdminDashboard";
 import Notifications from "./pages/Notifications";
 import { IncompleteProfileBanner } from "./components/IncompleteProfileBanner";
 
@@ -117,10 +116,21 @@ function App() {
 						}
 					/>
 					<Route
-						path="/admin/news"
+						path="/invest/:id"
 						element={
 							<AuthGuard>
-								<AdminNews />
+								<KycGuard>
+									<Invest />
+								</KycGuard>
+							</AuthGuard>
+						}
+					/>
+
+					<Route
+						path="/admin"
+						element={
+							<AuthGuard>
+								<AdminDashboard />
 							</AuthGuard>
 						}
 					/>
@@ -138,14 +148,6 @@ function App() {
 						element={
 							<AuthGuard>
 								<Notifications />
-							</AuthGuard>
-						}
-					/>
-					<Route
-						path="/admin/reviews"
-						element={
-							<AuthGuard>
-								<AdminReviews />
 							</AuthGuard>
 						}
 					/>

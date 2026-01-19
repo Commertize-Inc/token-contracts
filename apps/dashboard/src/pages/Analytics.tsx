@@ -9,7 +9,7 @@ import {
 	TrendingUp,
 	Users,
 } from "lucide-react";
-import { Navbar } from "../components/Navbar";
+import { DashboardLayout } from "../components/DashboardLayout";
 
 export default function Analytics() {
 	const upcomingFeatures = [
@@ -52,10 +52,8 @@ export default function Analytics() {
 	];
 
 	return (
-		<div className="min-h-screen bg-slate-50">
-			<Navbar />
-
-			<main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+		<DashboardLayout>
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
 				{/* Coming Soon Banner */}
 				<div className="bg-gradient-to-r from-[#D4A024]/10 to-[#E6BE8A]/10 rounded-3xl p-8 md:p-12 border border-[#D4A024]/20 mb-16">
 					<div className="flex flex-col md:flex-row items-center gap-8">
@@ -199,7 +197,7 @@ export default function Analytics() {
 						</div>
 					</div>
 				</div>
-			</main>
-		</div>
+			</div>
+		</DashboardLayout>
 	);
 }

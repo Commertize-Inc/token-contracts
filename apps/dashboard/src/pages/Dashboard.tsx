@@ -5,8 +5,8 @@ import { AlertTriangle, Loader2, PlusCircle, TrendingUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChatWidget } from "../components/ChatWidget";
+import { DashboardLayout } from "../components/DashboardLayout";
 import { InvestmentList } from "../components/InvestmentList";
-import { Navbar } from "../components/Navbar";
 import { useListings } from "../hooks/useListings";
 import { useProfile } from "../hooks/useProfile";
 import { api } from "../lib/api";
@@ -59,10 +59,8 @@ export default function DashboardHome() {
 	).length;
 
 	return (
-		<div className="min-h-screen bg-slate-50 pb-20">
-			<Navbar />
-
-			<main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+		<DashboardLayout>
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
 				{/* Global KYC Banner for Unverified Users */}
 				{!isKycApproved && (
 					<div className="mb-8 rounded-lg bg-red-50 p-4 border border-red-200 flex items-start sm:items-center justify-between gap-4">
@@ -186,8 +184,8 @@ export default function DashboardHome() {
 						</div>
 					</section>
 				</div>
-			</main>
+			</div>
 			<ChatWidget />
-		</div>
+		</DashboardLayout>
 	);
 }

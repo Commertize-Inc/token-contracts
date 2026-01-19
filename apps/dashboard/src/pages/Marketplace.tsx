@@ -3,13 +3,17 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { BarChart3, Globe, Users, AlertTriangle } from "lucide-react";
-import { Navbar } from "../components/Navbar";
+import { DashboardLayout } from "../components/DashboardLayout";
 import { ListingCard, PageHeader } from "@commertize/ui";
 // Keep UI button for specific uses if needed, or replace
 import { ListingStatus, PropertyType } from "@commertize/data/enums";
 import { useListings } from "../hooks/useListings";
 
-import { DataTable, DataTableToolbar } from "@commertize/ui";
+import {
+	DataTable,
+	DataTableToolbar,
+	DataTableColumnHeader,
+} from "@commertize/ui";
 import { ColumnDef } from "@tanstack/react-table";
 import type { Listing } from "@commertize/data"; // Import Listing type
 import { usePostHog } from "@commertize/utils/client";
@@ -64,12 +68,16 @@ export default function MarketplacePage() {
 	const columns: ColumnDef<Listing>[] = [
 		{
 			accessorKey: "name",
-			header: "Property Name",
+			header: ({ column }) => (
+				<DataTableColumnHeader column={column} title="Property Name" />
+			),
 			filterFn: "includesString",
 		},
 		{
 			accessorKey: "propertyType",
-			header: "Type",
+			header: ({ column }) => (
+				<DataTableColumnHeader column={column} title="Type" />
+			),
 			filterFn: "arrIncludesSome",
 			cell: ({ row }) => {
 				const type = row.getValue("propertyType") as string;
@@ -82,7 +90,9 @@ export default function MarketplacePage() {
 		},
 		{
 			accessorKey: "status",
-			header: "Status",
+			header: ({ column }) => (
+				<DataTableColumnHeader column={column} title="Status" />
+			),
 			filterFn: "arrIncludesSome",
 			cell: ({ row }) => {
 				const status = row.getValue("status") as string;
@@ -127,20 +137,26 @@ export default function MarketplacePage() {
 		},
 		{
 			id: "tokenPrice",
-			header: "Token Price",
+			header: ({ column }) => (
+				<DataTableColumnHeader column={column} title="Token Price" />
+			),
 			accessorFn: (row) => row.tokenomics?.tokenPrice ?? 0,
 			cell: ({ row }) => {
 				const price = row.getValue("tokenPrice") as number;
+				const currency = row.original.fundingCurrency;
+				const symbol = currency === "HBAR" ? "ℏ" : "$";
 				return (
 					<span className="text-sm">
-						${price > 0 ? price.toLocaleString() : "TBD"}
+						{price > 0 ? `${symbol}${price.toLocaleString()}` : "TBD"}
 					</span>
 				);
 			},
 		},
 		{
 			id: "capRate",
-			header: "Cap Rate",
+			header: ({ column }) => (
+				<DataTableColumnHeader column={column} title="Cap Rate" />
+			),
 			accessorFn: (row) => row.financials?.exitCapRate ?? 0,
 			cell: ({ row }) => {
 				const rate = row.getValue("capRate") as number;
@@ -154,12 +170,10 @@ export default function MarketplacePage() {
 	];
 
 	return (
-		<div className="min-h-screen bg-white">
-			<Navbar className="!mb-0" />
-
+		<DashboardLayout>
 			{/* Main Content with Landing Styling */}
 			<div className="bg-white pb-12">
-				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2">
 					{/* Page Header */}
 					<motion.div
 						initial={{ opacity: 0, y: 20 }}
@@ -227,8 +241,8 @@ export default function MarketplacePage() {
 									<button
 										onClick={() => setView("table")}
 										className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${view === "table"
-											? "bg-white text-gray-900 shadow-sm"
-											: "text-gray-500 hover:text-gray-900 hover:bg-gray-200/50"
+												? "bg-white text-gray-900 shadow-sm"
+												: "text-gray-500 hover:text-gray-900 hover:bg-gray-200/50"
 											}`}
 									>
 										<span className="w-4 h-4">
@@ -252,8 +266,8 @@ export default function MarketplacePage() {
 									<button
 										onClick={() => setView("grid")}
 										className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-all ${view === "grid"
-											? "bg-white text-gray-900 shadow-sm"
-											: "text-gray-500 hover:text-gray-900 hover:bg-gray-200/50"
+												? "bg-white text-gray-900 shadow-sm"
+												: "text-gray-500 hover:text-gray-900 hover:bg-gray-200/50"
 											}`}
 									>
 										<span className="w-4 h-4">
@@ -324,31 +338,6 @@ export default function MarketplacePage() {
 													})),
 												},
 											]}
-											sortOptions={[
-												{ label: "Name (A-Z)", value: "name-asc" },
-												{ label: "Name (Z-A)", value: "name-desc" },
-												{ label: "Price (Low-High)", value: "price-asc" },
-												{ label: "Price (High-Low)", value: "price-desc" },
-												{ label: "Cap Rate (High-Low)", value: "cap-desc" },
-											]}
-											onSortChange={(val) => {
-												if (posthog) {
-													posthog.capture("marketplace_filter", {
-														filter_type: "sort",
-														value: val,
-													});
-												}
-												if (val === "name-asc")
-													table.setSorting([{ id: "name", desc: false }]);
-												else if (val === "name-desc")
-													table.setSorting([{ id: "name", desc: true }]);
-												else if (val === "price-asc")
-													table.setSorting([{ id: "tokenPrice", desc: false }]);
-												else if (val === "price-desc")
-													table.setSorting([{ id: "tokenPrice", desc: true }]);
-												else if (val === "cap-desc")
-													table.setSorting([{ id: "capRate", desc: true }]);
-											}}
 										/>
 									</div>
 								)}
@@ -383,6 +372,6 @@ export default function MarketplacePage() {
 					</motion.div>
 				</div>
 			</div>
-		</div>
+		</DashboardLayout>
 	);
 }

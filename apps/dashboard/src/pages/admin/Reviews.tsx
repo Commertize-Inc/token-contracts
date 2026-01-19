@@ -21,7 +21,6 @@ import {
 	X,
 } from "lucide-react";
 import { usePrivy } from "@privy-io/react-auth";
-import { Navbar } from "../../components/Navbar";
 import { SubmissionDetails } from "../../components/admin/SubmissionDetails";
 
 interface Submission {
@@ -207,18 +206,26 @@ export default function AdminReviews() {
 			header: "Applicant",
 			cell: ({ row }) => {
 				const user = row.original.user;
+				if (!user) {
+					return <span className="text-muted-foreground text-xs">Unknown</span>;
+				}
 				return (
 					<div>
-						<div className="font-medium text-foreground">{user.name}</div>
-						<div className="text-xs text-muted-foreground">{user.email}</div>
+						<div className="font-medium text-foreground">
+							{user.name || "Unknown"}
+						</div>
+						<div className="text-xs text-muted-foreground">
+							{user.email || "No Email"}
+						</div>
 					</div>
 				);
 			},
 			filterFn: (row, id, value) => {
 				const user = row.getValue(id) as { name: string; email: string };
+				if (!user) return false;
 				return (
-					user.name.toLowerCase().includes(value.toLowerCase()) ||
-					user.email.toLowerCase().includes(value.toLowerCase())
+					(user.name?.toLowerCase() || "").includes(value.toLowerCase()) ||
+					(user.email?.toLowerCase() || "").includes(value.toLowerCase())
 				);
 			},
 		},
@@ -289,286 +296,274 @@ export default function AdminReviews() {
 	];
 
 	return (
-		<div className="min-h-screen bg-slate-50 pb-20">
-			<Navbar />
-			<PageContainer>
-				<PageHeader
-					title="Review Queue"
-					actions={
-						<div className="flex items-center gap-4">
-							<div className="flex items-center gap-2">
-								<input
-									type="checkbox"
-									id="showAll"
-									checked={showAll}
-									onChange={(e) => setShowAll(e.target.checked)}
-									className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4"
-								/>
-								<label
-									htmlFor="showAll"
-									className="text-sm text-slate-700 cursor-pointer select-none"
+		<PageContainer>
+			<PageHeader
+				title="Review Queue"
+				actions={
+					<div className="flex items-center gap-4">
+						<div className="flex items-center gap-2">
+							<input
+								type="checkbox"
+								id="showAll"
+								checked={showAll}
+								onChange={(e) => setShowAll(e.target.checked)}
+								className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4"
+							/>
+							<label
+								htmlFor="showAll"
+								className="text-sm text-slate-700 cursor-pointer select-none"
+							>
+								Show All History
+							</label>
+						</div>
+					</div>
+				}
+				className="mb-8"
+			/>
+
+			<div className="bg-white rounded-lg shadow-sm border p-4">
+				<DataTable
+					columns={columns}
+					data={submissions}
+					searchPlaceholder="Search applicants..."
+					filterColumnName="user"
+					renderToolbar={(table) => (
+						<div className="flex items-center gap-2">
+							<div className="flex items-center gap-2 bg-white px-3 py-2 rounded-md border shadow-sm">
+								<Filter className="h-4 w-4 text-muted-foreground" />
+								<select
+									className="bg-transparent border-none text-sm focus:ring-0 outline-none"
+									value={
+										(table.getColumn("type")?.getFilterValue() as string) ??
+										"ALL"
+									}
+									onChange={(e) =>
+										table.getColumn("type")?.setFilterValue(e.target.value)
+									}
 								>
-									Show All History
-								</label>
+									<option value="ALL">All Types</option>
+									<option value="KYC">KYC</option>
+									<option value="INVESTOR">Investor</option>
+									<option value="SPONSOR">Sponsor</option>
+									<option value="LISTING">Listing</option>
+								</select>
 							</div>
 						</div>
-					}
-					className="mb-8"
+					)}
 				/>
+			</div>
 
-				<div className="bg-white rounded-lg shadow-sm border p-4">
-					<DataTable
-						columns={columns}
-						data={submissions}
-						searchPlaceholder="Search applicants..."
-						filterColumnName="user"
-						renderToolbar={(table) => (
-							<div className="flex items-center gap-2">
-								<div className="flex items-center gap-2 bg-white px-3 py-2 rounded-md border shadow-sm">
-									<Filter className="h-4 w-4 text-muted-foreground" />
-									<select
-										className="bg-transparent border-none text-sm focus:ring-0 outline-none"
-										value={
-											(table.getColumn("type")?.getFilterValue() as string) ??
-											"ALL"
-										}
-										onChange={(e) =>
-											table.getColumn("type")?.setFilterValue(e.target.value)
-										}
+			{/* Enhanced Review Modal */}
+			{selectedSubmission && (
+				<div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+					<div className="bg-white rounded-xl shadow-xl w-full max-w-7xl h-[90vh] flex flex-col md:flex-row overflow-hidden animate-in zoom-in-95 duration-200">
+						{/* Left: Metadata Details */}
+						<div className="flex-1 border-r border-slate-100 flex flex-col min-h-0">
+							<div className="px-6 py-4 border-b bg-slate-50 flex justify-between items-center flex-shrink-0">
+								<h3 className="font-semibold text-lg">Submission Details</h3>
+								<div className="flex items-center gap-2">
+									<Badge
+										variant={getStatusColor(selectedSubmission.status) as any}
 									>
-										<option value="ALL">All Types</option>
-										<option value="KYC">KYC</option>
-										<option value="INVESTOR">Investor</option>
-										<option value="SPONSOR">Sponsor</option>
-										<option value="LISTING">Listing</option>
-									</select>
+										{selectedSubmission.status}
+									</Badge>
 								</div>
 							</div>
-						)}
-					/>
-				</div>
-
-				{/* Enhanced Review Modal */}
-				{selectedSubmission && (
-					<div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-						<div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col md:flex-row overflow-hidden animate-in zoom-in-95 duration-200">
-							{/* Left: Metadata Details */}
-							<div className="flex-1 border-r border-slate-100 flex flex-col min-h-[300px]">
-								<div className="px-6 py-4 border-b bg-slate-50 flex justify-between items-center">
-									<h3 className="font-semibold text-lg">Submission Details</h3>
-									<div className="flex items-center gap-2">
-										<Badge
-											variant={getStatusColor(selectedSubmission.status) as any}
-										>
-											{selectedSubmission.status}
-										</Badge>
-										<button
-											onClick={() => setSelectedSubmission(null)}
-											className="text-muted-foreground hover:text-foreground p-1 rounded-full hover:bg-slate-100 transition-colors"
-										>
-											<X className="h-5 w-5" />
-										</button>
+							<div className="flex-1 overflow-y-auto p-6 bg-slate-50/50">
+								<div className="space-y-4">
+									<div>
+										<label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+											Applicant
+										</label>
+										<div className="text-sm font-medium">
+											{selectedSubmission.user.name}
+										</div>
+										<div className="text-xs text-muted-foreground">
+											{selectedSubmission.user.email}
+										</div>
 									</div>
-								</div>
-								<div className="flex-1 overflow-y-auto p-6 bg-slate-50/50">
-									<div className="space-y-4">
-										<div>
-											<label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-												Applicant
-											</label>
-											<div className="text-sm font-medium">
-												{selectedSubmission.user.name}
-											</div>
-											<div className="text-xs text-muted-foreground">
-												{selectedSubmission.user.email}
-											</div>
-										</div>
 
-										<div className="border-t pt-4">
-											<SubmissionDetails
-												type={selectedSubmission.type}
-												details={selectedSubmission.details}
-											/>
-										</div>
+									<div className="border-t pt-4">
+										<SubmissionDetails
+											type={selectedSubmission.type}
+											details={selectedSubmission.details}
+										/>
 									</div>
 								</div>
 							</div>
+						</div>
 
-							{/* Right: Actions */}
-							<div className="w-full md:w-96 flex flex-col bg-white">
-								<div className="px-6 py-4 border-b flex justify-between items-center">
-									<h3 className="font-semibold text-lg">Actions</h3>
-									<button
-										onClick={() => setSelectedSubmission(null)}
-										className="text-muted-foreground hover:text-foreground p-1 rounded-full hover:bg-slate-100 transition-colors"
-									>
-										<X className="h-5 w-5" />
-									</button>
-								</div>
+						{/* Right: Actions */}
+						<div className="w-full md:w-96 flex flex-col bg-white border-l h-full">
+							<div className="px-6 py-4 border-b flex justify-between items-center flex-shrink-0">
+								<h3 className="font-semibold text-lg">Actions</h3>
+								<button
+									onClick={() => setSelectedSubmission(null)}
+									className="text-muted-foreground hover:text-foreground p-1 rounded-full hover:bg-slate-100 transition-colors"
+								>
+									<X className="h-5 w-5" />
+								</button>
+							</div>
 
-								<div className="flex-1 p-6 flex flex-col gap-6">
-									{/* Action Selection Buttons */}
-									<div className="grid grid-cols-1 gap-3">
-										{selectedSubmission.type === "LISTING" ? (
-											<>
-												<Button
-													variant={
-														reviewAction === "TOKENIZE" ? "default" : "outline"
-													}
-													className={`justify-start ${reviewAction === "TOKENIZE" ? "bg-indigo-600 hover:bg-indigo-700 border-indigo-600 text-white" : "hover:border-indigo-600 hover:text-indigo-600"}`}
-													onClick={() => setReviewAction("TOKENIZE")}
-												>
-													<CheckCircle className="mr-2 h-4 w-4" /> Tokenize
-												</Button>
-
-												<Button
-													variant={
-														reviewAction === "FREEZE" ? "default" : "outline"
-													}
-													className={`justify-start ${reviewAction === "FREEZE" ? "bg-cyan-600 hover:bg-cyan-700 border-cyan-600 text-white" : "hover:border-cyan-600 hover:text-cyan-600"}`}
-													onClick={() => setReviewAction("FREEZE")}
-												>
-													<AlertTriangle className="mr-2 h-4 w-4" /> Freeze
-												</Button>
-
-												<div className="pt-2 border-t mt-2">
-													<label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-2">
-														Set Status Manually
-													</label>
-													<select
-														className="w-full rounded-md border text-sm p-2"
-														onChange={(e) => {
-															setReviewAction("UPDATE_STATUS");
-															setComment(e.target.value); // Using comment state to store status temporarily for UPDATE_STATUS action
-														}}
-														value={
-															reviewAction === "UPDATE_STATUS" ? comment : ""
-														}
-													>
-														<option value="">Select Status...</option>
-														<option value="DRAFT">Draft</option>
-														<option value="PENDING_REVIEW">
-															Pending Review
-														</option>
-														<option value="APPROVED">Approved</option>
-														<option value="TOKENIZING">Tokenizing</option>
-														<option value="ACTIVE">Active</option>
-														<option value="FULLY_FUNDED">Fully Funded</option>
-														<option value="REJECTED">Rejected</option>
-														<option value="WITHDRAWN">Withdrawn</option>
-														<option value="FROZEN">Frozen</option>
-													</select>
-												</div>
-											</>
-										) : (
-											<>
-												<Button
-													variant={
-														reviewAction === "APPROVE" ? "default" : "outline"
-													}
-													className={`justify-start ${reviewAction === "APPROVE" ? "bg-green-600 hover:bg-green-700 border-green-600 text-white" : "hover:border-green-600 hover:text-green-600"}`}
-													onClick={() => setReviewAction("APPROVE")}
-												>
-													<CheckCircle className="mr-2 h-4 w-4" /> Approve
-												</Button>
-
-												<Button
-													variant={
-														reviewAction === "REQUEST_INFO"
-															? "secondary"
-															: "outline"
-													}
-													className={`justify-start ${reviewAction === "REQUEST_INFO" ? "bg-amber-100 text-amber-900 border-amber-200" : "hover:border-amber-500 hover:text-amber-600"}`}
-													onClick={() => setReviewAction("REQUEST_INFO")}
-												>
-													<AlertTriangle className="mr-2 h-4 w-4" /> Request
-													Info
-												</Button>
-
-												<Button
-													variant={
-														reviewAction === "REJECT" ? "destructive" : "outline"
-													}
-													className={`justify-start ${reviewAction === "REJECT" ? "bg-red-600 hover:bg-red-700 border-red-600 text-white" : "hover:border-red-600 hover:text-red-600"}`}
-													onClick={() => setReviewAction("REJECT")}
-												>
-													<XCircle className="mr-2 h-4 w-4" /> Reject
-												</Button>
-											</>
-										)}
-									</div>
-
-									{/* Comment Box */}
-									{reviewAction && reviewAction !== "UPDATE_STATUS" && (
-										<div className="space-y-2 animate-in slide-in-from-top-2 duration-200">
-											<label className="text-sm font-medium">
-												Comment{" "}
-												{reviewAction !== "APPROVE" &&
-													reviewAction !== "TOKENIZE" && (
-														<span className="text-red-500">*</span>
-													)}
-											</label>
-											<textarea
-												className="w-full min-h-[120px] p-3 border rounded-md text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-none"
-												placeholder={
-													reviewAction === "APPROVE" ||
-														reviewAction === "TOKENIZE"
-														? "Optional comment"
-														: `Reason for ${reviewAction === "REJECT" ? "rejection" : "action"}...`
+							<div className="flex-1 p-6 flex flex-col gap-6 overflow-y-auto min-h-0">
+								{/* Action Selection Buttons */}
+								<div className="grid grid-cols-1 gap-3">
+									{selectedSubmission.type === "LISTING" ? (
+										<>
+											<Button
+												variant={
+													reviewAction === "TOKENIZE" ? "default" : "outline"
 												}
-												value={comment}
-												onChange={(e) => setComment(e.target.value)}
-												autoFocus
-											/>
-										</div>
+												className={`justify-start ${reviewAction === "TOKENIZE" ? "bg-indigo-600 hover:bg-indigo-700 border-indigo-600 text-white" : "hover:border-indigo-600 hover:text-indigo-600"}`}
+												onClick={() => setReviewAction("TOKENIZE")}
+											>
+												<CheckCircle className="mr-2 h-4 w-4" /> Tokenize
+											</Button>
+
+											<Button
+												variant={
+													reviewAction === "FREEZE" ? "default" : "outline"
+												}
+												className={`justify-start ${reviewAction === "FREEZE" ? "bg-cyan-600 hover:bg-cyan-700 border-cyan-600 text-white" : "hover:border-cyan-600 hover:text-cyan-600"}`}
+												onClick={() => setReviewAction("FREEZE")}
+											>
+												<AlertTriangle className="mr-2 h-4 w-4" /> Freeze
+											</Button>
+
+											<div className="pt-2 border-t mt-2">
+												<label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-2">
+													Set Status Manually
+												</label>
+												<select
+													className="w-full rounded-md border text-sm p-2"
+													onChange={(e) => {
+														setReviewAction("UPDATE_STATUS");
+														setComment(e.target.value); // Using comment state to store status temporarily for UPDATE_STATUS action
+													}}
+													value={
+														reviewAction === "UPDATE_STATUS" ? comment : ""
+													}
+												>
+													<option value="">Select Status...</option>
+													<option value="DRAFT">Draft</option>
+													<option value="PENDING_REVIEW">Pending Review</option>
+													<option value="APPROVED">Approved</option>
+													<option value="TOKENIZING">Tokenizing</option>
+													<option value="ACTIVE">Active</option>
+													<option value="FULLY_FUNDED">Fully Funded</option>
+													<option value="REJECTED">Rejected</option>
+													<option value="WITHDRAWN">Withdrawn</option>
+													<option value="FROZEN">Frozen</option>
+												</select>
+											</div>
+										</>
+									) : (
+										<>
+											<Button
+												variant={
+													reviewAction === "APPROVE" ? "default" : "outline"
+												}
+												className={`justify-start ${reviewAction === "APPROVE" ? "bg-green-600 hover:bg-green-700 border-green-600 text-white" : "hover:border-green-600 hover:text-green-600"}`}
+												onClick={() => setReviewAction("APPROVE")}
+											>
+												<CheckCircle className="mr-2 h-4 w-4" /> Approve
+											</Button>
+
+											<Button
+												variant={
+													reviewAction === "REQUEST_INFO"
+														? "secondary"
+														: "outline"
+												}
+												className={`justify-start ${reviewAction === "REQUEST_INFO" ? "bg-amber-100 text-amber-900 border-amber-200" : "hover:border-amber-500 hover:text-amber-600"}`}
+												onClick={() => setReviewAction("REQUEST_INFO")}
+											>
+												<AlertTriangle className="mr-2 h-4 w-4" /> Request Info
+											</Button>
+
+											<Button
+												variant={
+													reviewAction === "REJECT" ? "destructive" : "outline"
+												}
+												className={`justify-start ${reviewAction === "REJECT" ? "bg-red-600 hover:bg-red-700 border-red-600 text-white" : "hover:border-red-600 hover:text-red-600"}`}
+												onClick={() => setReviewAction("REJECT")}
+											>
+												<XCircle className="mr-2 h-4 w-4" /> Reject
+											</Button>
+										</>
 									)}
 								</div>
 
-								<div className="p-6 border-t bg-slate-50 flex justify-end gap-2">
-									<Button
-										variant="text"
-										onClick={() => setSelectedSubmission(null)}
-									>
-										Cancel
-									</Button>
-									<Button
-										onClick={handleSubmitReview}
-										disabled={
-											!reviewAction ||
-											reviewMutation.isPending ||
-											(reviewAction !== "APPROVE" &&
-												reviewAction !== "TOKENIZE" &&
-												reviewAction !== "UPDATE_STATUS" &&
-												!comment.trim())
-										}
-										variant="default"
-										className={
-											reviewAction === "REJECT"
-												? "bg-red-600 hover:bg-red-700"
-												: reviewAction === "APPROVE"
-													? "bg-green-600 hover:bg-green-700"
-													: ""
-										}
-									>
-										{reviewMutation.isPending && (
-											<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-										)}
-										Confirm Decision
-									</Button>
-								</div>
+								{/* Comment Box */}
+								{reviewAction && reviewAction !== "UPDATE_STATUS" && (
+									<div className="space-y-2 animate-in slide-in-from-top-2 duration-200">
+										<label className="text-sm font-medium">
+											Comment{" "}
+											{reviewAction !== "APPROVE" &&
+												reviewAction !== "TOKENIZE" && (
+													<span className="text-red-500">*</span>
+												)}
+										</label>
+										<textarea
+											className="w-full min-h-[120px] p-3 border rounded-md text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-none"
+											placeholder={
+												reviewAction === "APPROVE" ||
+												reviewAction === "TOKENIZE"
+													? "Optional comment"
+													: `Reason for ${reviewAction === "REJECT" ? "rejection" : "action"}...`
+											}
+											value={comment}
+											onChange={(e) => setComment(e.target.value)}
+											autoFocus
+										/>
+									</div>
+								)}
+							</div>
+
+							<div className="p-6 border-t bg-slate-50 flex justify-end gap-2 flex-shrink-0">
+								<Button
+									variant="text"
+									onClick={() => setSelectedSubmission(null)}
+								>
+									Cancel
+								</Button>
+								<Button
+									onClick={handleSubmitReview}
+									disabled={
+										!reviewAction ||
+										reviewMutation.isPending ||
+										(reviewAction !== "APPROVE" &&
+											reviewAction !== "TOKENIZE" &&
+											reviewAction !== "UPDATE_STATUS" &&
+											!comment.trim())
+									}
+									variant="default"
+									className={
+										reviewAction === "REJECT"
+											? "bg-red-600 hover:bg-red-700"
+											: reviewAction === "APPROVE"
+												? "bg-green-600 hover:bg-green-700"
+												: ""
+									}
+								>
+									{reviewMutation.isPending && (
+										<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+									)}
+									Confirm
+								</Button>
 							</div>
 						</div>
 					</div>
-				)}
+				</div>
+			)}
 
-				<Alert
-					isOpen={alertState.isOpen}
-					onClose={() => setAlertState((prev) => ({ ...prev, isOpen: false }))}
-					title={alertState.title}
-					message={alertState.message}
-					type={alertState.type}
-				/>
-			</PageContainer>
-		</div>
+			<Alert
+				isOpen={alertState.isOpen}
+				onClose={() => setAlertState((prev) => ({ ...prev, isOpen: false }))}
+				title={alertState.title}
+				message={alertState.message}
+				type={alertState.type}
+			/>
+		</PageContainer>
 	);
 }

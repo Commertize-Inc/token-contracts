@@ -2,6 +2,8 @@ import {
 	EntityStructure,
 	OfferingType,
 	PropertyType,
+	SupportedNetwork,
+	SupportedCurrency,
 } from "@commertize/data/enums";
 import { createListingSchema } from "@commertize/data/schemas/property";
 import type { SubNavbarItem } from "@commertize/ui";
@@ -18,6 +20,8 @@ import {
 	FormDescription,
 	FileUpload,
 	ErrorModal,
+	Switch,
+	MultiSelect,
 } from "@commertize/ui";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getAccessToken } from "@privy-io/react-auth";
@@ -44,7 +48,7 @@ import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
-import { Navbar } from "../../components/Navbar";
+import { DashboardLayout } from "../../components/DashboardLayout";
 import { Tooltip } from "../../components/Tooltip";
 import { api } from "../../lib/api";
 import { useOnboardingStatus } from "../../hooks/useOnboardingStatus";
@@ -81,6 +85,18 @@ const PROPERTY_TYPE_LABELS: Record<PropertyType, string> = {
 	[PropertyType.OTHER]: "Other",
 };
 
+const CurrencySymbol: Record<SupportedCurrency, string> = {
+	[SupportedCurrency.USD]: "$",
+	[SupportedCurrency.USDC]: "USDC",
+	[SupportedCurrency.HBAR]: "ℏ",
+	[SupportedCurrency.ETH]: "Ξ",
+	[SupportedCurrency.AVAX]: "AVAX",
+	[SupportedCurrency.MATIC]: "MATIC",
+	[SupportedCurrency.USDT]: "USDT",
+	[SupportedCurrency.DAI]: "DAI",
+	[SupportedCurrency.CREUSD]: "CREUSD",
+};
+
 export default function CreateListing() {
 	const navigate = useNavigate();
 	const [serverError, setServerError] = useState<string | null>(null);
@@ -110,6 +126,7 @@ export default function CreateListing() {
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			offeringType: OfferingType.RULE_506_B,
+			fundingCurrency: SupportedCurrency.USDC,
 			images: [{ value: "" }],
 			documents: [{ value: "" }],
 			highlights: [{ value: "" }],
@@ -119,10 +136,16 @@ export default function CreateListing() {
 			tokenomics: {
 				transferRestricted: false,
 			},
+			crossChainConfig: {
+				enabled: false,
+				subsidized: false,
+			},
 		},
 	});
 
 	const { control, handleSubmit, setValue } = form;
+	const selectedCurrency = form.watch("fundingCurrency") || SupportedCurrency.USDC;
+
 
 	// Pre-fill Offering Structure details from Sponsor info if available
 	useEffect(() => {
@@ -263,6 +286,52 @@ export default function CreateListing() {
 		name: "highlights",
 	});
 
+	const onInvalid = (errors: any) => {
+		console.log("Form errors:", errors);
+		// Find the first error and scroll to it
+		// We need to flatten the errors or find the first one in DOM order
+		// A simple heuristic: iterate through the registered fields order or just Object.keys
+		// React Hook Form errors object structure matches the form data structure.
+
+		// Helper to find first error key in deep object
+		const getFirstErrorKey = (errorObj: any, prefix = ""): string | null => {
+			for (const key in errorObj) {
+				if (errorObj[key]?.message) {
+					return prefix + key;
+				}
+				if (typeof errorObj[key] === "object") {
+					const result = getFirstErrorKey(
+						errorObj[key],
+						prefix ? `${prefix}.${key}.` : `${key}.`
+					);
+					if (result) return result;
+				}
+			}
+			return null;
+		};
+
+		const firstErrorKey = getFirstErrorKey(errors);
+		if (firstErrorKey) {
+			// Try to find element by name
+			// Note: This relies on inputs having the correct name attribute
+			const element = document.querySelector(`[name="${firstErrorKey}"]`);
+			if (element) {
+				element.scrollIntoView({
+					behavior: "smooth",
+					block: "center",
+					inline: "nearest",
+				});
+				// Small delay to focus
+				setTimeout(() => {
+					(element as HTMLElement).focus();
+				}, 500);
+			} else {
+				// Fallback: try to find by id if name selector fails (sometimes used for checkboxes etc)
+				// Or check for field arrays
+				console.warn(`Could not find element with name: ${firstErrorKey}`);
+			}
+		}
+	};
 	const onSubmit = async (data: CreateListingFormData) => {
 		setIsSubmitting(true);
 		setServerError(null);
@@ -320,14 +389,13 @@ export default function CreateListing() {
 	);
 
 	return (
-		<div className="min-h-screen bg-slate-50">
+		<DashboardLayout>
 			<ErrorModal
 				isOpen={errorModalOpen}
 				onClose={() => setErrorModalOpen(false)}
 				title="Creation Failed"
 				message={serverError || "An unexpected error occurred."}
 			/>
-			<Navbar />
 			<div className="flex gap-8 max-w-[90rem] mx-auto py-10 px-4 sm:px-6 lg:px-8">
 				{/* Vertical SubNavbar Sidebar */}
 				<SubNavbar items={navItems} offset={80} className="hidden lg:flex" />
@@ -349,7 +417,7 @@ export default function CreateListing() {
 
 					<Form {...form}>
 						<form
-							onSubmit={handleSubmit(onSubmit)}
+							onSubmit={handleSubmit(onSubmit, onInvalid)}
 							className="bg-white shadow-xl rounded-2xl p-8 border border-slate-100"
 						>
 							{serverError && (
@@ -529,6 +597,8 @@ export default function CreateListing() {
 							</div>
 
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+
 								<FormField
 									control={control}
 									name="financials.purchasePrice"
@@ -797,7 +867,7 @@ export default function CreateListing() {
 									name="financials.acquisitionFee"
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel className="flex items-center gap-1">
+											<FormLabel required className="flex items-center gap-1">
 												Acquisition Fee ($)
 												<Tooltip content="Fee paid to sponsor for acquiring the property." />
 											</FormLabel>
@@ -821,7 +891,7 @@ export default function CreateListing() {
 									name="financials.capexBudget"
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel className="flex items-center gap-1">
+											<FormLabel required className="flex items-center gap-1">
 												CapEx Budget ($)
 												<Tooltip content="Capital expenditure budget for improvements." />
 											</FormLabel>
@@ -845,7 +915,7 @@ export default function CreateListing() {
 									name="financials.workingCapital"
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel className="flex items-center gap-1">
+											<FormLabel required className="flex items-center gap-1">
 												Working Capital ($)
 												<Tooltip content="Operating cash reserves for ongoing expenses." />
 											</FormLabel>
@@ -869,7 +939,7 @@ export default function CreateListing() {
 									name="financials.reservesInitial"
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel className="flex items-center gap-1">
+											<FormLabel required className="flex items-center gap-1">
 												Initial Reserves ($)
 												<Tooltip content="Initial reserve funds for contingencies." />
 											</FormLabel>
@@ -1405,6 +1475,28 @@ export default function CreateListing() {
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 								<FormField
 									control={control}
+									name="fundingCurrency"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel required>Funding Currency</FormLabel>
+											<FormControl>
+												<select
+													{...field}
+													className="w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#C59B26] bg-white h-10"
+												>
+													{Object.values(SupportedCurrency).map((currency) => (
+														<option key={currency} value={currency}>
+															{currency} ({CurrencySymbol[currency as SupportedCurrency]})
+														</option>
+													))}
+												</select>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={control}
 									name="financials.effectiveGrossIncome"
 									render={({ field }) => (
 										<FormItem>
@@ -1582,7 +1674,7 @@ export default function CreateListing() {
 									name="tokenomics.tokensForTreasury"
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel className="flex items-center gap-1">
+											<FormLabel required className="flex items-center gap-1">
 												Tokens for Treasury
 												<Tooltip content="Number of tokens reserved for platform/treasury." />
 											</FormLabel>
@@ -1607,7 +1699,7 @@ export default function CreateListing() {
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel required className="flex items-center gap-1">
-												Token Price ($)
+												Token Price ({CurrencySymbol[selectedCurrency]})
 												<Tooltip content="Price per individual token in USD." />
 											</FormLabel>
 											<FormControl>
@@ -1722,6 +1814,92 @@ export default function CreateListing() {
 											</FormItem>
 										)}
 									/>
+								</div>
+
+								<div className="space-y-4 md:col-span-2 pt-4">
+									<h4 className="text-sm font-medium text-slate-900 border-b pb-2 mb-4">
+										Cross-Chain Integration (LayerZero)
+									</h4>
+									<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+										<FormField
+											control={control}
+											name="crossChainConfig.enabled"
+											render={({ field }) => (
+												<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+													<div className="space-y-0.5">
+														<FormLabel className="text-base">
+															Enable Cross-Chain Support
+														</FormLabel>
+														<FormDescription>
+															Allow tokens to be bridged to other supported
+															networks via LayerZero.
+														</FormDescription>
+													</div>
+													<FormControl>
+														<Switch
+															checked={field.value}
+															onCheckedChange={field.onChange}
+														/>
+													</FormControl>
+												</FormItem>
+											)}
+										/>
+										<FormField
+											control={control}
+											name="crossChainConfig.subsidized"
+											render={({ field }) => (
+												<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+													<div className="space-y-0.5">
+														<FormLabel className="text-base">
+															Subsidize Bridging
+														</FormLabel>
+														<FormDescription>
+															Sponsor pays gas fees for cross-chain token
+															transfers.
+														</FormDescription>
+													</div>
+													<FormControl>
+														<Switch
+															checked={field.value}
+															onCheckedChange={field.onChange}
+															disabled={!form.watch("crossChainConfig.enabled")}
+														/>
+													</FormControl>
+												</FormItem>
+											)}
+										/>
+									</div>
+									{form.watch("crossChainConfig.enabled") && (
+										<div className="mt-4">
+											<FormField
+												control={control}
+												name="crossChainConfig.targetNetworks"
+												render={({ field }) => (
+													<FormItem>
+														<FormLabel required>Target Networks</FormLabel>
+														<FormDescription>
+															Select the blockchain networks where this token
+															should be available.
+														</FormDescription>
+														<FormControl>
+															<MultiSelect
+																selected={field.value || []}
+																options={Object.values(SupportedNetwork).map(
+																	(network) => ({
+																		label: network,
+																		value: network,
+																	})
+																)}
+																onChange={field.onChange}
+																placeholder="Select networks..."
+															/>
+														</FormControl>
+														<FormMessage />
+													</FormItem>
+												)}
+											/>
+										</div>
+									)}
 								</div>
 							</div>
 
@@ -1949,6 +2127,6 @@ export default function CreateListing() {
 					</Form>
 				</div>
 			</div>
-		</div>
+		</DashboardLayout >
 	);
 }

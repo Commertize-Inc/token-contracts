@@ -1,14 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import {
-	Sparkles,
-	RefreshCw,
-	Trash2,
-	ArrowLeft,
-	Check,
-	AlertCircle,
-} from "lucide-react";
-import { Link } from "react-router-dom";
+import { Sparkles, RefreshCw, Trash2, Check, AlertCircle } from "lucide-react";
 
 interface Article {
 	id: string;
@@ -99,14 +91,6 @@ export default function AdminNewsPage() {
 	return (
 		<div className="min-h-screen bg-gray-50 py-12 px-4">
 			<div className="max-w-4xl mx-auto">
-				<Link
-					to="/"
-					className="inline-flex items-center gap-2 text-gray-600 hover:text-[#D4A024] mb-8 transition-colors"
-				>
-					<ArrowLeft className="w-4 h-4" />
-					<span className="font-light">Back to Dashboard</span>
-				</Link>
-
 				<motion.div
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}

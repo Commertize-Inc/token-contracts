@@ -3,7 +3,7 @@ import { api } from "../lib/api";
 import { usePrivy } from "@privy-io/react-auth";
 import { KycStatus } from "@commertize/data/enums";
 import { useParams, useNavigate } from "react-router-dom";
-import { Navbar } from "../components/Navbar";
+import { DashboardLayout } from "../components/DashboardLayout";
 import { Button, SubNavbar, ScrollToTopButton } from "@commertize/ui";
 import {
 	Loader2,
@@ -76,23 +76,29 @@ export default function ListingDetails() {
 
 	if (loading) {
 		return (
-			<div className="min-h-screen flex items-center justify-center bg-slate-50">
-				<Loader2 className="w-8 h-8 animate-spin text-[#D4A024]" />
-			</div>
+			<DashboardLayout>
+				<div className="flex items-center justify-center h-[calc(100vh-64px)]">
+					<Loader2 className="w-8 h-8 animate-spin text-[#D4A024]" />
+				</div>
+			</DashboardLayout>
 		);
 	}
 
 	if (error || !listing) {
 		return (
-			<div className="min-h-screen flex items-center justify-center bg-slate-50">
-				<div className="text-center">
-					<h2 className="text-2xl font-bold text-slate-900 mb-2">Error</h2>
-					<p className="text-slate-500 mb-4">{error || "Listing not found"}</p>
-					<Button onClick={() => navigate("/marketplace")}>
-						Back to Marketplace
-					</Button>
+			<DashboardLayout>
+				<div className="flex items-center justify-center h-[calc(100vh-64px)]">
+					<div className="text-center">
+						<h2 className="text-2xl font-bold text-slate-900 mb-2">Error</h2>
+						<p className="text-slate-500 mb-4">
+							{error || "Listing not found"}
+						</p>
+						<Button onClick={() => navigate("/marketplace")}>
+							Back to Marketplace
+						</Button>
+					</div>
 				</div>
-			</div>
+			</DashboardLayout>
 		);
 	}
 
@@ -125,10 +131,8 @@ export default function ListingDetails() {
 	];
 
 	return (
-		<div className="min-h-screen bg-slate-50 text-slate-900 font-sans">
-			<Navbar />
-
-			<main className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+		<DashboardLayout className="text-slate-900 font-sans">
+			<div className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 pb-12">
 				<div className="flex flex-col lg:flex-row gap-8 relative">
 					{/* Left Sidebar: SubNavbar (Vertical) */}
 					<SubNavbar
@@ -144,7 +148,7 @@ export default function ListingDetails() {
 					/>
 
 					{/* Middle Column: Main Content */}
-					<div className="flex-1 min-w-0 space-y-8">
+					<div className="flex-1 min-w-0 space-y-8 pt-8">
 						{/* Breadcrumb / Back Navigation */}
 						<button
 							id="overview"
@@ -222,11 +226,11 @@ export default function ListingDetails() {
 												<p className="font-semibold text-slate-900">
 													$
 													{listing.tokenomics?.minInvestmentTokens &&
-														listing.tokenomics?.tokenPrice
+													listing.tokenomics?.tokenPrice
 														? (
-															listing.tokenomics.minInvestmentTokens *
-															listing.tokenomics.tokenPrice
-														).toLocaleString()
+																listing.tokenomics.minInvestmentTokens *
+																listing.tokenomics.tokenPrice
+															).toLocaleString()
 														: "—"}
 												</p>
 											</div>
@@ -331,10 +335,10 @@ export default function ListingDetails() {
 						</div>
 					</div>
 				</div>
-			</main>
+			</div>
 
 			{/* Scroll to Top Button */}
 			<ScrollToTopButton />
-		</div>
+		</DashboardLayout>
 	);
 }

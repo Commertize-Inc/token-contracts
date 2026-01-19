@@ -76,8 +76,18 @@ export default function KYCPage() {
 		address: "",
 		documents: [] as string[],
 		bio: "",
+		walletAddress: "",
 	});
 
+	// Initialize wallet address from Privy user if not set
+	useEffect(() => {
+		if (user?.wallet?.address && !sponsorFormData.walletAddress) {
+			setSponsorFormData((prev) => ({
+				...prev,
+				walletAddress: user.wallet?.address || "",
+			}));
+		}
+	}, [user?.wallet?.address]);
 	const [feedbackModal, setFeedbackModal] = useState({
 		isOpen: false,
 		entityType: EntityType.KYC,
@@ -149,6 +159,8 @@ export default function KYCPage() {
 						address: data.sponsor.address || "",
 						documents: data.sponsor.kybData?.documents || [],
 						bio: data.sponsor.bio || "",
+						walletAddress:
+							data.sponsor.walletAddress || user?.wallet?.address || "",
 					});
 				}
 
@@ -565,6 +577,7 @@ export default function KYCPage() {
 			address: "",
 			documents: [],
 			bio: "",
+			walletAddress: user?.wallet?.address || "",
 		});
 	};
 

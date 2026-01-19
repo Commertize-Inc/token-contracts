@@ -7,8 +7,6 @@ import {
 	TableRow,
 	Badge,
 	Card,
-	CardHeader,
-	CardTitle,
 } from "@commertize/ui";
 import { InvestmentStatus } from "@commertize/data/enums"; // Ensure this package is in dependencies
 
@@ -39,9 +37,6 @@ export function InvestmentList({ investments }: InvestmentListProps) {
 
 	return (
 		<Card className="w-full">
-			<CardHeader>
-				<CardTitle>Your Portfolio</CardTitle>
-			</CardHeader>
 			<div className="p-0">
 				<Table>
 					<TableHeader>

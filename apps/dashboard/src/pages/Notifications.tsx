@@ -1,4 +1,3 @@
-
 import { usePrivy } from "@privy-io/react-auth";
 import {
 	Badge,
@@ -9,8 +8,16 @@ import {
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import { api } from "../lib/api";
-import { Loader2, MessageSquare, Eye, Filter, X, Bell, Send } from "lucide-react";
-import { Navbar } from "../components/Navbar";
+import {
+	Loader2,
+	MessageSquare,
+	Eye,
+	Filter,
+	X,
+	Bell,
+	Send,
+} from "lucide-react";
+import { DashboardLayout } from "../components/DashboardLayout";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
@@ -89,17 +96,18 @@ export default function NotificationsPage() {
 	});
 
 	// --- Queries for INBOX (Notifications) ---
-	const { data: notifications = [], isLoading: isLoadingNotifications } = useQuery<Notification[]>({
-		queryKey: ["notifications"],
-		queryFn: async () => {
-			const token = await getAccessToken();
-			if (!token) return [];
-			const res = await api.get("/notifications", token);
-			return res || [];
-		},
-		enabled: ready && authenticated,
-		refetchInterval: 30000,
-	});
+	const { data: notifications = [], isLoading: isLoadingNotifications } =
+		useQuery<Notification[]>({
+			queryKey: ["notifications"],
+			queryFn: async () => {
+				const token = await getAccessToken();
+				if (!token) return [];
+				const res = await api.get("/notifications", token);
+				return res || [];
+			},
+			enabled: ready && authenticated,
+			refetchInterval: 30000,
+		});
 
 	const markReadMutation = useMutation({
 		mutationFn: async (id: string) => {
@@ -122,19 +130,22 @@ export default function NotificationsPage() {
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["notifications"] });
 			queryClient.invalidateQueries({ queryKey: ["notifications", "unread"] });
-		}
+		},
 	});
 
-
 	// --- Loading State ---
-	if (isLoadingStatus || isLoadingListings || isLoadingReviews || (isLoadingNotifications && activeTab === 'inbox')) {
+	if (
+		isLoadingStatus ||
+		isLoadingListings ||
+		isLoadingReviews ||
+		(isLoadingNotifications && activeTab === "inbox")
+	) {
 		return (
-			<div className="min-h-screen bg-slate-50 flex flex-col">
-				<Navbar />
+			<DashboardLayout className="flex flex-col">
 				<div className="flex-1 flex justify-center items-center">
 					<Loader2 className="animate-spin h-8 w-8 text-primary" />
 				</div>
-			</div>
+			</DashboardLayout>
 		);
 	}
 
@@ -355,14 +366,14 @@ export default function NotificationsPage() {
 						{(item.status.toUpperCase() === "REJECTED" ||
 							item.status.toUpperCase() === "PENDING" ||
 							item.status.toUpperCase() === "PENDING_REVIEW") && (
-								<Button
-									variant="outlined"
-									className="text-sm px-3 py-1"
-									onClick={() => handleResubmit(item)}
-								>
-									{item.status.toUpperCase() === "REJECTED" ? "Resubmit" : "Edit"}
-								</Button>
-							)}
+							<Button
+								variant="outlined"
+								className="text-sm px-3 py-1"
+								onClick={() => handleResubmit(item)}
+							>
+								{item.status.toUpperCase() === "REJECTED" ? "Resubmit" : "Edit"}
+							</Button>
+						)}
 					</div>
 				);
 			},
@@ -370,8 +381,7 @@ export default function NotificationsPage() {
 	];
 
 	return (
-		<div className="min-h-screen bg-slate-50 pb-20">
-			<Navbar />
+		<DashboardLayout className="pb-20">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 				{/* Header & Tabs */}
 				<div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
@@ -379,25 +389,29 @@ export default function NotificationsPage() {
 						<div className="bg-white p-1 rounded-xl shadow-sm border border-slate-200 inline-flex">
 							<button
 								onClick={() => setActiveTab("inbox")}
-								className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium transition-all ${activeTab === "inbox"
-									? "bg-slate-900 text-white shadow-md"
-									: "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
-									}`}
+								className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium transition-all ${
+									activeTab === "inbox"
+										? "bg-slate-900 text-white shadow-md"
+										: "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+								}`}
 							>
 								<Bell className="w-4 h-4" />
 								Inbox
-								{notifications.filter(n => !n.isRead).length > 0 && (
-									<span className={`ml-1 px-1.5 py-0.5 rounded-full text-[10px] ${activeTab === "inbox" ? "bg-white text-slate-900" : "bg-slate-200 text-slate-600"}`}>
-										{notifications.filter(n => !n.isRead).length}
+								{notifications.filter((n) => !n.isRead).length > 0 && (
+									<span
+										className={`ml-1 px-1.5 py-0.5 rounded-full text-[10px] ${activeTab === "inbox" ? "bg-white text-slate-900" : "bg-slate-200 text-slate-600"}`}
+									>
+										{notifications.filter((n) => !n.isRead).length}
 									</span>
 								)}
 							</button>
 							<button
 								onClick={() => setActiveTab("outbox")}
-								className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium transition-all ${activeTab === "outbox"
-									? "bg-slate-900 text-white shadow-md"
-									: "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
-									}`}
+								className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium transition-all ${
+									activeTab === "outbox"
+										? "bg-slate-900 text-white shadow-md"
+										: "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+								}`}
 							>
 								<Send className="w-4 h-4" />
 								Outbox
@@ -411,8 +425,10 @@ export default function NotificationsPage() {
 					<div>
 						<div className="bg-white rounded-xl shadow-sm border overflow-hidden">
 							<div className="p-4 border-b bg-slate-50/50 flex justify-between items-center">
-								<h2 className="text-lg font-semibold text-slate-800">Recent Notifications</h2>
-								{notifications.some(n => !n.isRead) && (
+								<h2 className="text-lg font-semibold text-slate-800">
+									Recent Notifications
+								</h2>
+								{notifications.some((n) => !n.isRead) && (
 									<button
 										onClick={() => markAllReadMutation.mutate()}
 										className="text-sm text-blue-600 hover:text-blue-700 font-medium hover:underline"
@@ -428,26 +444,37 @@ export default function NotificationsPage() {
 										<div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-slate-100 mb-4">
 											<Bell className="w-6 h-6 text-slate-400" />
 										</div>
-										<h3 className="text-lg font-medium text-slate-900">All caught up</h3>
-										<p className="mt-1">You have no notifications at this time.</p>
+										<h3 className="text-lg font-medium text-slate-900">
+											All caught up
+										</h3>
+										<p className="mt-1">
+											You have no notifications at this time.
+										</p>
 									</div>
 								) : (
 									notifications.map((notification) => (
 										<div
 											key={notification.id}
-											className={`p-6 transition-colors hover:bg-slate-50 group ${notification.isRead ? "bg-white" : "bg-blue-50/30"
-												}`}
+											className={`p-6 transition-colors hover:bg-slate-50 group ${
+												notification.isRead ? "bg-white" : "bg-blue-50/30"
+											}`}
 										>
 											<div className="flex gap-4">
-												<div className={`mt-1 flex-shrink-0 w-2 h-2 rounded-full ${notification.isRead ? "bg-slate-200" : "bg-blue-500"}`} />
+												<div
+													className={`mt-1 flex-shrink-0 w-2 h-2 rounded-full ${notification.isRead ? "bg-slate-200" : "bg-blue-500"}`}
+												/>
 												<div className="flex-1">
 													<Link
 														to={notification.link || "#"}
-														onClick={() => handleNotificationClick(notification)}
+														onClick={() =>
+															handleNotificationClick(notification)
+														}
 														className="block"
 													>
 														<div className="flex justify-between items-start">
-															<h4 className={`text-base ${notification.isRead ? "text-slate-700" : "text-slate-900 font-medium"}`}>
+															<h4
+																className={`text-base ${notification.isRead ? "text-slate-700" : "text-slate-900 font-medium"}`}
+															>
 																{notification.title}
 															</h4>
 															<span className="text-xs text-slate-400 whitespace-nowrap ml-4">
@@ -526,33 +553,33 @@ export default function NotificationsPage() {
 							{/* Admin Feedback Section */}
 							{getCommentsFor(selectedSubmission.type, selectedSubmission.id)
 								.length > 0 && (
+								<div className="space-y-3">
+									<h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+										Review Feedback
+									</h4>
 									<div className="space-y-3">
-										<h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-											Review Feedback
-										</h4>
-										<div className="space-y-3">
-											{getCommentsFor(
-												selectedSubmission.type,
-												selectedSubmission.id
-											).map((comment) => (
-												<div
-													key={comment.id}
-													className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-900"
-												>
-													<div className="flex items-center justify-between mb-2">
-														<span className="font-semibold text-amber-700">
-															{comment.author.firstName} {comment.author.lastName}
-														</span>
-														<span className="text-xs text-amber-600/70">
-															{formatDateTime(comment.createdAt)}
-														</span>
-													</div>
-													<p>{comment.content}</p>
+										{getCommentsFor(
+											selectedSubmission.type,
+											selectedSubmission.id
+										).map((comment) => (
+											<div
+												key={comment.id}
+												className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-900"
+											>
+												<div className="flex items-center justify-between mb-2">
+													<span className="font-semibold text-amber-700">
+														{comment.author.firstName} {comment.author.lastName}
+													</span>
+													<span className="text-xs text-amber-600/70">
+														{formatDateTime(comment.createdAt)}
+													</span>
 												</div>
-											))}
-										</div>
+												<p>{comment.content}</p>
+											</div>
+										))}
 									</div>
-								)}
+								</div>
+							)}
 
 							{/* Metadata Section */}
 							<div className="space-y-3">
@@ -577,17 +604,17 @@ export default function NotificationsPage() {
 							{(selectedSubmission.status.toUpperCase() === "REJECTED" ||
 								selectedSubmission.status.toUpperCase() === "PENDING" ||
 								selectedSubmission.status.toUpperCase() ===
-								"PENDING_REVIEW") && (
-									<Button onClick={() => handleResubmit(selectedSubmission)}>
-										{selectedSubmission.status.toUpperCase() === "REJECTED"
-											? "Resubmit"
-											: "Edit Submission"}
-									</Button>
-								)}
+									"PENDING_REVIEW") && (
+								<Button onClick={() => handleResubmit(selectedSubmission)}>
+									{selectedSubmission.status.toUpperCase() === "REJECTED"
+										? "Resubmit"
+										: "Edit Submission"}
+								</Button>
+							)}
 						</div>
 					</div>
 				</div>
 			)}
-		</div>
+		</DashboardLayout>
 	);
 }

@@ -69,10 +69,10 @@ export function Navbar(props: NavbarProps) {
 			)}
 			{profile?.isAdmin && (
 				<Link
-					to="/admin/reviews"
+					to="/admin?tab=reviews"
 					className="text-sm font-medium text-purple-600 hover:text-purple-800 transition-colors"
 				>
-					Admin Reviews
+					Admin
 				</Link>
 			)}
 		</div>
@@ -102,10 +102,10 @@ export function Navbar(props: NavbarProps) {
 			)}
 			{profile?.isAdmin && (
 				<Link
-					to="/admin/reviews"
+					to="/admin"
 					className="text-base font-medium text-purple-600 hover:text-purple-800 transition-colors"
 				>
-					Admin Reviews
+					Admin Dashboard
 				</Link>
 			)}
 		</div>

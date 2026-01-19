@@ -21,7 +21,7 @@ import {
 	XCircle,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { Navbar } from "../components/Navbar";
+import { DashboardLayout } from "../components/DashboardLayout";
 
 import { VerificationStatusCard } from "../components/VerificationStatusCard";
 
@@ -60,6 +60,7 @@ interface ProfileData {
 	bio?: string;
 	avatarUrl?: string;
 	createdAt: string;
+	wallets: { address: string; name: string }[];
 }
 
 export default function ProfilePage() {
@@ -106,6 +107,12 @@ export default function ProfilePage() {
 		email: "",
 		bio: "",
 		// avatarUrl: "", // Not implemented in UI yet
+	});
+
+	const [isWalletEditModalOpen, setIsWalletEditModalOpen] = useState(false);
+	const [walletEditForm, setWalletEditForm] = useState({
+		address: "",
+		name: "",
 	});
 
 	const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(
@@ -183,6 +190,50 @@ export default function ProfilePage() {
 				isOpen: true,
 				title: "Update Failed",
 				message: error.message || "Failed to update profile",
+				type: "error",
+			});
+		}
+	};
+
+	const handleUpdateWalletName = async (e: React.FormEvent) => {
+		e.preventDefault();
+		try {
+			const token = await getAccessToken();
+			const response = await api.put(
+				"/profile/wallet-name",
+				walletEditForm,
+				token
+			);
+
+			// Update local profile state
+			setProfile((prev) => {
+				if (!prev) return null;
+				const existingWalletIndex = prev.wallets.findIndex(
+					(w) => w.address === walletEditForm.address
+				);
+				let newWallets = [...prev.wallets];
+				if (existingWalletIndex >= 0) {
+					newWallets[existingWalletIndex] = response.wallet;
+				} else {
+					newWallets.push(response.wallet);
+				}
+				return { ...prev, wallets: newWallets };
+			});
+
+			setIsWalletEditModalOpen(false);
+
+			setAlertState({
+				isOpen: true,
+				title: "Wallet Updated",
+				message: "Wallet name saved successfully.",
+				type: "success",
+			});
+		} catch (error: any) {
+			console.error("Error updating wallet name:", error);
+			setAlertState({
+				isOpen: true,
+				title: "Update Failed",
+				message: error.message || "Failed to update wallet name",
 				type: "error",
 			});
 		}
@@ -426,21 +477,19 @@ export default function ProfilePage() {
 
 	if (loading) {
 		return (
-			<div className="min-h-screen bg-[#fafafa]">
-				<Navbar />
+			<DashboardLayout>
 				<div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 					<div className="flex items-center justify-center py-20">
 						<Loader2 className="w-8 h-8 animate-spin text-[#D4A024]" />
 					</div>
 				</div>
-			</div>
+			</DashboardLayout>
 		);
 	}
 
 	if (!profile) {
 		return (
-			<div className="min-h-screen bg-[#fafafa]">
-				<Navbar />
+			<DashboardLayout>
 				<div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 					<div className="text-center py-20">
 						<p className="text-gray-500 font-light text-lg">
@@ -448,15 +497,13 @@ export default function ProfilePage() {
 						</p>
 					</div>
 				</div>
-			</div>
+			</DashboardLayout>
 		);
 	}
 
 	return (
-		<div className="min-h-screen bg-[#fafafa]">
-			<Navbar />
-
-			<main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+		<DashboardLayout>
+			<div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
 				<motion.div
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
@@ -482,7 +529,10 @@ export default function ProfilePage() {
 						className="space-y-6"
 					>
 						{/* Personal Details Card */}
-						<div className="p-6 h-full flex flex-col relative" style={cardStyle}>
+						<div
+							className="p-6 h-full flex flex-col relative"
+							style={cardStyle}
+						>
 							<div className="flex items-center space-x-4 mb-6">
 								<div
 									className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
@@ -746,67 +796,113 @@ export default function ProfilePage() {
 											)}
 										</div>
 
-										{/* Wallet */}
-										<div className="flex items-center justify-between bg-gray-50 p-2.5 rounded-lg border border-gray-100">
-											<div className="flex items-center space-x-3 overflow-hidden">
-												<div className="w-8 h-8 rounded-full bg-white flex items-center justify-center border border-gray-100 shrink-0">
-													<Wallet className="w-4 h-4 text-gray-500" />
-												</div>
-												<div className="truncate">
-													<p className="text-sm font-medium text-gray-900">
-														Wallet
-													</p>
-													{user?.wallet?.address ? (
-														<p className="text-xs text-gray-500 truncate font-mono">
-															{user.wallet.address.slice(0, 6)}...
-															{user.wallet.address.slice(-4)}
-														</p>
-													) : (
+										{/* Wallet Section */}
+										<div className="space-y-2">
+											<div className="flex items-center justify-between">
+												<p className="text-xs text-gray-400 font-light">
+													Wallets
+												</p>
+												<Button
+													variant="text"
+													className="!p-0 !h-auto text-[#D4A024] text-xs font-medium hover:underline"
+													onClick={linkWallet}
+												>
+													+ Add Wallet
+												</Button>
+											</div>
+
+											{user?.linkedAccounts?.filter(
+												(a: any) => a.type === "wallet"
+											).length === 0 && (
+												<div className="flex items-center justify-between bg-gray-50 p-2.5 rounded-lg border border-gray-100">
+													<div className="flex items-center space-x-3">
+														<div className="w-8 h-8 rounded-full bg-white flex items-center justify-center border border-gray-100 shrink-0">
+															<Wallet className="w-4 h-4 text-gray-500" />
+														</div>
 														<p className="text-xs text-gray-400">
 															Not connected
 														</p>
-													)}
+													</div>
 												</div>
-											</div>
-											{user?.wallet?.address ? (
-												<Button
-													variant="text"
-													className="!p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50"
-													onClick={() => {
-														if (user.linkedAccounts.length <= 1) {
-															setAlertState({
-																isOpen: true,
-																title: "Cannot Disconnect",
-																message:
-																	"You must have at least one linked login method.",
-																type: "warning",
-															});
-															return;
-														}
-														setAlertState({
-															isOpen: true,
-															title: "Disconnect Wallet",
-															message:
-																"Are you sure you want to disconnect this wallet?",
-															type: "warning",
-															confirmText: "Disconnect",
-															onConfirm: () =>
-																unlinkWallet(user.wallet!.address),
-														});
-													}}
-													title="Disconnect"
-												>
-													<Trash2 className="w-4 h-4" />
-												</Button>
-											) : (
-												<Button
-													variant="text"
-													className="!px-3 !py-1 text-xs font-medium text-[#D4A024] hover:bg-[#D4A024]/5"
-													onClick={linkWallet}
-												>
-													Connect
-												</Button>
 											)}
+
+											{user?.linkedAccounts
+												?.filter((a: any) => a.type === "wallet")
+												.map((account: any, index) => {
+													const walletName = profile.wallets?.find(
+														(w) => w.address === account.address
+													)?.name;
+													return (
+														<div
+															key={index}
+															className="flex items-center justify-between bg-gray-50 p-2.5 rounded-lg border border-gray-100"
+														>
+															<div className="flex items-center space-x-3 overflow-hidden">
+																<div className="w-8 h-8 rounded-full bg-white flex items-center justify-center border border-gray-100 shrink-0">
+																	<Wallet className="w-4 h-4 text-gray-500" />
+																</div>
+																<div className="truncate">
+																	<p className="text-sm font-medium text-gray-900">
+																		{walletName ||
+																			(account.walletClientType === "privy"
+																				? "Embedded Wallet"
+																				: "External Wallet")}
+																	</p>
+																	<p className="text-xs text-gray-500 truncate font-mono">
+																		{account.address.slice(0, 6)}...
+																		{account.address.slice(-4)}
+																	</p>
+																</div>
+															</div>
+
+															<div className="flex items-center space-x-1">
+																<Button
+																	variant="text"
+																	className="!p-1.5 text-gray-400 hover:text-[#D4A024]"
+																	onClick={() => {
+																		setWalletEditForm({
+																			address: account.address,
+																			name: walletName || "",
+																		});
+																		setIsWalletEditModalOpen(true);
+																	}}
+																	title="Edit Name"
+																>
+																	<Edit2 className="w-4 h-4" />
+																</Button>
+																<Button
+																	variant="text"
+																	className="!p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50"
+																	onClick={() => {
+																		if (user.linkedAccounts.length <= 1) {
+																			setAlertState({
+																				isOpen: true,
+																				title: "Cannot Disconnect",
+																				message:
+																					"You must have at least one linked login method.",
+																				type: "warning",
+																			});
+																			return;
+																		}
+																		const address = account.address;
+																		setAlertState({
+																			isOpen: true,
+																			title: "Disconnect Wallet",
+																			message:
+																				"Are you sure you want to disconnect this wallet?",
+																			type: "warning",
+																			confirmText: "Disconnect",
+																			onConfirm: () => unlinkWallet(address),
+																		});
+																	}}
+																	title="Disconnect"
+																>
+																	<Trash2 className="w-4 h-4" />
+																</Button>
+															</div>
+														</div>
+													);
+												})}
 										</div>
 									</div>
 								</div>
@@ -966,7 +1062,7 @@ export default function ProfilePage() {
 						</Button>
 					</div>
 				</motion.div>
-			</main>
+			</div>
 			<Alert
 				isOpen={alertState.isOpen}
 				onClose={() => setAlertState((prev) => ({ ...prev, isOpen: false }))}
@@ -1092,6 +1188,78 @@ export default function ProfilePage() {
 				</div>
 			)}
 
+			{/* Edit Wallet Modal */}
+			{isWalletEditModalOpen && (
+				<div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+					<motion.div
+						initial={{ opacity: 0, scale: 0.95 }}
+						animate={{ opacity: 1, scale: 1 }}
+						className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-xl"
+					>
+						<div className="flex items-center justify-between p-6 border-b border-gray-100">
+							<h3 className="text-lg font-medium text-gray-900">
+								Edit Wallet Name
+							</h3>
+							<button
+								onClick={() => setIsWalletEditModalOpen(false)}
+								className="text-gray-400 hover:text-gray-500"
+							>
+								<X className="w-5 h-5" />
+							</button>
+						</div>
+
+						<form onSubmit={handleUpdateWalletName} className="p-6 space-y-4">
+							<div>
+								<label className="block text-sm font-medium text-gray-700 mb-1">
+									Wallet Address
+								</label>
+								<Input
+									value={walletEditForm.address}
+									disabled
+									className="bg-gray-50 text-gray-500 font-mono text-xs"
+								/>
+							</div>
+
+							<div>
+								<label className="block text-sm font-medium text-gray-700 mb-1">
+									Name
+								</label>
+								<Input
+									value={walletEditForm.name}
+									onChange={(e) =>
+										setWalletEditForm({
+											...walletEditForm,
+											name: e.target.value,
+										})
+									}
+									className="w-full"
+									placeholder="e.g. Vault, Hot Wallet, etc."
+									autoFocus
+								/>
+							</div>
+
+							<div className="flex justify-between pt-4">
+								<Button
+									variant="text"
+									type="button"
+									onClick={() => setIsWalletEditModalOpen(false)}
+									className="text-gray-500"
+								>
+									Cancel
+								</Button>
+								<Button
+									type="submit"
+									className="bg-[#D4A024] hover:bg-[#b08d35]"
+								>
+									<Save className="w-4 h-4 mr-2" />
+									Save Name
+								</Button>
+							</div>
+						</form>
+					</motion.div>
+				</div>
+			)}
+
 			<Alert
 				isOpen={alertState.isOpen}
 				onClose={() => setAlertState({ ...alertState, isOpen: false })}
@@ -1103,6 +1271,6 @@ export default function ProfilePage() {
 				cancelText={alertState.cancelText}
 				autoClose={alertState.autoClose}
 			/>
-		</div>
+		</DashboardLayout>
 	);
 }
