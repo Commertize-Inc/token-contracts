@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import { Input } from "@commertize/ui";
-import { Plus, X, Upload, Loader2 } from "lucide-react";
+import {
+	Plus,
+	X,
+	Upload,
+	Loader2,
+	ChevronDown,
+	ChevronRight,
+} from "lucide-react";
 
 interface SponsorFormFieldsProps {
 	formData: {
@@ -10,6 +17,7 @@ interface SponsorFormFieldsProps {
 		address: string;
 		documents: string[];
 		bio?: string;
+		walletAddress?: string;
 	};
 	fieldErrors: Record<string, string>;
 	newDocUrl: string;
@@ -38,6 +46,7 @@ export const SponsorFormFields: React.FC<SponsorFormFieldsProps> = ({
 }) => {
 	const [isUploading, setIsUploading] = useState(false);
 	const [uploadError, setUploadError] = useState<string | null>(null);
+	const [showAdvanced, setShowAdvanced] = useState(false);
 
 	const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
@@ -239,6 +248,39 @@ export const SponsorFormFields: React.FC<SponsorFormFieldsProps> = ({
 							</div>
 						)}
 					</>
+				)}
+			</div>
+			<div className="pt-4 border-t border-slate-200">
+				<button
+					type="button"
+					onClick={() => setShowAdvanced(!showAdvanced)}
+					className="flex items-center text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+				>
+					{showAdvanced ? (
+						<ChevronDown className="w-4 h-4 mr-1" />
+					) : (
+						<ChevronRight className="w-4 h-4 mr-1" />
+					)}
+					Advanced Options
+				</button>
+
+				{showAdvanced && (
+					<div className="mt-4 space-y-2">
+						<label className="block text-sm font-medium text-slate-700">
+							Wallet Address
+						</label>
+						<Input
+							name="walletAddress"
+							value={formData.walletAddress || ""}
+							onChange={onChange}
+							placeholder="0x..."
+							disabled={readonly}
+						/>
+						<p className="text-xs text-slate-500">
+							The wallet address that will receive funds raised. Defaults to
+							your connected wallet.
+						</p>
+					</div>
 				)}
 			</div>
 		</div>

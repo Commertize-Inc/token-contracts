@@ -10,6 +10,7 @@ interface SponsorStepProps {
 		ein: string;
 		address: string;
 		documents: string[];
+		walletAddress?: string;
 	};
 	fieldErrors: Record<string, string>;
 	newDocUrl: string; // Reusing state from Coordinator or local? Coordinator passed down

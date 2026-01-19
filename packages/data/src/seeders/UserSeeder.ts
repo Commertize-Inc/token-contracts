@@ -1,11 +1,11 @@
-import { type EntityManager } from "@mikro-orm/core";
+import { RequiredEntityData, type EntityManager } from "@mikro-orm/core";
 import { Seeder } from "@mikro-orm/seeder";
 import { User } from "../entities/User";
 import { KycStatus } from "../enums";
 
 export const COMMERTIZE_ADMIN_ID = "mock-commertize-sponsor";
 export const COMMERTIZE_ADMIN_PRIVY_ID = "did:privy:mock-commertize-sponsor";
-export const COMMERTIZE_ADMIN: User = {
+export const COMMERTIZE_ADMIN: RequiredEntityData<User> = {
 	id: COMMERTIZE_ADMIN_ID,
 	createdAt: new Date(),
 	isAdmin: true,
@@ -21,7 +21,7 @@ export class UserSeeder extends Seeder {
 			privyId: COMMERTIZE_ADMIN_PRIVY_ID,
 		});
 		if (!admin) {
-			em.create<User>(User, COMMERTIZE_ADMIN);
+			em.create(User, COMMERTIZE_ADMIN);
 			em.flush();
 		}
 	}
