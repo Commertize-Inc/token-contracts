@@ -1,0 +1,5 @@
+{
+	"buildCommand": "turbo run build --filter=!@commertize/nexus",
+	"installCommand": "pnpm install",
+	"ignoreCommand": "exit 0"
+}
