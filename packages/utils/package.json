@@ -33,6 +33,12 @@
 			"types": "./dist/env-server.d.ts",
 			"import": "./dist/env-server.js",
 			"require": "./dist/env-server.cjs"
+		},
+		"./onchain": {
+			"development": "./src/onchain/index.ts",
+			"types": "./dist/onchain/index.d.ts",
+			"import": "./dist/onchain/index.js",
+			"require": "./dist/onchain/index.cjs"
 		}
 	},
 	"scripts": {
@@ -41,6 +47,7 @@
 		"clean": "rm -rf node_modules dist .turbo .next .vite coverage"
 	},
 	"dependencies": {
+		"@commertize/nexus": "workspace:*",
 		"add": "^2.0.6",
 		"dotenv": "^17.2.3",
 		"dotenv-expand": "^12.0.3",

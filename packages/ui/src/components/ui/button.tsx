@@ -42,8 +42,8 @@ const buttonVariants = cva(
 
 export interface ButtonProps
 	extends
-	React.ButtonHTMLAttributes<HTMLButtonElement>,
-	VariantProps<typeof buttonVariants> {
+		React.ButtonHTMLAttributes<HTMLButtonElement>,
+		VariantProps<typeof buttonVariants> {
 	asChild?: boolean;
 	width?: "full" | "auto";
 	loading?: boolean;
@@ -51,7 +51,20 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-	({ className, variant, size, asChild = false, width, loading, icon: Icon, children, ...props }, ref) => {
+	(
+		{
+			className,
+			variant,
+			size,
+			asChild = false,
+			width,
+			loading,
+			icon: Icon,
+			children,
+			...props
+		},
+		ref
+	) => {
 		const Comp = asChild ? Slot : "button";
 		const widthClass = width === "full" ? "w-full" : "";
 		return (

@@ -2,8 +2,7 @@ import { jwtVerify, createRemoteJWKSet } from "jose";
 
 export async function verifyUserJWT(token: string) {
 	try {
-		const appId =
-			process.env.NEXT_PUBLIC_PRIVY_APP_ID || process.env.PRIVY_APP_ID;
+		const appId = process.env.VITE_PRIVY_APP_ID || process.env.PRIVY_APP_ID;
 
 		if (!appId) {
 			console.error("Missing PRIVY_APP_ID for JWT verification");

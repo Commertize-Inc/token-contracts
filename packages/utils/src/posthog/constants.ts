@@ -4,6 +4,5 @@ export enum PostHogEvents {
 }
 
 export enum PostHogFeatureFlags {
-
 	NEWS_GENERATION = "news-generation",
 }

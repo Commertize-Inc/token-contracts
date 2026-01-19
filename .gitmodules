@@ -1,3 +1,0 @@
-[submodule "token-contracts"]
-	path = vendor/token-contracts
-	url = https://github.com/commertize-inc/token-contracts.git

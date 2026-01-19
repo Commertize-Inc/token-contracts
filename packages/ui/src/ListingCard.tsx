@@ -170,7 +170,9 @@ export const ListingCard = ({
 							</span>
 							<span className="font-medium text-gray-900">
 								{listing.tokenomics?.tokenPrice
-									? `$${listing.tokenomics.tokenPrice.toLocaleString()}`
+									? `${listing.fundingCurrency === "HBAR" ? "ℏ" : "$"
+									}${listing.tokenomics.tokenPrice.toLocaleString()} ${listing.fundingCurrency === "HBAR" ? "" : ""
+									}`
 									: "TBD"}
 							</span>
 						</div>
@@ -192,7 +194,13 @@ export const ListingCard = ({
 						/>
 					</div>
 					<div className="flex justify-between text-xs text-gray-400 mt-1.5">
-						<span>Target: ${targetRaise?.toLocaleString() ?? "TBD"}</span>
+						<span>
+							Target:{" "}
+							{targetRaise
+								? `${listing.fundingCurrency === "HBAR" ? "ℏ" : "$"
+								}${targetRaise.toLocaleString()}`
+								: "TBD"}
+						</span>
 					</div>
 				</div>
 

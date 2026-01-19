@@ -6,6 +6,7 @@ export default defineConfig({
 		"src/client.ts",
 		"src/server.ts",
 		"src/env-server.ts",
+		"src/onchain/index.ts",
 	],
 	format: ["cjs", "esm"],
 	dts: true,

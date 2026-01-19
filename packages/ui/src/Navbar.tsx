@@ -53,7 +53,7 @@ const Navbar: React.FC<NavbarProps> = ({
 
 	return (
 		<nav
-			className={`sticky top-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur transition-all duration-300 mb-8 ${className || ""}`}
+			className={`sticky top-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur transition-all duration-300 ${className || ""}`}
 			style={style}
 		>
 			<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

@@ -227,7 +227,9 @@ const Navbar = () => {
 						onClick={() => {
 							if (posthog) {
 								posthog.capture("landing_signin_click", {
-									destination: import.meta.env.VITE_DASHBOARD_URL || "http://localhost:3003",
+									destination:
+										import.meta.env.VITE_DASHBOARD_URL ||
+										"http://localhost:3003",
 								});
 							}
 						}}
@@ -301,7 +303,9 @@ const Navbar = () => {
 						onClick={() => {
 							if (posthog) {
 								posthog.capture("landing_signin_click", {
-									destination: import.meta.env.VITE_DASHBOARD_URL || "http://localhost:3003",
+									destination:
+										import.meta.env.VITE_DASHBOARD_URL ||
+										"http://localhost:3003",
 									source: "mobile_menu",
 								});
 							}

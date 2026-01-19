@@ -118,12 +118,12 @@ export default function ChatGPTWidget() {
 			prev.map((msg) =>
 				msg.id === messageId
 					? {
-						...msg,
-						reactions: {
-							...msg.reactions,
-							[reaction]: !msg.reactions?.[reaction],
-						},
-					}
+							...msg,
+							reactions: {
+								...msg.reactions,
+								[reaction]: !msg.reactions?.[reaction],
+							},
+						}
 					: msg
 			)
 		);
@@ -240,25 +240,28 @@ export default function ChatGPTWidget() {
 														className={`max-w-[85%] ${message.role === "user" ? "order-2" : ""}`}
 													>
 														<div
-															className={`rounded-2xl p-4 text-sm leading-relaxed relative ${message.role === "user"
+															className={`rounded-2xl p-4 text-sm leading-relaxed relative ${
+																message.role === "user"
 																	? "bg-gradient-to-br from-[#DDB35F] to-[#DDB35F] text-white ml-4 sm:ml-8 shadow-sm border-2 border-[#DDB35F]"
 																	: "bg-white border-2 border-[#DDB35F] shadow-sm mr-4 sm:mr-8 text-black"
-																}`}
+															}`}
 														>
 															<div
-																className={`whitespace-pre-wrap font-sans ${message.role === "user"
+																className={`whitespace-pre-wrap font-sans ${
+																	message.role === "user"
 																		? "font-light text-white"
 																		: "font-light text-black"
-																	}`}
+																}`}
 															>
 																{message.content}
 															</div>
 
 															<div
-																className={`text-xs mt-3 font-sans font-light ${message.role === "user"
+																className={`text-xs mt-3 font-sans font-light ${
+																	message.role === "user"
 																		? "text-white/80"
 																		: "text-black/80"
-																	}`}
+																}`}
 															>
 																{message.role === "assistant"
 																	? "RUNE.CTZ • "
