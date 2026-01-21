@@ -8,6 +8,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: mainnet
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v2
@@ -22,11 +25,38 @@ jobs:
           EVM_PRIVATE_KEY: ${{ secrets.EVM_PRIVATE_KEY }}
         run: pnpm hardhat run scripts/deploy.js --network hedera-mainnet
 
+      - name: Commit mainnet deployment
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add deployment.hedera_mainnet.json
+          git commit -m "chore: update mainnet deployment [skip ci]" || exit 0
+          git push origin HEAD:main
+
       - name: Upload deployment artifacts
         uses: actions/upload-artifact@v4
         with:
           name: mainnet-deployment-artifacts
           path: |
-            deployment.json
-            artifacts/
+            deployment.hedera_mainnet.json
+            artifacts/contracts/**/*.json
           retention-days: 90
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            deployment.hedera_mainnet.json
+            artifacts/contracts/**/*.json
+          generate_release_notes: true
+          name: Release ${{ github.ref_name }}
+          body: |
+            🚀 Mainnet deployment for version ${{ github.ref_name }}
+
+            **Deployment artifacts are attached to this release.**
+
+            To use in your project:
+            ```typescript
+            import { getContractAddress } from '@commertize/nexus';
+            const address = getContractAddress('IdentityRegistry', 'hedera_mainnet');
+            ```

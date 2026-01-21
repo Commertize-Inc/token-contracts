@@ -9,6 +9,10 @@ typechain-types
 cache
 artifacts
 
+# Deployment configs - commit Hedera deployments, ignore local networks
+deployment.localhost.json
+deployment.hardhat.json
+
 # Editors
 .vscode
 .idea

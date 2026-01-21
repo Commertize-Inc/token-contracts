@@ -29,8 +29,9 @@ async function main() {
 
 	console.log(`Network: ${chalk.magenta(networkName)} (ChainID: ${chainId})`);
 
-	// Load existing deployment is possible
-	const mainDeploymentPath = path.join(__dirname, "../deployment.json");
+	// Convert network name to filename (replace hyphens with underscores)
+	const deploymentFile = `deployment.${networkName.replace(/-/g, '_')}.json`;
+	const mainDeploymentPath = path.join(__dirname, `../${deploymentFile}`);
 
 	let deploymentConfig = { contracts: {} };
 
@@ -221,7 +222,7 @@ async function main() {
 	);
 
 	console.log(chalk.bold.green("\n✅ Deployment Config Updated!"));
-	console.log(`Updated:  ${chalk.underline("deployment.json")}`);
+	console.log(`Updated:  ${chalk.underline(deploymentFile)}`);
 }
 
 async function deployContract(infoName, args, context, aliasKey) {

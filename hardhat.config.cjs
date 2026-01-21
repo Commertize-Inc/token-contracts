@@ -33,16 +33,12 @@ module.exports = {
 			chainId: 296,
 			accounts: [
 				process.env.EVM_PRIVATE_KEY,
-				process.env.EVM_PRIVATE_KEY,
-				process.env.HEDERA_OPERATOR_KEY,
 			].filter((k) => !!k && k.startsWith("0x")),
 		},
 		["hedera-mainnet"]: {
 			url: "https://mainnet.hashio.io/api",
 			chainId: 295,
 			accounts: [
-				process.env.HEDERA_MAINNET_PRIVATE_KEY,
-				process.env.EVM_PRIVATE_KEY,
 				process.env.EVM_PRIVATE_KEY,
 			].filter((k) => !!k && k.startsWith("0x")),
 		},

@@ -1,89 +1,219 @@
-# Commertize Smart Contracts (MVP)
+# @commertize/nexus
 
-This package contains the minimal viable set of smart contracts for the Commertize Real Estate Tokenization Platform.
+Commertize smart contracts for real estate tokenization, debt instruments, and mortgage lending.
 
-## Architecture
+## Installation
 
-The project is simplified into four core modules:
-
-### 1. Core (`src/core/`)
-
-Foundational assets for the ecosystem.
-
-- **`CREUSD.sol`**: The platform stablecoin (Pegged to USD). Implements `ERC20Permit` for gasless transactions.
-- **`CommertizeToken.sol`**: The platform governance and staking token (COMM). Captures yield from the protocol.
-
-### 2. Compliance (`src/compliance/`)
-
-Regulatory enforcement layer.
-
-- **`IdentityRegistry.sol`**: A whitelist of verified wallet addresses and their country codes.
-- **`TokenCompliance.sol`**: A transfer validation module used by Property Tokens to ensure only verified users can send/receive tokens.
-
-### 3. Tokenization (`src/tokenization/`)
-
-Real estate asset representation.
-
-- **`PropertyToken.sol`**: An ERC-20 token representing fractional ownership of a property.
-  - Enforces `Compliance` on every transfer.
-  - Includes **Snapshots** to track balances for accurate dividend distribution.
-- **`PropertyFactory.sol`**: A factory contract to deploy new Property Tokens efficiently.
-
-### 4. Finance (`src/finance/`)
-
-Economic flows and yield distribution.
-
-- **`DividendVault.sol`**: The engine for distributing rental income.
-  - Sponsors deposit rental income (in CREUSD).
-  - The Vault takes a protocol fee (sent to Staking Pool).
-  - The remaining amount is distributed pro-rata to Property Token holders based on a snapshot.
-- **`StakingPool.sol`**: Manages the staking of COMM tokens to earn protocol fees.
-
----
+```bash
+pnpm add @commertize/nexus
+```
 
 ## Usage
 
-### Installation
+### Default: Shared Hedera Testnet
+
+By default, all developers use the shared Hedera testnet deployment. No setup required!
+
+```typescript
+import { getContractAddress, getContracts, ABIS } from '@commertize/nexus';
+
+// Get a specific contract address
+const identityRegistry = getContractAddress('IdentityRegistry');
+
+// Get all contract addresses
+const contracts = getContracts();
+
+// Use with ethers.js
+import { ethers } from 'ethers';
+const contract = new ethers.Contract(
+  contracts.IdentityRegistry,
+  ABIS.IdentityRegistry,
+  provider
+);
+```
+
+### Local Development (Optional)
+
+Want to test against your own local deployment? Easy!
+
+1. **Start a local Hardhat node:**
+   ```bash
+   pnpm node
+   ```
+
+2. **Deploy contracts locally:**
+   ```bash
+   pnpm deploy:localhost
+   ```
+
+3. **Use local deployment:**
+   This creates `deployment.localhost.json` which automatically takes precedence over the shared testnet.
+
+4. **Revert to testnet:**
+   ```bash
+   rm deployment.localhost.json
+   ```
+
+### Production: Hedera Mainnet
+
+For production applications:
+
+```typescript
+import { getContractAddress } from '@commertize/nexus';
+
+const identityRegistry = getContractAddress('IdentityRegistry', 'hedera_mainnet');
+```
+
+### Available Networks
+
+- **`hedera_testnet`** (default) - Shared Hedera testnet for all developers
+- **`hedera_mainnet`** - Hedera mainnet for production
+- **`localhost`** - Local development network
+
+## Environment Variables
+
+### Network Selection
+
+Control which blockchain network your app connects to:
+
+```bash
+# For backend (apps/backend/.env)
+EVM_NETWORK=hedera_testnet
+
+# For dashboard (apps/dashboard/.env)
+VITE_EVM_NETWORK=hedera_testnet
+```
+
+**Available Networks:**
+- `localhost` - Local Hardhat node (for development)
+- `hedera_testnet` - Hedera testnet (default, shared across all developers)
+- `hedera_mainnet` - Hedera mainnet (production)
+
+The network setting automatically determines:
+- ✅ Which contract addresses to use
+- ✅ Which RPC endpoint to connect to
+- ✅ Which deployed version of the smart contracts
+
+### Optional Configuration
+
+```bash
+# Override default network
+DEPLOYMENT_NETWORK=hedera_mainnet
+
+# Override RPC URL
+RPC_URL=https://mainnet.hashio.io/api
+
+# Provide deployment as JSON (for CI/CD)
+DEPLOYMENT_JSON='{"contracts":{"IdentityRegistry":"0x..."},...}'
+```
+
+## Development
+
+### Prerequisites
+
+- Node.js >= 20
+- pnpm >= 10
+
+### Setup
 
 ```bash
 pnpm install
+pnpm hardhat compile
 ```
 
-### Compilation
-
-```bash
-pnpm compile
-```
-
-### Interactive Deployment
-
-We provide an interactive CLI to deploy specific parts of the system or the entire stack.
+### Deploy to Testnet
 
 ```bash
 pnpm deploy:testnet
-# OR
-npx hardhat run scripts/deploy.js --network hedera-testnet
 ```
 
-Follow the on-screen prompts to select which contracts to deploy. The script will automatically handle dependencies (e.g., deploying IdentityRegistry before TokenCompliance).
+This creates `deployment.hedera_testnet.json` with the deployed contract addresses.
 
-### Address Configuration
+### Deploy to Mainnet
 
-Deployed addresses are automatically saved to `deployment.json`. This file is used by the frontend and backend to locate the contracts.
+Only deploy to mainnet via tagged releases:
 
----
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
 
-## Contract Interaction Flow
+The GitHub Actions workflow will automatically:
+1. Deploy contracts to Hedera mainnet
+2. Create `deployment.hedera_mainnet.json`
+3. Commit the deployment file to the repository
+4. Create a GitHub release with attached artifacts
 
-1.  **Onboarding**: User passes KYC off-chain -> Backend calls `IdentityRegistry.registerIdentity(user)`.
-2.  **Listing**: Sponsor creates a listing -> Backend calls `PropertyFactory.deployProperty(...)`.
-3.  **Investment**: User pays USDC -> Backend mints `PropertyToken` to User.
-4.  **Dividends**:
-    - Sponsor deposits CREUSD to `DividendVault`.
-    - `PropertyToken` takes a snapshot.
-    - Vault records the distribution.
-    - Token Holders call `claim()` to receive their share.
+## Contract ABIs
 
-## Licensing
+All contract ABIs are available via the `ABIS` export:
 
-Proprietary - Commertize Inc.
+```typescript
+import { ABIS } from '@commertize/nexus';
+
+// Available ABIs:
+// - ABIS.IdentityRegistry
+// - ABIS.Compliance
+// - ABIS.USDC
+// - ABIS.CommertizeToken
+// - ABIS.DividendVault
+// - ABIS.StakingPool
+// - ABIS.PropertyFactory
+// - ABIS.PropertyToken
+// - ABIS.ListingEscrow
+```
+
+## API Reference
+
+### `getDeployment(network?: string): DeploymentData | null`
+
+Load deployment configuration for a specific network.
+
+```typescript
+const deployment = getDeployment('hedera_testnet');
+console.log(deployment.network.chainId); // 296
+```
+
+### `getContractAddress(contractName: string, network?: string): string | null`
+
+Get a specific contract address.
+
+```typescript
+const address = getContractAddress('IdentityRegistry', 'hedera_mainnet');
+```
+
+### `getContracts(network?: string): Record<string, string>`
+
+Get all contract addresses.
+
+```typescript
+const contracts = getContracts('hedera_testnet');
+```
+
+### `getNetwork(network?: string)`
+
+Get network information.
+
+```typescript
+const network = getNetwork('hedera_testnet');
+// { name: 'hedera-testnet', chainId: 296, rpc: '...', currency: 'HBAR' }
+```
+
+## How It Works
+
+The package uses a priority-based deployment loading system:
+
+1. **Environment variable** (`DEPLOYMENT_JSON`) - for CI/CD
+2. **`deployment.localhost.json`** - for local development
+3. **`deployment.{network}.json`** - for specified network
+4. **`deployment.hedera_testnet.json`** - default fallback
+
+This means:
+- ✅ New developers get shared testnet contracts immediately
+- ✅ Optional local deployments don't interfere with others
+- ✅ Production builds use committed mainnet addresses
+- ✅ No configuration required for most use cases
+
+## License
+
+MIT

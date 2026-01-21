@@ -29,6 +29,8 @@ contract ListingEscrow is Ownable, ReentrancyGuard {
     event Deposited(address indexed investor, uint256 amount);
     event Finalized(uint256 totalRaised, uint256 timestamp);
     event Refunded(address indexed investor, uint256 amount);
+    event AdminFinalized(uint256 totalRaised, uint256 timestamp, address indexed admin);
+    event AdminTokensDistributed(address indexed investor, uint256 amount, address indexed admin);
 
     constructor(
         address _propertyToken,
@@ -112,6 +114,48 @@ contract ListingEscrow is Ownable, ReentrancyGuard {
         }
 
         emit Finalized(totalRaised, block.timestamp);
+    }
+
+    /**
+     * @notice Admin-only finalize that allows releasing funds to sponsor even if not fully funded.
+     * @dev This provides flexibility for admin to manually handle partial funding scenarios.
+     */
+    function adminFinalize() external onlyOwner nonReentrant {
+        require(!finalized && !refunded, "Already closed");
+
+        finalized = true;
+
+        // Send whatever was raised to the Sponsor
+        if (address(paymentToken) == address(0)) {
+            (bool success, ) = sponsor.call{value: totalRaised}("");
+            require(success, "Transfer failed");
+        } else {
+            paymentToken.safeTransfer(sponsor, totalRaised);
+        }
+
+        emit AdminFinalized(totalRaised, block.timestamp, msg.sender);
+    }
+
+    /**
+     * @notice Admin-only function to distribute property tokens to investors.
+     * @param investors Array of investor addresses to receive tokens.
+     * @param amounts Array of token amounts corresponding to each investor.
+     * @dev This allows admin to manually distribute tokens based on investment records.
+     */
+    function adminDistributeTokens(
+        address[] calldata investors,
+        uint256[] calldata amounts
+    ) external onlyOwner nonReentrant {
+        require(investors.length == amounts.length, "Array length mismatch");
+        require(finalized, "Must finalize first");
+
+        for (uint256 i = 0; i < investors.length; i++) {
+            require(investors[i] != address(0), "Invalid investor address");
+            require(amounts[i] > 0, "Invalid amount");
+
+            propertyToken.safeTransfer(investors[i], amounts[i]);
+            emit AdminTokensDistributed(investors[i], amounts[i], msg.sender);
+        }
     }
 
     /**

@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
-import Deployment from "./deployment.json";
+import * as fs from "fs";
+import * as path from "path";
 
 // Import Artifacts direct from compilation output
 import IdentityRegistryArtifact from "./artifacts/src/compliance/IdentityRegistry.sol/IdentityRegistry.json";
@@ -12,6 +13,25 @@ import PropertyFactoryArtifact from "./artifacts/src/tokenization/PropertyFactor
 import PropertyTokenArtifact from "./artifacts/src/tokenization/PropertyToken.sol/PropertyToken.json";
 import ListingEscrowArtifact from "./artifacts/src/finance/ListingEscrow.sol/ListingEscrow.json";
 
+// ------------------------------------------------------------------
+// TYPES
+// ------------------------------------------------------------------
+
+export interface DeploymentData {
+	contracts: Record<string, string>;
+	network: {
+		name: string;
+		chainId: number;
+		rpc: string;
+		currency: string;
+	};
+	timestamp: string | null;
+}
+
+// ------------------------------------------------------------------
+// DEPLOYMENT LOADING
+// ------------------------------------------------------------------
+
 // Config Loading Logic
 const getEnv = (key: string, viteKey: string) => {
 	if (typeof process !== "undefined" && process.env) {
@@ -20,28 +40,63 @@ const getEnv = (key: string, viteKey: string) => {
 	return undefined;
 };
 
+/**
+ * Load deployment configuration for a specific network.
+ *
+ * Priority order:
+ * 1. Environment variable (DEPLOYMENT_JSON or VITE_DEPLOYMENT_JSON)
+ * 2. deployment.localhost.json (local development)
+ * 3. deployment.{network}.json (specified network)
+ * 4. deployment.hedera_testnet.json (default fallback)
+ */
+function loadDeployment(network: string = 'hedera_testnet'): DeploymentData | null {
+	// 1. Try from environment variable (for CI/CD/Vercel)
+	if (typeof process !== "undefined" && process.env) {
+		const envVar = process.env.VITE_DEPLOYMENT_JSON || process.env.DEPLOYMENT_JSON;
+		if (envVar) {
+			try {
+				return JSON.parse(envVar);
+			} catch (e) {
+				console.warn("Failed to parse DEPLOYMENT_JSON env var, falling back to file.");
+			}
+		}
+	}
+
+	// 2. Try from files in priority order
+	const possiblePaths = [
+		path.join(__dirname, './deployment.localhost.json'),
+		path.join(__dirname, `./deployment.${network}.json`),
+		path.join(__dirname, './deployment.hedera_testnet.json'),
+	];
+
+	for (const deploymentPath of possiblePaths) {
+		if (fs.existsSync(deploymentPath)) {
+			try {
+				const content = fs.readFileSync(deploymentPath, 'utf-8');
+				const data = JSON.parse(content);
+				console.log(`📦 Loaded deployment from ${path.basename(deploymentPath)}`);
+				return data;
+			} catch (error) {
+				console.warn(`⚠️  Failed to parse ${deploymentPath}`);
+			}
+		}
+	}
+
+	console.warn('⚠️  No deployment configuration found');
+	return null;
+}
+
+// Load deployment (defaults to hedera_testnet)
+// EVM_NETWORK should match hardhat network names with underscores:
+// - 'localhost'
+// - 'hedera_testnet' (default)
+// - 'hedera_mainnet'
+const deploymentNetwork = getEnv('EVM_NETWORK', 'VITE_EVM_NETWORK') || 'hedera_testnet';
+const DeploymentData: DeploymentData | null = loadDeployment(deploymentNetwork);
+
 // ------------------------------------------------------------------
 // Configuration & Addresses
 // ------------------------------------------------------------------
-
-// 1. Try Config from Environment Variable (CI/CD/Vercel)
-let EnvDeployment: any = null;
-if (typeof process !== "undefined" && process.env) {
-	const envVar =
-		process.env.VITE_DEPLOYMENT_JSON || process.env.DEPLOYMENT_JSON;
-	if (envVar) {
-		try {
-			EnvDeployment = JSON.parse(envVar);
-		} catch (e) {
-			console.warn(
-				"Failed to parse DEPLOYMENT_JSON env var, falling back to local file."
-			);
-		}
-	}
-}
-
-// 2. Fallback to Local JSON (Development)
-const DeploymentData: any = EnvDeployment || Deployment;
 
 export const HEDERA_TESTNET_CHAIN_ID = Number(
 	getEnv("CHAIN_ID", "VITE_CHAIN_ID") || DeploymentData?.network?.chainId || 296
@@ -53,6 +108,7 @@ export const HEDERA_TESTNET_RPC =
 
 export const CONTRACTS: any = DeploymentData?.contracts || {};
 export const DeploymentConfig = DeploymentData;
+
 
 // ------------------------------------------------------------------
 // ADDRESS CONFIGURATION (Legacy / Helpers)
