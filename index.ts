@@ -1,18 +1,44 @@
 
 import { ethers } from "ethers";
-import * as fs from "fs";
-import * as path from "path";
-import { fileURLToPath } from "url";
 
-// Handle __dirname for both CommonJS and ESM
-const getFileName = () => {
-	if (typeof __filename !== 'undefined') return __filename;
-	return fileURLToPath(import.meta.url);
-};
+// Conditionally import Node.js modules only in Node environment
+// In browser, these will be undefined
+const isBrowser = typeof window !== 'undefined';
+const isNode = typeof process !== 'undefined' && process.versions?.node;
 
-const getDirName = () => {
+// Only load Node.js modules in Node environment (not browser)
+let fs: any;
+let path: any;
+let fileURLToPath: any;
+
+if (isNode && !isBrowser) {
+	// In Node.js environment, use require for synchronous loading
+	// This works in both CommonJS and ESM (with proper config)
+	try {
+		// Try CommonJS require first
+		if (typeof require !== 'undefined') {
+			fs = require('fs');
+			path = require('path');
+			fileURLToPath = require('url').fileURLToPath;
+		}
+	} catch (e) {
+		// If require fails (pure ESM), modules stay undefined
+		// File loading will be skipped, only env vars will work
+	}
+}
+
+// Handle __dirname for both CommonJS and ESM (Node only)
+const getDirName = (): string | undefined => {
+	if (isBrowser) return undefined;
 	if (typeof __dirname !== 'undefined') return __dirname;
-	return path.dirname(getFileName());
+	if (fileURLToPath && typeof import.meta !== 'undefined') {
+		try {
+			return path?.dirname(fileURLToPath(import.meta.url));
+		} catch (e) {
+			return undefined;
+		}
+	}
+	return undefined;
 };
 
 const __dirname_compat = getDirName();
@@ -52,6 +78,11 @@ const getEnv = (key: string, viteKey: string) => {
 	if (typeof process !== "undefined" && process.env) {
 		return process.env[key] || process.env[viteKey];
 	}
+	// In browser, try to access Vite's import.meta.env
+	if (typeof import.meta !== 'undefined' && (import.meta as any).env) {
+		const env = (import.meta as any).env;
+		return env[viteKey] || env[key];
+	}
 	return undefined;
 };
 
@@ -60,12 +91,12 @@ const getEnv = (key: string, viteKey: string) => {
  *
  * Priority order:
  * 1. Environment variable (DEPLOYMENT_JSON or VITE_DEPLOYMENT_JSON)
- * 2. deployment.localhost.json (local development)
- * 3. deployment.{network}.json (specified network)
- * 4. deployment.hedera_testnet.json (default fallback)
+ * 2. deployment.localhost.json (local development - Node only)
+ * 3. deployment.{network}.json (specified network - Node only)
+ * 4. deployment.hedera_testnet.json (default fallback - Node only)
  */
 function loadDeployment(network: string = 'hedera_testnet'): DeploymentData | null {
-	// 1. Try from environment variable (for CI/CD/Vercel)
+	// 1. Try from environment variable (works in both browser and Node)
 	if (typeof process !== "undefined" && process.env) {
 		const envVar = process.env.VITE_DEPLOYMENT_JSON || process.env.DEPLOYMENT_JSON;
 		if (envVar) {
@@ -77,7 +108,13 @@ function loadDeployment(network: string = 'hedera_testnet'): DeploymentData | nu
 		}
 	}
 
-	// 2. Try from files in priority order
+	// In browser, only use env vars (no file system access)
+	if (isBrowser || !fs || !path || !__dirname_compat) {
+		console.warn('⚠️  No deployment configuration found (browser mode - use VITE_DEPLOYMENT_JSON env var)');
+		return null;
+	}
+
+	// 2. Try from files in priority order (Node only)
 	const possiblePaths = [
 		path.join(__dirname_compat, './deployment.localhost.json'),
 		path.join(__dirname_compat, `./deployment.${network}.json`),
@@ -113,10 +150,10 @@ const DeploymentData: DeploymentData | null = loadDeployment(deploymentNetwork);
 // Configuration & Addresses
 // ------------------------------------------------------------------
 
-export const HEDERA_TESTNET_CHAIN_ID = Number(
+export const TESTNET_CHAIN_ID = Number(
 	getEnv("CHAIN_ID", "VITE_CHAIN_ID") || DeploymentData?.network?.chainId || 296
 );
-export const HEDERA_TESTNET_RPC =
+export const TESTNET_RPC =
 	getEnv("RPC_URL", "VITE_RPC_URL") ||
 	DeploymentData?.network?.rpc ||
 	"https://testnet.hashio.io/api";
