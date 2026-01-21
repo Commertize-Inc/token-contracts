@@ -86,12 +86,12 @@ function loadDeployment(network: string = 'hedera_testnet'): DeploymentData | nu
 	return null;
 }
 
-// Load deployment (defaults to hedera_testnet)
+// Load deployment (defaults to testnet)
 // EVM_NETWORK should match hardhat network names with underscores:
 // - 'localhost'
-// - 'hedera_testnet' (default)
-// - 'hedera_mainnet'
-const deploymentNetwork = getEnv('EVM_NETWORK', 'VITE_EVM_NETWORK') || 'hedera_testnet';
+// - 'testnet' (default)
+// - 'mainnet'
+const deploymentNetwork = getEnv('EVM_NETWORK', 'VITE_EVM_NETWORK') || 'testnet';
 const DeploymentData: DeploymentData | null = loadDeployment(deploymentNetwork);
 
 // ------------------------------------------------------------------

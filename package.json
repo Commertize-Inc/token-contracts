@@ -39,9 +39,9 @@
 			"import": "./dist/index.mjs",
 			"require": "./dist/index.js"
 		},
-		"./deployment.json": "./deployment.hedera_testnet.json",
-		"./deployment.hedera_testnet.json": "./deployment.hedera_testnet.json",
-		"./deployment.hedera_mainnet.json": "./deployment.hedera_mainnet.json",
+		"./deployment.json": "./deployment.testnet.json",
+		"./deployment.testnet.json": "./deployment.testnet.json",
+		"./deployment.mainnet.json": "./deployment.mainnet.json",
 		"./deployment.localhost.json": "./deployment.localhost.json",
 		"./artifacts/*": "./artifacts/contracts/*"
 	},

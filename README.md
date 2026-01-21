@@ -61,13 +61,13 @@ For production applications:
 ```typescript
 import { getContractAddress } from '@commertize/nexus';
 
-const identityRegistry = getContractAddress('IdentityRegistry', 'hedera_mainnet');
+const identityRegistry = getContractAddress('IdentityRegistry', 'mainnet');
 ```
 
 ### Available Networks
 
-- **`hedera_testnet`** (default) - Shared Hedera testnet for all developers
-- **`hedera_mainnet`** - Hedera mainnet for production
+- **`testnet`** (default) - Shared Hedera testnet for all developers
+- **`mainnet`** - Hedera mainnet for production
 - **`localhost`** - Local development network
 
 ## Environment Variables
@@ -78,16 +78,16 @@ Control which blockchain network your app connects to:
 
 ```bash
 # For backend (apps/backend/.env)
-EVM_NETWORK=hedera_testnet
+EVM_NETWORK=testnet
 
 # For dashboard (apps/dashboard/.env)
-VITE_EVM_NETWORK=hedera_testnet
+VITE_EVM_NETWORK=testnet
 ```
 
 **Available Networks:**
 - `localhost` - Local Hardhat node (for development)
-- `hedera_testnet` - Hedera testnet (default, shared across all developers)
-- `hedera_mainnet` - Hedera mainnet (production)
+- `testnet` - Hedera testnet (default, shared across all developers)
+- `mainnet` - Hedera mainnet (production)
 
 The network setting automatically determines:
 - ✅ Which contract addresses to use
@@ -98,7 +98,7 @@ The network setting automatically determines:
 
 ```bash
 # Override default network
-DEPLOYMENT_NETWORK=hedera_mainnet
+DEPLOYMENT_NETWORK=mainnet
 
 # Override RPC URL
 RPC_URL=https://mainnet.hashio.io/api
@@ -127,7 +127,7 @@ pnpm hardhat compile
 pnpm deploy:testnet
 ```
 
-This creates `deployment.hedera_testnet.json` with the deployed contract addresses.
+This creates `deployment.testnet.json` with the deployed contract addresses.
 
 ### Deploy to Mainnet
 
@@ -140,7 +140,7 @@ git push origin v1.0.0
 
 The GitHub Actions workflow will automatically:
 1. Deploy contracts to Hedera mainnet
-2. Create `deployment.hedera_mainnet.json`
+2. Create `deployment.mainnet.json`
 3. Commit the deployment file to the repository
 4. Create a GitHub release with attached artifacts
 
@@ -170,7 +170,7 @@ import { ABIS } from '@commertize/nexus';
 Load deployment configuration for a specific network.
 
 ```typescript
-const deployment = getDeployment('hedera_testnet');
+const deployment = getDeployment('testnet');
 console.log(deployment.network.chainId); // 296
 ```
 
@@ -179,7 +179,7 @@ console.log(deployment.network.chainId); // 296
 Get a specific contract address.
 
 ```typescript
-const address = getContractAddress('IdentityRegistry', 'hedera_mainnet');
+const address = getContractAddress('IdentityRegistry', 'mainnet');
 ```
 
 ### `getContracts(network?: string): Record<string, string>`
@@ -187,7 +187,7 @@ const address = getContractAddress('IdentityRegistry', 'hedera_mainnet');
 Get all contract addresses.
 
 ```typescript
-const contracts = getContracts('hedera_testnet');
+const contracts = getContracts('testnet');
 ```
 
 ### `getNetwork(network?: string)`
@@ -195,8 +195,8 @@ const contracts = getContracts('hedera_testnet');
 Get network information.
 
 ```typescript
-const network = getNetwork('hedera_testnet');
-// { name: 'hedera-testnet', chainId: 296, rpc: '...', currency: 'HBAR' }
+const network = getNetwork('testnet');
+// { name: 'testnet', chainId: 296, rpc: '...', currency: 'HBAR' }
 ```
 
 ## How It Works
@@ -206,7 +206,7 @@ The package uses a priority-based deployment loading system:
 1. **Environment variable** (`DEPLOYMENT_JSON`) - for CI/CD
 2. **`deployment.localhost.json`** - for local development
 3. **`deployment.{network}.json`** - for specified network
-4. **`deployment.hedera_testnet.json`** - default fallback
+4. **`deployment.testnet.json`** - default fallback
 
 This means:
 - ✅ New developers get shared testnet contracts immediately

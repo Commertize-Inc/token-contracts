@@ -22,13 +22,13 @@ jobs:
       - name: Deploy to Testnet
         env:
           EVM_PRIVATE_KEY: ${{ secrets.EVM_PRIVATE_KEY }}
-        run: pnpm hardhat run scripts/deploy.js --network hedera-testnet
+        run: test -f deployment.testnet.json || pnpm hardhat run scripts/deploy.js --network hedera-testnet
 
       - name: Commit updated testnet deployment
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git add deployment.hedera_testnet.json
+          git add deployment.testnet.json
           git commit -m "chore: update testnet deployment [skip ci]" || exit 0
           git push
 
@@ -37,6 +37,6 @@ jobs:
         with:
           name: testnet-deployment-artifacts
           path: |
-            deployment.hedera_testnet.json
+            deployment.testnet.json
             artifacts/contracts/**/*.json
           retention-days: 90

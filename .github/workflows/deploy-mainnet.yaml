@@ -23,13 +23,13 @@ jobs:
       - name: Deploy to Mainnet
         env:
           EVM_PRIVATE_KEY: ${{ secrets.EVM_PRIVATE_KEY }}
-        run: pnpm hardhat run scripts/deploy.js --network hedera-mainnet
+        run: pnpm hardhat run scripts/deploy.js --network mainnet
 
       - name: Commit mainnet deployment
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git add deployment.hedera_mainnet.json
+          git add deployment.mainnet.json
           git commit -m "chore: update mainnet deployment [skip ci]" || exit 0
           git push origin HEAD:main
 
@@ -38,7 +38,7 @@ jobs:
         with:
           name: mainnet-deployment-artifacts
           path: |
-            deployment.hedera_mainnet.json
+            deployment.mainnet.json
             artifacts/contracts/**/*.json
           retention-days: 90
 
@@ -46,7 +46,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            deployment.hedera_mainnet.json
+            deployment.mainnet.json
             artifacts/contracts/**/*.json
           generate_release_notes: true
           name: Release ${{ github.ref_name }}
@@ -58,5 +58,5 @@ jobs:
             To use in your project:
             ```typescript
             import { getContractAddress } from '@commertize/nexus';
-            const address = getContractAddress('IdentityRegistry', 'hedera_mainnet');
+            const address = getContractAddress('IdentityRegistry', 'mainnet');
             ```

@@ -28,14 +28,14 @@ module.exports = {
 		localhost: {
 			url: "http://127.0.0.1:8545",
 		},
-		["hedera-testnet"]: {
+		testnet: {
 			url: "https://testnet.hashio.io/api",
 			chainId: 296,
 			accounts: [
 				process.env.EVM_PRIVATE_KEY,
 			].filter((k) => !!k && k.startsWith("0x")),
 		},
-		["hedera-mainnet"]: {
+		mainnet: {
 			url: "https://mainnet.hashio.io/api",
 			chainId: 295,
 			accounts: [
