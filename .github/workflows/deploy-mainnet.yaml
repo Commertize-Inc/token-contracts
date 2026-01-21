@@ -23,7 +23,7 @@ jobs:
       - name: Deploy to Mainnet
         env:
           EVM_PRIVATE_KEY: ${{ secrets.EVM_PRIVATE_KEY }}
-        run: pnpm hardhat run scripts/deploy.js --network mainnet
+        run: test -f deployment.mainnet.json || pnpm hardhat run scripts/deploy.js --network mainnet
 
       - name: Commit mainnet deployment
         run: |
