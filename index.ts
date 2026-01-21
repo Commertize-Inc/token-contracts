@@ -1,6 +1,21 @@
+
 import { ethers } from "ethers";
 import * as fs from "fs";
 import * as path from "path";
+import { fileURLToPath } from "url";
+
+// Handle __dirname for both CommonJS and ESM
+const getFileName = () => {
+	if (typeof __filename !== 'undefined') return __filename;
+	return fileURLToPath(import.meta.url);
+};
+
+const getDirName = () => {
+	if (typeof __dirname !== 'undefined') return __dirname;
+	return path.dirname(getFileName());
+};
+
+const __dirname_compat = getDirName();
 
 // Import Artifacts direct from compilation output
 import IdentityRegistryArtifact from "./artifacts/src/compliance/IdentityRegistry.sol/IdentityRegistry.json";
@@ -64,9 +79,9 @@ function loadDeployment(network: string = 'hedera_testnet'): DeploymentData | nu
 
 	// 2. Try from files in priority order
 	const possiblePaths = [
-		path.join(__dirname, './deployment.localhost.json'),
-		path.join(__dirname, `./deployment.${network}.json`),
-		path.join(__dirname, './deployment.hedera_testnet.json'),
+		path.join(__dirname_compat, './deployment.localhost.json'),
+		path.join(__dirname_compat, `./deployment.${network}.json`),
+		path.join(__dirname_compat, './deployment.hedera_testnet.json'),
 	];
 
 	for (const deploymentPath of possiblePaths) {
@@ -141,7 +156,7 @@ export const ABIS = {
 // ------------------------------------------------------------------
 
 export const getProvider = () => {
-	return new ethers.JsonRpcProvider(HEDERA_TESTNET_RPC);
+	return new ethers.JsonRpcProvider(DeploymentConfig.network.rpc);
 };
 
 export const getWallet = (provider?: ethers.Provider | null) => {
