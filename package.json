@@ -27,15 +27,26 @@
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",
 	"types": "./dist/index.d.ts",
+	"files": [
+		"dist",
+		"deployment.*.json",
+		"artifacts/contracts/**/*.json",
+		"!artifacts/build-info"
+	],
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
 			"import": "./dist/index.mjs",
 			"require": "./dist/index.js"
 		},
-		"./deployment.json": "./deployment.json"
+		"./deployment.json": "./deployment.hedera_testnet.json",
+		"./deployment.hedera_testnet.json": "./deployment.hedera_testnet.json",
+		"./deployment.hedera_mainnet.json": "./deployment.hedera_mainnet.json",
+		"./deployment.localhost.json": "./deployment.localhost.json",
+		"./artifacts/*": "./artifacts/contracts/*"
 	},
 	"type": "commonjs",
+	"packageManager": "pnpm@9.15.4",
 	"devDependencies": {
 		"@nomicfoundation/hardhat-toolbox": "^5.0.0",
 		"@openzeppelin/contracts": "^5.1.0",
