@@ -1,0 +1,19 @@
+{
+  "contracts": {
+    "IdentityRegistry": "0x1E6361A6ce329813cb8B09C35aAF4515D429f3CE",
+    "CREUSD": "0xe5655c9260CCF84bE61383235fc3feCDaCeDf41e",
+    "USDC": "0xe5655c9260CCF84bE61383235fc3feCDaCeDf41e",
+    "CommertizeToken": "0x7eBf00157f95Fe4Ffa929968dcFcB436ADd070D7",
+    "TokenCompliance": "0x1694a1AFb8Cb47751c8C6A68B42C7dA9074751e0",
+    "PropertyFactory": "0xe86246e9Ed2C4647cd29e7C28FA48167Ee1E7153",
+    "StakingPool": "0xe184544f6Cf2e7B2c247bBD604D56D330cfB5ace",
+    "DividendVault": "0x28726Df03b62C486a5ea27C094642086621eC0FE"
+  },
+  "timestamp": "2026-01-21T00:15:05.448Z",
+  "network": {
+    "name": "hedera-testnet",
+    "chainId": 296,
+    "rpc": "https://testnet.hashio.io/api",
+    "currency": "HBAR"
+  }
+}
