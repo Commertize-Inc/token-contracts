@@ -1,51 +1,19 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
 node_modules
+.env
+coverage
+coverage.json
+typechain
+typechain-types
 
-# testing
-/coverage
+# Hardhat files
+cache
+artifacts
 
-# turborepo
-.turbo
+# Deployment configs - commit Hedera deployments, ignore local networks
+deployment.localhost.json
+deployment.hardhat.json
 
-# next.js
-.next
-out
-
-# production
-/build
-dist
-
-# misc
+# Editors
+.vscode
+.idea
 .DS_Store
-*.pem
-
-# debug
-npm-debug.log*
-.pnpm-debug.log*
-
-# env files
-.env*
-!.env*.example
-
-# Root development env (safe to commit for dev, contains dev values)
-# .env.development - tracked in git for shared dev environment
-
-# App-specific production env files (never commit, contains secrets)
-apps/**/.env.production
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# mikro-orm
-**/temp
-apps/dashboard/lib/db/migrations/*.ts
-!apps/dashboard/lib/db/migrations/.gitkeep
-
-# replit
-attached_assets

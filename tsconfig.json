@@ -1,0 +1,21 @@
+{
+	"compilerOptions": {
+		"outDir": "dist",
+		"rootDir": ".",
+		"moduleResolution": "node",
+		"target": "es2020",
+		"module": "commonjs",
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"resolveJsonModule": true
+	},
+	"include": [
+		"index.ts",
+		"src/**/*",
+	],
+	"exclude": [
+		"node_modules",
+		"dist"
+	]
+}

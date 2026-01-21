@@ -1,8 +1,0 @@
-../landing
-../dashboard
-../../apps/landing
-../../apps/dashboard
-../../packages/ui
-**/*.tsx
-**/apps/landing/**
-**/apps/dashboard/**

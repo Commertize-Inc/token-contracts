@@ -1,47 +1,68 @@
 {
-	"name": "commertize-monorepo",
-	"version": "0.1.0",
-	"private": true,
-	"packageManager": "pnpm@10.26.1+sha512.664074abc367d2c9324fdc18037097ce0a8f126034160f709928e9e9f95d98714347044e5c3164d65bd5da6c59c6be362b107546292a8eecb7999196e5ce58fa",
-	"engines": {
-		"node": ">=20.0.0",
-		"pnpm": ">=10.0.0"
-	},
+	"name": "@commertize/nexus",
+	"version": "1.0.0",
+	"description": "Commertize smart contracts for real estate tokenization, debt instruments, and mortgage lending",
 	"scripts": {
-		"dev": "turbo run dev",
-		"docker:up": "docker compose up --build -d && pnpm migration:up",
-		"docker:down": "docker compose down",
-		"build": "turbo run build",
-		"build:packages": "turbo run build --filter='./packages/*'",
-		"lint": "turbo run lint",
-		"format": "prettier --write .",
-		"format:check": "prettier --check .",
-		"migration:create": "turbo run migration:create",
-		"migration:up": "turbo run migration:up",
-		"migration:pending": "turbo run migration:pending",
-		"sync:env": "tsx scripts/sync-vercel-env.ts",
-		"test": "turbo run test",
-		"clean": "turbo run clean && rm -rf node_modules"
+		"build": "tsup index.ts --format cjs,esm --dts --clean",
+		"compile": "hardhat compile",
+		"test": "hardhat test",
+		"test:coverage": "hardhat coverage",
+		"node": "hardhat node",
+		"clean": "hardhat clean",
+		"deploy:localhost": "hardhat run scripts/deploy.js --network localhost",
+		"deploy:testnet": "hardhat run scripts/deploy.js --network hedera-testnet",
+		"deploy:mainnet": "hardhat run scripts/deploy.js --network hedera-mainnet",
+		"release": "node scripts/release.js"
 	},
+	"keywords": [
+		"real-estate",
+		"tokenization",
+		"ERC-3643",
+		"DeFi",
+		"mortgage",
+		"debt"
+	],
+	"author": "Commertize",
+	"license": "MIT",
+	"main": "./dist/index.js",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
+	"files": [
+		"dist",
+		"deployment.*.json",
+		"artifacts/contracts/**/*.json",
+		"!artifacts/build-info"
+	],
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.mjs",
+			"require": "./dist/index.js"
+		},
+		"./deployment.json": "./deployment.testnet.json",
+		"./deployment.testnet.json": "./deployment.testnet.json",
+		"./deployment.mainnet.json": "./deployment.mainnet.json",
+		"./deployment.localhost.json": "./deployment.localhost.json",
+		"./artifacts/*": "./artifacts/contracts/*"
+	},
+	"type": "commonjs",
+	"packageManager": "pnpm@9.15.4",
 	"devDependencies": {
-		"@eslint/js": "^9.39.2",
-		"@typescript-eslint/eslint-plugin": "^8.49.0",
-		"@typescript-eslint/parser": "^8.49.0",
-		"eslint": "^9.39.2",
-		"eslint-config-next": "16.0.3",
-		"eslint-config-prettier": "^10.1.8",
-		"eslint-plugin-prettier": "^5.5.4",
-		"eslint-plugin-react": "^7.37.5",
-		"eslint-plugin-react-hooks": "^7.0.1",
-		"prettier": "^3.7.4",
-		"turbo": "^2.6.3",
+		"@nomicfoundation/hardhat-toolbox": "^5.0.0",
+		"@openzeppelin/contracts": "^5.1.0",
+		"@openzeppelin/hardhat-upgrades": "^3.9.1",
+		"@types/node": "^25.0.9",
+		"chalk": "^4.1.2",
+		"hardhat": "^2.22.0",
+		"prompts": "^2.4.2",
+		"tsup": "^8.5.1",
 		"typescript": "^5.9.3"
 	},
 	"dependencies": {
+		"@layerzerolabs/lz-evm-oapp-v2": "^3.0.154",
+		"@layerzerolabs/lz-evm-protocol-v2": "^3.0.154",
+		"@openzeppelin/contracts-upgradeable": "^5.4.0",
 		"dotenv": "^17.2.3",
-		"dotenv-expand": "^12.0.3",
-		"react": "18.3.1",
-		"react-dom": "18.3.1",
-		"tsx": "^4.21.0"
+		"ethers": "^6.16.0"
 	}
 }
