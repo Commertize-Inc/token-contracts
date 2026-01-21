@@ -93,9 +93,9 @@ const getEnv = (key: string, viteKey: string) => {
  * 1. Environment variable (DEPLOYMENT_JSON or VITE_DEPLOYMENT_JSON)
  * 2. deployment.localhost.json (local development - Node only)
  * 3. deployment.{network}.json (specified network - Node only)
- * 4. deployment.hedera_testnet.json (default fallback - Node only)
+ * 4. deployment.testnet.json (default fallback - Node only)
  */
-function loadDeployment(network: string = 'hedera_testnet'): DeploymentData | null {
+function loadDeployment(network: string = 'testnet'): DeploymentData | null {
 	// 1. Try from environment variable (works in both browser and Node)
 	if (typeof process !== "undefined" && process.env) {
 		const envVar = process.env.VITE_DEPLOYMENT_JSON || process.env.DEPLOYMENT_JSON;
@@ -118,7 +118,7 @@ function loadDeployment(network: string = 'hedera_testnet'): DeploymentData | nu
 	const possiblePaths = [
 		path.join(__dirname_compat, './deployment.localhost.json'),
 		path.join(__dirname_compat, `./deployment.${network}.json`),
-		path.join(__dirname_compat, './deployment.hedera_testnet.json'),
+		path.join(__dirname_compat, './deployment.testnet.json'),
 	];
 
 	for (const deploymentPath of possiblePaths) {
