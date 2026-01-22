@@ -1,44 +1,24 @@
-
+console.log("Loading Nexus Index Source...");
 import { ethers } from "ethers";
+import * as fs from "fs";
+import * as path from "path";
+import { fileURLToPath } from "url";
 
 // Conditionally import Node.js modules only in Node environment
 // In browser, these will be undefined
 const isBrowser = typeof window !== 'undefined';
 const isNode = typeof process !== 'undefined' && process.versions?.node;
 
-// Only load Node.js modules in Node environment (not browser)
-let fs: any;
-let path: any;
-let fileURLToPath: any;
-
-if (isNode && !isBrowser) {
-	// In Node.js environment, use require for synchronous loading
-	// This works in both CommonJS and ESM (with proper config)
-	try {
-		// Try CommonJS require first
-		if (typeof require !== 'undefined') {
-			fs = require('fs');
-			path = require('path');
-			fileURLToPath = require('url').fileURLToPath;
-		}
-	} catch (e) {
-		// If require fails (pure ESM), modules stay undefined
-		// File loading will be skipped, only env vars will work
-	}
-}
 
 // Handle __dirname for both CommonJS and ESM (Node only)
 const getDirName = (): string | undefined => {
 	if (isBrowser) return undefined;
 	if (typeof __dirname !== 'undefined') return __dirname;
-	if (fileURLToPath && typeof import.meta !== 'undefined') {
-		try {
-			return path?.dirname(fileURLToPath(import.meta.url));
-		} catch (e) {
-			return undefined;
-		}
+	try {
+		return path.dirname(fileURLToPath(import.meta.url));
+	} catch (e) {
+		return undefined;
 	}
-	return undefined;
 };
 
 const __dirname_compat = getDirName();
@@ -115,10 +95,15 @@ function loadDeployment(network: string = 'testnet'): DeploymentData | null {
 	}
 
 	// 2. Try from files in priority order (Node only)
+	// 2. Try from files in priority order (Node only)
+	// 2. Try from files in priority order (Node only)
 	const possiblePaths = [
-		path.join(__dirname_compat, './deployment.localhost.json'),
 		path.join(__dirname_compat, `./deployment.${network}.json`),
 		path.join(__dirname_compat, './deployment.testnet.json'),
+		// Removing localhost fallback to prevent accidental confusion
+		// Fallback: Check parent directory (useful when running from dist/)
+		path.join(__dirname_compat, `../deployment.${network}.json`),
+		path.join(__dirname_compat, '../deployment.testnet.json'),
 	];
 
 	for (const deploymentPath of possiblePaths) {
@@ -139,21 +124,20 @@ function loadDeployment(network: string = 'testnet'): DeploymentData | null {
 }
 
 // Load deployment (defaults to testnet)
-// EVM_NETWORK should match hardhat network names with underscores:
-// - 'localhost'
-// - 'testnet' (default)
-// - 'mainnet'
 const deploymentNetwork = getEnv('EVM_NETWORK', 'VITE_EVM_NETWORK') || 'testnet';
+console.log(`Nexus Config: Using network '${deploymentNetwork}'`);
 const DeploymentData: DeploymentData | null = loadDeployment(deploymentNetwork);
 
 // ------------------------------------------------------------------
 // Configuration & Addresses
 // ------------------------------------------------------------------
 
-export const TESTNET_CHAIN_ID = Number(
+export const NETWORK = getEnv("NETWORK", "VITE_NETWORK") || DeploymentData?.network?.name || "testnet";
+export const CHAIN_ID = Number(
 	getEnv("CHAIN_ID", "VITE_CHAIN_ID") || DeploymentData?.network?.chainId || 296
 );
-export const TESTNET_RPC =
+export const CURRENCY = getEnv("CURRENCY", "VITE_CURRENCY") || DeploymentData?.network?.currency || "HBAR";
+export const RPC_URL =
 	getEnv("RPC_URL", "VITE_RPC_URL") ||
 	DeploymentData?.network?.rpc ||
 	"https://testnet.hashio.io/api";
@@ -193,6 +177,9 @@ export const ABIS = {
 // ------------------------------------------------------------------
 
 export const getProvider = () => {
+	if (!DeploymentConfig) {
+		throw new Error("Nexus DeploymentConfig is missing. Check deployment.json or environment variables.");
+	}
 	return new ethers.JsonRpcProvider(DeploymentConfig.network.rpc);
 };
 

@@ -11,7 +11,7 @@
 		"resolveJsonModule": true
 	},
 	"include": [
-		"index.ts",
+		"index.mts",
 		"src/**/*",
 	],
 	"exclude": [
