@@ -1,6 +1,6 @@
 {
 	"network": {
-		"name": "hedera-testnet",
+		"name": "testnet",
 		"chainId": 296,
 		"rpc": "https://testnet.hashio.io/api",
 		"currency": "HBAR"
