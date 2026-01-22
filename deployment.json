@@ -3,7 +3,8 @@
 		"name": "testnet",
 		"chainId": 296,
 		"rpc": "https://testnet.hashio.io/api",
-		"currency": "HBAR"
+		"currency": "HBAR",
+		"blockExplorerUrl": "https://hashscan.io/testnet"
 	},
 	"contracts": {
 		"IdentityRegistry": "0xcf8C25E53Fb2B9404C0339f40c9f36531d8d7cb5",

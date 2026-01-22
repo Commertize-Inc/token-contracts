@@ -31,6 +31,22 @@ async function main() {
 	// Currency symbol (default ETH/HBAR)
 	const currency = networkName.includes("hedera") ? "HBAR" : "ETH";
 
+	// Determine block explorer URL based on network
+	let blockExplorerUrl = "";
+	if (chainId === 296) {
+		// Hedera testnet
+		blockExplorerUrl = "https://hashscan.io/testnet";
+	} else if (chainId === 295) {
+		// Hedera mainnet
+		blockExplorerUrl = "https://hashscan.io";
+	} else if (networkName === "localhost" || chainId === 31337) {
+		// Local development - no block explorer
+		blockExplorerUrl = "";
+	} else {
+		// Try to get from Hardhat config if available
+		blockExplorerUrl = hre.network.config.blockExplorer || "";
+	}
+
 	console.log(`Network: ${chalk.magenta(networkName)} (ChainID: ${chainId})`);
 
 	// Convert network name to filename (replace hyphens with underscores)
@@ -43,9 +59,10 @@ async function main() {
 	if (fs.existsSync(mainDeploymentPath)) {
 		try {
 			deploymentConfig = require(mainDeploymentPath);
-			console.log(chalk.green(`Loaded existing config from deployment.json`));
+			console.log(chalk.green(`Loaded existing config from ${mainDeploymentPath}`));
 		} catch (e) {
-			console.warn(chalk.red(`Could not parse ${filename}, starting fresh.`));
+			console.warn(chalk.red(`Could not parse ${mainDeploymentPath}: ${e.message}`));
+			console.warn(chalk.red(`Starting fresh.`));
 		}
 	}
 
@@ -150,7 +167,7 @@ async function main() {
 	if (selectedContracts.has("CREUSD")) {
 		await deployContract("CREUSD", [deployer.address], context);
 		// Alias USDC
-		context.deploymentConfig.contracts.USDC = context.deployedAddresses.CREUSD;
+		context.deploymentConfig.contracts.USDC = hre.network.config.USDC_ADDRESS;
 	}
 
 	// 3. Commertize Token
@@ -218,6 +235,7 @@ async function main() {
 		chainId: chainId,
 		rpc: rpcUrl,
 		currency: currency,
+		blockExplorerUrl: blockExplorerUrl,
 	};
 
 	fs.writeFileSync(

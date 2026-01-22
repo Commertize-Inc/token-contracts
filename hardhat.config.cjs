@@ -36,6 +36,7 @@ module.exports = {
 			accounts: [
 				process.env.EVM_PRIVATE_KEY,
 			].filter((k) => !!k && k.startsWith("0x")),
+			USDC_ADDRESS: "0x0000000000000000000000000000000000068cda",
 		},
 		mainnet: {
 			url: "https://mainnet.hashio.io/api",
@@ -43,6 +44,7 @@ module.exports = {
 			accounts: [
 				process.env.EVM_PRIVATE_KEY,
 			].filter((k) => !!k && k.startsWith("0x")),
+			USDC_ADDRESS: "0x000000000000000000000000000000000006f89a",
 		},
 	},
 	mocha: {

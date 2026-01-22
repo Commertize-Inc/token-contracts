@@ -45,6 +45,7 @@ export interface DeploymentData {
 		chainId: number;
 		rpc: string;
 		currency: string;
+		blockExplorerUrl: string;
 	};
 	timestamp: string | null;
 }
