@@ -29,23 +29,10 @@ async function main() {
 	const rpcUrl = hre.network.config.url || "http://localhost:8545";
 
 	// Currency symbol (default ETH/HBAR)
-	const currency = networkName.includes("hedera") ? "HBAR" : "ETH";
+	const currency = hre.network.config.currency;
 
 	// Determine block explorer URL based on network
-	let blockExplorerUrl = "";
-	if (chainId === 296) {
-		// Hedera testnet
-		blockExplorerUrl = "https://hashscan.io/testnet";
-	} else if (chainId === 295) {
-		// Hedera mainnet
-		blockExplorerUrl = "https://hashscan.io";
-	} else if (networkName === "localhost" || chainId === 31337) {
-		// Local development - no block explorer
-		blockExplorerUrl = "";
-	} else {
-		// Try to get from Hardhat config if available
-		blockExplorerUrl = hre.network.config.blockExplorer || "";
-	}
+	const blockExplorerUrl = hre.network.config.blockExplorerUrl;
 
 	console.log(`Network: ${chalk.magenta(networkName)} (ChainID: ${chainId})`);
 

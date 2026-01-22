@@ -31,19 +31,23 @@ module.exports = {
 			url: "http://127.0.0.1:8545",
 		},
 		testnet: {
-			url: "https://testnet.hashio.io/api",
 			chainId: 296,
+			currency: "HBAR",
+			url: "https://testnet.hashio.io/api",
 			accounts: [process.env.EVM_PRIVATE_KEY].filter(
 				(k) => !!k && k.startsWith("0x")
 			),
+			blockExplorerUrl: "https://hashscan.io/testnet",
 			USDC_ADDRESS: "0x0000000000000000000000000000000000068cda",
 		},
 		mainnet: {
-			url: "https://mainnet.hashio.io/api",
 			chainId: 295,
+			currency: "HBAR",
+			url: "https://mainnet.hashio.io/api",
 			accounts: [process.env.EVM_PRIVATE_KEY].filter(
 				(k) => !!k && k.startsWith("0x")
 			),
+			blockExplorerUrl: "https://hashscan.io/mainnet",
 			USDC_ADDRESS: "0x000000000000000000000000000000000006f89a",
 		},
 	},
