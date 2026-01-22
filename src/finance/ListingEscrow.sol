@@ -103,6 +103,9 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 	 */
 	function _checkCompliance(address investor) internal view {
 		TokenCompliance compliance = PropertyToken(payable(address(propertyToken))).compliance();
+		if (compliance.isExempt(investor)) {
+			return;
+		}
 		IdentityRegistry registry = compliance.identityRegistry();
 		require(registry.isVerified(investor), "Investor not verified");
 	}
