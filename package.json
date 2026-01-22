@@ -60,6 +60,7 @@
 		"typescript": "^5.9.3"
 	},
 	"dependencies": {
+		"@commertize/utils": "workspace:*",
 		"@layerzerolabs/lz-evm-oapp-v2": "^3.0.154",
 		"@layerzerolabs/lz-evm-protocol-v2": "^3.0.154",
 		"@openzeppelin/contracts-upgradeable": "^5.4.0",
