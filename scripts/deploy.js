@@ -50,7 +50,7 @@ async function main() {
 	console.log(`Network: ${chalk.magenta(networkName)} (ChainID: ${chainId})`);
 
 	// Convert network name to filename (replace hyphens with underscores)
-	const deploymentFile = `deployment.${networkName.replace(/-/g, '_')}.json`;
+	const deploymentFile = `deployment.${networkName.replace(/-/g, "_")}.json`;
 	const mainDeploymentPath = path.join(__dirname, `../${deploymentFile}`);
 
 	let deploymentConfig = { contracts: {} };
@@ -59,9 +59,13 @@ async function main() {
 	if (fs.existsSync(mainDeploymentPath)) {
 		try {
 			deploymentConfig = require(mainDeploymentPath);
-			console.log(chalk.green(`Loaded existing config from ${mainDeploymentPath}`));
+			console.log(
+				chalk.green(`Loaded existing config from ${mainDeploymentPath}`)
+			);
 		} catch (e) {
-			console.warn(chalk.red(`Could not parse ${mainDeploymentPath}: ${e.message}`));
+			console.warn(
+				chalk.red(`Could not parse ${mainDeploymentPath}: ${e.message}`)
+			);
 			console.warn(chalk.red(`Starting fresh.`));
 		}
 	}

@@ -41,7 +41,7 @@ const getEnv = (key: string, viteKey: string) => {
 		return process.env[key] || process.env[viteKey];
 	}
 	// In browser, try to access Vite's import.meta.env
-	if (typeof import.meta !== 'undefined' && (import.meta as any).env) {
+	if (typeof import.meta !== "undefined" && (import.meta as any).env) {
 		const env = (import.meta as any).env;
 		return env[viteKey] || env[key];
 	}
@@ -52,18 +52,18 @@ const getEnv = (key: string, viteKey: string) => {
  * Load deployment configuration for a specific network (Browser Version).
  * Only supports VITE_DEPLOYMENT_JSON environment variable.
  */
-function loadDeployment(network: string = 'testnet'): DeploymentData | null {
+function loadDeployment(network: string = "testnet"): DeploymentData | null {
 	// 1. Try from environment variable (works in both browser and Node)
 	const envVar = getEnv("DEPLOYMENT_JSON", "VITE_DEPLOYMENT_JSON");
 	if (envVar) {
 		try {
 			// If it's a string starting with {, parse it.
 			// Vite sometimes injects the object directly if using specific plugins, but usually string.
-			if (typeof envVar === 'string' && envVar.trim().startsWith('{')) {
+			if (typeof envVar === "string" && envVar.trim().startsWith("{")) {
 				return JSON.parse(envVar);
 			}
 			// If it's already an object (rare)
-			if (typeof envVar === 'object') {
+			if (typeof envVar === "object") {
 				return envVar as DeploymentData;
 			}
 		} catch (e) {
@@ -71,22 +71,31 @@ function loadDeployment(network: string = 'testnet'): DeploymentData | null {
 		}
 	}
 
-	console.warn('⚠️  No deployment configuration found (browser mode - using VITE_DEPLOYMENT_JSON env var is required for contract addresses)');
+	console.warn(
+		"⚠️  No deployment configuration found (browser mode - using VITE_DEPLOYMENT_JSON env var is required for contract addresses)"
+	);
 	return null;
 }
 
 // Load deployment (defaults to testnet)
-const deploymentNetwork = getEnv('EVM_NETWORK', 'VITE_EVM_NETWORK') || 'testnet';
+const deploymentNetwork =
+	getEnv("EVM_NETWORK", "VITE_EVM_NETWORK") || "testnet";
 const DeploymentData: DeploymentData | null = loadDeployment(deploymentNetwork);
 
 // ------------------------------------------------------------------
 // Configuration & Addresses
 // ------------------------------------------------------------------
-export const NETWORK = getEnv("NETWORK", "VITE_NETWORK") || DeploymentData?.network?.name || "testnet";
+export const NETWORK =
+	getEnv("NETWORK", "VITE_NETWORK") ||
+	DeploymentData?.network?.name ||
+	"testnet";
 export const CHAIN_ID = Number(
 	getEnv("CHAIN_ID", "VITE_CHAIN_ID") || DeploymentData?.network?.chainId || 296
 );
-export const CURRENCY = getEnv("CURRENCY", "VITE_CURRENCY") || DeploymentData?.network?.currency || "HBAR";
+export const CURRENCY =
+	getEnv("CURRENCY", "VITE_CURRENCY") ||
+	DeploymentData?.network?.currency ||
+	"HBAR";
 export const RPC_URL =
 	getEnv("RPC_URL", "VITE_RPC_URL") ||
 	DeploymentData?.network?.rpc ||
@@ -94,7 +103,6 @@ export const RPC_URL =
 
 export const CONTRACTS: any = DeploymentData?.contracts || {};
 export const DeploymentConfig = DeploymentData;
-
 
 // ------------------------------------------------------------------
 // ADDRESS CONFIGURATION (Legacy / Helpers)
@@ -128,7 +136,11 @@ export const ABIS = {
 
 export const getProvider = () => {
 	// In browser, we might get a provider from window.ethereum or just a JsonRpcProvider
-	if (DeploymentConfig && DeploymentConfig.network && DeploymentConfig.network.rpc) {
+	if (
+		DeploymentConfig &&
+		DeploymentConfig.network &&
+		DeploymentConfig.network.rpc
+	) {
 		return new ethers.JsonRpcProvider(DeploymentConfig.network.rpc);
 	}
 	// Fallback or potentially user wallet provider handling can be done here or in UI
@@ -140,12 +152,16 @@ export const getWallet = (provider?: ethers.Provider | null) => {
 	// But if env var is set (e.g. for testing in browser?), we support it.
 	const key =
 		getEnv("EVM_PRIVATE_KEY", "VITE_EVM_PRIVATE_KEY") ||
-		(typeof process !== "undefined" && process.env ? process.env.EVM_PRIVATE_KEY || process.env.PRIVATE_KEY : undefined);
+		(typeof process !== "undefined" && process.env
+			? process.env.EVM_PRIVATE_KEY || process.env.PRIVATE_KEY
+			: undefined);
 
 	if (key) {
 		return new ethers.Wallet(key, provider || getProvider());
 	}
-	throw new Error("Private key not found in environment for getWallet (Note: Only safe in Node or local dev)");
+	throw new Error(
+		"Private key not found in environment for getWallet (Note: Only safe in Node or local dev)"
+	);
 };
 
 // Contract Instances

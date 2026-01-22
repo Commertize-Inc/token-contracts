@@ -3,7 +3,7 @@ name: Deploy to Mainnet
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 jobs:
   deploy:

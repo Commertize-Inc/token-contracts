@@ -6,14 +6,13 @@ import { fileURLToPath } from "url";
 
 // Conditionally import Node.js modules only in Node environment
 // In browser, these will be undefined
-const isBrowser = typeof window !== 'undefined';
-const isNode = typeof process !== 'undefined' && process.versions?.node;
-
+const isBrowser = typeof window !== "undefined";
+const isNode = typeof process !== "undefined" && process.versions?.node;
 
 // Handle __dirname for both CommonJS and ESM (Node only)
 const getDirName = (): string | undefined => {
 	if (isBrowser) return undefined;
-	if (typeof __dirname !== 'undefined') return __dirname;
+	if (typeof __dirname !== "undefined") return __dirname;
 	try {
 		return path.dirname(fileURLToPath(import.meta.url));
 	} catch (e) {
@@ -60,7 +59,7 @@ const getEnv = (key: string, viteKey: string) => {
 		return process.env[key] || process.env[viteKey];
 	}
 	// In browser, try to access Vite's import.meta.env
-	if (typeof import.meta !== 'undefined' && (import.meta as any).env) {
+	if (typeof import.meta !== "undefined" && (import.meta as any).env) {
 		const env = (import.meta as any).env;
 		return env[viteKey] || env[key];
 	}
@@ -76,22 +75,27 @@ const getEnv = (key: string, viteKey: string) => {
  * 3. deployment.{network}.json (specified network - Node only)
  * 4. deployment.testnet.json (default fallback - Node only)
  */
-function loadDeployment(network: string = 'testnet'): DeploymentData | null {
+function loadDeployment(network: string = "testnet"): DeploymentData | null {
 	// 1. Try from environment variable (works in both browser and Node)
 	if (typeof process !== "undefined" && process.env) {
-		const envVar = process.env.VITE_DEPLOYMENT_JSON || process.env.DEPLOYMENT_JSON;
+		const envVar =
+			process.env.VITE_DEPLOYMENT_JSON || process.env.DEPLOYMENT_JSON;
 		if (envVar) {
 			try {
 				return JSON.parse(envVar);
 			} catch (e) {
-				console.warn("Failed to parse DEPLOYMENT_JSON env var, falling back to file.");
+				console.warn(
+					"Failed to parse DEPLOYMENT_JSON env var, falling back to file."
+				);
 			}
 		}
 	}
 
 	// In browser, only use env vars (no file system access)
 	if (isBrowser || !fs || !path || !__dirname_compat) {
-		console.warn('⚠️  No deployment configuration found (browser mode - use VITE_DEPLOYMENT_JSON env var)');
+		console.warn(
+			"⚠️  No deployment configuration found (browser mode - use VITE_DEPLOYMENT_JSON env var)"
+		);
 		return null;
 	}
 
@@ -100,19 +104,21 @@ function loadDeployment(network: string = 'testnet'): DeploymentData | null {
 	// 2. Try from files in priority order (Node only)
 	const possiblePaths = [
 		path.join(__dirname_compat, `./deployment.${network}.json`),
-		path.join(__dirname_compat, './deployment.testnet.json'),
+		path.join(__dirname_compat, "./deployment.testnet.json"),
 		// Removing localhost fallback to prevent accidental confusion
 		// Fallback: Check parent directory (useful when running from dist/)
 		path.join(__dirname_compat, `../deployment.${network}.json`),
-		path.join(__dirname_compat, '../deployment.testnet.json'),
+		path.join(__dirname_compat, "../deployment.testnet.json"),
 	];
 
 	for (const deploymentPath of possiblePaths) {
 		if (fs.existsSync(deploymentPath)) {
 			try {
-				const content = fs.readFileSync(deploymentPath, 'utf-8');
+				const content = fs.readFileSync(deploymentPath, "utf-8");
 				const data = JSON.parse(content);
-				console.log(`📦 Loaded deployment from ${path.basename(deploymentPath)}`);
+				console.log(
+					`📦 Loaded deployment from ${path.basename(deploymentPath)}`
+				);
 				return data;
 			} catch (error) {
 				console.warn(`⚠️  Failed to parse ${deploymentPath}`);
@@ -120,12 +126,13 @@ function loadDeployment(network: string = 'testnet'): DeploymentData | null {
 		}
 	}
 
-	console.warn('⚠️  No deployment configuration found');
+	console.warn("⚠️  No deployment configuration found");
 	return null;
 }
 
 // Load deployment (defaults to testnet)
-const deploymentNetwork = getEnv('EVM_NETWORK', 'VITE_EVM_NETWORK') || 'testnet';
+const deploymentNetwork =
+	getEnv("EVM_NETWORK", "VITE_EVM_NETWORK") || "testnet";
 console.log(`Nexus Config: Using network '${deploymentNetwork}'`);
 const DeploymentData: DeploymentData | null = loadDeployment(deploymentNetwork);
 
@@ -133,11 +140,17 @@ const DeploymentData: DeploymentData | null = loadDeployment(deploymentNetwork);
 // Configuration & Addresses
 // ------------------------------------------------------------------
 
-export const NETWORK = getEnv("NETWORK", "VITE_NETWORK") || DeploymentData?.network?.name || "testnet";
+export const NETWORK =
+	getEnv("NETWORK", "VITE_NETWORK") ||
+	DeploymentData?.network?.name ||
+	"testnet";
 export const CHAIN_ID = Number(
 	getEnv("CHAIN_ID", "VITE_CHAIN_ID") || DeploymentData?.network?.chainId || 296
 );
-export const CURRENCY = getEnv("CURRENCY", "VITE_CURRENCY") || DeploymentData?.network?.currency || "HBAR";
+export const CURRENCY =
+	getEnv("CURRENCY", "VITE_CURRENCY") ||
+	DeploymentData?.network?.currency ||
+	"HBAR";
 export const RPC_URL =
 	getEnv("RPC_URL", "VITE_RPC_URL") ||
 	DeploymentData?.network?.rpc ||
@@ -145,7 +158,6 @@ export const RPC_URL =
 
 export const CONTRACTS: any = DeploymentData?.contracts || {};
 export const DeploymentConfig = DeploymentData;
-
 
 // ------------------------------------------------------------------
 // ADDRESS CONFIGURATION (Legacy / Helpers)
@@ -179,7 +191,9 @@ export const ABIS = {
 
 export const getProvider = () => {
 	if (!DeploymentConfig) {
-		throw new Error("Nexus DeploymentConfig is missing. Check deployment.json or environment variables.");
+		throw new Error(
+			"Nexus DeploymentConfig is missing. Check deployment.json or environment variables."
+		);
 	}
 	return new ethers.JsonRpcProvider(DeploymentConfig.network.rpc);
 };

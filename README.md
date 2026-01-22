@@ -15,20 +15,20 @@ pnpm add @commertize/nexus
 By default, all developers use the shared Hedera testnet deployment. No setup required!
 
 ```typescript
-import { getContractAddress, getContracts, ABIS } from '@commertize/nexus';
+import { getContractAddress, getContracts, ABIS } from "@commertize/nexus";
 
 // Get a specific contract address
-const identityRegistry = getContractAddress('IdentityRegistry');
+const identityRegistry = getContractAddress("IdentityRegistry");
 
 // Get all contract addresses
 const contracts = getContracts();
 
 // Use with ethers.js
-import { ethers } from 'ethers';
+import { ethers } from "ethers";
 const contract = new ethers.Contract(
-  contracts.IdentityRegistry,
-  ABIS.IdentityRegistry,
-  provider
+	contracts.IdentityRegistry,
+	ABIS.IdentityRegistry,
+	provider
 );
 ```
 
@@ -37,11 +37,13 @@ const contract = new ethers.Contract(
 Want to test against your own local deployment? Easy!
 
 1. **Start a local Hardhat node:**
+
    ```bash
    pnpm node
    ```
 
 2. **Deploy contracts locally:**
+
    ```bash
    pnpm deploy:localhost
    ```
@@ -59,9 +61,9 @@ Want to test against your own local deployment? Easy!
 For production applications:
 
 ```typescript
-import { getContractAddress } from '@commertize/nexus';
+import { getContractAddress } from "@commertize/nexus";
 
-const identityRegistry = getContractAddress('IdentityRegistry', 'mainnet');
+const identityRegistry = getContractAddress("IdentityRegistry", "mainnet");
 ```
 
 ### Available Networks
@@ -85,11 +87,13 @@ VITE_EVM_NETWORK=testnet
 ```
 
 **Available Networks:**
+
 - `localhost` - Local Hardhat node (for development)
 - `testnet` - Hedera testnet (default, shared across all developers)
 - `mainnet` - Hedera mainnet (production)
 
 The network setting automatically determines:
+
 - ✅ Which contract addresses to use
 - ✅ Which RPC endpoint to connect to
 - ✅ Which deployed version of the smart contracts
@@ -139,6 +143,7 @@ git push origin v1.0.0
 ```
 
 The GitHub Actions workflow will automatically:
+
 1. Deploy contracts to Hedera mainnet
 2. Create `deployment.mainnet.json`
 3. Commit the deployment file to the repository
@@ -149,7 +154,7 @@ The GitHub Actions workflow will automatically:
 All contract ABIs are available via the `ABIS` export:
 
 ```typescript
-import { ABIS } from '@commertize/nexus';
+import { ABIS } from "@commertize/nexus";
 
 // Available ABIs:
 // - ABIS.IdentityRegistry
@@ -170,7 +175,7 @@ import { ABIS } from '@commertize/nexus';
 Load deployment configuration for a specific network.
 
 ```typescript
-const deployment = getDeployment('testnet');
+const deployment = getDeployment("testnet");
 console.log(deployment.network.chainId); // 296
 ```
 
@@ -179,7 +184,7 @@ console.log(deployment.network.chainId); // 296
 Get a specific contract address.
 
 ```typescript
-const address = getContractAddress('IdentityRegistry', 'mainnet');
+const address = getContractAddress("IdentityRegistry", "mainnet");
 ```
 
 ### `getContracts(network?: string): Record<string, string>`
@@ -187,7 +192,7 @@ const address = getContractAddress('IdentityRegistry', 'mainnet');
 Get all contract addresses.
 
 ```typescript
-const contracts = getContracts('testnet');
+const contracts = getContracts("testnet");
 ```
 
 ### `getNetwork(network?: string)`
@@ -195,7 +200,7 @@ const contracts = getContracts('testnet');
 Get network information.
 
 ```typescript
-const network = getNetwork('testnet');
+const network = getNetwork("testnet");
 // { name: 'testnet', chainId: 296, rpc: '...', currency: 'HBAR' }
 ```
 
@@ -209,6 +214,7 @@ The package uses a priority-based deployment loading system:
 4. **`deployment.testnet.json`** - default fallback
 
 This means:
+
 - ✅ New developers get shared testnet contracts immediately
 - ✅ Optional local deployments don't interfere with others
 - ✅ Production builds use committed mainnet addresses

@@ -33,17 +33,17 @@ module.exports = {
 		testnet: {
 			url: "https://testnet.hashio.io/api",
 			chainId: 296,
-			accounts: [
-				process.env.EVM_PRIVATE_KEY,
-			].filter((k) => !!k && k.startsWith("0x")),
+			accounts: [process.env.EVM_PRIVATE_KEY].filter(
+				(k) => !!k && k.startsWith("0x")
+			),
 			USDC_ADDRESS: "0x0000000000000000000000000000000000068cda",
 		},
 		mainnet: {
 			url: "https://mainnet.hashio.io/api",
 			chainId: 295,
-			accounts: [
-				process.env.EVM_PRIVATE_KEY,
-			].filter((k) => !!k && k.startsWith("0x")),
+			accounts: [process.env.EVM_PRIVATE_KEY].filter(
+				(k) => !!k && k.startsWith("0x")
+			),
 			USDC_ADDRESS: "0x000000000000000000000000000000000006f89a",
 		},
 	},
