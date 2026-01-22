@@ -100,6 +100,10 @@ export const RPC_URL =
 	getEnv("RPC_URL", "VITE_RPC_URL") ||
 	DeploymentData?.network?.rpc ||
 	"https://testnet.hashio.io/api";
+export const BLOCK_EXPLORER_URL =
+	getEnv("BLOCK_EXPLORER_URL", "VITE_BLOCK_EXPLORER_URL") ||
+	DeploymentData?.network?.blockExplorerUrl ||
+	"https://hashscan.io/testnet";
 
 export const CONTRACTS: any = DeploymentData?.contracts || {};
 export const DeploymentConfig = DeploymentData;

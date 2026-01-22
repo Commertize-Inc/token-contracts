@@ -13,325 +13,367 @@ import "@openzeppelin/contracts/utils/Pausable.sol";
  * @dev Implements proper investor tracking to prevent unbounded array growth and DoS
  */
 contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
-    using SafeERC20 for IERC20;
+	using SafeERC20 for IERC20;
 
-    // Minimum deposit to prevent dust spam
-    uint256 public constant MIN_DEPOSIT = 1000;
+	// Minimum deposit to prevent dust spam
+	uint256 public constant MIN_DEPOSIT = 1000;
 
-    // Configuration
-    IERC20 public propertyToken;
-    IERC20 public paymentToken; // If address(0), uses Native Token
-    address public sponsor;
-    uint256 public targetRaise;
-    uint256 public deadline;
+	// Configuration
+	IERC20 public propertyToken;
+	IERC20 public paymentToken; // If address(0), uses Native Token
+	address public sponsor;
+	uint256 public targetRaise;
+	uint256 public deadline;
+	address public admin; // Admin address (separate from owner)
 
-    // Improved investor tracking to prevent unbounded array issues
-    mapping(address => uint256) public deposits; // How much each user deposited
-    mapping(address => bool) private isInvestor; // Quick lookup for investor status
-    address[] public investors; // List of all investors (bounded by adding deduplication)
-    uint256 public totalRaised;
+	// Improved investor tracking to prevent unbounded array issues
+	mapping(address => uint256) public deposits; // How much each user deposited
+	mapping(address => bool) private isInvestor; // Quick lookup for investor status
+	address[] public investors; // List of all investors (bounded by adding deduplication)
+	uint256 public totalRaised;
 
-    // State
-    bool public finalized;
-    bool public refunded;
+	// State
+	bool public finalized;
+	bool public refunded;
 
-    // Events
-    event Deposited(address indexed investor, uint256 amount);
-    event Finalized(uint256 totalRaised, uint256 timestamp);
-    event Refunded(address indexed investor, uint256 amount);
-    event AdminFinalized(uint256 totalRaised, uint256 timestamp, address indexed admin);
-    event AdminTokensDistributed(address indexed investor, uint256 amount, address indexed admin);
-    event TokensBurned(uint256 amount);
+	// Events
+	event Deposited(address indexed investor, uint256 amount);
+	event Finalized(uint256 totalRaised, uint256 timestamp);
+	event Refunded(address indexed investor, uint256 amount);
+	event AdminFinalized(
+		uint256 totalRaised,
+		uint256 timestamp,
+		address indexed admin
+	);
+	event AdminTokensDistributed(
+		address indexed investor,
+		uint256 amount,
+		address indexed admin
+	);
+	event TokensBurned(uint256 amount);
+	event AdminUpdated(address indexed oldAdmin, address indexed newAdmin);
 
-    constructor(
-        address _propertyToken,
-        address _paymentToken,
-        address _sponsor,
-        uint256 _targetRaise,
-        uint256 _deadline,
-        address _admin
-    ) Ownable(_admin) {
-        require(_propertyToken != address(0), "Invalid property token");
-        require(_sponsor != address(0), "Invalid sponsor");
-        require(_targetRaise > 0, "Invalid target raise");
-        require(_deadline > block.timestamp, "Invalid deadline");
-        // Note: _paymentToken can be address(0) for native token
+	constructor(
+		address _propertyToken,
+		address _paymentToken,
+		address _sponsor,
+		uint256 _targetRaise,
+		uint256 _deadline,
+		address _admin
+	) Ownable(_admin) {
+		require(_propertyToken != address(0), "Invalid property token");
+		require(_sponsor != address(0), "Invalid sponsor");
+		require(_targetRaise > 0, "Invalid target raise");
+		require(_deadline > block.timestamp, "Invalid deadline");
+		require(_admin != address(0), "Invalid admin");
+		// Note: _paymentToken can be address(0) for native token
 
-        propertyToken = IERC20(_propertyToken);
-        paymentToken = IERC20(_paymentToken);
-        sponsor = _sponsor;
-        targetRaise = _targetRaise;
-        deadline = _deadline;
-    }
+		propertyToken = IERC20(_propertyToken);
+		paymentToken = IERC20(_paymentToken);
+		sponsor = _sponsor;
+		targetRaise = _targetRaise;
+		deadline = _deadline;
+		admin = _admin; // Set admin (can be same as owner or different)
+	}
 
-    /**
-     * @dev Internal function to track investors efficiently
-     * @param investor Address to add to investor list
-     */
-    function _addInvestor(address investor) private {
-        if (!isInvestor[investor]) {
-            isInvestor[investor] = true;
-            investors.push(investor);
-        }
-    }
+	/**
+	 * @dev Modifier to check if caller is admin or owner
+	 */
+	modifier onlyAdminOrOwner() {
+		require(msg.sender == admin || msg.sender == owner(), "Not admin or owner");
+		_;
+	}
 
-    /**
-     * @notice Invest in the listing.
-     * @param amount Amount of payment tokens (ignored if Native).
-     */
-    function deposit(uint256 amount) public payable nonReentrant whenNotPaused {
-        require(!finalized && !refunded, "Escrow closed");
-        require(block.timestamp < deadline, "Deadline passed");
+	/**
+	 * @dev Internal function to track investors efficiently
+	 * @param investor Address to add to investor list
+	 */
+	function _addInvestor(address investor) private {
+		if (!isInvestor[investor]) {
+			isInvestor[investor] = true;
+			investors.push(investor);
+		}
+	}
 
-        uint256 depositAmount;
+	/**
+	 * @notice Invest in the listing.
+	 * @param amount Amount of payment tokens (ignored if Native).
+	 */
+	function deposit(uint256 amount) public payable nonReentrant whenNotPaused {
+		require(!finalized && !refunded, "Escrow closed");
+		require(block.timestamp < deadline, "Deadline passed");
 
-        if (address(paymentToken) == address(0)) {
-            // Native HBAR
-            require(msg.value >= MIN_DEPOSIT, "Below minimum deposit");
-            depositAmount = msg.value;
-        } else {
-            // ERC20
-            require(amount >= MIN_DEPOSIT, "Below minimum deposit");
-            depositAmount = amount;
-            paymentToken.safeTransferFrom(msg.sender, address(this), amount);
-        }
+		uint256 depositAmount;
 
-        // Track investor efficiently (CRITICAL FIX: prevents unbounded growth)
-        _addInvestor(msg.sender);
+		if (address(paymentToken) == address(0)) {
+			// Native HBAR
+			require(msg.value >= MIN_DEPOSIT, "Below minimum deposit");
+			depositAmount = msg.value;
+		} else {
+			// ERC20
+			require(amount >= MIN_DEPOSIT, "Below minimum deposit");
+			depositAmount = amount;
+			paymentToken.safeTransferFrom(msg.sender, address(this), amount);
+		}
 
-        deposits[msg.sender] += depositAmount;
-        totalRaised += depositAmount;
+		// Track investor efficiently (CRITICAL FIX: prevents unbounded growth)
+		_addInvestor(msg.sender);
 
-        emit Deposited(msg.sender, depositAmount);
-    }
+		deposits[msg.sender] += depositAmount;
+		totalRaised += depositAmount;
 
-    /**
-     * @notice Allow admin/backend to deposit on behalf of a user (using transferFrom).
-     * @param investor Address of the investor.
-     * @param amount Amount to pull from the investor.
-     */
-    function depositFor(address investor, uint256 amount) external nonReentrant whenNotPaused {
-        require(!finalized && !refunded, "Escrow closed");
-        require(block.timestamp < deadline, "Deadline passed");
-        require(amount >= MIN_DEPOSIT, "Below minimum deposit");
-        require(address(paymentToken) != address(0), "Cannot call depositFor with Native Asset");
-        require(investor != address(0), "Invalid investor");
+		emit Deposited(msg.sender, depositAmount);
+	}
 
-        // Pull funds from Investor (Investor must have approved Escrow)
-        paymentToken.safeTransferFrom(investor, address(this), amount);
+	/**
+	 * @notice Allow admin/backend to deposit on behalf of a user (using transferFrom).
+	 * @param investor Address of the investor.
+	 * @param amount Amount to pull from the investor.
+	 */
+	function depositFor(
+		address investor,
+		uint256 amount
+	) external nonReentrant whenNotPaused {
+		require(!finalized && !refunded, "Escrow closed");
+		require(block.timestamp < deadline, "Deadline passed");
+		require(amount >= MIN_DEPOSIT, "Below minimum deposit");
+		require(
+			address(paymentToken) != address(0),
+			"Cannot call depositFor with Native Asset"
+		);
+		require(investor != address(0), "Invalid investor");
 
-        // CRITICAL FIX: Track investor properly (was missing in original)
-        _addInvestor(investor);
+		// Pull funds from Investor (Investor must have approved Escrow)
+		paymentToken.safeTransferFrom(investor, address(this), amount);
 
-        deposits[investor] += amount;
-        totalRaised += amount;
+		// CRITICAL FIX: Track investor properly (was missing in original)
+		_addInvestor(investor);
 
-        emit Deposited(investor, amount);
-    }
+		deposits[investor] += amount;
+		totalRaised += amount;
 
-    /**
-     * @notice Finalize the raise if target is met.
-     * Moves funds to Sponsor and enables Token Claims (or air-drops them).
-     */
-    function finalize() external nonReentrant whenNotPaused {
-        require(!finalized && !refunded, "Already closed");
-        require(totalRaised >= targetRaise, "Target not met");
-        require(block.timestamp >= deadline, "Deadline not passed");
+		emit Deposited(investor, amount);
+	}
 
-        finalized = true;
+	/**
+	 * @notice Finalize the raise if target is met.
+	 * Moves funds to Sponsor and enables Token Claims (or air-drops them).
+	 */
+	function finalize() external nonReentrant whenNotPaused {
+		require(!finalized && !refunded, "Already closed");
+		require(totalRaised >= targetRaise, "Target not met");
+		require(block.timestamp >= deadline, "Deadline not passed");
 
-        // Send Funds to Sponsor
-        if (address(paymentToken) == address(0)) {
-            (bool success, ) = sponsor.call{value: totalRaised}("");
-             require(success, "Transfer failed");
-        } else {
-            paymentToken.safeTransfer(sponsor, totalRaised);
-        }
+		finalized = true;
 
-        // Distribute tokens to investors automatically
-        uint256 totalTokenSupply = propertyToken.balanceOf(address(this));
+		// Send Funds to Sponsor
+		if (address(paymentToken) == address(0)) {
+			(bool success, ) = sponsor.call{ value: totalRaised }("");
+			require(success, "Transfer failed");
+		} else {
+			paymentToken.safeTransfer(sponsor, totalRaised);
+		}
 
-        for (uint256 i = 0; i < investors.length; i++) {
-            address investor = investors[i];
-            uint256 investorDeposit = deposits[investor];
+		// Distribute tokens to investors automatically
+		uint256 totalTokenSupply = propertyToken.balanceOf(address(this));
 
-            if (investorDeposit > 0) {
-                // Calculate proportional token amount
-                // tokenShare = (investorDeposit / totalRaised) * totalTokenSupply
-                uint256 tokenShare = (investorDeposit * totalTokenSupply) / totalRaised;
+		for (uint256 i = 0; i < investors.length; i++) {
+			address investor = investors[i];
+			uint256 investorDeposit = deposits[investor];
 
-                if (tokenShare > 0) {
-                    propertyToken.safeTransfer(investor, tokenShare);
-                    emit AdminTokensDistributed(investor, tokenShare, address(this));
-                }
-            }
-        }
+			if (investorDeposit > 0) {
+				// Calculate proportional token amount
+				// tokenShare = (investorDeposit / totalRaised) * totalTokenSupply
+				uint256 tokenShare = (investorDeposit * totalTokenSupply) / totalRaised;
 
-        emit Finalized(totalRaised, block.timestamp);
-    }
+				if (tokenShare > 0) {
+					propertyToken.safeTransfer(investor, tokenShare);
+					emit AdminTokensDistributed(investor, tokenShare, address(this));
+				}
+			}
+		}
 
-    /**
-     * @notice Admin can finalize the raise (even before target) and send funds to sponsor.
-     * @dev Burns remaining unsold tokens if target not reached.
-     */
-    function adminFinalize() external onlyOwner nonReentrant {
-        require(!finalized, "Already finalized");
-        require(!refunded, "Refund mode active");
+		emit Finalized(totalRaised, block.timestamp);
+	}
 
-        finalized = true;
+	/**
+	 * @notice Admin can finalize the raise (even before target) and send funds to sponsor.
+	 * @dev Burns remaining unsold tokens if target not reached.
+	 */
+	function adminFinalize() external onlyAdminOrOwner nonReentrant {
+		require(!finalized, "Already finalized");
+		require(!refunded, "Refund mode active");
 
-        uint256 totalTokenSupply = propertyToken.balanceOf(address(this));
+		finalized = true;
 
-        // Calculate tokens to burn if target not reached
-        if (totalRaised < targetRaise && totalTokenSupply > 0) {
-            uint256 soldTokens = (totalRaised * totalTokenSupply) / targetRaise;
-            uint256 unsoldTokens = totalTokenSupply - soldTokens;
+		uint256 totalTokenSupply = propertyToken.balanceOf(address(this));
 
-            if (unsoldTokens > 0) {
-                // CRITICAL FIX: Proper burn to address(0) instead of 0xdead
-                propertyToken.safeTransfer(address(0), unsoldTokens);
-                emit TokensBurned(unsoldTokens);
-            }
-        }
+		// Calculate tokens to burn if target not reached
+		if (totalRaised < targetRaise && totalTokenSupply > 0) {
+			uint256 soldTokens = (totalRaised * totalTokenSupply) / targetRaise;
+			uint256 unsoldTokens = totalTokenSupply - soldTokens;
 
-        // Transfer payment to sponsor
-        if (address(paymentToken) == address(0)) {
-            (bool success, ) = sponsor.call{value: totalRaised}("");
-            require(success, "Transfer failed");
-        } else {
-            paymentToken.safeTransfer(sponsor, totalRaised);
-        }
+			if (unsoldTokens > 0) {
+				// CRITICAL FIX: Proper burn to address(0) instead of 0xdead
+				propertyToken.safeTransfer(address(0), unsoldTokens);
+				emit TokensBurned(unsoldTokens);
+			}
+		}
 
-        emit AdminFinalized(totalRaised, block.timestamp, msg.sender);
-    }
+		// Transfer payment to sponsor
+		if (address(paymentToken) == address(0)) {
+			(bool success, ) = sponsor.call{ value: totalRaised }("");
+			require(success, "Transfer failed");
+		} else {
+			paymentToken.safeTransfer(sponsor, totalRaised);
+		}
 
-    /**
-     * @notice Admin-only function to distribute property tokens to investors.
-     * @param investorList Array of investor addresses to receive tokens.
-     * @param amounts Array of token amounts corresponding to each investor.
-     * @dev This allows admin to manually distribute tokens based on investment records.
-     */
-    function adminDistributeTokens(
-        address[] calldata investorList,
-        uint256[] calldata amounts
-    ) external onlyOwner nonReentrant {
-        require(investorList.length == amounts.length, "Array length mismatch");
-        require(finalized, "Must finalize first");
+		emit AdminFinalized(totalRaised, block.timestamp, msg.sender);
+	}
 
-        for (uint256 i = 0; i < investorList.length; i++) {
-            require(investorList[i] != address(0), "Invalid investor address");
-            require(amounts[i] > 0, "Invalid amount");
+	/**
+	 * @notice Admin-only function to distribute property tokens to investors.
+	 * @param investorList Array of investor addresses to receive tokens.
+	 * @param amounts Array of token amounts corresponding to each investor.
+	 * @dev This allows admin to manually distribute tokens based on investment records.
+	 */
+	function adminDistributeTokens(
+		address[] calldata investorList,
+		uint256[] calldata amounts
+	) external onlyAdminOrOwner nonReentrant {
+		require(investorList.length == amounts.length, "Array length mismatch");
+		require(finalized, "Must finalize first");
 
-            propertyToken.safeTransfer(investorList[i], amounts[i]);
-            emit AdminTokensDistributed(investorList[i], amounts[i], msg.sender);
-        }
-    }
+		for (uint256 i = 0; i < investorList.length; i++) {
+			require(investorList[i] != address(0), "Invalid investor address");
+			require(amounts[i] > 0, "Invalid amount");
 
-    /**
-     * @notice Claim refund if raise failed/expired.
-     */
-    function refund() external nonReentrant {
-        require(!finalized, "Raise successful");
-        require(block.timestamp >= deadline || refunded, "Deadline not passed");
+			propertyToken.safeTransfer(investorList[i], amounts[i]);
+			emit AdminTokensDistributed(investorList[i], amounts[i], msg.sender);
+		}
+	}
 
-        // Mark as refunded state if not already (first refund call triggers it effectively)
-        refunded = true;
+	/**
+	 * @notice Claim refund if raise failed/expired.
+	 */
+	function refund() external nonReentrant {
+		require(!finalized, "Raise successful");
+		require(block.timestamp >= deadline || refunded, "Deadline not passed");
 
-        uint256 userDeposit = deposits[msg.sender];
-        require(userDeposit > 0, "No deposit");
+		// Mark as refunded state if not already (first refund call triggers it effectively)
+		refunded = true;
 
-        deposits[msg.sender] = 0; // Prevent re-entrancy
+		uint256 userDeposit = deposits[msg.sender];
+		require(userDeposit > 0, "No deposit");
 
-        if (address(paymentToken) == address(0)) {
-            (bool success, ) = msg.sender.call{value: userDeposit}("");
-            require(success, "Transfer failed");
-        } else {
-            paymentToken.safeTransfer(msg.sender, userDeposit);
-        }
+		deposits[msg.sender] = 0; // Prevent re-entrancy
 
-        emit Refunded(msg.sender, userDeposit);
-    }
+		if (address(paymentToken) == address(0)) {
+			(bool success, ) = msg.sender.call{ value: userDeposit }("");
+			require(success, "Transfer failed");
+		} else {
+			paymentToken.safeTransfer(msg.sender, userDeposit);
+		}
 
-    /**
-     * @notice Admin-only function to batch refund investors.
-     * @param investorList Array of investor addresses to refund.
-     * @dev This allows admin to process refunds on behalf of investors.
-     *      Can only be called if not finalized and after deadline or refunded flag is set.
-     */
-    function adminBatchRefund(address[] calldata investorList) external onlyOwner nonReentrant {
-        require(!finalized, "Raise successful");
-        require(block.timestamp >= deadline || refunded, "Deadline not passed");
+		emit Refunded(msg.sender, userDeposit);
+	}
 
-        // Mark as refunded state
-        refunded = true;
+	/**
+	 * @notice Admin-only function to batch refund investors.
+	 * @param investorList Array of investor addresses to refund.
+	 * @dev This allows admin to process refunds on behalf of investors.
+	 *      Can only be called if not finalized and after deadline or refunded flag is set.
+	 */
+	function adminBatchRefund(
+		address[] calldata investorList
+	) external onlyAdminOrOwner nonReentrant {
+		require(!finalized, "Raise successful");
+		require(block.timestamp >= deadline || refunded, "Deadline not passed");
 
-        for (uint256 i = 0; i < investorList.length; i++) {
-            address investor = investorList[i];
-            uint256 userDeposit = deposits[investor];
+		// Mark as refunded state
+		refunded = true;
 
-            if (userDeposit == 0) {
-                continue; // Skip if no deposit
-            }
+		for (uint256 i = 0; i < investorList.length; i++) {
+			address investor = investorList[i];
+			uint256 userDeposit = deposits[investor];
 
-            deposits[investor] = 0; // Clear deposit to prevent re-entrancy
+			if (userDeposit == 0) {
+				continue; // Skip if no deposit
+			}
 
-            if (address(paymentToken) == address(0)) {
-                (bool success, ) = investor.call{value: userDeposit}("");
-                require(success, "Transfer failed");
-            } else {
-                paymentToken.safeTransfer(investor, userDeposit);
-            }
+			deposits[investor] = 0; // Clear deposit to prevent re-entrancy
 
-            emit Refunded(investor, userDeposit);
-        }
-    }
+			if (address(paymentToken) == address(0)) {
+				(bool success, ) = investor.call{ value: userDeposit }("");
+				require(success, "Transfer failed");
+			} else {
+				paymentToken.safeTransfer(investor, userDeposit);
+			}
 
-    /**
-     * @notice Allow admin to withdraw unsold tokens if failed.
-     */
-    function recoverTokens() external onlyOwner {
-        require(refunded || (block.timestamp >= deadline && totalRaised < targetRaise), "Cannot recover yet");
-        uint256 bal = propertyToken.balanceOf(address(this));
-        propertyToken.safeTransfer(owner(), bal);
-    }
+			emit Refunded(investor, userDeposit);
+		}
+	}
 
-    /**
-     * @notice Get total number of investors
-     */
-    function getInvestorCount() external view returns (uint256) {
-        return investors.length;
-    }
+	/**
+	 * @notice Allow admin to withdraw unsold tokens if failed.
+	 */
+	function recoverTokens() external onlyAdminOrOwner {
+		require(
+			refunded || (block.timestamp >= deadline && totalRaised < targetRaise),
+			"Cannot recover yet"
+		);
+		uint256 bal = propertyToken.balanceOf(address(this));
+		propertyToken.safeTransfer(owner(), bal);
+	}
 
-    /**
-     * @notice Get investor address by index
-     * @param index Index in the investors array
-     */
-    function getInvestor(uint256 index) external view returns (address) {
-        require(index < investors.length, "Index out of bounds");
-        return investors[index];
-    }
+	/**
+	 * @notice Update admin address (owner only)
+	 * @param _newAdmin New admin address
+	 */
+	function setAdmin(address _newAdmin) external onlyOwner {
+		require(_newAdmin != address(0), "Invalid admin address");
+		address oldAdmin = admin;
+		admin = _newAdmin;
+		emit AdminUpdated(oldAdmin, _newAdmin);
+	}
 
-    /**
-     * @notice Get all investors (use with caution for large arrays)
-     */
-    function getAllInvestors() external view returns (address[] memory) {
-        return investors;
-    }
+	/**
+	 * @notice Get total number of investors
+	 */
+	function getInvestorCount() external view returns (uint256) {
+		return investors.length;
+	}
 
-    /**
-     * @notice Pause contract (owner only)
-     */
-    function pause() external onlyOwner {
-        _pause();
-    }
+	/**
+	 * @notice Get investor address by index
+	 * @param index Index in the investors array
+	 */
+	function getInvestor(uint256 index) external view returns (address) {
+		require(index < investors.length, "Index out of bounds");
+		return investors[index];
+	}
 
-    /**
-     * @notice Unpause contract (owner only)
-     */
-    function unpause() external onlyOwner {
-        _unpause();
-    }
+	/**
+	 * @notice Get all investors (use with caution for large arrays)
+	 */
+	function getAllInvestors() external view returns (address[] memory) {
+		return investors;
+	}
 
-    // CRITICAL FIX: Removed receive() function to make deposits explicit
-    // Users must explicitly call deposit() with proper validation
+	/**
+	 * @notice Pause contract (owner only)
+	 */
+	function pause() external onlyOwner {
+		_pause();
+	}
+
+	/**
+	 * @notice Unpause contract (owner only)
+	 */
+	function unpause() external onlyOwner {
+		_unpause();
+	}
+
+	// CRITICAL FIX: Removed receive() function to make deposits explicit
+	// Users must explicitly call deposit() with proper validation
 }
