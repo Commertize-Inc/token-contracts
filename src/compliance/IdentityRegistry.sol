@@ -9,6 +9,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
  */
 contract IdentityRegistry is Ownable {
 
+    // ISO 3166-1 numeric country codes range from 1 to 999
+    uint16 public constant MAX_COUNTRY_CODE = 999;
+
     struct Identity {
         uint16 country;
         bool isVerified;
@@ -23,6 +26,9 @@ contract IdentityRegistry is Ownable {
     constructor(address initialOwner) Ownable(initialOwner) {}
 
     function registerIdentity(address user, uint16 country, bytes32 _identityHash) external onlyOwner {
+        require(user != address(0), "Invalid user address");
+        require(country > 0 && country <= MAX_COUNTRY_CODE, "Invalid country code");
+
         identities[user] = Identity({
             country: country,
             isVerified: true,
@@ -32,6 +38,7 @@ contract IdentityRegistry is Ownable {
     }
 
     function removeIdentity(address user) external onlyOwner {
+        require(user != address(0), "Invalid user address");
         delete identities[user];
         emit IdentityRemoved(user);
     }

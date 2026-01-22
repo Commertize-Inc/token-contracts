@@ -13,10 +13,12 @@ contract TokenCompliance is Ownable {
     IdentityRegistry public identityRegistry;
 
     constructor(address _identityRegistry, address initialOwner) Ownable(initialOwner) {
+        require(_identityRegistry != address(0), "Invalid registry address");
         identityRegistry = IdentityRegistry(_identityRegistry);
     }
 
     function updateIdentityRegistry(address _newRegistry) external onlyOwner {
+        require(_newRegistry != address(0), "Invalid registry address");
         identityRegistry = IdentityRegistry(_newRegistry);
     }
 
@@ -27,7 +29,7 @@ contract TokenCompliance is Ownable {
      */
     function canTransfer(address from, address to) external view returns (bool) {
         // Minting (from 0x0) - usually allowed if 'to' is verified,
-        // but often minter role handles strictly. We check 'to' anyway.
+        // but often minter role handles strictly. Checks 'to' address state.
         if (from == address(0)) {
             return identityRegistry.isVerified(to);
         }

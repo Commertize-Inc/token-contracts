@@ -36,12 +36,37 @@ contract CREUSD is ERC20, ERC20Permit, Ownable {
     }
 
     function faucet() external {
-        require(lastFaucetClaim[msg.sender] + faucetCooldown <= block.timestamp, "Faucet cooldown active");
+        require(lastFaucetClaim[msg.sender] + faucetCooldown < block.timestamp, "Faucet cooldown active");
         require(totalSupply() + faucetAmount <= MAX_SUPPLY, "Exceeds maximum supply");
 
         lastFaucetClaim[msg.sender] = block.timestamp;
         _mint(msg.sender, faucetAmount);
 
         emit FaucetClaimed(msg.sender, faucetAmount);
+    }
+
+    /**
+     * @notice Update faucet amount (owner only)
+     * @param _amount New faucet amount
+     */
+    function setFaucetAmount(uint256 _amount) external onlyOwner {
+        require(_amount > 0, "Invalid amount");
+        faucetAmount = _amount;
+    }
+
+    /**
+     * @notice Update faucet cooldown period (owner only)
+     * @param _cooldown New cooldown period in seconds
+     */
+    function setFaucetCooldown(uint256 _cooldown) external onlyOwner {
+        require(_cooldown > 0, "Invalid cooldown");
+        faucetCooldown = _cooldown;
+    }
+
+    /**
+     * @notice Disable faucet by setting amount to zero (owner only)
+     */
+    function disableFaucet() external onlyOwner {
+        faucetAmount = 0;
     }
 }

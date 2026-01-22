@@ -47,6 +47,7 @@ contract PropertyToken is ERC20, ERC20Permit, Ownable {
     }
 
     function setCompliance(address _compliance) external onlyOwner {
+        require(_compliance != address(0), "Invalid compliance address");
         compliance = TokenCompliance(_compliance);
     }
 
@@ -74,11 +75,11 @@ contract PropertyToken is ERC20, ERC20Permit, Ownable {
 
     // Snapshot Logic: Store (id, oldValue) when a change happens in a NEW id period.
     function _updateSnap(Snap[] storage snaps, uint256 currentId, uint256 currentValue) private {
-        // If currentId > 0 check if we need to store the *pre-change* value
+        // If currentId > 0 check if storage of the *pre-change* value is required
         if (currentId > 0) {
             uint256 lastId = snaps.length > 0 ? snaps[snaps.length - 1].id : 0;
             // If the last stored snapshot ID is older than the current ID,
-            // we must record the value that existed *before* this transaction.
+            // Records the value that existed *before* this transaction.
             if (lastId < currentId) {
                 snaps.push(Snap(currentId, currentValue));
             }
@@ -86,7 +87,7 @@ contract PropertyToken is ERC20, ERC20Permit, Ownable {
     }
 
     function _valueAt(Snap[] storage snaps, uint256 snapshotId, uint256 currentValue) private view returns (uint256) {
-        // We look for the FIRST checkpoint where `checkpoint.id > snapshotId`.
+        // Finds the first checkpoint where `checkpoint.id > snapshotId`.
         // The value stored there is the value that was preserved just before the first change AFTER snapshotId.
         // If no such checkpoint exists, it means no changes happened after snapshotId, so current value is valid.
 

@@ -7,7 +7,7 @@ const path = require("path");
 async function main() {
 	console.log(chalk.bold.blue("\n📦 Nexus Release Helper\n"));
 
-	// 1. Check if deployment.json exists
+	// 1. Checks deployment.json existence.
 	const deploymentPath = path.join(__dirname, "../deployment.json");
 	if (!fs.existsSync(deploymentPath)) {
 		console.warn(
@@ -31,7 +31,7 @@ async function main() {
 		);
 	}
 
-	// 2. Check git status
+	// 2. Checks git status.
 	const status = execSync("git status --porcelain", { encoding: "utf-8" });
 	if (status.includes("deployment.json")) {
 		console.log(chalk.cyan("deployment.json has changed."));
@@ -49,7 +49,7 @@ async function main() {
 		}
 	}
 
-	// 3. Bump Version & Tag
+	// 3. Bumps Version & Tag.
 	const packageJsonPath = path.join(__dirname, "../package.json");
 	const pkg = require(packageJsonPath);
 	console.log(`Current version: ${chalk.bold(pkg.version)}`);
@@ -75,13 +75,13 @@ async function main() {
 
 		version = require(packageJsonPath).version;
 
-		// Commit the version bump in the main monorepo
+		// Commits version bump in monorepo.
 		execSync(`git add package.json`);
 		execSync(`git commit -m "chore(nexus): release v${version}"`);
 		console.log(chalk.green(`✅ Bumped to v${version}`));
 	}
 
-	// 4. Push to Private Remote (Subtree)
+	// 4. Pushes to Private Remote (Subtree).
 	const REMOTE_URL = "github-mambattu:Commertize-Inc/nexus.git";
 	const BRANCH_NAME = "main"; // Target branch on remote
 
@@ -89,14 +89,13 @@ async function main() {
 
 	try {
 		// Go to root of monorepo to run git subtree
-		// We assume this script is in packages/nexus/scripts, so ../../ is root
+		// Resolves project root.
 		const rootDir = path.resolve(__dirname, "../../");
 
-		// 1. Split the subtree
-		// We need a unique branch name for the split
+		// 1. Splits subtree into unique branch.
 		const splitBranch = `nexus-release-v${version}-${Date.now()}`;
 		console.log("  Running git subtree split...");
-		// This command creates a branch 'splitBranch' containing only the history of 'packages/nexus'
+		// Creates split branch containing 'packages/nexus' history.
 		execSync(`git subtree split --prefix=packages/nexus -b ${splitBranch}`, {
 			cwd: rootDir,
 			stdio: "inherit",
@@ -112,14 +111,14 @@ async function main() {
 		// 3. Tag on remote?
 		if (bump !== "none") {
 			console.log(`  Pushing tag v${version}...`);
-			// We tag the split branch locally then push it
+			// Tags and pushes split branch locally.
 			execSync(`git tag v${version} ${splitBranch}`, { cwd: rootDir });
 			execSync(`git push ${REMOTE_URL} v${version}`, {
 				cwd: rootDir,
 				stdio: "inherit",
 			});
 
-			// Clean up local tag to avoid pollution in monorepo
+			// Cleans up local tag.
 			execSync(`git tag -d v${version}`, { cwd: rootDir });
 		}
 
