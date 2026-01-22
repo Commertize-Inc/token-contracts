@@ -4,6 +4,10 @@ const fs = require("fs");
 const path = require("path");
 const prompts = require("prompts");
 const chalk = require("chalk");
+const { loadEnv } = require("@commertize/utils/env-server");
+
+// Load environment variables
+loadEnv();
 
 async function main() {
 	console.log(

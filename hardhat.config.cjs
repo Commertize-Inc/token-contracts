@@ -1,7 +1,9 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("@openzeppelin/hardhat-upgrades");
-require("dotenv").config(); // Load from local .env (vendor/token-contracts/.env)
-require("dotenv").config({ path: "../../.env" }); // Fallback to root .env
+const { loadEnv } = require("@commertize/utils/env-server");
+
+// Load environment variables
+loadEnv();
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
