@@ -95,7 +95,7 @@ contract DividendVault is Ownable, ReentrancyGuard, Pausable {
         require(amount >= MIN_DISTRIBUTION, "Amount too small");
         require(property != address(0), "Invalid property");
 
-        PropertyToken token = PropertyToken(property);
+        PropertyToken token = PropertyToken(payable(property));
 
         // Validate it's a legitimate property token
         require(token.totalSupply() > 0, "Invalid property token");
@@ -143,7 +143,7 @@ contract DividendVault is Ownable, ReentrancyGuard, Pausable {
         require(!d.claimed[msg.sender], "Already claimed");
         require(d.totalAmount > 0, "Invalid distribution");
 
-        PropertyToken token = PropertyToken(property);
+        PropertyToken token = PropertyToken(payable(property));
         uint256 balance = token.balanceOfAt(msg.sender, d.snapshotId);
 
         require(balance > 0, "No balance at snapshot");
@@ -174,7 +174,7 @@ contract DividendVault is Ownable, ReentrancyGuard, Pausable {
                 continue; // Skip if already claimed or invalid
             }
 
-            PropertyToken token = PropertyToken(property);
+            PropertyToken token = PropertyToken(payable(property));
             uint256 balance = token.balanceOfAt(msg.sender, d.snapshotId);
 
             if (balance == 0) {
@@ -264,7 +264,7 @@ contract DividendVault is Ownable, ReentrancyGuard, Pausable {
             return 0;
         }
 
-        PropertyToken token = PropertyToken(property);
+        PropertyToken token = PropertyToken(payable(property));
         uint256 balance = token.balanceOfAt(user, d.snapshotId);
 
         if (balance == 0) {

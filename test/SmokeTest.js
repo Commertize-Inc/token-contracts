@@ -2,76 +2,75 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
 describe("Commertize Contracts Suite", function () {
-	let admin, agent, compliance, user;
-	let identityRegistry, creToken, yieldDistributor, trustedForwarder;
+	let admin, agent, compliance, user, sponsor;
+	let identityRegistry, tokenCompliance, propertyFactory;
+	let propertyToken, listingEscrow;
 
 	before(async function () {
-		[admin, agent, compliance, user] = await ethers.getSigners();
+		[admin, agent, compliance, user, sponsor] = await ethers.getSigners();
 	});
 
 	it("Should deploy Identity Registry", async function () {
-		const CREIdentityRegistry = await ethers.getContractFactory(
-			"CREIdentityRegistry"
-		);
-		identityRegistry = await CREIdentityRegistry.deploy(admin.address);
-		// await identityRegistry.deployed(); // Hardhat ethers v6 diff? assumes v5 for now or check package.json
-		expect(
-			await identityRegistry.hasRole(
-				await identityRegistry.AGENT_ROLE(),
-				admin.address
-			)
-		).to.be.true;
+		const IdentityRegistry = await ethers.getContractFactory("IdentityRegistry");
+		identityRegistry = await IdentityRegistry.deploy(admin.address);
+		await identityRegistry.waitForDeployment();
+
+		expect(await identityRegistry.owner()).to.equal(admin.address);
 	});
 
-	it("Should deploy Trusted Forwarder (Paymaster)", async function () {
-		const TrustedForwarder =
-			await ethers.getContractFactory("TrustedForwarder");
-		trustedForwarder = await TrustedForwarder.deploy("CommertizeForwarder");
-		// await trustedForwarder.deployed();
-		expect(trustedForwarder.target).to.not.be.undefined;
+	it("Should deploy Token Compliance", async function () {
+        const TokenCompliance = await ethers.getContractFactory("TokenCompliance");
+        tokenCompliance = await TokenCompliance.deploy(identityRegistry.target, admin.address);
+        await tokenCompliance.waitForDeployment();
+
+        expect(await tokenCompliance.identityRegistry()).to.equal(identityRegistry.target);
 	});
 
-	it("Should deploy CREToken (Equity)", async function () {
-		console.log("Debugging Factory...");
-		const CREToken = await ethers.getContractFactory("CREToken");
+	it("Should deploy Property Factory", async function () {
+		const PropertyFactory = await ethers.getContractFactory("PropertyFactory");
+		propertyFactory = await PropertyFactory.deploy(admin.address);
+		await propertyFactory.waitForDeployment();
 
-		// Deploy Mock Compliance locally for this test
-		const MockCompliance = await ethers.getContractFactory("MockCompliance");
-		const complianceContract = await MockCompliance.deploy();
-
-		// Deploy Forwarder locally for this test (or use dummy)
-		const TrustedForwarder =
-			await ethers.getContractFactory("TrustedForwarder");
-		const forwarderContract = await TrustedForwarder.deploy(
-			"CommertizeForwarder"
-		);
-
-		const args = [
-			"Test Token",
-			"TEST",
-			"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-			"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-			complianceContract.target,
-			"123 Test St",
-			"APN123",
-			"https://lien.uri",
-			BigInt(1000000),
-			BigInt(100000000),
-			"US-DE",
-			forwarderContract.target,
-		];
-		console.log("Attempting deploy with " + args.length + " args");
-		try {
-			creToken = await CREToken.deploy(...args);
-			console.log("Deploy success");
-			expect(await creToken.name()).to.equal("Test Token");
-		} catch (e) {
-			console.log("Deploy failed: " + e.message);
-			throw e;
-		}
+        expect(await propertyFactory.owner()).to.equal(admin.address);
 	});
 
-	// Revised Test Plan:
-	// 1. Deploy Identity
-	// 2. Deploy YieldDistributor (renamed from SponsorPaymaster)
+    it("Should deploy PropertyToken and Escrow via Factory", async function () {
+        // Register Admin to allow minting (checking compliance)
+        await identityRegistry.connect(admin).registerIdentity(admin.address, 840, ethers.keccak256(ethers.toUtf8Bytes("admin")));
+
+        const tx = await propertyFactory.connect(admin).deployProperty(
+            "Test Property",
+            "TST",
+            1000000,
+            tokenCompliance.target
+        );
+        const receipt = await tx.wait();
+        const event = receipt.logs.find(log => {
+            try { return propertyFactory.interface.parseLog(log).name === 'PropertyDeployed'; }
+            catch { return false; }
+        });
+        const propertyTokenAddress = propertyFactory.interface.parseLog(event).args.property;
+        const PropertyToken = await ethers.getContractFactory("PropertyToken");
+        propertyToken = PropertyToken.attach(propertyTokenAddress);
+
+        expect(await propertyToken.name()).to.equal("Test Property");
+
+        // Deploy Escrow
+        const deadline = Math.floor(Date.now() / 1000) + 3600;
+        const tx2 = await propertyFactory.connect(admin).deployEscrow(
+            propertyTokenAddress,
+            ethers.ZeroAddress,
+            sponsor.address,
+            ethers.parseEther("1.0"),
+            deadline
+        );
+        const receipt2 = await tx2.wait();
+        const event2 = receipt2.logs.find(log => {
+            try { return propertyFactory.interface.parseLog(log).name === 'EscrowDeployed'; }
+            catch { return false; }
+        });
+        const escrowAddress = propertyFactory.interface.parseLog(event2).args.escrow;
+
+        expect(escrowAddress).to.not.equal(ethers.ZeroAddress);
+    });
 });

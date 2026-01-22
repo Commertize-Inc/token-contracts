@@ -6,6 +6,9 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
+import "../tokenization/PropertyToken.sol";
+import "../compliance/TokenCompliance.sol";
+import "../compliance/IdentityRegistry.sol";
 
 /**
  * @title ListingEscrow
@@ -96,12 +99,24 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 	}
 
 	/**
+	 * @dev Verify investor is allowed to hold tokens.
+	 */
+	function _checkCompliance(address investor) internal view {
+		TokenCompliance compliance = PropertyToken(payable(address(propertyToken))).compliance();
+		IdentityRegistry registry = compliance.identityRegistry();
+		require(registry.isVerified(investor), "Investor not verified");
+	}
+
+	/**
 	 * @notice Invest in the listing.
 	 * @param amount Amount of payment tokens (ignored if Native).
 	 */
 	function deposit(uint256 amount) public payable nonReentrant whenNotPaused {
 		require(!finalized && !refunded, "Escrow closed");
 		require(block.timestamp < deadline, "Deadline passed");
+
+		// Compliance Check
+		_checkCompliance(msg.sender);
 
 		uint256 depositAmount;
 
@@ -143,6 +158,9 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 		);
 		require(investor != address(0), "Invalid investor");
 
+		// Compliance Check
+		_checkCompliance(investor);
+
 		// Pull funds from Investor (Investor must have approved Escrow)
 		paymentToken.safeTransferFrom(investor, address(this), amount);
 
@@ -166,12 +184,13 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 
 		finalized = true;
 
-		// Send Funds to Sponsor
+		// Send Funds to PropertyToken (Vault)
+		// Funds are now held by the Property entity, and Sponsor/Admin can withdraw.
 		if (address(paymentToken) == address(0)) {
-			(bool success, ) = sponsor.call{ value: totalRaised }("");
+			(bool success, ) = address(propertyToken).call{ value: totalRaised }("");
 			require(success, "Transfer failed");
 		} else {
-			paymentToken.safeTransfer(sponsor, totalRaised);
+			paymentToken.safeTransfer(address(propertyToken), totalRaised);
 		}
 
 		// Distribute tokens to investors automatically
@@ -220,12 +239,12 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 			}
 		}
 
-		// Transfer payment to sponsor
+		// Transfer payment to PropertyToken (Vault)
 		if (address(paymentToken) == address(0)) {
-			(bool success, ) = sponsor.call{ value: totalRaised }("");
+			(bool success, ) = address(propertyToken).call{ value: totalRaised }("");
 			require(success, "Transfer failed");
 		} else {
-			paymentToken.safeTransfer(sponsor, totalRaised);
+			paymentToken.safeTransfer(address(propertyToken), totalRaised);
 		}
 
 		emit AdminFinalized(totalRaised, block.timestamp, msg.sender);

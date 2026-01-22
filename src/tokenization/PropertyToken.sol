@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -117,5 +118,35 @@ contract PropertyToken is ERC20, ERC20Permit, Ownable {
 
     function totalSupplyAt(uint256 snapshotId) public view returns (uint256) {
         return _valueAt(_totalSupplySnaps, snapshotId, totalSupply());
+    }
+
+    // ==========================================
+    // Vault Functionality
+    // ==========================================
+
+    /**
+     * @notice Allow contract to receive native funds (e.g. from Escrow)
+     */
+    receive() external payable {}
+
+    /**
+     * @notice Withdraw funds (Native or ERC20) from the contract.
+     * @dev Only owner (Sponsor/Admin) can withdraw.
+     * @param token Address of token to withdraw. address(0) for Native.
+     * @param to Recipient address.
+     * @param amount Amount to withdraw.
+     */
+    function withdrawFunds(address token, address to, uint256 amount) external onlyOwner {
+        require(to != address(0), "Invalid recipient");
+
+        if (token == address(0)) {
+            // Native
+            require(address(this).balance >= amount, "Insufficient balance");
+            (bool success, ) = to.call{value: amount}("");
+            require(success, "Transfer failed");
+        } else {
+            // ERC20
+            IERC20(token).transfer(to, amount);
+        }
     }
 }
