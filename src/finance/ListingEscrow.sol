@@ -184,6 +184,40 @@ contract ListingEscrow is Ownable, ReentrancyGuard {
     }
 
     /**
+     * @notice Admin-only function to batch refund investors.
+     * @param investors Array of investor addresses to refund.
+     * @dev This allows admin to process refunds on behalf of investors.
+     *      Can only be called if not finalized and after deadline or refunded flag is set.
+     */
+    function adminBatchRefund(address[] calldata investors) external onlyOwner nonReentrant {
+        require(!finalized, "Raise successful");
+        require(block.timestamp >= deadline || refunded, "Deadline not passed");
+
+        // Mark as refunded state
+        refunded = true;
+
+        for (uint256 i = 0; i < investors.length; i++) {
+            address investor = investors[i];
+            uint256 userDeposit = deposits[investor];
+
+            if (userDeposit == 0) {
+                continue; // Skip if no deposit
+            }
+
+            deposits[investor] = 0; // Clear deposit to prevent re-entrancy
+
+            if (address(paymentToken) == address(0)) {
+                (bool success, ) = investor.call{value: userDeposit}("");
+                require(success, "Transfer failed");
+            } else {
+                paymentToken.safeTransfer(investor, userDeposit);
+            }
+
+            emit Refunded(investor, userDeposit);
+        }
+    }
+
+    /**
      * @notice Allow admin to withdraw unsold tokens if failed.
      */
     function recoverTokens() external onlyOwner {
