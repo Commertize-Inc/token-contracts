@@ -3,8 +3,8 @@
 	"version": "1.0.0",
 	"description": "Commertize smart contracts for real estate tokenization, debt instruments, and mortgage lending",
 	"scripts": {
-		"build": "hardhat compile && tsup index.mts --format esm --dts --clean",
-		"compile": "hardhat compile",
+		"build": "CI=true hardhat compile && tsup index.mts --format esm --dts --clean",
+		"compile": "CI=true hardhat compile",
 		"test": "hardhat test",
 		"test:coverage": "hardhat coverage",
 		"node": "hardhat node",
