@@ -1,0 +1,64 @@
+require("@nomicfoundation/hardhat-toolbox");
+require("@openzeppelin/hardhat-upgrades");
+const { loadEnv } = require("@commertize/utils/env-server");
+
+// Load environment variables
+loadEnv();
+
+console.debug("EVM_PRIVATE_KEY", process.env.EVM_PRIVATE_KEY);
+console.debug("EVM_NETWORK", process.env.EVM_NETWORK);
+
+/** @type import('hardhat/config').HardhatUserConfig */
+module.exports = {
+	solidity: {
+		version: "0.8.25",
+		settings: {
+			optimizer: {
+				enabled: true,
+				runs: 1,
+			},
+			viaIR: true, // Enable via-IR to fix stack too deep errors
+		},
+	},
+	paths: {
+		sources: "./src",
+		tests: "./test",
+		cache: "./cache",
+		artifacts: "./artifacts",
+	},
+	networks: {
+		hardhat: {
+			chainId: 31337,
+		},
+		localhost: {
+			chainId: 31337,
+			currency: "GO",
+			url: "http://127.0.0.1:8545",
+			blockExplorerUrl: "",
+			USDC_ADDRESS: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+		},
+		testnet: {
+			chainId: 296,
+			currency: "HBAR",
+			url: "https://testnet.hashio.io/api",
+			accounts: [process.env.EVM_PRIVATE_KEY].filter(
+				(k) => !!k && k.startsWith("0x")
+			),
+			blockExplorerUrl: "https://hashscan.io/testnet",
+			USDC_ADDRESS: "0x0000000000000000000000000000000000068cda",
+		},
+		mainnet: {
+			chainId: 295,
+			currency: "HBAR",
+			url: "https://mainnet.hashio.io/api",
+			accounts: [process.env.EVM_PRIVATE_KEY].filter(
+				(k) => !!k && k.startsWith("0x")
+			),
+			blockExplorerUrl: "https://hashscan.io/mainnet",
+			USDC_ADDRESS: "0x000000000000000000000000000000000006f89a",
+		},
+	},
+	mocha: {
+		timeout: 40000,
+	},
+};
