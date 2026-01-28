@@ -96,10 +96,13 @@ async function main() {
 		const splitBranch = `nexus-release-v${version}-${Date.now()}`;
 		console.log("  Running git subtree split...");
 		// Creates split branch containing 'packages/token-contracts' history.
-		execSync(`git subtree split --prefix=packages/token-contracts -b ${splitBranch}`, {
-			cwd: rootDir,
-			stdio: "inherit",
-		});
+		execSync(
+			`git subtree split --prefix=packages/token-contracts -b ${splitBranch}`,
+			{
+				cwd: rootDir,
+				stdio: "inherit",
+			}
+		);
 
 		// 2. Push the split branch to the remote
 		console.log(`  Pushing to remote ${BRANCH_NAME}...`);

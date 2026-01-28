@@ -28,7 +28,11 @@ pnpm add @commertize/token-contracts
 By default, all developers use the shared Hedera testnet deployment. No setup required!
 
 ```typescript
-import { getContractAddress, getContracts, ABIS } from "@commertize/token-contracts";
+import {
+	getContractAddress,
+	getContracts,
+	ABIS,
+} from "@commertize/token-contracts";
 
 // Get a specific contract address
 const identityRegistry = getContractAddress("IdentityRegistry");
@@ -50,11 +54,13 @@ const contract = new ethers.Contract(
 Want to test against your own local deployment? Easy!
 
 1. **Start a local Hardhat node:**
+
    ```bash
    pnpm node
    ```
 
 2. **Deploy contracts locally:**
+
    ```bash
    pnpm deploy:localhost
    ```
@@ -115,6 +121,7 @@ The Commertize onchain system is built on Hedera EVM and consists of three main 
 #### 1. Compliance Contracts
 
 **IdentityRegistry** (`src/compliance/IdentityRegistry.sol`)
+
 - **Purpose**: Maintains a whitelist of verified investor addresses
 - **Key Features**:
   - Stores identity data (country code, verification status, identity hash)
@@ -123,6 +130,7 @@ The Commertize onchain system is built on Hedera EVM and consists of three main 
 - **Usage**: All token transfers require both sender and receiver to be verified
 
 **TokenCompliance** (`src/compliance/TokenCompliance.sol`)
+
 - **Purpose**: Enforces transfer restrictions based on identity verification
 - **Key Features**:
   - Checks `IdentityRegistry` before allowing transfers
@@ -133,6 +141,7 @@ The Commertize onchain system is built on Hedera EVM and consists of three main 
 #### 2. Core Token Contracts
 
 **PropertyToken** (`src/tokenization/PropertyToken.sol`)
+
 - **Purpose**: ERC-20 token representing fractional ownership of a property
 - **Key Features**:
   - ERC-20 with Permit (gasless approvals)
@@ -142,6 +151,7 @@ The Commertize onchain system is built on Hedera EVM and consists of three main 
 - **Standards**: ERC-20, ERC-2612 (Permit)
 
 **CommertizeToken (CTZ)** (`src/core/CommertizeToken.sol`)
+
 - **Purpose**: Platform governance and utility token
 - **Key Features**:
   - ERC-20Votes for governance
@@ -150,6 +160,7 @@ The Commertize onchain system is built on Hedera EVM and consists of three main 
 - **Standards**: ERC-20, ERC-2612, ERC-5805 (Votes)
 
 **CREUSD** (`src/core/CREUSD.sol`)
+
 - **Purpose**: Platform stablecoin for payments and dividends
 - **Key Features**:
   - ERC-20 with Permit
@@ -161,6 +172,7 @@ The Commertize onchain system is built on Hedera EVM and consists of three main 
 #### 3. Tokenization Contracts
 
 **PropertyFactory** (`src/tokenization/PropertyFactory.sol`)
+
 - **Purpose**: Factory for deploying new property tokens and escrows
 - **Key Features**:
   - Deploys `PropertyToken` instances
@@ -169,6 +181,7 @@ The Commertize onchain system is built on Hedera EVM and consists of three main 
 - **Usage**: Single entry point for creating new property listings
 
 **ListingEscrow** (`src/finance/ListingEscrow.sol`)
+
 - **Purpose**: Holds property tokens and investor funds until funding goal is met
 - **Key Features**:
   - Time-bound fundraising (deadline)
@@ -181,6 +194,7 @@ The Commertize onchain system is built on Hedera EVM and consists of three main 
 #### 4. Finance Contracts
 
 **DividendVault** (`src/finance/DividendVault.sol`)
+
 - **Purpose**: Distributes property income to token holders based on snapshots
 - **Key Features**:
   - Snapshot-based distribution (prevents front-running)
@@ -191,6 +205,7 @@ The Commertize onchain system is built on Hedera EVM and consists of three main 
 - **Security**: ReentrancyGuard, snapshot-first design
 
 **StakingPool** (`src/finance/StakingPool.sol`)
+
 - **Purpose**: Staking mechanism for CTZ tokens (MVP placeholder)
 - **Status**: Simplified implementation, ready for expansion
 
@@ -428,15 +443,15 @@ const network = getNetwork("testnet");
 The package also exports helper functions for creating contract instances:
 
 ```typescript
-import { 
-  getIdentityRegistryContract,
-  getComplianceContract,
-  getUSDCContract,
-  getCommertizeTokenContract,
-  getDividendVaultContract,
-  getPropertyFactoryContract,
-  getPropertyTokenContract,
-  getEscrowContract
+import {
+	getIdentityRegistryContract,
+	getComplianceContract,
+	getUSDCContract,
+	getCommertizeTokenContract,
+	getDividendVaultContract,
+	getPropertyFactoryContract,
+	getPropertyTokenContract,
+	getEscrowContract,
 } from "@commertize/token-contracts";
 
 const provider = new ethers.JsonRpcProvider(RPC_URL);
@@ -462,6 +477,7 @@ This means:
 ## Contract Addresses
 
 Current deployments are stored in:
+
 - `deployment.testnet.json` - Hedera testnet (shared)
 - `deployment.mainnet.json` - Hedera mainnet (production)
 
