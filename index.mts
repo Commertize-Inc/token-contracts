@@ -157,6 +157,11 @@ async function loadDeployment(
 const deploymentNetwork = getEnv("EVM_NETWORK") || "testnet";
 console.log(`Nexus Config: Using network '${deploymentNetwork}'`);
 
+// This is our final fallback network name when no deployment file is found.
+// In browser mode (no filesystem), deploymentConfig will be null, so we rely
+// on this value, which in turn is driven by EVM_NETWORK/VITE_EVM_NETWORK.
+const DEFAULT_NETWORK = deploymentNetwork;
+
 // USE TOP-LEVEL AWAIT
 const deploymentConfig: DeploymentConfig | null =
 	await loadDeployment(deploymentNetwork);
@@ -166,7 +171,7 @@ const deploymentConfig: DeploymentConfig | null =
 // ------------------------------------------------------------------
 
 export const NETWORK =
-	getEnv("NETWORK") || deploymentConfig?.network?.name || "testnet";
+	getEnv("NETWORK") || deploymentConfig?.network?.name || DEFAULT_NETWORK;
 export const CHAIN_ID = Number(
 	getEnv("CHAIN_ID") || deploymentConfig?.network?.chainId || 296
 );
