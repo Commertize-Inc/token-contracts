@@ -163,8 +163,17 @@ console.log(`Nexus Config: Using network '${deploymentNetwork}'`);
 const DEFAULT_NETWORK = deploymentNetwork;
 
 // USE TOP-LEVEL AWAIT
-const deploymentConfig: DeploymentConfig | null =
+let deploymentConfig: DeploymentConfig | null =
 	await loadDeployment(deploymentNetwork);
+// In browser we cannot read deployment files; use bundled testnet config so dashboard gets correct chain (e.g. Arc)
+if (!deploymentConfig && isBrowser && deploymentNetwork === "testnet") {
+	try {
+		const mod = await import("./deployment.testnet.json");
+		deploymentConfig = (mod as any).default ?? (mod as any);
+	} catch {
+		// ignore
+	}
+}
 
 // ------------------------------------------------------------------
 // Configuration & Addresses
