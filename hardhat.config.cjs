@@ -38,14 +38,14 @@ module.exports = {
 			USDC_ADDRESS: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
 		},
 		testnet: {
-			chainId: 296,
-			currency: "HBAR",
-			url: "https://testnet.hashio.io/api",
+			chainId: 5042002,
+			currency: "USDC",
+			url: "https://rpc.testnet.arc.network",
 			accounts: [process.env.EVM_PRIVATE_KEY].filter(
 				(k) => !!k && k.startsWith("0x")
 			),
-			blockExplorerUrl: "https://hashscan.io/testnet",
-			USDC_ADDRESS: "0x0000000000000000000000000000000000068cda",
+			blockExplorerUrl: "https://testnet.arcscan.app/",
+			USDC_ADDRESS: "0x3600000000000000000000000000000000000000",
 		},
 		mainnet: {
 			chainId: 295,

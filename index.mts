@@ -1,25 +1,17 @@
-console.log("Loading Nexus Index Source...");
 import { ethers } from "ethers";
 
-// ------------------------------------------------------------------
-// ENVIRONMENT DETECTION
-// ------------------------------------------------------------------
-const isBrowser = typeof window !== "undefined";
-const isNode = typeof process !== "undefined" && process.versions?.node;
-
-// ------------------------------------------------------------------
-// ARTIFACT IMPORTS
-// ------------------------------------------------------------------
-// Import Artifacts direct from compilation output
 import IdentityRegistryArtifact from "./artifacts/src/compliance/IdentityRegistry.sol/IdentityRegistry.json";
 import TokenComplianceArtifact from "./artifacts/src/compliance/TokenCompliance.sol/TokenCompliance.json";
 import CREUSDArtifact from "./artifacts/src/core/CREUSD.sol/CREUSD.json";
 import CommertizeTokenArtifact from "./artifacts/src/core/CommertizeToken.sol/CommertizeToken.json";
 import DividendVaultArtifact from "./artifacts/src/finance/DividendVault.sol/DividendVault.json";
+import ListingEscrowArtifact from "./artifacts/src/finance/ListingEscrow.sol/ListingEscrow.json";
 import StakingPoolArtifact from "./artifacts/src/finance/StakingPool.sol/StakingPool.json";
 import PropertyFactoryArtifact from "./artifacts/src/tokenization/PropertyFactory.sol/PropertyFactory.json";
 import PropertyTokenArtifact from "./artifacts/src/tokenization/PropertyToken.sol/PropertyToken.json";
-import ListingEscrowArtifact from "./artifacts/src/finance/ListingEscrow.sol/ListingEscrow.json";
+
+const isBrowser = typeof window !== "undefined";
+const isNode = typeof process !== "undefined" && process.versions?.node;
 
 // ------------------------------------------------------------------
 // TYPES
@@ -134,11 +126,7 @@ async function loadDeployment(
 				if (fs.existsSync(deploymentPath)) {
 					try {
 						const content = fs.readFileSync(deploymentPath, "utf-8");
-						const data = JSON.parse(content);
-						console.log(
-							`📦 Loaded deployment from ${path.basename(deploymentPath)}`
-						);
-						return data;
+						return JSON.parse(content);
 					} catch (error) {
 						console.warn(`⚠️  Failed to parse ${deploymentPath}`);
 					}
@@ -153,11 +141,9 @@ async function loadDeployment(
 	return null;
 }
 
-// Load deployment (defaults to testnet)
-const deploymentNetwork = getEnv("EVM_NETWORK") || "testnet";
-console.log(`Nexus Config: Using network '${deploymentNetwork}'`);
+const deploymentNetwork = getEnv("EVM_NETWORK") || getEnv("VITE_EVM_NETWORK") || "testnet";
 
-// This is our final fallback network name when no deployment file is found.
+// Final fallback network name when no deployment file is found.
 // In browser mode (no filesystem), deploymentConfig will be null, so we rely
 // on this value, which in turn is driven by EVM_NETWORK/VITE_EVM_NETWORK.
 const DEFAULT_NETWORK = deploymentNetwork;
@@ -208,10 +194,7 @@ export const USDC_ADDRESS =
 	getEnv("USDC_ADDRESS") ||
 	"0x0000000000000000000000000000000000068cda";
 
-// ------------------------------------------------------------------
-// ABIs
-// ------------------------------------------------------------------
-
+/** Contract ABIs (ethers/viem compatible). */
 export const ABIS = {
 	IdentityRegistry: IdentityRegistryArtifact.abi,
 	Compliance: TokenComplianceArtifact.abi,
@@ -223,6 +206,9 @@ export const ABIS = {
 	PropertyToken: PropertyTokenArtifact.abi,
 	ListingEscrow: ListingEscrowArtifact.abi,
 };
+
+/** ListingEscrow ABI for deposit/decode (includes SafeERC20FailedOperation and other errors). */
+export const ListingEscrowAbi = ListingEscrowArtifact.abi;
 
 // ------------------------------------------------------------------
 // HELPERS

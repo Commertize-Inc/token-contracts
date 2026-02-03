@@ -9,9 +9,9 @@
 		"test:coverage": "hardhat coverage",
 		"node": "hardhat node",
 		"clean": "hardhat clean",
-		"deploy:localhost": "hardhat run scripts/deploy.cjs --network localhost",
-		"deploy:testnet": "hardhat run scripts/deploy.cjs --network testnet",
-		"deploy:mainnet": "hardhat run scripts/deploy.cjs --network mainnet",
+		"deploy:localhost": "hardhat run --network localhost scripts/deploy.cjs",
+		"deploy:testnet": "hardhat run --network testnet scripts/deploy.cjs",
+		"deploy:mainnet": "hardhat run --network mainnet scripts/deploy.cjs",
 		"release": "node scripts/release.js"
 	},
 	"keywords": [

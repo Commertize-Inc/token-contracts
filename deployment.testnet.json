@@ -1,20 +1,20 @@
 {
-	"contracts": {
-		"IdentityRegistry": "0xb8c7210BdD394c3f0C2aCE5388F43066c8483C3a",
-		"CREUSD": "0x6D911482bA617DED94B091F999dD1542e77ccAA5",
-		"USDC": "0x0000000000000000000000000000000000068cda",
-		"CommertizeToken": "0x81C7f9Ee779F0C79f290c2425CD2F039C18cbB08",
-		"TokenCompliance": "0x6471fD3CE0E9621c229199DD0aB551764Ba66413",
-		"PropertyFactory": "0xc0711d2419f31d8dBDE752FAA48Ef94E073FF055",
-		"StakingPool": "0x3C87e1b3aE68996f6C6fe379275dD2eF45E1d8CA",
-		"DividendVault": "0x93B27B3546326757834D5b9448E5290Cf7d089d0"
-	},
-	"timestamp": "2026-01-27T00:54:18.458Z",
-	"network": {
-		"name": "testnet",
-		"chainId": 296,
-		"rpc": "https://testnet.hashio.io/api",
-		"currency": "HBAR",
-		"blockExplorerUrl": "https://hashscan.io/testnet"
-	}
+  "contracts": {
+    "IdentityRegistry": "0xce9edA419cC9F19dc64a100A11417742704B9917",
+    "CREUSD": "0xb4560ead4f661a9B8Efc6DDB401011260BAf953E",
+    "USDC": "0x3600000000000000000000000000000000000000",
+    "CommertizeToken": "0xEA9f321c1acd919b5Ffc2EaBCbCe14b7fB661CA8",
+    "TokenCompliance": "0xf259af2a64C13403C6197DE3bf255f2bA31051F2",
+    "PropertyFactory": "0x4F827074b80640673880CAdA6c24FBf01A973d04",
+    "StakingPool": "0x395a462159F316C9b6A660aa9B4689d913cD736e",
+    "DividendVault": "0xAFCCe0dd860fcc332366ca2d399ec69b1A42E492"
+  },
+  "timestamp": "2026-02-03T01:50:16.972Z",
+  "network": {
+    "name": "testnet",
+    "chainId": 5042002,
+    "rpc": "https://rpc.testnet.arc.network",
+    "currency": "USDC",
+    "blockExplorerUrl": "https://testnet.arcscan.app/"
+  }
 }
