@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 
+// Artifact imports
 import IdentityRegistryArtifact from "./artifacts/src/compliance/IdentityRegistry.sol/IdentityRegistry.json";
 import TokenComplianceArtifact from "./artifacts/src/compliance/TokenCompliance.sol/TokenCompliance.json";
 import CREUSDArtifact from "./artifacts/src/core/CREUSD.sol/CREUSD.json";
@@ -10,64 +11,34 @@ import StakingPoolArtifact from "./artifacts/src/finance/StakingPool.sol/Staking
 import PropertyFactoryArtifact from "./artifacts/src/tokenization/PropertyFactory.sol/PropertyFactory.json";
 import PropertyTokenArtifact from "./artifacts/src/tokenization/PropertyToken.sol/PropertyToken.json";
 
-const isBrowser = typeof window !== "undefined";
-const isNode = typeof process !== "undefined" && process.versions?.node;
+// Utils imports
+import {
+	DeploymentConfig,
+	getNetworkName,
+	getChainId,
+	getRpcUrl,
+	getCurrency,
+	getBlockExplorerUrl,
+	getDeploymentJsonEnv,
+} from "@commertize/utils/onchain";
 
-// ------------------------------------------------------------------
-// TYPES
-// ------------------------------------------------------------------
+export type { DeploymentConfig };
 
-export interface DeploymentConfig {
-	contracts: {
-		IdentityRegistry: string;
-		PropertyFactory: string;
-		TokenCompliance: string;
-		CommertizeToken: string;
-		CREUSD: string;
-		StakingPool: string;
-		DividendVault: string;
-	};
-	network: {
-		name: string;
-		chainId: number;
-		rpc: string;
-		currency: string;
-		blockExplorerUrl: string;
-	};
-	timestamp: string | null;
-}
+
 
 // ------------------------------------------------------------------
 // DEPLOYMENT LOADING
 // ------------------------------------------------------------------
 
-// Config Loading Logic
-const getEnv = (key: string) => {
-	if (typeof process !== "undefined" && process.env) {
-		// Check standard, VITE_, and NEXT_PUBLIC_ prefixes
-		return (
-			process.env[key] ||
-			process.env[`VITE_${key}`] ||
-			process.env[`NEXT_PUBLIC_${key}`]
-		);
-	}
-	// In browser, try to access Vite's import.meta.env
-	if (typeof import.meta !== "undefined" && (import.meta as any).env) {
-		const env = (import.meta as any).env;
-		return env[key] || env[`VITE_${key}`] || env[`NEXT_PUBLIC_${key}`];
-	}
-	return undefined;
-};
-
 /**
  * Load deployment configuration for a specific network.
- * Uses dynamic imports for Node.js modules to be browser-safe.
+ * Uses dynamic imports which are bundled by tsup for both Node and Browser.
  */
 async function loadDeployment(
 	network: string = "testnet"
 ): Promise<DeploymentConfig | null> {
 	// 1. Try from environment variable (works in both browser and Node)
-	const envVar = getEnv("DEPLOYMENT_JSON") || getEnv("VITE_DEPLOYMENT_JSON");
+	const envVar = getDeploymentJsonEnv();
 
 	if (envVar) {
 		try {
@@ -81,105 +52,55 @@ async function loadDeployment(
 			}
 		} catch (e) {
 			console.warn(
-				"Failed to parse DEPLOYMENT_JSON env var, falling back to file."
+				"Failed to parse DEPLOYMENT_JSON env var, falling back to bundled file."
 			);
 		}
 	}
 
-	// 2. Browser Mode: Cannot use FS, so we stop here
-	if (isBrowser) {
-		console.warn(
-			"⚠️  No deployment configuration found (browser mode - using VITE_DEPLOYMENT_JSON env var is recommended)"
-		);
+	// 2. Load bundled deployment JSON based on network
+	// These imports are processed by tsup/bundlers into separate chunks
+	try {
+		if (network === "localhost") {
+			const mod = await import("./deployment.localhost.json");
+			return (mod as any).default ?? (mod as any);
+		} else if (network === "mainnet") {
+			const mod = await import("./deployment.mainnet.json");
+			return (mod as any).default ?? (mod as any);
+		} else {
+			// Default to testnet
+			const mod = await import("./deployment.testnet.json");
+			return (mod as any).default ?? (mod as any);
+		}
+	} catch (err) {
+		console.warn(`⚠️  Failed to load deployment for network: ${network}`, err);
 		return null;
 	}
-
-	// 3. Node Mode: Try from files
-	if (isNode) {
-		try {
-			const fs = await import("fs");
-			const path = await import("path");
-			const { fileURLToPath } = await import("url");
-
-			const getDirName = () => {
-				try {
-					// @ts-ignore
-					return typeof __dirname !== "undefined"
-						? __dirname
-						: path.dirname(fileURLToPath(import.meta.url));
-				} catch (e) {
-					return undefined;
-				}
-			};
-
-			const __dirname_compat = getDirName();
-			if (!__dirname_compat) return null;
-
-			const possiblePaths = [
-				path.join(__dirname_compat, `./deployment.${network}.json`),
-				path.join(__dirname_compat, "./deployment.testnet.json"),
-				path.join(__dirname_compat, `../deployment.${network}.json`),
-				path.join(__dirname_compat, "../deployment.testnet.json"),
-			];
-
-			for (const deploymentPath of possiblePaths) {
-				if (fs.existsSync(deploymentPath)) {
-					try {
-						const content = fs.readFileSync(deploymentPath, "utf-8");
-						return JSON.parse(content);
-					} catch (error) {
-						console.warn(`⚠️  Failed to parse ${deploymentPath}`);
-					}
-				}
-			}
-		} catch (err) {
-			console.warn("Error loading deployment in Node environment:", err);
-		}
-	}
-
-	console.warn("⚠️  No deployment configuration found");
-	return null;
 }
 
-const deploymentNetwork = getEnv("EVM_NETWORK") || getEnv("VITE_EVM_NETWORK") || "testnet";
+const deploymentNetwork = getNetworkName();
 
-// Final fallback network name when no deployment file is found.
-// In browser mode (no filesystem), deploymentConfig will be null, so we rely
-// on this value, which in turn is driven by EVM_NETWORK/VITE_EVM_NETWORK.
+// Final fallback network name
 const DEFAULT_NETWORK = deploymentNetwork;
 
 // USE TOP-LEVEL AWAIT
 let deploymentConfig: DeploymentConfig | null =
 	await loadDeployment(deploymentNetwork);
-// In browser we cannot read deployment files; use bundled testnet config so dashboard gets correct chain (e.g. Arc)
-if (!deploymentConfig && isBrowser && deploymentNetwork === "testnet") {
-	try {
-		const mod = await import("./deployment.testnet.json");
-		deploymentConfig = (mod as any).default ?? (mod as any);
-	} catch {
-		// ignore
-	}
-}
 
 // ------------------------------------------------------------------
 // Configuration & Addresses
 // ------------------------------------------------------------------
 
 export const NETWORK =
-	getEnv("NETWORK") || deploymentConfig?.network?.name || DEFAULT_NETWORK;
+	deploymentConfig?.network?.name || getNetworkName();
 export const CHAIN_ID = Number(
-	getEnv("CHAIN_ID") || deploymentConfig?.network?.chainId || 296
+	deploymentConfig?.network?.chainId || getChainId()
 );
 export const CURRENCY =
-	getEnv("CURRENCY") || deploymentConfig?.network?.currency || "HBAR";
+	deploymentConfig?.network?.currency || getCurrency();
 export const RPC_URL =
-	getEnv("RPC_URL") ||
-	deploymentConfig?.network?.rpc ||
-	"https://testnet.hashio.io/api";
+	deploymentConfig?.network?.rpc || getRpcUrl();
 export const BLOCK_EXPLORER_URL =
-	getEnv("BLOCK_EXPLORER_URL") ||
-	deploymentConfig?.network?.blockExplorerUrl ||
-	"https://hashscan.io/testnet";
+	deploymentConfig?.network?.blockExplorerUrl || getBlockExplorerUrl();
 
 export const CONTRACTS: any = deploymentConfig?.contracts || {};
 export const Deployment = deploymentConfig;
@@ -193,6 +114,18 @@ export const USDC_ADDRESS =
 	(CONTRACTS as any)?.CREUSD ||
 	getEnv("USDC_ADDRESS") ||
 	"0x0000000000000000000000000000000000068cda";
+
+// Helper for USDC address fallback which isn't in utils/onchain
+function getEnv(key: string) {
+	if (typeof process !== "undefined" && process.env) {
+		return process.env[key] || process.env[`VITE_${key}`];
+	}
+	if (typeof import.meta !== "undefined" && (import.meta as any).env) {
+		const env = (import.meta as any).env;
+		return env[key] || env[`VITE_${key}`];
+	}
+	return undefined;
+}
 
 /** Contract ABIs (ethers/viem compatible). */
 export const ABIS = {
