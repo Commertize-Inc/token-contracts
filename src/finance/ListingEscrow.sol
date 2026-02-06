@@ -134,6 +134,9 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 			paymentToken.safeTransferFrom(msg.sender, address(this), amount);
 		}
 
+
+		require(totalRaised + depositAmount <= targetRaise, "Exceeds target raise");
+
 		// Track investor efficiently (CRITICAL FIX: prevents unbounded growth)
 		_addInvestor(msg.sender);
 
@@ -160,6 +163,9 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 			"Cannot call depositFor with Native Asset"
 		);
 		require(investor != address(0), "Invalid investor");
+
+		// Enforce Hard Cap
+		require(totalRaised + amount <= targetRaise, "Exceeds target raise");
 
 		// Compliance Check
 		_checkCompliance(investor);
