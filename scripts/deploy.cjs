@@ -29,7 +29,7 @@ async function main() {
 	// Try to get RPC. Hardhat network config might have 'url', or we use default
 	const rpcUrl = hre.network.config.url || "http://localhost:8545";
 
-	// Currency symbol (default ETH/HBAR)
+	// Currency symbol (default ETH)
 	const currency = hre.network.config.currency;
 
 	// Determine block explorer URL based on network
@@ -58,36 +58,36 @@ async function main() {
 		}
 	}
 
+	// USDC is not deployed here; use the address from the Anvil fork (set in deployment.*.json).
 	const contracts = [
 		{
 			name: "IdentityRegistry",
 			title: "1. Identity Registry (Compliance)",
 			value: "IdentityRegistry",
 		},
-		{ name: "CREUSD", title: "2. CREUSD (Stablecoin)", value: "CREUSD" },
 		{
 			name: "CommertizeToken",
-			title: "3. Commertize Token (Platform/Governance)",
+			title: "2. Commertize Token (Platform/Governance)",
 			value: "CommertizeToken",
 		},
 		{
 			name: "TokenCompliance",
-			title: "4. Token Compliance (Requires IdentityRegistry)",
+			title: "3. Token Compliance (Requires IdentityRegistry)",
 			value: "TokenCompliance",
 		},
 		{
 			name: "PropertyFactory",
-			title: "5. Property Factory (Requires Compliance)",
+			title: "4. Property Factory (Requires Compliance)",
 			value: "PropertyFactory",
 		},
 		{
 			name: "StakingPool",
-			title: "6. Staking Pool (Requires CTZ & CREUSD)",
+			title: "5. Staking Pool (Requires CTZ & USDC from fork)",
 			value: "StakingPool",
 		},
 		{
 			name: "DividendVault",
-			title: "7. Dividend Vault (Requires CREUSD)",
+			title: "6. Dividend Vault (Requires USDC from fork)",
 			value: "DividendVault",
 		},
 	];
@@ -155,19 +155,14 @@ async function main() {
 		}
 	}
 
-	// 2. CREUSD
-	if (selectedContracts.has("CREUSD")) {
-		await deployContract("CREUSD", [deployer.address], context);
-		// Alias USDC
-		context.deploymentConfig.contracts.USDC = hre.network.config.USDC_ADDRESS;
-	}
+	// USDC: not deployed; use address from Anvil fork in deployment.*.json (e.g. deployment.localhost.json).
 
-	// 3. Commertize Token
+	// 2. Commertize Token
 	if (selectedContracts.has("CommertizeToken")) {
 		await deployContract("CommertizeToken", [deployer.address], context);
 	}
 
-	// 4. Token Compliance
+	// 3. Token Compliance
 	if (selectedContracts.has("TokenCompliance")) {
 		const idRegistry = context.deployedAddresses.IdentityRegistry;
 		if (!idRegistry) {
@@ -183,38 +178,38 @@ async function main() {
 		}
 	}
 
-	// 5. Property Factory
+	// 4. Property Factory
 	if (selectedContracts.has("PropertyFactory")) {
 		await deployContract("PropertyFactory", [deployer.address], context);
 	}
 
-	// 6. Staking Pool
+	// 5. Staking Pool
 	if (selectedContracts.has("StakingPool")) {
 		const comm = context.deployedAddresses.CommertizeToken;
-		const creusd = context.deployedAddresses.CREUSD;
-		if (!comm || !creusd) {
+		const usdc = context.deployedAddresses.USDC;
+		if (!comm || !usdc) {
 			console.error(
-				chalk.red("❌ Error: StakingPool requires CommertizeToken and CREUSD.")
+				chalk.red("❌ Error: StakingPool requires CommertizeToken and USDC.")
 			);
 		} else {
 			await deployContract(
 				"StakingPool",
-				[comm, creusd, deployer.address],
+				[comm, usdc, deployer.address],
 				context
 			);
 		}
 	}
 
-	// 7. Dividend Vault
+	// 6. Dividend Vault
 	if (selectedContracts.has("DividendVault")) {
-		const creusd = context.deployedAddresses.CREUSD;
-		if (!creusd) {
-			console.error(chalk.red("❌ Error: DividendVault requires CREUSD."));
+		const usdc = context.deployedAddresses.USDC;
+		if (!usdc) {
+			console.error(chalk.red("❌ Error: DividendVault requires USDC."));
 		} else {
 			// Protocol Wallet = Deployer for now
 			await deployContract(
 				"DividendVault",
-				[creusd, deployer.address, deployer.address],
+				[usdc, deployer.address, deployer.address],
 				context
 			);
 		}

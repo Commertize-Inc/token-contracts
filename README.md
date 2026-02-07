@@ -112,7 +112,7 @@ The Commertize onchain system is built on Hedera EVM and consists of three main 
                             ↓
 ┌─────────────────────────────────────────────────────────┐
 │                     FINANCE LAYER                         │
-│  DividendVault → StakingPool → CREUSD                    │
+│  DividendVault → StakingPool → USDC                      │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -159,15 +159,13 @@ The Commertize onchain system is built on Hedera EVM and consists of three main 
   - 100M initial supply
 - **Standards**: ERC-20, ERC-2612, ERC-5805 (Votes)
 
-**CREUSD** (`src/core/CREUSD.sol`)
+**USDC** (payment token)
 
-- **Purpose**: Platform stablecoin for payments and dividends
+- **Purpose**: Payment token for investments and dividends. The token is **not** implemented or deployed by this repo; it is assumed to **already exist** on Arc (localnet, testnet, mainnet).
 - **Key Features**:
-  - ERC-20 with Permit
-  - Faucet for testnet (24h cooldown)
-  - 1B max supply, 6 decimals
-  - Owner-controlled minting
-- **Standards**: ERC-20, ERC-2612
+  - Address is read from deployment config or `USDC_ADDRESS` env (use Arc’s USDC or compatible token address for each network).
+  - Backend and frontend use an ERC-20 + EIP-2612 Permit ABI only to **interact** with the existing token.
+- **Standards**: ERC-20, ERC-2612 (Permit)
 
 #### 3. Tokenization Contracts
 
@@ -240,7 +238,7 @@ The Commertize onchain system is built on Hedera EVM and consists of three main 
 ```
 1. Property generates income (off-chain)
    ↓
-2. Sponsor deposits CREUSD
+2. Sponsor deposits USDC
    → DividendVault.depositDividend(property, amount)
    ↓
 3. Snapshot taken FIRST (prevents front-running)
@@ -393,7 +391,7 @@ import { ABIS } from "@commertize/token-contracts";
 // Available ABIs:
 // - ABIS.IdentityRegistry
 // - ABIS.Compliance (TokenCompliance)
-// - ABIS.USDC (CREUSD)
+// - ABIS.USDC
 // - ABIS.CommertizeToken
 // - ABIS.DividendVault
 // - ABIS.StakingPool

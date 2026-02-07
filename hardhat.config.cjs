@@ -31,11 +31,11 @@ module.exports = {
 			chainId: 31337,
 		},
 		localhost: {
-			chainId: 31337,
+			chainId: 5042002,
 			currency: "GO",
 			url: "http://127.0.0.1:8545",
 			blockExplorerUrl: "",
-			USDC_ADDRESS: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+			USDC_ADDRESS: "0x3600000000000000000000000000000000000000",
 		},
 		testnet: {
 			chainId: 5042002,

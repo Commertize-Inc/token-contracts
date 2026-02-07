@@ -3,7 +3,6 @@ import { ethers } from "ethers";
 // Artifact imports
 import IdentityRegistryArtifact from "./artifacts/src/compliance/IdentityRegistry.sol/IdentityRegistry.json";
 import TokenComplianceArtifact from "./artifacts/src/compliance/TokenCompliance.sol/TokenCompliance.json";
-import CREUSDArtifact from "./artifacts/src/core/CREUSD.sol/CREUSD.json";
 import CommertizeTokenArtifact from "./artifacts/src/core/CommertizeToken.sol/CommertizeToken.json";
 import DividendVaultArtifact from "./artifacts/src/finance/DividendVault.sol/DividendVault.json";
 import ListingEscrowArtifact from "./artifacts/src/finance/ListingEscrow.sol/ListingEscrow.json";
@@ -111,7 +110,6 @@ export const Deployment = deploymentConfig;
 
 export const USDC_ADDRESS =
 	(CONTRACTS as any)?.USDC ||
-	(CONTRACTS as any)?.CREUSD ||
 	getEnv("USDC_ADDRESS") ||
 	"0x0000000000000000000000000000000000068cda";
 
@@ -127,11 +125,30 @@ function getEnv(key: string) {
 	return undefined;
 }
 
+/** ABI to interact with the existing USDC (or compatible) payment token on Arc. No token is implemented or deployed by this package. */
+const ERC20_PERMIT_ABI = [
+	{ inputs: [{ name: "owner", type: "address" }, { name: "spender", type: "address" }], name: "allowance", outputs: [{ type: "uint256" }], stateMutability: "view", type: "function" },
+	{ inputs: [{ name: "spender", type: "address" }, { name: "value", type: "uint256" }], name: "approve", outputs: [{ type: "bool" }], stateMutability: "nonpayable", type: "function" },
+	{ inputs: [{ name: "account", type: "address" }], name: "balanceOf", outputs: [{ type: "uint256" }], stateMutability: "view", type: "function" },
+	{ inputs: [], name: "decimals", outputs: [{ type: "uint8" }], stateMutability: "view", type: "function" },
+	{ inputs: [], name: "DOMAIN_SEPARATOR", outputs: [{ type: "bytes32" }], stateMutability: "view", type: "function" },
+	{ inputs: [], name: "eip712Domain", outputs: [{ name: "fields", type: "bytes1" }, { name: "name", type: "string" }, { name: "version", type: "string" }, { name: "chainId", type: "uint256" }, { name: "verifyingContract", type: "address" }, { name: "salt", type: "bytes32" }, { name: "extensions", type: "uint256[]" }], stateMutability: "view", type: "function" },
+	{ inputs: [], name: "name", outputs: [{ type: "string" }], stateMutability: "view", type: "function" },
+	{ inputs: [{ name: "owner", type: "address" }], name: "nonces", outputs: [{ type: "uint256" }], stateMutability: "view", type: "function" },
+	{ inputs: [{ name: "owner", type: "address" }, { name: "spender", type: "address" }, { name: "value", type: "uint256" }, { name: "deadline", type: "uint256" }, { name: "v", type: "uint8" }, { name: "r", type: "bytes32" }, { name: "s", type: "bytes32" }], name: "permit", outputs: [], stateMutability: "nonpayable", type: "function" },
+	{ inputs: [], name: "symbol", outputs: [{ type: "string" }], stateMutability: "view", type: "function" },
+	{ inputs: [], name: "totalSupply", outputs: [{ type: "uint256" }], stateMutability: "view", type: "function" },
+	{ inputs: [{ name: "to", type: "address" }, { name: "value", type: "uint256" }], name: "transfer", outputs: [{ type: "bool" }], stateMutability: "nonpayable", type: "function" },
+	{ inputs: [{ name: "from", type: "address" }, { name: "to", type: "address" }, { name: "value", type: "uint256" }], name: "transferFrom", outputs: [{ type: "bool" }], stateMutability: "nonpayable", type: "function" },
+	{ inputs: [{ indexed: true, name: "owner", type: "address" }, { indexed: true, name: "spender", type: "address" }, { indexed: false, name: "value", type: "uint256" }], name: "Approval", type: "event", anonymous: false },
+	{ inputs: [{ indexed: true, name: "from", type: "address" }, { indexed: true, name: "to", type: "address" }, { indexed: false, name: "value", type: "uint256" }], name: "Transfer", type: "event", anonymous: false },
+] as const;
+
 /** Contract ABIs (ethers/viem compatible). */
 export const ABIS = {
 	IdentityRegistry: IdentityRegistryArtifact.abi,
 	Compliance: TokenComplianceArtifact.abi,
-	USDC: CREUSDArtifact.abi,
+	USDC: [...ERC20_PERMIT_ABI],
 	CommertizeToken: CommertizeTokenArtifact.abi,
 	DividendVault: DividendVaultArtifact.abi,
 	StakingPool: StakingPoolArtifact.abi,
@@ -157,7 +174,7 @@ export const getIdentityRegistryContract = (runner: ethers.ContractRunner) =>
 export const getComplianceContract = (runner: ethers.ContractRunner) =>
 	new ethers.Contract(CONTRACTS.TokenCompliance, ABIS.Compliance, runner);
 export const getUSDCContract = (runner: ethers.ContractRunner) =>
-	new ethers.Contract(CONTRACTS.CREUSD || USDC_ADDRESS, ABIS.USDC, runner);
+	new ethers.Contract(CONTRACTS.USDC || USDC_ADDRESS, ABIS.USDC, runner);
 export const getCommertizeTokenContract = (runner: ethers.ContractRunner) =>
 	new ethers.Contract(CONTRACTS.CommertizeToken, ABIS.CommertizeToken, runner);
 export const getDividendVaultContract = (runner: ethers.ContractRunner) =>

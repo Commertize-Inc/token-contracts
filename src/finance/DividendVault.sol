@@ -13,7 +13,7 @@ import "../tokenization/PropertyToken.sol";
  * @dev Uses snapshot mechanism to prevent front-running and ensures fair distribution
  */
 contract DividendVault is Ownable, ReentrancyGuard, Pausable {
-    IERC20 public paymentToken; // CREUSD
+    IERC20 public paymentToken; // USDC or payment token
     address public protocolWallet;
     uint256 public protocolFeeBps; // Changed to mutable
 

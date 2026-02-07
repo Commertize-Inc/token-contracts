@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract StakingPool is Ownable {
     IERC20 public stakingToken; // COMM
-    IERC20 public rewardToken;  // CREUSD
+    IERC20 public rewardToken;  // USDC or payment token
 
     // Simplified Staking: Pro-rata shares of rewards based on staked amount
     // For MVP, just a holder
