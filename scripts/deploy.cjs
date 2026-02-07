@@ -58,7 +58,23 @@ async function main() {
 		}
 	}
 
-	// USDC is not deployed here; use the address from the Anvil fork (set in deployment.*.json).
+	const context = {
+		deployer,
+		deploymentConfig,
+		deployedAddresses: { ...deploymentConfig.contracts },
+	};
+
+	// USDC is not deployed here; pull the address from hardhat network config
+	const usdcAddress = hre.network.config.USDC_ADDRESS;
+	if (usdcAddress) {
+		context.deployedAddresses.USDC = usdcAddress;
+		context.deploymentConfig.contracts = context.deploymentConfig.contracts || {};
+		context.deploymentConfig.contracts.USDC = usdcAddress;
+		console.log(`USDC Address (from config): ${chalk.green(usdcAddress)}`);
+	} else {
+		console.error(chalk.red(`⚠️ No USDC_ADDRESS configured for network: ${networkName}`));
+	}
+
 	const contracts = [
 		{
 			name: "IdentityRegistry",
@@ -116,12 +132,6 @@ async function main() {
 		}
 		selectedContracts = new Set(response.selected);
 	}
-
-	const context = {
-		deployer,
-		deploymentConfig,
-		deployedAddresses: { ...deploymentConfig.contracts },
-	};
 
 	console.log(chalk.bold("\n⚡ Starting Deployment...\n"));
 

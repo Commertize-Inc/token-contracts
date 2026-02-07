@@ -1,14 +1,14 @@
 {
   "contracts": {
-    "IdentityRegistry": "0xA5b2E77F68882e04B1526dA10232E76D3F72CCeE",
-    "USDC": "0xb4560ead4f661a9B8Efc6DDB401011260BAf953E",
-    "CommertizeToken": "0x1375805bA6b0EA1919C0271Eafb7be6409DC6Bb1",
-    "TokenCompliance": "0x9d476E6b0abcFe1BA70cd724A577dF413bc4B3D9",
-    "PropertyFactory": "0xcF1a9D45D23073285E1Bb6fad214FffD463EC31b",
-    "StakingPool": "0x564beF94AB13c5d8a9220C60b6e682904974c784",
-    "DividendVault": "0xcf8C25E53Fb2B9404C0339f40c9f36531d8d7cb5"
+    "IdentityRegistry": "0x947dF7DE6a2d93e31a3C8B552e264c8d1113Ea37",
+    "USDC": "0x3600000000000000000000000000000000000000",
+    "CommertizeToken": "0x6400a359C5C9ba1a88acBD0a796c87459b36C337",
+    "TokenCompliance": "0x78b2E6E27553766369454d5e8d2ECE2847Af24A8",
+    "PropertyFactory": "0x35D40C23aC91638F03e936384A2851185981B5a9",
+    "StakingPool": "0x1caC1d93a2E423205DF9Ff470519aBE84cE440F0",
+    "DividendVault": "0x697792eff546fF6a895Ad842fDdB803F312aCaF4"
   },
-  "timestamp": "2026-02-07T00:07:20.229Z",
+  "timestamp": "2026-02-07T01:09:21.739Z",
   "network": {
     "name": "testnet",
     "chainId": 5042002,

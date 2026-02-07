@@ -5,9 +5,6 @@ const { loadEnv } = require("@commertize/utils/env-server");
 // Load environment variables
 loadEnv();
 
-console.debug("EVM_PRIVATE_KEY", process.env.EVM_PRIVATE_KEY);
-console.debug("EVM_NETWORK", process.env.EVM_NETWORK);
-
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
 	solidity: {
