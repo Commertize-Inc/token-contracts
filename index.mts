@@ -160,6 +160,11 @@ export const ABIS = {
 /** ListingEscrow ABI for deposit/decode (includes SafeERC20FailedOperation and other errors). */
 export const ListingEscrowAbi = ListingEscrowArtifact.abi;
 
+/** Standard Solidity Error(string) ABI for decoding require()/revert() messages. */
+export const ErrorStringAbi = [
+	{ type: "error", name: "Error", inputs: [{ name: "message", type: "string" }] },
+] as const;
+
 // ------------------------------------------------------------------
 // HELPERS
 // ------------------------------------------------------------------
