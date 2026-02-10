@@ -57,19 +57,11 @@ async function loadDeployment(
 	}
 
 	// 2. Load bundled deployment JSON based on network
-	// These imports are processed by tsup/bundlers into separate chunks
+	// Template literal prevents TypeScript from statically resolving the path,
+	// so the DTS build won't fail when a file (e.g. deployment.localhost.json) is absent.
 	try {
-		if (network === "localhost") {
-			const mod = await import("./deployment.localhost.json");
-			return (mod as any).default ?? (mod as any);
-		} else if (network === "mainnet") {
-			const mod = await import("./deployment.mainnet.json");
-			return (mod as any).default ?? (mod as any);
-		} else {
-			// Default to testnet
-			const mod = await import("./deployment.testnet.json");
-			return (mod as any).default ?? (mod as any);
-		}
+		const mod = await import(`./deployment.${network}.json`);
+		return (mod as any).default ?? (mod as any);
 	} catch (err) {
 		console.warn(`⚠️  Failed to load deployment for network: ${network}`, err);
 		return null;
