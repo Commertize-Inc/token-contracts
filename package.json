@@ -12,6 +12,8 @@
 		"deploy:localhost": "hardhat run --network localhost scripts/deploy.cjs",
 		"deploy:testnet": "hardhat run --network testnet scripts/deploy.cjs",
 		"deploy:mainnet": "hardhat run --network mainnet scripts/deploy.cjs",
+		"deploy:bridge:testnet": "hardhat run --network testnet scripts/deploy-bridge.cjs",
+		"deploy:bridge:base-sepolia": "hardhat run --network base-sepolia scripts/deploy-bridge.cjs",
 		"release": "node scripts/release.js"
 	},
 	"keywords": [
@@ -43,6 +45,7 @@
 		"./deployment.testnet.json": "./deployment.testnet.json",
 		"./deployment.mainnet.json": "./deployment.mainnet.json",
 		"./deployment.localhost.json": "./deployment.localhost.json",
+		"./deployment.base_sepolia.json": "./deployment.base_sepolia.json",
 		"./artifacts/*": "./artifacts/contracts/*"
 	},
 	"type": "module",

@@ -9,6 +9,8 @@ import ListingEscrowArtifact from "./artifacts/src/finance/ListingEscrow.sol/Lis
 import StakingPoolArtifact from "./artifacts/src/finance/StakingPool.sol/StakingPool.json";
 import PropertyFactoryArtifact from "./artifacts/src/tokenization/PropertyFactory.sol/PropertyFactory.json";
 import PropertyTokenArtifact from "./artifacts/src/tokenization/PropertyToken.sol/PropertyToken.json";
+import PropertyTokenAdapterArtifact from "./artifacts/src/tokenization/PropertyTokenAdapter.sol/PropertyTokenAdapter.json";
+import PropertyTokenOFTArtifact from "./artifacts/src/tokenization/PropertyTokenOFT.sol/PropertyTokenOFT.json";
 
 // Utils imports
 import {
@@ -146,11 +148,16 @@ export const ABIS = {
 	StakingPool: StakingPoolArtifact.abi,
 	PropertyFactory: PropertyFactoryArtifact.abi,
 	PropertyToken: PropertyTokenArtifact.abi,
+	PropertyTokenAdapter: PropertyTokenAdapterArtifact.abi,
+	PropertyTokenOFT: PropertyTokenOFTArtifact.abi,
 	ListingEscrow: ListingEscrowArtifact.abi,
 };
 
 /** ListingEscrow ABI for deposit/decode (includes SafeERC20FailedOperation and other errors). */
 export const ListingEscrowAbi = ListingEscrowArtifact.abi;
+
+/** Full artifact (ABI + bytecode) for backend deployment via ContractFactory. */
+export { default as PropertyTokenAdapterArtifact } from "./artifacts/src/tokenization/PropertyTokenAdapter.sol/PropertyTokenAdapter.json";
 
 /** Standard Solidity Error(string) ABI for decoding require()/revert() messages. */
 export const ErrorStringAbi = [
@@ -189,3 +196,60 @@ export const getEscrowContract = (
 	address: string,
 	runner: ethers.ContractRunner
 ) => new ethers.Contract(address, ABIS.ListingEscrow, runner);
+
+// ------------------------------------------------------------------
+// LAYERZERO BRIDGE CONFIGURATION
+// ------------------------------------------------------------------
+
+export interface BridgeChainConfig {
+	name: string;
+	displayName: string;
+	chainId: number;
+	lzEid: number;
+	lzEndpoint: string;
+	rpcUrl: string;
+	blockExplorerUrl: string;
+	nativeCurrency: { name: string; symbol: string; decimals: number };
+	isHome: boolean;
+}
+
+/**
+ * Known bridge-enabled chains. The home chain is always first.
+ * Destination chain deployment addresses are loaded separately.
+ */
+export const BRIDGE_CHAINS: BridgeChainConfig[] = [
+	{
+		name: "hedera-testnet",
+		displayName: "Hedera (Home)",
+		chainId: 296,
+		lzEid: 40285,
+		lzEndpoint: "0xbD672D1562Dd32C23B563C989d8140122483631d",
+		rpcUrl: "https://testnet.hashio.io/api",
+		blockExplorerUrl: "https://hashscan.io/testnet",
+		nativeCurrency: { name: "HBAR", symbol: "HBAR", decimals: 18 },
+		isHome: true,
+	},
+	{
+		name: "base-sepolia",
+		displayName: "Base",
+		chainId: 84532,
+		lzEid: 40245,
+		lzEndpoint: "0x6EDCE65403992e310A62460808c4b910D972f10f",
+		rpcUrl: "https://sepolia.base.org",
+		blockExplorerUrl: "https://sepolia.basescan.org",
+		nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
+		isHome: false,
+	},
+];
+
+/** Load a destination chain's deployment config (OFT addresses, compliance, etc.) */
+export async function loadBridgeDeployment(
+	chainName: string
+): Promise<DeploymentConfig | null> {
+	try {
+		const mod = await import(`./deployment.${chainName.replace(/-/g, "_")}.json`);
+		return (mod as any).default ?? (mod as any);
+	} catch {
+		return null;
+	}
+}

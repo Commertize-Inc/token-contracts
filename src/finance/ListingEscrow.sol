@@ -236,14 +236,15 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 
 		uint256 totalTokenSupply = propertyToken.balanceOf(address(this));
 
-		// Calculate tokens to burn if target not reached
+		// Return unsold tokens to owner if target not reached
+		// Note: Cannot transfer to address(0) via ERC20.transfer() — OpenZeppelin v5
+		// reverts with ERC20InvalidReceiver. Return to owner for manual burn or reuse.
 		if (totalRaised < targetRaise && totalTokenSupply > 0) {
 			uint256 soldTokens = (totalRaised * totalTokenSupply) / targetRaise;
 			uint256 unsoldTokens = totalTokenSupply - soldTokens;
 
 			if (unsoldTokens > 0) {
-				// CRITICAL FIX: Proper burn to address(0) instead of 0xdead
-				propertyToken.safeTransfer(address(0), unsoldTokens);
+				propertyToken.safeTransfer(owner(), unsoldTokens);
 				emit TokensBurned(unsoldTokens);
 			}
 		}

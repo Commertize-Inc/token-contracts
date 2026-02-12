@@ -20,6 +20,10 @@ contract PropertyTokenOFT is Ownable, ERC20Permit, OFT, Pausable {
     TokenCompliance public compliance;
     bool public complianceEnabled; // Explicit flag to enable/disable compliance
 
+    // Rate limiting for cross-chain credits
+    uint256 public dailyBridgeCap; // 0 = unlimited
+    mapping(uint256 => uint256) private _dailyBridged; // day => cumulative amount
+
     struct Snap {
         uint256 id;
         uint256 value;
@@ -86,6 +90,38 @@ contract PropertyTokenOFT is Ownable, ERC20Permit, OFT, Pausable {
      */
     function unpause() external onlyOwner {
         _unpause();
+    }
+
+    /**
+     * @notice Set daily cap for cross-chain bridge credits. 0 = unlimited.
+     * @param _cap Maximum total amount (in local decimals) that can be credited per day
+     */
+    function setDailyBridgeCap(uint256 _cap) external onlyOwner {
+        dailyBridgeCap = _cap;
+    }
+
+    /**
+     * @notice View how much has been bridged today
+     */
+    function dailyBridgedAmount() external view returns (uint256) {
+        return _dailyBridged[block.timestamp / 1 days];
+    }
+
+    /**
+     * @dev Override _credit to enforce rate limiting on incoming cross-chain transfers.
+     *      Compliance is enforced downstream via _update() → canTransfer(address(0), _to).
+     */
+    function _credit(
+        address _to,
+        uint256 _amountLD,
+        uint32 _srcEid
+    ) internal override returns (uint256 amountReceivedLD) {
+        if (dailyBridgeCap > 0) {
+            uint256 day = block.timestamp / 1 days;
+            _dailyBridged[day] += _amountLD;
+            require(_dailyBridged[day] <= dailyBridgeCap, "OFT: Daily bridge cap exceeded");
+        }
+        return super._credit(_to, _amountLD, _srcEid);
     }
 
     // Overrides
