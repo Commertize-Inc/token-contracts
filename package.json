@@ -3,18 +3,17 @@
 	"version": "1.0.0",
 	"description": "Commertize smart contracts for real estate tokenization, debt instruments, and mortgage lending",
 	"scripts": {
-		"build": "CI=true hardhat compile && tsup index.mts --format esm --dts --clean",
-		"compile": "CI=true hardhat compile",
+		"build": "hardhat build && tsup index.mts --format esm --dts --clean",
+		"compile": "hardhat build",
 		"test": "hardhat test",
-		"test:coverage": "hardhat coverage",
 		"node": "hardhat node",
 		"clean": "hardhat clean",
-		"deploy:localhost": "hardhat run --network localhost scripts/deploy.cjs",
-		"deploy:testnet": "hardhat run --network testnet scripts/deploy.cjs",
-		"deploy:mainnet": "hardhat run --network mainnet scripts/deploy.cjs",
-		"deploy:bridge:testnet": "hardhat run --network testnet scripts/deploy-bridge.cjs",
-		"deploy:bridge:base-sepolia": "hardhat run --network base-sepolia scripts/deploy-bridge.cjs",
-		"release": "node scripts/release.js"
+		"deploy:localhost": "hardhat run --network localhost scripts/deploy.ts",
+		"deploy:testnet": "hardhat run --network testnet scripts/deploy.ts",
+		"deploy:mainnet": "hardhat run --network mainnet scripts/deploy.ts",
+		"deploy:bridge:testnet": "hardhat run --network testnet scripts/deploy-bridge.ts",
+		"deploy:bridge:base-sepolia": "hardhat run --network base-sepolia scripts/deploy-bridge.ts",
+		"release": "npx tsx scripts/release.ts"
 	},
 	"keywords": [
 		"real-estate",
@@ -32,7 +31,7 @@
 	"files": [
 		"dist",
 		"deployment.*.json",
-		"artifacts/contracts/**/*.json",
+		"artifacts/src/**/*.json",
 		"!artifacts/build-info"
 	],
 	"exports": {
@@ -46,18 +45,30 @@
 		"./deployment.mainnet.json": "./deployment.mainnet.json",
 		"./deployment.localhost.json": "./deployment.localhost.json",
 		"./deployment.base_sepolia.json": "./deployment.base_sepolia.json",
-		"./artifacts/*": "./artifacts/contracts/*"
+		"./artifacts/*": "./artifacts/src/*"
 	},
 	"type": "module",
 	"packageManager": "pnpm@9.15.4",
 	"devDependencies": {
-		"@nomicfoundation/hardhat-toolbox": "^5.0.0",
+		"@nomicfoundation/hardhat-ethers": "^4.0.0",
+		"@nomicfoundation/hardhat-ethers-chai-matchers": "^3.0.0",
+		"@nomicfoundation/hardhat-ignition": "^3.0.0",
+		"@nomicfoundation/hardhat-ignition-ethers": "^3.0.0",
+		"@nomicfoundation/hardhat-keystore": "^3.0.0",
+		"@nomicfoundation/hardhat-mocha": "^3.0.0",
+		"@nomicfoundation/hardhat-network-helpers": "^3.0.0",
+		"@nomicfoundation/hardhat-toolbox-mocha-ethers": "^3.0.0",
+		"@nomicfoundation/hardhat-typechain": "^3.0.0",
+		"@nomicfoundation/hardhat-verify": "^3.0.0",
+		"@nomicfoundation/ignition-core": "^3.0.0",
 		"@openzeppelin/contracts": "^5.1.0",
-		"@openzeppelin/hardhat-upgrades": "^3.9.1",
 		"@types/node": "^25.0.9",
+		"chai": "^5.1.2",
 		"chalk": "^4.1.2",
-		"hardhat": "^2.22.0",
+		"hardhat": "^3.0.0",
+		"mocha": "^11.0.0",
 		"prompts": "^2.4.2",
+		"tsx": "^4.19.0",
 		"tsup": "^8.5.1",
 		"typescript": "^5.9.3"
 	},

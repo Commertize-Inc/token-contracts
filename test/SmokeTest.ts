@@ -1,10 +1,18 @@
-const { expect } = require("chai");
-const { ethers } = require("hardhat");
+import { expect } from "chai";
+import hre from "hardhat";
+
+const { ethers } = await hre.network.connect();
 
 describe("Commertize Contracts Suite", function () {
-	let admin, agent, compliance, user, sponsor;
-	let identityRegistry, tokenCompliance, propertyFactory;
-	let propertyToken, listingEscrow;
+	let admin: any;
+	let agent: any;
+	let compliance: any;
+	let user: any;
+	let sponsor: any;
+	let identityRegistry: any;
+	let tokenCompliance: any;
+	let propertyFactory: any;
+	let propertyToken: any;
 
 	before(async function () {
 		[admin, agent, compliance, user, sponsor] = await ethers.getSigners();
@@ -16,7 +24,8 @@ describe("Commertize Contracts Suite", function () {
 		identityRegistry = await IdentityRegistry.deploy(admin.address);
 		await identityRegistry.waitForDeployment();
 
-		expect(await identityRegistry.owner()).to.equal(admin.address);
+		const DEFAULT_ADMIN_ROLE = await identityRegistry.DEFAULT_ADMIN_ROLE();
+		expect(await identityRegistry.hasRole(DEFAULT_ADMIN_ROLE, admin.address)).to.be.true;
 	});
 
 	it("Should deploy Token Compliance", async function () {
@@ -54,17 +63,17 @@ describe("Commertize Contracts Suite", function () {
 			.connect(admin)
 			.deployProperty("Test Property", "TST", 1000000, tokenCompliance.target);
 		const receipt = await tx.wait();
-		const event = receipt.logs.find((log) => {
+		const event = receipt!.logs.find((log: any) => {
 			try {
 				return (
-					propertyFactory.interface.parseLog(log).name === "PropertyDeployed"
+					propertyFactory.interface.parseLog(log)!.name === "PropertyDeployed"
 				);
 			} catch {
 				return false;
 			}
 		});
 		const propertyTokenAddress =
-			propertyFactory.interface.parseLog(event).args.property;
+			propertyFactory.interface.parseLog(event!)!.args.property;
 		const PropertyToken = await ethers.getContractFactory("PropertyToken");
 		propertyToken = PropertyToken.attach(propertyTokenAddress);
 
@@ -82,17 +91,17 @@ describe("Commertize Contracts Suite", function () {
 				deadline
 			);
 		const receipt2 = await tx2.wait();
-		const event2 = receipt2.logs.find((log) => {
+		const event2 = receipt2!.logs.find((log: any) => {
 			try {
 				return (
-					propertyFactory.interface.parseLog(log).name === "EscrowDeployed"
+					propertyFactory.interface.parseLog(log)!.name === "EscrowDeployed"
 				);
 			} catch {
 				return false;
 			}
 		});
 		const escrowAddress =
-			propertyFactory.interface.parseLog(event2).args.escrow;
+			propertyFactory.interface.parseLog(event2!)!.args.escrow;
 
 		expect(escrowAddress).to.not.equal(ethers.ZeroAddress);
 	});

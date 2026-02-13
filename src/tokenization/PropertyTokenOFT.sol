@@ -6,7 +6,7 @@ import { ERC20Permit } from "@openzeppelin/contracts/token/ERC20/extensions/ERC2
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
-import "../compliance/TokenCompliance.sol";
+import "../compliance/ComplianceEnabled.sol";
 
 /**
  * @title PropertyTokenOFT
@@ -15,9 +15,8 @@ import "../compliance/TokenCompliance.sol";
  *      When claiming dividends, the balance at the snapshot is used, not current balance.
  *      This prevents front-running of dividend distributions.
  */
-contract PropertyTokenOFT is Ownable, ERC20Permit, OFT, Pausable {
+contract PropertyTokenOFT is Ownable, ERC20Permit, OFT, Pausable, ComplianceEnabled {
 
-    TokenCompliance public compliance;
     bool public complianceEnabled; // Explicit flag to enable/disable compliance
 
     // Rate limiting for cross-chain credits
@@ -48,7 +47,7 @@ contract PropertyTokenOFT is Ownable, ERC20Permit, OFT, Pausable {
         address _owner
     ) OFT(_name, _symbol, _lzEndpoint, _delegate) ERC20Permit(_name) Ownable(_owner) {
         require(_compliance != address(0), "Invalid compliance");
-        compliance = TokenCompliance(_compliance);
+        _setCompliance(_compliance);
         complianceEnabled = true; // Enable by default
         _mint(_owner, _supply);
     }
@@ -65,8 +64,7 @@ contract PropertyTokenOFT is Ownable, ERC20Permit, OFT, Pausable {
     }
 
     function setCompliance(address _compliance) external onlyOwner {
-        require(_compliance != address(0), "Invalid compliance");
-        compliance = TokenCompliance(_compliance);
+        _setCompliance(_compliance);
     }
 
     /**
@@ -133,7 +131,7 @@ contract PropertyTokenOFT is Ownable, ERC20Permit, OFT, Pausable {
     function _update(address from, address to, uint256 value) internal override(ERC20) whenNotPaused {
         // CRITICAL FIX: Check both complianceEnabled flag AND compliance address
         if (complianceEnabled && address(compliance) != address(0)) {
-            require(compliance.canTransfer(from, to), "Compliance: Transfer not allowed");
+            _checkCompliance(from, to);
         }
 
         // Capture old values for snapshot if needed

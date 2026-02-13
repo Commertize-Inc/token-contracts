@@ -2,17 +2,22 @@
 	"compilerOptions": {
 		"outDir": "dist",
 		"rootDir": ".",
-		"moduleResolution": "bundler",
+		"moduleResolution": "node16",
 		"target": "ES2022",
-		"module": "ES2022",
+		"module": "node16",
 		"esModuleInterop": true,
 		"skipLibCheck": true,
 		"forceConsistentCasingInFileNames": true,
-		"resolveJsonModule": true
+		"resolveJsonModule": true,
+		"strict": false
 	},
 	"include": [
 		"index.mts",
-		"src/**/*"
+		"src/**/*",
+		"test/**/*",
+		"hardhat.config.ts",
+		"network-meta.ts",
+		"scripts/**/*"
 	],
 	"exclude": [
 		"node_modules",
