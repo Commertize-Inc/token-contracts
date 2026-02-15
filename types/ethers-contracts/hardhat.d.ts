@@ -17,6 +17,7 @@ getContractFactory(name: 'CommertizeToken', signerOrOptions?: ethers.Signer | Fa
 getContractFactory(name: 'DividendVault', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.DividendVault__factory>
 getContractFactory(name: 'ListingEscrow', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.ListingEscrow__factory>
 getContractFactory(name: 'StakingPool', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.StakingPool__factory>
+getContractFactory(name: 'EndpointV2Mock', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.EndpointV2Mock__factory>
 getContractFactory(name: 'PropertyFactory', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.PropertyFactory__factory>
 getContractFactory(name: 'PropertyToken', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.PropertyToken__factory>
 getContractFactory(name: 'PropertyTokenAdapter', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.PropertyTokenAdapter__factory>
@@ -29,6 +30,7 @@ getContractAt(name: 'CommertizeToken', address: string | ethers.Addressable, sig
 getContractAt(name: 'DividendVault', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.DividendVault>
 getContractAt(name: 'ListingEscrow', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.ListingEscrow>
 getContractAt(name: 'StakingPool', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.StakingPool>
+getContractAt(name: 'EndpointV2Mock', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.EndpointV2Mock>
 getContractAt(name: 'PropertyFactory', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.PropertyFactory>
 getContractAt(name: 'PropertyToken', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.PropertyToken>
 getContractAt(name: 'PropertyTokenAdapter', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.PropertyTokenAdapter>
@@ -41,6 +43,7 @@ deployContract(name: 'CommertizeToken', signerOrOptions?: ethers.Signer | Deploy
 deployContract(name: 'DividendVault', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.DividendVault>
 deployContract(name: 'ListingEscrow', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.ListingEscrow>
 deployContract(name: 'StakingPool', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.StakingPool>
+deployContract(name: 'EndpointV2Mock', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.EndpointV2Mock>
 deployContract(name: 'PropertyFactory', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.PropertyFactory>
 deployContract(name: 'PropertyToken', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.PropertyToken>
 deployContract(name: 'PropertyTokenAdapter', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.PropertyTokenAdapter>
@@ -53,6 +56,7 @@ deployContract(name: 'CommertizeToken', args: any[], signerOrOptions?: ethers.Si
 deployContract(name: 'DividendVault', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.DividendVault>
 deployContract(name: 'ListingEscrow', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.ListingEscrow>
 deployContract(name: 'StakingPool', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.StakingPool>
+deployContract(name: 'EndpointV2Mock', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.EndpointV2Mock>
 deployContract(name: 'PropertyFactory', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.PropertyFactory>
 deployContract(name: 'PropertyToken', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.PropertyToken>
 deployContract(name: 'PropertyTokenAdapter', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.PropertyTokenAdapter>

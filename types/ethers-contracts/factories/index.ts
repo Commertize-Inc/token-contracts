@@ -4,4 +4,5 @@
 export * as compliance from './compliance/index.js';
 export * as core from './core/index.js';
 export * as finance from './finance/index.js';
+export * as test from './test/index.js';
 export * as tokenization from './tokenization/index.js';
