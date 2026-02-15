@@ -13,6 +13,9 @@
 		"deploy:mainnet": "hardhat run --network mainnet scripts/deploy.ts",
 		"deploy:bridge:testnet": "hardhat run --network testnet scripts/deploy-bridge.ts",
 		"deploy:bridge:base-sepolia": "hardhat run --network base-sepolia scripts/deploy-bridge.ts",
+		"deploy:bridge:full": "hardhat run --network testnet scripts/deploy-full-bridge.ts",
+		"test:testnet": "CI=true hardhat test test/TestnetValidation.ts --network testnet",
+		"test:base-sepolia": "CI=true hardhat test test/TestnetValidation.ts --network base-sepolia",
 		"release": "npx tsx scripts/release.ts"
 	},
 	"keywords": [

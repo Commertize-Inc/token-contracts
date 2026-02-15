@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import prompts from "prompts";
 import chalk from "chalk";
-import { getNetworkMeta } from "../network-meta.js";
+import { getNetworkMeta } from "../hardhat.config.js";
 
 interface DeploymentConfig {
 	contracts: Record<string, string>;

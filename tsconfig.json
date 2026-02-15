@@ -16,7 +16,6 @@
 		"src/**/*",
 		"test/**/*",
 		"hardhat.config.ts",
-		"network-meta.ts",
 		"scripts/**/*"
 	],
 	"exclude": [

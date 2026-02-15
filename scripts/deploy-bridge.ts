@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import prompts from "prompts";
 import chalk from "chalk";
-import { getNetworkMeta } from "../network-meta.js";
+import { getNetworkMeta } from "../hardhat.config.js";
 
 /**
  * LayerZero Bridge Deployment Script
@@ -15,12 +15,6 @@ import { getNetworkMeta } from "../network-meta.js";
  *   npx hardhat run scripts/deploy-bridge.ts --network testnet       # Home chain (Hedera)
  *   npx hardhat run scripts/deploy-bridge.ts --network base-sepolia  # Destination chain
  */
-
-// Known LayerZero endpoint IDs per network
-const LZ_CONFIG: Record<string, { eid: number; endpoint: string }> = {
-	testnet: { eid: 40285, endpoint: "0xbD672D1562Dd32C23B563C989d8140122483631d" },
-	"base-sepolia": { eid: 40245, endpoint: "0x6EDCE65403992e310A62460808c4b910D972f10f" },
-};
 
 // Minimum gas for lzReceive on destination (200k should be sufficient for mint + compliance check)
 const MIN_DST_GAS = 200_000;
@@ -64,14 +58,12 @@ const balance = await deployer.provider.getBalance(deployer.address);
 console.log(`Balance: ${chalk.yellow(ethers.formatEther(balance))} ${meta.currency || "ETH"}`);
 console.log(`Network: ${chalk.magenta(networkName)} (ChainID: ${chainId})\n`);
 
-const lzConfig = meta.LZ_ENDPOINT
-	? { eid: meta.LZ_EID!, endpoint: meta.LZ_ENDPOINT }
-	: LZ_CONFIG[networkName];
-
-if (!lzConfig) {
-	console.error(chalk.red(`No LayerZero config found for network: ${networkName}`));
+if (!meta.LZ_ENDPOINT || !meta.LZ_EID) {
+	console.error(chalk.red(`No LayerZero config in network metadata for: ${networkName}`));
 	process.exit(1);
 }
+
+const lzConfig = { eid: meta.LZ_EID, endpoint: meta.LZ_ENDPOINT };
 
 console.log(`LZ Endpoint: ${chalk.cyan(lzConfig.endpoint)}`);
 console.log(`LZ EID: ${chalk.cyan(String(lzConfig.eid))}\n`);
