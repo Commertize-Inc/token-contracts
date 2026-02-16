@@ -68,11 +68,14 @@ async function main() {
 	const usdcAddress = hre.network.config.USDC_ADDRESS;
 	if (usdcAddress) {
 		context.deployedAddresses.USDC = usdcAddress;
-		context.deploymentConfig.contracts = context.deploymentConfig.contracts || {};
+		context.deploymentConfig.contracts =
+			context.deploymentConfig.contracts || {};
 		context.deploymentConfig.contracts.USDC = usdcAddress;
 		console.log(`USDC Address (from config): ${chalk.green(usdcAddress)}`);
 	} else {
-		console.error(chalk.red(`⚠️ No USDC_ADDRESS configured for network: ${networkName}`));
+		console.error(
+			chalk.red(`⚠️ No USDC_ADDRESS configured for network: ${networkName}`)
+		);
 	}
 
 	const contracts = [
