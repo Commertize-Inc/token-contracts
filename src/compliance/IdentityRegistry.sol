@@ -1,20 +1,23 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
 /**
  * @title IdentityRegistry
- * @dev Simple whitelist of verified investor addresses.
+ * @dev Role-based whitelist of verified investor addresses using AccessControl.
+ * @dev Uses VERIFIED_ROLE to track verified investors and DEFAULT_ADMIN_ROLE for management.
  */
-contract IdentityRegistry is Ownable {
+contract IdentityRegistry is AccessControl {
 
     // ISO 3166-1 numeric country codes range from 1 to 999
     uint16 public constant MAX_COUNTRY_CODE = 999;
 
+    // Role for verified investors
+    bytes32 public constant VERIFIED_ROLE = keccak256("VERIFIED_ROLE");
+
     struct Identity {
         uint16 country;
-        bool isVerified;
         bytes32 identityHash;
     }
 
@@ -23,27 +26,30 @@ contract IdentityRegistry is Ownable {
     event IdentityVerified(address indexed user, uint16 country, bytes32 identityHash);
     event IdentityRemoved(address indexed user);
 
-    constructor(address initialOwner) Ownable(initialOwner) {}
+    constructor(address initialOwner) {
+        _grantRole(DEFAULT_ADMIN_ROLE, initialOwner);
+    }
 
-    function registerIdentity(address user, uint16 country, bytes32 _identityHash) external onlyOwner {
+    function registerIdentity(address user, uint16 country, bytes32 _identityHash) external onlyRole(DEFAULT_ADMIN_ROLE) {
         require(user != address(0), "Invalid user address");
         require(country > 0 && country <= MAX_COUNTRY_CODE, "Invalid country code");
 
         identities[user] = Identity({
             country: country,
-            isVerified: true,
             identityHash: _identityHash
         });
+        _grantRole(VERIFIED_ROLE, user);
         emit IdentityVerified(user, country, _identityHash);
     }
 
-    function removeIdentity(address user) external onlyOwner {
+    function removeIdentity(address user) external onlyRole(DEFAULT_ADMIN_ROLE) {
         require(user != address(0), "Invalid user address");
+        _revokeRole(VERIFIED_ROLE, user);
         delete identities[user];
         emit IdentityRemoved(user);
     }
 
     function isVerified(address user) external view returns (bool) {
-        return identities[user].isVerified;
+        return hasRole(VERIFIED_ROLE, user);
     }
 }

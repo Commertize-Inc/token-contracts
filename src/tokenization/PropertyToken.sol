@@ -5,11 +5,9 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "../compliance/TokenCompliance.sol";
+import "../compliance/ComplianceEnabled.sol";
 
-contract PropertyToken is ERC20, ERC20Permit, Ownable {
-
-    TokenCompliance public compliance;
+contract PropertyToken is ERC20, ERC20Permit, Ownable, ComplianceEnabled {
 
     struct Snap {
         uint256 id;
@@ -32,7 +30,7 @@ contract PropertyToken is ERC20, ERC20Permit, Ownable {
         address _compliance,
         address _owner
     ) ERC20(_name, _symbol) ERC20Permit(_name) Ownable(_owner) {
-        compliance = TokenCompliance(_compliance);
+        _setCompliance(_compliance);
         _mint(_owner, _supply);
     }
 
@@ -48,15 +46,12 @@ contract PropertyToken is ERC20, ERC20Permit, Ownable {
     }
 
     function setCompliance(address _compliance) external onlyOwner {
-        require(_compliance != address(0), "Invalid compliance address");
-        compliance = TokenCompliance(_compliance);
+        _setCompliance(_compliance);
     }
 
     // Overrides
 
-    function _update(address from, address to, uint256 value) internal override {
-        require(compliance.canTransfer(from, to), "Compliance: Transfer not allowed");
-
+    function _update(address from, address to, uint256 value) internal override canTransfer(from, to) {
         // Capture old values for snapshot if needed
         uint256 currentId = _currentSnapshotId;
 

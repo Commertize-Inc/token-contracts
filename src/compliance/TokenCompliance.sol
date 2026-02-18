@@ -32,25 +32,25 @@ contract TokenCompliance is Ownable {
     }
 
     /**
-     * @dev Checks if a transfer is allowed.
+     * @dev Modifier to enforce compliance checks on transfers.
      * @param from Sender address
      * @param to Receiver address
      */
-    function canTransfer(address from, address to) external view returns (bool) {
+    modifier canTransfer(address from, address to) {
         // Minting (from 0x0)
         if (from == address(0)) {
-            return identityRegistry.isVerified(to) || isExempt[to];
+            require(identityRegistry.isVerified(to) || isExempt[to], "Compliance: Transfer not allowed");
         }
-
         // Burning (to 0x0) - always allowed
-        if (to == address(0)) {
-            return true;
+        else if (to == address(0)) {
+            // No check needed for burning
         }
-
         // Standard Transfer - both must be Verified OR Exempt
-        bool fromOk = identityRegistry.isVerified(from) || isExempt[from];
-        bool toOk = identityRegistry.isVerified(to) || isExempt[to];
-
-        return fromOk && toOk;
+        else {
+            bool fromOk = identityRegistry.isVerified(from) || isExempt[from];
+            bool toOk = identityRegistry.isVerified(to) || isExempt[to];
+            require(fromOk && toOk, "Compliance: Transfer not allowed");
+        }
+        _;
     }
 }
