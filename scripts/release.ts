@@ -1,14 +1,14 @@
-const { execSync } = require("child_process");
-const prompts = require("prompts");
-const chalk = require("chalk");
-const fs = require("fs");
-const path = require("path");
+import { execSync } from "node:child_process";
+import prompts from "prompts";
+import chalk from "chalk";
+import fs from "node:fs";
+import path from "node:path";
 
 async function main() {
 	console.log(chalk.bold.blue("\n📦 Nexus Release Helper\n"));
 
 	// 1. Checks deployment.json existence.
-	const deploymentPath = path.join(__dirname, "../deployment.json");
+	const deploymentPath = path.join(import.meta.dirname, "../deployment.json");
 	if (!fs.existsSync(deploymentPath)) {
 		console.warn(
 			chalk.yellow(
@@ -23,7 +23,8 @@ async function main() {
 		});
 		if (!continueRelease) return;
 	} else {
-		const deployment = require(deploymentPath);
+		const raw = fs.readFileSync(deploymentPath, "utf-8");
+		const deployment = JSON.parse(raw);
 		console.log(
 			chalk.green(
 				`✅ deployment.json found (Network: ${deployment.network?.name || "Unknown"})`
@@ -50,8 +51,8 @@ async function main() {
 	}
 
 	// 3. Bumps Version & Tag.
-	const packageJsonPath = path.join(__dirname, "../package.json");
-	const pkg = require(packageJsonPath);
+	const packageJsonPath = path.join(import.meta.dirname, "../package.json");
+	const pkg = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
 	console.log(`Current version: ${chalk.bold(pkg.version)}`);
 
 	const { bump } = await prompts({
@@ -73,7 +74,8 @@ async function main() {
 		// Bump version in package.json
 		execSync(`npm version ${bump} --no-git-tag-version`);
 
-		version = require(packageJsonPath).version;
+		const updatedPkg = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
+		version = updatedPkg.version;
 
 		// Commits version bump in monorepo.
 		execSync(`git add package.json`);
@@ -89,13 +91,11 @@ async function main() {
 
 	try {
 		// Go to root of monorepo to run git subtree
-		// Resolves project root.
-		const rootDir = path.resolve(__dirname, "../../");
+		const rootDir = path.resolve(import.meta.dirname, "../../");
 
 		// 1. Splits subtree into unique branch.
 		const splitBranch = `nexus-release-v${version}-${Date.now()}`;
 		console.log("  Running git subtree split...");
-		// Creates split branch containing 'packages/token-contracts' history.
 		execSync(
 			`git subtree split --prefix=packages/token-contracts -b ${splitBranch}`,
 			{
@@ -114,7 +114,6 @@ async function main() {
 		// 3. Tag on remote?
 		if (bump !== "none") {
 			console.log(`  Pushing tag v${version}...`);
-			// Tags and pushes split branch locally.
 			execSync(`git tag v${version} ${splitBranch}`, { cwd: rootDir });
 			execSync(`git push ${REMOTE_URL} v${version}`, {
 				cwd: rootDir,
@@ -132,7 +131,7 @@ async function main() {
 		console.log(
 			chalk.green(`\n✅ Successfully deployed v${version} to private remote!`)
 		);
-	} catch (e) {
+	} catch (e: any) {
 		console.error(chalk.red("\n❌ Deployment failed:"), e.message);
 	}
 }

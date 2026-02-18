@@ -9,6 +9,8 @@ import ListingEscrowArtifact from "./artifacts/src/finance/ListingEscrow.sol/Lis
 import StakingPoolArtifact from "./artifacts/src/finance/StakingPool.sol/StakingPool.json";
 import PropertyFactoryArtifact from "./artifacts/src/tokenization/PropertyFactory.sol/PropertyFactory.json";
 import PropertyTokenArtifact from "./artifacts/src/tokenization/PropertyToken.sol/PropertyToken.json";
+import PropertyTokenAdapterArtifact from "./artifacts/src/tokenization/PropertyTokenAdapter.sol/PropertyTokenAdapter.json";
+import PropertyTokenOFTArtifact from "./artifacts/src/tokenization/PropertyTokenOFT.sol/PropertyTokenOFT.json";
 
 // Utils imports
 import {
@@ -98,7 +100,7 @@ export const Deployment = deploymentConfig;
 export const USDC_ADDRESS =
 	(CONTRACTS as any)?.USDC ||
 	getEnv("USDC_ADDRESS") ||
-	"0x0000000000000000000000000000000000068cda";
+	"";
 
 // Helper for USDC address fallback which isn't in utils/onchain
 function getEnv(key: string) {
@@ -266,11 +268,19 @@ export const ABIS = {
 	StakingPool: StakingPoolArtifact.abi,
 	PropertyFactory: PropertyFactoryArtifact.abi,
 	PropertyToken: PropertyTokenArtifact.abi,
+	PropertyTokenAdapter: PropertyTokenAdapterArtifact.abi,
+	PropertyTokenOFT: PropertyTokenOFTArtifact.abi,
 	ListingEscrow: ListingEscrowArtifact.abi,
 };
 
 /** ListingEscrow ABI for deposit/decode (includes SafeERC20FailedOperation and other errors). */
 export const ListingEscrowAbi = ListingEscrowArtifact.abi;
+
+/** Full artifacts (ABI + bytecode) for backend deployment via ContractFactory. */
+export { default as PropertyTokenAdapterArtifact } from "./artifacts/src/tokenization/PropertyTokenAdapter.sol/PropertyTokenAdapter.json";
+export { default as PropertyTokenOFTArtifact } from "./artifacts/src/tokenization/PropertyTokenOFT.sol/PropertyTokenOFT.json";
+export { default as IdentityRegistryArtifact } from "./artifacts/src/compliance/IdentityRegistry.sol/IdentityRegistry.json";
+export { default as TokenComplianceArtifact } from "./artifacts/src/compliance/TokenCompliance.sol/TokenCompliance.json";
 
 /** Standard Solidity Error(string) ABI for decoding require()/revert() messages. */
 export const ErrorStringAbi = [
@@ -313,3 +323,88 @@ export const getEscrowContract = (
 	address: string,
 	runner: ethers.ContractRunner
 ) => new ethers.Contract(address, ABIS.ListingEscrow, runner);
+
+// ------------------------------------------------------------------
+// LAYERZERO BRIDGE CONFIGURATION
+// ------------------------------------------------------------------
+
+/**
+ * Configuration for a LayerZero bridge-enabled chain.
+ *
+ * The home chain (Hedera) holds the canonical PropertyToken and a lock-and-mint
+ * adapter, while each destination chain runs a PropertyTokenOFT (mint/burn).
+ */
+export interface BridgeChainConfig {
+	/** Internal identifier used in deployment files (e.g. `"base-sepolia"`). */
+	name: string;
+	/** Human-readable label shown in the dashboard UI. */
+	displayName: string;
+	/** EVM chain ID (e.g. 296 for Hedera testnet, 84532 for Base Sepolia). */
+	chainId: number;
+	/** LayerZero v2 endpoint ID for this chain. */
+	lzEid: number;
+	/** Address of the LayerZero endpoint contract on this chain. */
+	lzEndpoint: string;
+	/** JSON-RPC URL used by the backend and dashboard to interact with this chain. */
+	rpcUrl: string;
+	/** Base URL of the chain's block explorer (no trailing slash). */
+	blockExplorerUrl: string;
+	/** Native gas token metadata. */
+	nativeCurrency: { name: string; symbol: string; decimals: number };
+	/** `true` for the home chain where canonical PropertyTokens live. */
+	isHome: boolean;
+	/** Maps to `SupportedNetwork` enum value (e.g. `"BASE"`). Omitted for the home chain. */
+	network?: string;
+}
+
+/**
+ * Known bridge-enabled chains. The home chain is always first.
+ * Destination chain deployment addresses are loaded separately.
+ */
+export const BRIDGE_CHAINS: BridgeChainConfig[] = [
+	{
+		name: "hedera-testnet",
+		displayName: "Hedera (Home)",
+		chainId: 296,
+		lzEid: 40285,
+		lzEndpoint: "0xbD672D1562Dd32C23B563C989d8140122483631d",
+		rpcUrl: "https://testnet.hashio.io/api",
+		blockExplorerUrl: "https://hashscan.io/testnet",
+		nativeCurrency: { name: "HBAR", symbol: "HBAR", decimals: 18 },
+		isHome: true,
+	},
+	{
+		name: "base-sepolia",
+		displayName: "Base",
+		chainId: 84532,
+		lzEid: 40245,
+		lzEndpoint: "0x6EDCE65403992e310A62460808c4b910D972f10f",
+		rpcUrl: "https://sepolia.base.org",
+		blockExplorerUrl: "https://sepolia.basescan.org",
+		nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
+		isHome: false,
+		network: "BASE",
+	},
+];
+
+/** Bridge chain name → SupportedNetwork (e.g. "base-sepolia" → "BASE") */
+export const CHAIN_TO_NETWORK: Record<string, string> = Object.fromEntries(
+	BRIDGE_CHAINS.filter((ch) => ch.network).map((ch) => [ch.name, ch.network!])
+);
+
+/** SupportedNetwork → bridge chain name (e.g. "BASE" → "base-sepolia") */
+export const NETWORK_TO_CHAIN: Record<string, string> = Object.fromEntries(
+	Object.entries(CHAIN_TO_NETWORK).map(([chain, network]) => [network, chain])
+);
+
+/** Load a destination chain's deployment config (OFT addresses, compliance, etc.) */
+export async function loadBridgeDeployment(
+	chainName: string
+): Promise<DeploymentConfig | null> {
+	try {
+		const mod = await import(`./deployment.${chainName.replace(/-/g, "_")}.json`);
+		return (mod as any).default ?? (mod as any);
+	} catch {
+		return null;
+	}
+}
