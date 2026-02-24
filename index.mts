@@ -357,35 +357,55 @@ export interface BridgeChainConfig {
 	network?: string;
 }
 
-/**
- * Known bridge-enabled chains. The home chain is always first.
- * Destination chain deployment addresses are loaded separately.
- */
-export const BRIDGE_CHAINS: BridgeChainConfig[] = [
+import { NETWORKS } from "./networks";
+
+/** UI-only metadata for bridge chains, keyed by networks.ts key. */
+const BRIDGE_UI_META: {
+	networkKey: string;
+	/** Override name in the bridge config (e.g. "hedera-testnet" instead of "testnet"). */
+	bridgeName?: string;
+	displayName: string;
+	nativeCurrency: { name: string; symbol: string; decimals: number };
+	isHome: boolean;
+	network?: string;
+}[] = [
 	{
-		name: "hedera-testnet",
+		networkKey: "testnet",
+		bridgeName: "hedera-testnet",
 		displayName: "Hedera (Home)",
-		chainId: 296,
-		lzEid: 40285,
-		lzEndpoint: "0xbD672D1562Dd32C23B563C989d8140122483631d",
-		rpcUrl: "https://testnet.hashio.io/api",
-		blockExplorerUrl: "https://hashscan.io/testnet",
 		nativeCurrency: { name: "HBAR", symbol: "HBAR", decimals: 18 },
 		isHome: true,
 	},
 	{
-		name: "base-sepolia",
+		networkKey: "base-sepolia",
 		displayName: "Base",
-		chainId: 84532,
-		lzEid: 40245,
-		lzEndpoint: "0x6EDCE65403992e310A62460808c4b910D972f10f",
-		rpcUrl: "https://sepolia.base.org",
-		blockExplorerUrl: "https://sepolia.basescan.org",
 		nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
 		isHome: false,
 		network: "BASE",
 	},
 ];
+
+/**
+ * Known bridge-enabled chains. The home chain is always first.
+ * Destination chain deployment addresses are loaded separately.
+ */
+export const BRIDGE_CHAINS: BridgeChainConfig[] = BRIDGE_UI_META.map((ui) => {
+	const net = NETWORKS[ui.networkKey];
+	if (!net) throw new Error(`Unknown network key "${ui.networkKey}" in BRIDGE_UI_META`);
+	if (!net.lzEndpoint || !net.lzEid) throw new Error(`Network "${ui.networkKey}" missing LZ config`);
+	return {
+		name: ui.bridgeName ?? net.name,
+		displayName: ui.displayName,
+		chainId: net.chainId,
+		lzEid: net.lzEid,
+		lzEndpoint: net.lzEndpoint,
+		rpcUrl: net.rpcUrl,
+		blockExplorerUrl: net.blockExplorerUrl,
+		nativeCurrency: ui.nativeCurrency,
+		isHome: ui.isHome,
+		...(ui.network ? { network: ui.network } : {}),
+	};
+});
 
 /** Bridge chain name → SupportedNetwork (e.g. "base-sepolia" → "BASE") */
 export const CHAIN_TO_NETWORK: Record<string, string> = Object.fromEntries(

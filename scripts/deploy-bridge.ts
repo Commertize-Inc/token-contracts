@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import prompts from "prompts";
 import chalk from "chalk";
-import { getNetworkMeta } from "../hardhat.config.js";
+import { getNetworkMeta } from "../hardhat.config";
 
 /**
  * LayerZero Bridge Deployment Script
@@ -51,19 +51,18 @@ const chainId = Number(
 	(await deployer.provider.getNetwork()).chainId
 );
 const meta = getNetworkMeta(networkName);
-const rpcUrl = (hre.network as any).config?.url || "http://localhost:8545";
 
 console.log(`Deployer: ${chalk.yellow(deployer.address)}`);
 const balance = await deployer.provider.getBalance(deployer.address);
 console.log(`Balance: ${chalk.yellow(ethers.formatEther(balance))} ${meta.currency || "ETH"}`);
 console.log(`Network: ${chalk.magenta(networkName)} (ChainID: ${chainId})\n`);
 
-if (!meta.LZ_ENDPOINT || !meta.LZ_EID) {
+if (!meta.lzEndpoint || !meta.lzEid) {
 	console.error(chalk.red(`No LayerZero config in network metadata for: ${networkName}`));
 	process.exit(1);
 }
 
-const lzConfig = { eid: meta.LZ_EID, endpoint: meta.LZ_ENDPOINT };
+const lzConfig = { eid: meta.lzEid, endpoint: meta.lzEndpoint };
 
 console.log(`LZ Endpoint: ${chalk.cyan(lzConfig.endpoint)}`);
 console.log(`LZ EID: ${chalk.cyan(String(lzConfig.eid))}\n`);
@@ -103,8 +102,8 @@ context.deploymentConfig.contracts = context.deployedAddresses;
 context.deploymentConfig.timestamp = new Date().toISOString();
 context.deploymentConfig.network = {
 	name: networkName,
-	chainId,
-	rpc: rpcUrl,
+	chainId: meta.chainId,
+	rpc: meta.rpcUrl,
 	currency: meta.currency,
 	blockExplorerUrl: meta.blockExplorerUrl,
 };

@@ -3,7 +3,7 @@ import { ethers as ethersLib } from "ethers";
 import fs from "node:fs";
 import path from "node:path";
 import chalk from "chalk";
-import { getNetworkMeta } from "../hardhat.config.js";
+import { getNetworkMeta } from "../hardhat.config";
 
 /**
  * Full Bridge Deployment Script (Non-Interactive)
@@ -104,8 +104,8 @@ console.log(chalk.bold.blue("\n🌉 Full Bridge Deployment — Hedera Testnet �
 const homeMeta = getNetworkMeta("testnet");
 const destMeta = getNetworkMeta("base-sepolia");
 
-if (!homeMeta.LZ_ENDPOINT || !homeMeta.LZ_EID) throw new Error("Missing LZ config for testnet");
-if (!destMeta.LZ_ENDPOINT || !destMeta.LZ_EID) throw new Error("Missing LZ config for base-sepolia");
+if (!homeMeta.lzEndpoint || !homeMeta.lzEid) throw new Error("Missing LZ config for testnet");
+if (!destMeta.lzEndpoint || !destMeta.lzEid) throw new Error("Missing LZ config for base-sepolia");
 
 // ═══════════════════════════════════════════════════════════════
 // PHASE 1: Connect to Hedera testnet
@@ -192,7 +192,7 @@ if (!existingAdapter) {
 	console.log(`  Deploying adapter for ${propertyTokenAddress}...`);
 	const adapter = await AdapterFactory.deploy(
 		propertyTokenAddress,
-		homeMeta.LZ_ENDPOINT,
+		homeMeta.lzEndpoint,
 		deployer.address,
 		homeContracts.TokenCompliance
 	);
@@ -236,13 +236,13 @@ if (!homeDeployment.bridgeContracts[propertyTokenAddress]) {
 	homeDeployment.bridgeContracts[propertyTokenAddress] = {};
 }
 homeDeployment.bridgeContracts[propertyTokenAddress].adapter = adapterAddress;
-homeDeployment.layerZero = { endpoint: homeMeta.LZ_ENDPOINT!, eid: homeMeta.LZ_EID! };
+homeDeployment.layerZero = { endpoint: homeMeta.lzEndpoint!, eid: homeMeta.lzEid! };
 homeDeployment.network = {
-	name: "testnet",
-	chainId: 296,
-	rpc: "https://testnet.hashio.io/api",
-	currency: "HBAR",
-	blockExplorerUrl: "https://hashscan.io/testnet",
+	name: homeMeta.name,
+	chainId: homeMeta.chainId,
+	rpc: homeMeta.rpcUrl,
+	currency: homeMeta.currency,
+	blockExplorerUrl: homeMeta.blockExplorerUrl,
 };
 saveDeployment("testnet", homeDeployment);
 console.log();
@@ -253,8 +253,7 @@ console.log();
 
 console.log(chalk.bold.cyan("Phase 6: Connect to Base Sepolia"));
 
-const baseRpc = "https://sepolia.base.org";
-const destProvider = new ethersLib.JsonRpcProvider(baseRpc);
+const destProvider = new ethersLib.JsonRpcProvider(destMeta.rpcUrl);
 
 const privateKey = process.env.EVM_PRIVATE_KEY;
 if (!privateKey) {
@@ -285,13 +284,13 @@ console.log(`  Starting nonce: ${destNonce}\n`);
 function saveDestState() {
 	destDeployment.contracts = destContracts;
 	destDeployment.network = {
-		name: "base-sepolia",
-		chainId: 84532,
-		rpc: baseRpc,
-		currency: "ETH",
-		blockExplorerUrl: "https://sepolia.basescan.org",
+		name: destMeta.name,
+		chainId: destMeta.chainId,
+		rpc: destMeta.rpcUrl,
+		currency: destMeta.currency,
+		blockExplorerUrl: destMeta.blockExplorerUrl,
 	};
-	destDeployment.layerZero = { endpoint: destMeta.LZ_ENDPOINT!, eid: destMeta.LZ_EID! };
+	destDeployment.layerZero = { endpoint: destMeta.lzEndpoint!, eid: destMeta.lzEid! };
 	saveDeployment("base-sepolia", destDeployment);
 }
 
@@ -379,7 +378,7 @@ if (!destContracts.PropertyTokenOFT) {
 	const oft = await OFTFactory.deploy(
 		PROPERTY_NAME,
 		PROPERTY_SYMBOL,
-		destMeta.LZ_ENDPOINT,
+		destMeta.lzEndpoint,
 		destSigner.address,
 		0, // Supply = 0 (tokens arrive via bridge only)
 		destTCAddress,
@@ -408,11 +407,11 @@ const oftBytes32 = ethersLib.zeroPadValue(oftAddress, 32);
 
 // Check & set adapter.setPeer(destEid, OFT)
 const adapter = await ethers.getContractAt("PropertyTokenAdapter", adapterAddress, deployer);
-const currentAdapterPeer = await adapter.peers(destMeta.LZ_EID);
+const currentAdapterPeer = await adapter.peers(destMeta.lzEid);
 
 if (currentAdapterPeer === ethersLib.ZeroHash) {
-	console.log(`  Setting adapter peer → OFT (EID ${destMeta.LZ_EID})...`);
-	const tx = await adapter.setPeer(destMeta.LZ_EID, oftBytes32);
+	console.log(`  Setting adapter peer → OFT (EID ${destMeta.lzEid})...`);
+	const tx = await adapter.setPeer(destMeta.lzEid, oftBytes32);
 	await tx.wait();
 	console.log(chalk.green("  ✓ Adapter peer set"));
 } else {
@@ -422,11 +421,11 @@ if (currentAdapterPeer === ethersLib.ZeroHash) {
 // Check & set OFT.setPeer(homeEid, adapter)
 const oftArtifact2 = loadArtifact("PropertyTokenOFT", "tokenization/PropertyTokenOFT.sol");
 const oftContract = new ethersLib.Contract(oftAddress, oftArtifact2.abi, destSigner);
-const currentOFTPeer = await oftContract.peers(homeMeta.LZ_EID);
+const currentOFTPeer = await oftContract.peers(homeMeta.lzEid);
 
 if (currentOFTPeer === ethersLib.ZeroHash) {
-	console.log(`  Setting OFT peer → Adapter (EID ${homeMeta.LZ_EID})...`);
-	const tx = await oftContract.setPeer(homeMeta.LZ_EID, adapterBytes32, { nonce: destNonce++ });
+	console.log(`  Setting OFT peer → Adapter (EID ${homeMeta.lzEid})...`);
+	const tx = await oftContract.setPeer(homeMeta.lzEid, adapterBytes32, { nonce: destNonce++ });
 	await tx.wait();
 	console.log(chalk.green("  ✓ OFT peer set"));
 } else {
@@ -445,8 +444,8 @@ const optionsHex = encodeEnforcedOptions(gasLimit);
 
 // Adapter enforced options (for messages going to dest)
 try {
-	console.log(`  Setting enforced options on Adapter (→ EID ${destMeta.LZ_EID}, ${MIN_DST_GAS} gas)...`);
-	const enforcedOpts = [{ eid: destMeta.LZ_EID, msgType: 1, options: optionsHex }];
+	console.log(`  Setting enforced options on Adapter (→ EID ${destMeta.lzEid}, ${MIN_DST_GAS} gas)...`);
+	const enforcedOpts = [{ eid: destMeta.lzEid, msgType: 1, options: optionsHex }];
 	const tx = await adapter.setEnforcedOptions(enforcedOpts);
 	await tx.wait();
 	console.log(chalk.green("  ✓ Adapter enforced options set"));
@@ -460,8 +459,8 @@ try {
 
 // OFT enforced options (for messages going to home)
 try {
-	console.log(`  Setting enforced options on OFT (→ EID ${homeMeta.LZ_EID}, ${MIN_DST_GAS} gas)...`);
-	const enforcedOpts = [{ eid: homeMeta.LZ_EID, msgType: 1, options: optionsHex }];
+	console.log(`  Setting enforced options on OFT (→ EID ${homeMeta.lzEid}, ${MIN_DST_GAS} gas)...`);
+	const enforcedOpts = [{ eid: homeMeta.lzEid, msgType: 1, options: optionsHex }];
 	const tx = await oftContract.setEnforcedOptions(enforcedOpts, { nonce: destNonce++ });
 	await tx.wait();
 	console.log(chalk.green("  ✓ OFT enforced options set"));
@@ -486,13 +485,13 @@ if (!destDeployment.bridgeContracts[propertyTokenAddress]) {
 }
 destDeployment.bridgeContracts[propertyTokenAddress].oft = oftAddress;
 destDeployment.contracts = destContracts;
-destDeployment.layerZero = { endpoint: destMeta.LZ_ENDPOINT!, eid: destMeta.LZ_EID! };
+destDeployment.layerZero = { endpoint: destMeta.lzEndpoint!, eid: destMeta.lzEid! };
 destDeployment.network = {
-	name: "base-sepolia",
-	chainId: 84532,
-	rpc: baseRpc,
-	currency: "ETH",
-	blockExplorerUrl: "https://sepolia.basescan.org",
+	name: destMeta.name,
+	chainId: destMeta.chainId,
+	rpc: destMeta.rpcUrl,
+	currency: destMeta.currency,
+	blockExplorerUrl: destMeta.blockExplorerUrl,
 };
 saveDeployment("base-sepolia", destDeployment);
 
@@ -505,17 +504,17 @@ console.log(chalk.bold("Home Chain (Hedera Testnet):"));
 console.log(`  PropertyToken:       ${propertyTokenAddress}`);
 console.log(`  PropertyTokenAdapter:${adapterAddress}`);
 console.log(`  TokenCompliance:     ${homeContracts.TokenCompliance}`);
-console.log(`  LZ Endpoint:         ${homeMeta.LZ_ENDPOINT} (EID ${homeMeta.LZ_EID})`);
+console.log(`  LZ Endpoint:         ${homeMeta.lzEndpoint} (EID ${homeMeta.lzEid})`);
 console.log();
 console.log(chalk.bold("Destination Chain (Base Sepolia):"));
 console.log(`  IdentityRegistry:    ${destContracts.IdentityRegistry}`);
 console.log(`  TokenCompliance:     ${destContracts.TokenCompliance}`);
 console.log(`  PropertyTokenOFT:    ${oftAddress}`);
-console.log(`  LZ Endpoint:         ${destMeta.LZ_ENDPOINT} (EID ${destMeta.LZ_EID})`);
+console.log(`  LZ Endpoint:         ${destMeta.lzEndpoint} (EID ${destMeta.lzEid})`);
 console.log();
 console.log(chalk.bold("Bridge Wiring:"));
-console.log(`  Adapter peer → OFT (EID ${destMeta.LZ_EID})`);
-console.log(`  OFT peer → Adapter (EID ${homeMeta.LZ_EID})`);
+console.log(`  Adapter peer → OFT (EID ${destMeta.lzEid})`);
+console.log(`  OFT peer → Adapter (EID ${homeMeta.lzEid})`);
 console.log(`  Enforced gas: ${MIN_DST_GAS} for lzReceive`);
 console.log();
 

@@ -13,7 +13,7 @@ import { expect } from "chai";
 import hre from "hardhat";
 import fs from "node:fs";
 import path from "node:path";
-import { getNetworkMeta } from "../hardhat.config.js";
+import { getNetworkMeta } from "../hardhat.config";
 import { describe, before, it, beforeEach, after } from "node:test";
 
 const { ethers, networkName } = await hre.network.connect();
@@ -213,19 +213,19 @@ describe(`Testnet Validation — ${networkName} (chainId ${deployment.network?.c
 		});
 
 		it("LZ endpoint is correct", async function () {
-			if (!meta.LZ_ENDPOINT) { this.skip(); return; }
+			if (!meta.lzEndpoint) { this.skip(); return; }
 			const endpoint = await adapter.endpoint();
-			expect(endpoint.toLowerCase()).to.equal(meta.LZ_ENDPOINT!.toLowerCase());
+			expect(endpoint.toLowerCase()).to.equal(meta.lzEndpoint!.toLowerCase());
 		});
 
 		it("Has peer configured for destination chain", async function () {
-			if (!meta.LZ_EID) { this.skip(); return; }
+			if (!meta.lzEid) { this.skip(); return; }
 			const destMeta = isHomeChain ? getNetworkMeta("base-sepolia") : getNetworkMeta("testnet");
-			if (!destMeta.LZ_EID) { this.skip(); return; }
+			if (!destMeta.lzEid) { this.skip(); return; }
 
-			const peer = await adapter.peers(destMeta.LZ_EID);
+			const peer = await adapter.peers(destMeta.lzEid);
 			const peerIsSet = peer !== ethers.ZeroHash;
-			console.log(`      Peer for EID ${destMeta.LZ_EID}: ${peerIsSet ? peer : "(not set)"}`);
+			console.log(`      Peer for EID ${destMeta.lzEid}: ${peerIsSet ? peer : "(not set)"}`);
 			expect(peerIsSet, "Peer should be configured for destination chain").to.be.true;
 		});
 	});
@@ -276,18 +276,18 @@ describe(`Testnet Validation — ${networkName} (chainId ${deployment.network?.c
 		});
 
 		it("LZ endpoint is correct", async function () {
-			if (!meta.LZ_ENDPOINT) { this.skip(); return; }
+			if (!meta.lzEndpoint) { this.skip(); return; }
 			const endpoint = await oft.endpoint();
-			expect(endpoint.toLowerCase()).to.equal(meta.LZ_ENDPOINT!.toLowerCase());
+			expect(endpoint.toLowerCase()).to.equal(meta.lzEndpoint!.toLowerCase());
 		});
 
 		it("Has peer configured for home chain", async function () {
 			const homeMeta = getNetworkMeta("testnet");
-			if (!homeMeta.LZ_EID) { this.skip(); return; }
+			if (!homeMeta.lzEid) { this.skip(); return; }
 
-			const peer = await oft.peers(homeMeta.LZ_EID);
+			const peer = await oft.peers(homeMeta.lzEid);
 			const peerIsSet = peer !== ethers.ZeroHash;
-			console.log(`      Peer for EID ${homeMeta.LZ_EID}: ${peerIsSet ? peer : "(not set)"}`);
+			console.log(`      Peer for EID ${homeMeta.lzEid}: ${peerIsSet ? peer : "(not set)"}`);
 			expect(peerIsSet, "Peer should be configured for home chain").to.be.true;
 		});
 
@@ -328,10 +328,10 @@ describe(`Testnet Validation — ${networkName} (chainId ${deployment.network?.c
 
 	// ─── LayerZero Config Validation ──────────────────────────
 
-	describe("LayerZero Configuration", { skip: !meta.LZ_ENDPOINT }, function () {
+	describe("LayerZero Configuration", { skip: !meta.lzEndpoint }, function () {
 		it("LZ endpoint has deployed code", async function () {
-			const code = await deployer.provider.getCode(meta.LZ_ENDPOINT!);
-			expect(code).to.not.equal("0x", `LZ endpoint ${meta.LZ_ENDPOINT} has no code`);
+			const code = await deployer.provider.getCode(meta.lzEndpoint!);
+			expect(code).to.not.equal("0x", `LZ endpoint ${meta.lzEndpoint} has no code`);
 		});
 
 		it("Deployment JSON LZ config matches network-meta (if present)", async function () {
@@ -340,14 +340,14 @@ describe(`Testnet Validation — ${networkName} (chainId ${deployment.network?.c
 				this.skip();
 				return;
 			}
-			if (deployment.layerZero.endpoint.toLowerCase() !== meta.LZ_ENDPOINT!.toLowerCase()) {
+			if (deployment.layerZero.endpoint.toLowerCase() !== meta.lzEndpoint!.toLowerCase()) {
 				console.log(`      ⚠ deployment.json endpoint: ${deployment.layerZero.endpoint}`);
-				console.log(`        network-meta endpoint:    ${meta.LZ_ENDPOINT}`);
+				console.log(`        network-meta endpoint:    ${meta.lzEndpoint}`);
 				console.log("        → Will be corrected on next bridge deploy");
 			}
-			if (deployment.layerZero.eid !== meta.LZ_EID) {
+			if (deployment.layerZero.eid !== meta.lzEid) {
 				console.log(`      ⚠ deployment.json EID: ${deployment.layerZero.eid}`);
-				console.log(`        network-meta EID:    ${meta.LZ_EID}`);
+				console.log(`        network-meta EID:    ${meta.lzEid}`);
 				console.log("        → Will be corrected on next bridge deploy");
 			}
 		});
@@ -360,12 +360,12 @@ describe(`Testnet Validation — ${networkName} (chainId ${deployment.network?.c
 			if (!isHomeChain || !hasBridge || !firstAdapterAddress) { this.skip(); return; }
 
 			const destMeta = getNetworkMeta("base-sepolia");
-			if (!destMeta.LZ_EID) { this.skip(); return; }
+			if (!destMeta.lzEid) { this.skip(); return; }
 
 			const adapter = await ethers.getContractAt("PropertyTokenAdapter", firstAdapterAddress);
 
 			const sendParam = {
-				dstEid: destMeta.LZ_EID,
+				dstEid: destMeta.lzEid,
 				to: ethers.zeroPadValue(deployer.address, 32),
 				amountLD: ethers.parseEther("1"),
 				minAmountLD: ethers.parseEther("1"),
@@ -393,12 +393,12 @@ describe(`Testnet Validation — ${networkName} (chainId ${deployment.network?.c
 			if (isHomeChain || !contracts.PropertyTokenOFT) { this.skip(); return; }
 
 			const homeMeta = getNetworkMeta("testnet");
-			if (!homeMeta.LZ_EID) { this.skip(); return; }
+			if (!homeMeta.lzEid) { this.skip(); return; }
 
 			const oft = await ethers.getContractAt("PropertyTokenOFT", contracts.PropertyTokenOFT);
 
 			const sendParam = {
-				dstEid: homeMeta.LZ_EID,
+				dstEid: homeMeta.lzEid,
 				to: ethers.zeroPadValue(deployer.address, 32),
 				amountLD: ethers.parseEther("1"),
 				minAmountLD: ethers.parseEther("1"),
@@ -431,9 +431,9 @@ describe(`Testnet Validation — ${networkName} (chainId ${deployment.network?.c
 		console.log(`    Role:       ${isHomeChain ? "Home Chain" : "Destination Chain"}`);
 		console.log(`    Contracts:  ${Object.keys(contracts).length}`);
 		console.log(`    Bridge:     ${hasBridge ? `${Object.keys(bridgeContracts).length} property token(s)` : "not deployed"}`);
-		if (meta.LZ_ENDPOINT) {
-			console.log(`    LZ EID:     ${meta.LZ_EID}`);
-			console.log(`    LZ Endpoint:${meta.LZ_ENDPOINT}`);
+		if (meta.lzEndpoint) {
+			console.log(`    LZ EID:     ${meta.lzEid}`);
+			console.log(`    LZ Endpoint:${meta.lzEndpoint}`);
 		}
 		console.log("");
 	});

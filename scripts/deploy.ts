@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import prompts from "prompts";
 import chalk from "chalk";
-import { getNetworkMeta } from "../hardhat.config.js";
+import { getNetworkMeta } from "../hardhat.config";
 
 interface DeploymentConfig {
 	contracts: Record<string, string>;
@@ -40,7 +40,6 @@ const chainId = Number(
 );
 
 const meta = getNetworkMeta(networkName);
-const rpcUrl = (hre.network as any).config?.url || "http://localhost:8545";
 
 console.log(`Network: ${chalk.magenta(networkName)} (ChainID: ${chainId})`);
 
@@ -73,7 +72,7 @@ const context: DeployContext = {
 };
 
 // USDC is not deployed here; pull the address from network metadata
-const usdcAddress = meta.USDC_ADDRESS;
+const usdcAddress = meta.usdcAddress;
 if (usdcAddress) {
 	context.deployedAddresses.USDC = usdcAddress;
 	context.deploymentConfig.contracts = context.deploymentConfig.contracts || {};
@@ -237,8 +236,8 @@ if (selectedContracts.has("DividendVault")) {
 context.deploymentConfig.timestamp = new Date().toISOString();
 context.deploymentConfig.network = {
 	name: networkName,
-	chainId: chainId,
-	rpc: rpcUrl,
+	chainId: meta.chainId,
+	rpc: meta.rpcUrl,
 	currency: meta.currency,
 	blockExplorerUrl: meta.blockExplorerUrl,
 };
