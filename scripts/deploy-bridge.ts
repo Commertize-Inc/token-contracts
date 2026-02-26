@@ -44,7 +44,7 @@ interface DeployContext {
 
 const { ethers, networkName } = await hre.network.connect();
 
-console.log(chalk.bold.blue("\n🌉 Commertize Bridge Deployment CLI\n"));
+console.log(chalk.bold.blue("\nCommertize Bridge Deployment CLI\n"));
 
 const [deployer] = await ethers.getSigners();
 const chainId = Number(
@@ -113,17 +113,17 @@ context.deploymentConfig.layerZero = {
 };
 
 fs.writeFileSync(deploymentPath, JSON.stringify(context.deploymentConfig, null, 2));
-console.log(chalk.bold.green(`\n✅ Saved to ${deploymentFile}`));
+console.log(chalk.bold.green(`\nSaved to ${deploymentFile}`));
 
 async function deployHomeChain(ctx: DeployContext, lz: { eid: number; endpoint: string }) {
-	console.log(chalk.bold("\n📍 Home Chain Deployment (Adapter)\n"));
+	console.log(chalk.bold("\nHome Chain Deployment (Adapter)\n"));
 
 	const { deployer, deployedAddresses } = ctx;
 
 	// Check prerequisites
 	const compliance = deployedAddresses.TokenCompliance;
 	if (!compliance) {
-		console.error(chalk.red("❌ TokenCompliance not found. Deploy core contracts first."));
+		console.error(chalk.red("Error: TokenCompliance not found. Deploy core contracts first."));
 		process.exit(1);
 	}
 
@@ -192,12 +192,12 @@ async function deployHomeChain(ctx: DeployContext, lz: { eid: number; endpoint: 
 		await configurePeer(adapter, destEid, peerAddress, "Adapter");
 		await configureEnforcedOptions(adapter, destEid, "Adapter");
 	} else {
-		console.log(chalk.yellow("\n⚠️  Skipping peer setup. Run this script again to configure peers later."));
+		console.log(chalk.yellow("\nSkipping peer setup. Run this script again to configure peers later."));
 	}
 }
 
 async function deployDestinationChain(ctx: DeployContext, lz: { eid: number; endpoint: string }) {
-	console.log(chalk.bold("\n🌐 Destination Chain Deployment (OFT)\n"));
+	console.log(chalk.bold("\nDestination Chain Deployment (OFT)\n"));
 
 	const { deployer, deployedAddresses } = ctx;
 
@@ -218,7 +218,7 @@ async function deployDestinationChain(ctx: DeployContext, lz: { eid: number; end
 			await tx.wait();
 			console.log(`  └─ ${chalk.green("Deployer registered as verified identity")}`);
 		} catch (err: any) {
-			console.warn(chalk.yellow(`  ⚠️ Failed to register deployer: ${err.message}`));
+			console.warn(chalk.yellow(`  Warning: Failed to register deployer: ${err.message}`));
 		}
 	}
 
@@ -308,10 +308,10 @@ async function deployDestinationChain(ctx: DeployContext, lz: { eid: number; end
 		await configurePeer(oft, srcEid, peerAddress, "OFT");
 		await configureEnforcedOptions(oft, srcEid, "OFT");
 	} else {
-		console.log(chalk.yellow("\n⚠️  Skipping peer setup. Run this script again to configure peers later."));
+		console.log(chalk.yellow("\nSkipping peer setup. Run this script again to configure peers later."));
 	}
 
-	console.log(chalk.bold.cyan("\n📋 Next Steps:"));
+	console.log(chalk.bold.cyan("\nNext Steps:"));
 	console.log(`  1. On the home chain, run: adapter.setPeer(${lz.eid}, ${oftAddress})`);
 	console.log(`  2. Verify the OFT at ${oftAddress} on the block explorer`);
 }

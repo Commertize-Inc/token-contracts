@@ -5,14 +5,14 @@ import fs from "node:fs";
 import path from "node:path";
 
 async function main() {
-	console.log(chalk.bold.blue("\n📦 Nexus Release Helper\n"));
+	console.log(chalk.bold.blue("\nNexus Release Helper\n"));
 
 	// 1. Checks deployment.json existence.
 	const deploymentPath = path.join(import.meta.dirname, "../deployment.json");
 	if (!fs.existsSync(deploymentPath)) {
 		console.warn(
 			chalk.yellow(
-				"⚠️  deployment.json not found. You might want to run a deploy script first."
+				"Warning: deployment.json not found. You might want to run a deploy script first."
 			)
 		);
 		const { continueRelease } = await prompts({
@@ -27,7 +27,7 @@ async function main() {
 		const deployment = JSON.parse(raw);
 		console.log(
 			chalk.green(
-				`✅ deployment.json found (Network: ${deployment.network?.name || "Unknown"})`
+				`deployment.json found (Network: ${deployment.network?.name || "Unknown"})`
 			)
 		);
 	}
@@ -46,7 +46,7 @@ async function main() {
 		if (commit) {
 			execSync("git add deployment.json");
 			execSync('git commit -m "chore(nexus): update deployment artifacts"');
-			console.log(chalk.green("✅ Committed deployment.json"));
+			console.log(chalk.green("Committed deployment.json"));
 		}
 	}
 
@@ -80,14 +80,14 @@ async function main() {
 		// Commits version bump in monorepo.
 		execSync(`git add package.json`);
 		execSync(`git commit -m "chore(nexus): release v${version}"`);
-		console.log(chalk.green(`✅ Bumped to v${version}`));
+		console.log(chalk.green(`Bumped to v${version}`));
 	}
 
 	// 4. Pushes to Private Remote (Subtree).
 	const REMOTE_URL = "github-mambattu:Commertize-Inc/nexus.git";
 	const BRANCH_NAME = "main"; // Target branch on remote
 
-	console.log(chalk.bold(`\n🚀 Deploying to ${REMOTE_URL}...`));
+	console.log(chalk.bold(`\nDeploying to ${REMOTE_URL}...`));
 
 	try {
 		// Go to root of monorepo to run git subtree
@@ -129,10 +129,10 @@ async function main() {
 		execSync(`git branch -D ${splitBranch}`, { cwd: rootDir });
 
 		console.log(
-			chalk.green(`\n✅ Successfully deployed v${version} to private remote!`)
+			chalk.green(`\nSuccessfully deployed v${version} to private remote!`)
 		);
 	} catch (e: any) {
-		console.error(chalk.red("\n❌ Deployment failed:"), e.message);
+		console.error(chalk.red("\nDeployment failed:"), e.message);
 	}
 }
 

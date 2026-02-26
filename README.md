@@ -2,7 +2,7 @@
 
 Commertize smart contracts for real estate tokenization, debt instruments, and mortgage lending.
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Installation](#installation)
 - [Quick Start](#quick-start)
@@ -326,9 +326,9 @@ VITE_EVM_NETWORK=testnet
 
 The network setting automatically determines:
 
-- ✅ Which contract addresses to use
-- ✅ Which RPC endpoint to connect to
-- ✅ Which deployed version of the smart contracts
+- Which contract addresses to use
+- Which RPC endpoint to connect to
+- Which deployed version of the smart contracts
 
 #### Optional Configuration
 
@@ -467,10 +467,10 @@ The package uses a priority-based deployment loading system:
 
 This means:
 
-- ✅ New developers get shared testnet contracts immediately
-- ✅ Optional local deployments don't interfere with others
-- ✅ Production builds use committed mainnet addresses
-- ✅ No configuration required for most use cases
+- New developers get shared testnet contracts immediately
+- Optional local deployments don't interfere with others
+- Production builds use committed mainnet addresses
+- No configuration required for most use cases
 
 ## Contract Addresses
 

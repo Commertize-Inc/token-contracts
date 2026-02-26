@@ -99,7 +99,7 @@ function encodeEnforcedOptions(gasLimit: bigint): string {
 // MAIN
 // ═══════════════════════════════════════════════════════════════
 
-console.log(chalk.bold.blue("\n🌉 Full Bridge Deployment — Hedera Testnet ↔ Base Sepolia\n"));
+console.log(chalk.bold.blue("\nFull Bridge Deployment — Hedera Testnet ↔ Base Sepolia\n"));
 
 const homeMeta = getNetworkMeta("testnet");
 const destMeta = getNetworkMeta("base-sepolia");

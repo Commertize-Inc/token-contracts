@@ -26,7 +26,7 @@ interface DeployContext {
 const { ethers, networkName } = await hre.network.connect();
 
 console.log(
-	chalk.bold.blue("\n🚀 Commertize Interactive Deployment CLI (MVP)\n")
+	chalk.bold.blue("\nCommertize Interactive Deployment CLI (MVP)\n")
 );
 
 const [deployer] = await ethers.getSigners();
@@ -79,7 +79,7 @@ if (usdcAddress) {
 	context.deploymentConfig.contracts.USDC = usdcAddress;
 	console.log(`USDC Address (from config): ${chalk.green(usdcAddress)}`);
 } else {
-	console.error(chalk.red(`⚠️ No USDC_ADDRESS configured for network: ${networkName}`));
+	console.error(chalk.red(`Warning: No USDC_ADDRESS configured for network: ${networkName}`));
 }
 
 const contracts = [
@@ -163,11 +163,11 @@ if (selectedContracts.has("IdentityRegistry")) {
 		); // 840 = US
 		await tx.wait();
 		console.log(
-			`  ✅ Deployer ${chalk.green(deployer.address)} authenticated (Country: 840, Hash: ADMIN)`
+			`  [OK] Deployer ${chalk.green(deployer.address)} authenticated (Country: 840, Hash: ADMIN)`
 		);
 	} catch (err: any) {
 		console.warn(
-			chalk.yellow(`  ⚠️ Failed to authenticate deployer: ${err.message}`)
+			chalk.yellow(`  Warning: Failed to authenticate deployer: ${err.message}`)
 		);
 	}
 }
@@ -184,7 +184,7 @@ if (selectedContracts.has("TokenCompliance")) {
 	const idRegistry = context.deployedAddresses.IdentityRegistry;
 	if (!idRegistry) {
 		console.error(
-			chalk.red("❌ Error: TokenCompliance requires IdentityRegistry.")
+			chalk.red("Error: TokenCompliance requires IdentityRegistry.")
 		);
 	} else {
 		await deployContract(
@@ -206,7 +206,7 @@ if (selectedContracts.has("StakingPool")) {
 	const usdc = context.deployedAddresses.USDC;
 	if (!comm || !usdc) {
 		console.error(
-			chalk.red("❌ Error: StakingPool requires CommertizeToken and USDC.")
+			chalk.red("Error: StakingPool requires CommertizeToken and USDC.")
 		);
 	} else {
 		await deployContract(
@@ -221,7 +221,7 @@ if (selectedContracts.has("StakingPool")) {
 if (selectedContracts.has("DividendVault")) {
 	const usdc = context.deployedAddresses.USDC;
 	if (!usdc) {
-		console.error(chalk.red("❌ Error: DividendVault requires USDC."));
+		console.error(chalk.red("Error: DividendVault requires USDC."));
 	} else {
 		// Protocol Wallet = Deployer for now
 		await deployContract(
@@ -247,7 +247,7 @@ fs.writeFileSync(
 	JSON.stringify(context.deploymentConfig, null, 2)
 );
 
-console.log(chalk.bold.green("\n✅ Deployment Config Updated!"));
+console.log(chalk.bold.green("\nDeployment Config Updated!"));
 console.log(`Updated:  ${chalk.underline(deploymentFile)}`);
 
 async function deployContract(infoName: string, args: any[], ctx: DeployContext, aliasKey?: string) {
