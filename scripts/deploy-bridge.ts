@@ -47,18 +47,20 @@ const { ethers, networkName } = await hre.network.connect();
 console.log(chalk.bold.blue("\nCommertize Bridge Deployment CLI\n"));
 
 const [deployer] = await ethers.getSigners();
-const chainId = Number(
-	(await deployer.provider.getNetwork()).chainId
-);
+const chainId = Number((await deployer.provider.getNetwork()).chainId);
 const meta = getNetworkMeta(networkName);
 
 console.log(`Deployer: ${chalk.yellow(deployer.address)}`);
 const balance = await deployer.provider.getBalance(deployer.address);
-console.log(`Balance: ${chalk.yellow(ethers.formatEther(balance))} ${meta.currency || "ETH"}`);
+console.log(
+	`Balance: ${chalk.yellow(ethers.formatEther(balance))} ${meta.currency || "ETH"}`
+);
 console.log(`Network: ${chalk.magenta(networkName)} (ChainID: ${chainId})\n`);
 
 if (!meta.lzEndpoint || !meta.lzEid) {
-	console.error(chalk.red(`No LayerZero config in network metadata for: ${networkName}`));
+	console.error(
+		chalk.red(`No LayerZero config in network metadata for: ${networkName}`)
+	);
 	process.exit(1);
 }
 
@@ -78,7 +80,9 @@ if (fs.existsSync(deploymentPath)) {
 		deploymentConfig = JSON.parse(raw);
 		console.log(chalk.green(`Loaded existing config: ${deploymentFile}`));
 	} catch (e) {
-		console.warn(chalk.yellow(`Could not parse ${deploymentFile}, starting fresh.`));
+		console.warn(
+			chalk.yellow(`Could not parse ${deploymentFile}, starting fresh.`)
+		);
 	}
 }
 
@@ -112,10 +116,16 @@ context.deploymentConfig.layerZero = {
 	eid: lzConfig.eid,
 };
 
-fs.writeFileSync(deploymentPath, JSON.stringify(context.deploymentConfig, null, 2));
+fs.writeFileSync(
+	deploymentPath,
+	JSON.stringify(context.deploymentConfig, null, 2)
+);
 console.log(chalk.bold.green(`\nSaved to ${deploymentFile}`));
 
-async function deployHomeChain(ctx: DeployContext, lz: { eid: number; endpoint: string }) {
+async function deployHomeChain(
+	ctx: DeployContext,
+	lz: { eid: number; endpoint: string }
+) {
 	console.log(chalk.bold("\nHome Chain Deployment (Adapter)\n"));
 
 	const { deployer, deployedAddresses } = ctx;
@@ -123,7 +133,11 @@ async function deployHomeChain(ctx: DeployContext, lz: { eid: number; endpoint: 
 	// Check prerequisites
 	const compliance = deployedAddresses.TokenCompliance;
 	if (!compliance) {
-		console.error(chalk.red("Error: TokenCompliance not found. Deploy core contracts first."));
+		console.error(
+			chalk.red(
+				"Error: TokenCompliance not found. Deploy core contracts first."
+			)
+		);
 		process.exit(1);
 	}
 
@@ -142,7 +156,9 @@ async function deployHomeChain(ctx: DeployContext, lz: { eid: number; endpoint: 
 
 	// Deploy PropertyTokenAdapter
 	console.log(chalk.cyan("\nDeploying PropertyTokenAdapter..."));
-	const AdapterFactory = await ethers.getContractFactory("PropertyTokenAdapter");
+	const AdapterFactory = await ethers.getContractFactory(
+		"PropertyTokenAdapter"
+	);
 	const adapter = await AdapterFactory.deploy(
 		propertyToken,
 		lz.endpoint,
@@ -166,10 +182,16 @@ async function deployHomeChain(ctx: DeployContext, lz: { eid: number; endpoint: 
 	// Set adapter as compliance-exempt (CRITICAL: adapter must transfer tokens freely)
 	console.log(chalk.cyan("\nSetting adapter as compliance-exempt..."));
 	try {
-		const complianceContract = await ethers.getContractAt("TokenCompliance", compliance, deployer);
+		const complianceContract = await ethers.getContractAt(
+			"TokenCompliance",
+			compliance,
+			deployer
+		);
 		const tx = await complianceContract.setExempt(adapterAddress, true);
 		await tx.wait();
-		console.log(`  └─ ${chalk.green("Adapter marked exempt in TokenCompliance")}`);
+		console.log(
+			`  └─ ${chalk.green("Adapter marked exempt in TokenCompliance")}`
+		);
 	} catch (err: any) {
 		console.error(chalk.red(`  Failed to exempt adapter: ${err.message}`));
 	}
@@ -192,11 +214,18 @@ async function deployHomeChain(ctx: DeployContext, lz: { eid: number; endpoint: 
 		await configurePeer(adapter, destEid, peerAddress, "Adapter");
 		await configureEnforcedOptions(adapter, destEid, "Adapter");
 	} else {
-		console.log(chalk.yellow("\nSkipping peer setup. Run this script again to configure peers later."));
+		console.log(
+			chalk.yellow(
+				"\nSkipping peer setup. Run this script again to configure peers later."
+			)
+		);
 	}
 }
 
-async function deployDestinationChain(ctx: DeployContext, lz: { eid: number; endpoint: string }) {
+async function deployDestinationChain(
+	ctx: DeployContext,
+	lz: { eid: number; endpoint: string }
+) {
 	console.log(chalk.bold("\nDestination Chain Deployment (OFT)\n"));
 
 	const { deployer, deployedAddresses } = ctx;
@@ -216,9 +245,13 @@ async function deployDestinationChain(ctx: DeployContext, lz: { eid: number; end
 			const adminHash = ethers.keccak256(ethers.toUtf8Bytes("ADMIN"));
 			const tx = await ir.registerIdentity(deployer.address, 840, adminHash);
 			await tx.wait();
-			console.log(`  └─ ${chalk.green("Deployer registered as verified identity")}`);
+			console.log(
+				`  └─ ${chalk.green("Deployer registered as verified identity")}`
+			);
 		} catch (err: any) {
-			console.warn(chalk.yellow(`  Warning: Failed to register deployer: ${err.message}`));
+			console.warn(
+				chalk.yellow(`  Warning: Failed to register deployer: ${err.message}`)
+			);
 		}
 	}
 
@@ -226,7 +259,10 @@ async function deployDestinationChain(ctx: DeployContext, lz: { eid: number; end
 	if (!deployedAddresses.TokenCompliance) {
 		console.log(chalk.cyan("Deploying TokenCompliance (destination)..."));
 		const TCFactory = await ethers.getContractFactory("TokenCompliance");
-		const tc = await TCFactory.deploy(deployedAddresses.IdentityRegistry, deployer.address);
+		const tc = await TCFactory.deploy(
+			deployedAddresses.IdentityRegistry,
+			deployer.address
+		);
 		await tc.waitForDeployment();
 		const tcAddress = await tc.getAddress();
 		console.log(`  └─ TokenCompliance: ${chalk.green(tcAddress)}`);
@@ -287,7 +323,9 @@ async function deployDestinationChain(ctx: DeployContext, lz: { eid: number; end
 			ctx.deploymentConfig.bridgeContracts[homePropertyToken] = {};
 		}
 		ctx.deploymentConfig.bridgeContracts[homePropertyToken].oft = oftAddress;
-		console.log(`  └─ ${chalk.green(`Mapped OFT to PropertyToken ${homePropertyToken}`)}`);
+		console.log(
+			`  └─ ${chalk.green(`Mapped OFT to PropertyToken ${homePropertyToken}`)}`
+		);
 	}
 
 	// Configure peer (requires home chain adapter address)
@@ -308,28 +346,45 @@ async function deployDestinationChain(ctx: DeployContext, lz: { eid: number; end
 		await configurePeer(oft, srcEid, peerAddress, "OFT");
 		await configureEnforcedOptions(oft, srcEid, "OFT");
 	} else {
-		console.log(chalk.yellow("\nSkipping peer setup. Run this script again to configure peers later."));
+		console.log(
+			chalk.yellow(
+				"\nSkipping peer setup. Run this script again to configure peers later."
+			)
+		);
 	}
 
 	console.log(chalk.bold.cyan("\nNext Steps:"));
-	console.log(`  1. On the home chain, run: adapter.setPeer(${lz.eid}, ${oftAddress})`);
+	console.log(
+		`  1. On the home chain, run: adapter.setPeer(${lz.eid}, ${oftAddress})`
+	);
 	console.log(`  2. Verify the OFT at ${oftAddress} on the block explorer`);
 }
 
-async function configurePeer(contract: any, remoteEid: number, remoteAddress: string, label: string) {
+async function configurePeer(
+	contract: any,
+	remoteEid: number,
+	remoteAddress: string,
+	label: string
+) {
 	console.log(chalk.cyan(`\nSetting peer on ${label}...`));
 	try {
 		// Convert address to bytes32 (left-padded with zeros)
 		const peerBytes32 = ethers.zeroPadValue(remoteAddress, 32);
 		const tx = await contract.setPeer(remoteEid, peerBytes32);
 		await tx.wait();
-		console.log(`  └─ ${chalk.green(`Peer set: EID ${remoteEid} → ${remoteAddress}`)}`);
+		console.log(
+			`  └─ ${chalk.green(`Peer set: EID ${remoteEid} → ${remoteAddress}`)}`
+		);
 	} catch (err: any) {
 		console.error(chalk.red(`  Failed to set peer: ${err.message}`));
 	}
 }
 
-async function configureEnforcedOptions(contract: any, remoteEid: number, label: string) {
+async function configureEnforcedOptions(
+	contract: any,
+	remoteEid: number,
+	label: string
+) {
 	console.log(chalk.cyan(`Setting enforced options on ${label}...`));
 	try {
 		// Encode enforced options for SEND message type (msgType = 1)
@@ -340,11 +395,17 @@ async function configureEnforcedOptions(contract: any, remoteEid: number, label:
 		);
 
 		// EnforcedOptionParam: { eid, msgType, options }
-		const enforcedOptions = [{ eid: remoteEid, msgType: 1, options: optionsHex }];
+		const enforcedOptions = [
+			{ eid: remoteEid, msgType: 1, options: optionsHex },
+		];
 		const tx = await contract.setEnforcedOptions(enforcedOptions);
 		await tx.wait();
-		console.log(`  └─ ${chalk.green(`Enforced options set: ${MIN_DST_GAS} gas for lzReceive`)}`);
+		console.log(
+			`  └─ ${chalk.green(`Enforced options set: ${MIN_DST_GAS} gas for lzReceive`)}`
+		);
 	} catch (err: any) {
-		console.error(chalk.red(`  Failed to set enforced options: ${err.message}`));
+		console.error(
+			chalk.red(`  Failed to set enforced options: ${err.message}`)
+		);
 	}
 }

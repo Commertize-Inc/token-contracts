@@ -98,9 +98,7 @@ export const Deployment = deploymentConfig;
 // ------------------------------------------------------------------
 
 export const USDC_ADDRESS =
-	(CONTRACTS as any)?.USDC ||
-	getEnv("USDC_ADDRESS") ||
-	"";
+	(CONTRACTS as any)?.USDC || getEnv("USDC_ADDRESS") || "";
 
 // Helper for USDC address fallback which isn't in utils/onchain
 function getEnv(key: string) {
@@ -391,8 +389,10 @@ const BRIDGE_UI_META: {
  */
 export const BRIDGE_CHAINS: BridgeChainConfig[] = BRIDGE_UI_META.map((ui) => {
 	const net = NETWORKS[ui.networkKey];
-	if (!net) throw new Error(`Unknown network key "${ui.networkKey}" in BRIDGE_UI_META`);
-	if (!net.lzEndpoint || !net.lzEid) throw new Error(`Network "${ui.networkKey}" missing LZ config`);
+	if (!net)
+		throw new Error(`Unknown network key "${ui.networkKey}" in BRIDGE_UI_META`);
+	if (!net.lzEndpoint || !net.lzEid)
+		throw new Error(`Network "${ui.networkKey}" missing LZ config`);
 	return {
 		name: ui.bridgeName ?? net.name,
 		displayName: ui.displayName,
@@ -422,7 +422,9 @@ export async function loadBridgeDeployment(
 	chainName: string
 ): Promise<DeploymentConfig | null> {
 	try {
-		const mod = await import(`./deployment.${chainName.replace(/-/g, "_")}.json`);
+		const mod = await import(
+			`./deployment.${chainName.replace(/-/g, "_")}.json`
+		);
 		return (mod as any).default ?? (mod as any);
 	} catch {
 		return null;

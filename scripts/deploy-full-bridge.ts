@@ -44,7 +44,9 @@ function loadArtifact(contractName: string, solPath: string) {
 		`../artifacts/src/${solPath}/${contractName}.json`
 	);
 	if (!fs.existsSync(artifactPath)) {
-		throw new Error(`Artifact not found: ${artifactPath}. Run 'hardhat build' first.`);
+		throw new Error(
+			`Artifact not found: ${artifactPath}. Run 'hardhat build' first.`
+		);
 	}
 	return JSON.parse(fs.readFileSync(artifactPath, "utf-8"));
 }
@@ -99,13 +101,17 @@ function encodeEnforcedOptions(gasLimit: bigint): string {
 // MAIN
 // ═══════════════════════════════════════════════════════════════
 
-console.log(chalk.bold.blue("\nFull Bridge Deployment — Hedera Testnet ↔ Base Sepolia\n"));
+console.log(
+	chalk.bold.blue("\nFull Bridge Deployment — Hedera Testnet ↔ Base Sepolia\n")
+);
 
 const homeMeta = getNetworkMeta("testnet");
 const destMeta = getNetworkMeta("base-sepolia");
 
-if (!homeMeta.lzEndpoint || !homeMeta.lzEid) throw new Error("Missing LZ config for testnet");
-if (!destMeta.lzEndpoint || !destMeta.lzEid) throw new Error("Missing LZ config for base-sepolia");
+if (!homeMeta.lzEndpoint || !homeMeta.lzEid)
+	throw new Error("Missing LZ config for testnet");
+if (!destMeta.lzEndpoint || !destMeta.lzEid)
+	throw new Error("Missing LZ config for base-sepolia");
 
 // ═══════════════════════════════════════════════════════════════
 // PHASE 1: Connect to Hedera testnet
@@ -116,24 +122,38 @@ console.log(chalk.bold.cyan("Phase 1: Connect to Hedera testnet"));
 const { ethers, networkName } = await hre.network.connect();
 
 if (networkName !== "testnet") {
-	console.error(chalk.red(`This script must be run with --network testnet (got: ${networkName})`));
+	console.error(
+		chalk.red(
+			`This script must be run with --network testnet (got: ${networkName})`
+		)
+	);
 	process.exit(1);
 }
 
 const [deployer] = await ethers.getSigners();
 const homeBalance = await deployer.provider.getBalance(deployer.address);
 console.log(`  Deployer: ${chalk.yellow(deployer.address)}`);
-console.log(`  Balance:  ${chalk.yellow(ethers.formatEther(homeBalance))} HBAR`);
+console.log(
+	`  Balance:  ${chalk.yellow(ethers.formatEther(homeBalance))} HBAR`
+);
 
 const homeDeployment = loadDeployment("testnet");
 const homeContracts = homeDeployment.contracts;
 
 if (!homeContracts.PropertyFactory) {
-	console.error(chalk.red("PropertyFactory not found in deployment.testnet.json. Deploy core contracts first."));
+	console.error(
+		chalk.red(
+			"PropertyFactory not found in deployment.testnet.json. Deploy core contracts first."
+		)
+	);
 	process.exit(1);
 }
 if (!homeContracts.TokenCompliance) {
-	console.error(chalk.red("TokenCompliance not found in deployment.testnet.json. Deploy core contracts first."));
+	console.error(
+		chalk.red(
+			"TokenCompliance not found in deployment.testnet.json. Deploy core contracts first."
+		)
+	);
 	process.exit(1);
 }
 
@@ -143,15 +163,26 @@ console.log(chalk.green("  ✓ Connected to Hedera testnet\n"));
 // PHASE 2: Deploy PropertyToken via PropertyFactory
 // ═══════════════════════════════════════════════════════════════
 
-console.log(chalk.bold.cyan("Phase 2: Deploy PropertyToken via PropertyFactory"));
+console.log(
+	chalk.bold.cyan("Phase 2: Deploy PropertyToken via PropertyFactory")
+);
 
 let propertyTokenAddress: string;
 
 // Check if we already deployed one (idempotent)
-if (!homeDeployment.bridgeContracts || Object.keys(homeDeployment.bridgeContracts).length === 0) {
-	const factory = await ethers.getContractAt("PropertyFactory", homeContracts.PropertyFactory, deployer);
+if (
+	!homeDeployment.bridgeContracts ||
+	Object.keys(homeDeployment.bridgeContracts).length === 0
+) {
+	const factory = await ethers.getContractAt(
+		"PropertyFactory",
+		homeContracts.PropertyFactory,
+		deployer
+	);
 
-	console.log(`  Deploying "${PROPERTY_NAME}" (${PROPERTY_SYMBOL}), supply: ${PROPERTY_SUPPLY.toLocaleString()}...`);
+	console.log(
+		`  Deploying "${PROPERTY_NAME}" (${PROPERTY_SYMBOL}), supply: ${PROPERTY_SUPPLY.toLocaleString()}...`
+	);
 	const tx = await factory.deployProperty(
 		PROPERTY_NAME,
 		PROPERTY_SYMBOL,
@@ -173,7 +204,9 @@ if (!homeDeployment.bridgeContracts || Object.keys(homeDeployment.bridgeContract
 	console.log(`  PropertyToken: ${chalk.green(propertyTokenAddress)}`);
 } else {
 	propertyTokenAddress = Object.keys(homeDeployment.bridgeContracts)[0];
-	console.log(`  Already deployed — reusing PropertyToken: ${chalk.green(propertyTokenAddress)}`);
+	console.log(
+		`  Already deployed — reusing PropertyToken: ${chalk.green(propertyTokenAddress)}`
+	);
 }
 
 console.log(chalk.green("  ✓ PropertyToken ready\n"));
@@ -186,9 +219,12 @@ console.log(chalk.bold.cyan("Phase 3: Deploy PropertyTokenAdapter"));
 
 let adapterAddress: string;
 
-const existingAdapter = homeDeployment.bridgeContracts?.[propertyTokenAddress]?.adapter;
+const existingAdapter =
+	homeDeployment.bridgeContracts?.[propertyTokenAddress]?.adapter;
 if (!existingAdapter) {
-	const AdapterFactory = await ethers.getContractFactory("PropertyTokenAdapter");
+	const AdapterFactory = await ethers.getContractFactory(
+		"PropertyTokenAdapter"
+	);
 	console.log(`  Deploying adapter for ${propertyTokenAddress}...`);
 	const adapter = await AdapterFactory.deploy(
 		propertyTokenAddress,
@@ -201,7 +237,9 @@ if (!existingAdapter) {
 	console.log(`  Adapter: ${chalk.green(adapterAddress)}`);
 } else {
 	adapterAddress = existingAdapter;
-	console.log(`  Already deployed — reusing Adapter: ${chalk.green(adapterAddress)}`);
+	console.log(
+		`  Already deployed — reusing Adapter: ${chalk.green(adapterAddress)}`
+	);
 }
 
 console.log(chalk.green("  ✓ Adapter ready\n"));
@@ -212,7 +250,11 @@ console.log(chalk.green("  ✓ Adapter ready\n"));
 
 console.log(chalk.bold.cyan("Phase 4: Set adapter as compliance-exempt"));
 
-const complianceContract = await ethers.getContractAt("TokenCompliance", homeContracts.TokenCompliance, deployer);
+const complianceContract = await ethers.getContractAt(
+	"TokenCompliance",
+	homeContracts.TokenCompliance,
+	deployer
+);
 const isExempt = await complianceContract.isExempt(adapterAddress);
 
 if (!isExempt) {
@@ -236,7 +278,10 @@ if (!homeDeployment.bridgeContracts[propertyTokenAddress]) {
 	homeDeployment.bridgeContracts[propertyTokenAddress] = {};
 }
 homeDeployment.bridgeContracts[propertyTokenAddress].adapter = adapterAddress;
-homeDeployment.layerZero = { endpoint: homeMeta.lzEndpoint!, eid: homeMeta.lzEid! };
+homeDeployment.layerZero = {
+	endpoint: homeMeta.lzEndpoint!,
+	eid: homeMeta.lzEid!,
+};
 homeDeployment.network = {
 	name: homeMeta.name,
 	chainId: homeMeta.chainId,
@@ -264,10 +309,14 @@ const destSigner = new ethersLib.Wallet(privateKey, destProvider);
 
 const destBalance = await destProvider.getBalance(destSigner.address);
 console.log(`  Deployer: ${chalk.yellow(destSigner.address)}`);
-console.log(`  Balance:  ${chalk.yellow(ethersLib.formatEther(destBalance))} ETH`);
+console.log(
+	`  Balance:  ${chalk.yellow(ethersLib.formatEther(destBalance))} ETH`
+);
 
 if (destBalance === 0n) {
-	console.error(chalk.red("  ⚠ No ETH on Base Sepolia! Fund from a faucet first."));
+	console.error(
+		chalk.red("  ⚠ No ETH on Base Sepolia! Fund from a faucet first.")
+	);
 	process.exit(1);
 }
 
@@ -277,7 +326,10 @@ const destContracts = destDeployment.contracts;
 console.log(chalk.green("  ✓ Connected to Base Sepolia\n"));
 
 // Nonce tracker: Base Sepolia RPCs can return stale nonces, so we track manually
-let destNonce = await destProvider.getTransactionCount(destSigner.address, "latest");
+let destNonce = await destProvider.getTransactionCount(
+	destSigner.address,
+	"latest"
+);
 console.log(`  Starting nonce: ${destNonce}\n`);
 
 // Helper: save Base Sepolia deployment state (called after each successful deploy)
@@ -290,7 +342,10 @@ function saveDestState() {
 		currency: destMeta.currency,
 		blockExplorerUrl: destMeta.blockExplorerUrl,
 	};
-	destDeployment.layerZero = { endpoint: destMeta.lzEndpoint!, eid: destMeta.lzEid! };
+	destDeployment.layerZero = {
+		endpoint: destMeta.lzEndpoint!,
+		eid: destMeta.lzEid!,
+	};
 	saveDeployment("base-sepolia", destDeployment);
 }
 
@@ -300,11 +355,18 @@ function saveDestState() {
 
 console.log(chalk.bold.cyan("Phase 7: Deploy IdentityRegistry (Base Sepolia)"));
 
-const irArtifact = loadArtifact("IdentityRegistry", "compliance/IdentityRegistry.sol");
+const irArtifact = loadArtifact(
+	"IdentityRegistry",
+	"compliance/IdentityRegistry.sol"
+);
 let destIRAddress: string;
 
 if (!destContracts.IdentityRegistry) {
-	const IRFactory = new ethersLib.ContractFactory(irArtifact.abi, irArtifact.bytecode, destSigner);
+	const IRFactory = new ethersLib.ContractFactory(
+		irArtifact.abi,
+		irArtifact.bytecode,
+		destSigner
+	);
 	console.log("  Deploying IdentityRegistry...");
 	const ir = await IRFactory.deploy(destSigner.address, { nonce: destNonce++ });
 	await ir.waitForDeployment();
@@ -315,9 +377,18 @@ if (!destContracts.IdentityRegistry) {
 
 	// Fresh deploy — register deployer immediately (no isVerified check needed)
 	console.log("  Registering deployer as verified identity...");
-	const irContract = new ethersLib.Contract(destIRAddress, irArtifact.abi, destSigner);
+	const irContract = new ethersLib.Contract(
+		destIRAddress,
+		irArtifact.abi,
+		destSigner
+	);
 	const adminHash = ethersLib.keccak256(ethersLib.toUtf8Bytes("ADMIN"));
-	const regTx = await irContract.registerIdentity(destSigner.address, 840, adminHash, { nonce: destNonce++ });
+	const regTx = await irContract.registerIdentity(
+		destSigner.address,
+		840,
+		adminHash,
+		{ nonce: destNonce++ }
+	);
 	await regTx.wait();
 	console.log(chalk.green("  ✓ Deployer registered"));
 } else {
@@ -325,12 +396,21 @@ if (!destContracts.IdentityRegistry) {
 	console.log(`  Already deployed: ${chalk.green(destIRAddress)}`);
 
 	// Re-run — check if deployer still needs to be registered
-	const irContract = new ethersLib.Contract(destIRAddress, irArtifact.abi, destSigner);
+	const irContract = new ethersLib.Contract(
+		destIRAddress,
+		irArtifact.abi,
+		destSigner
+	);
 	const isVerified = await irContract.isVerified(destSigner.address);
 	if (!isVerified) {
 		console.log("  Registering deployer as verified identity...");
 		const adminHash = ethersLib.keccak256(ethersLib.toUtf8Bytes("ADMIN"));
-		const regTx = await irContract.registerIdentity(destSigner.address, 840, adminHash, { nonce: destNonce++ });
+		const regTx = await irContract.registerIdentity(
+			destSigner.address,
+			840,
+			adminHash,
+			{ nonce: destNonce++ }
+		);
 		await regTx.wait();
 		console.log(chalk.green("  ✓ Deployer registered"));
 	} else {
@@ -348,10 +428,19 @@ console.log(chalk.bold.cyan("Phase 8: Deploy TokenCompliance (Base Sepolia)"));
 let destTCAddress: string;
 
 if (!destContracts.TokenCompliance) {
-	const tcArtifact = loadArtifact("TokenCompliance", "compliance/TokenCompliance.sol");
-	const TCFactory = new ethersLib.ContractFactory(tcArtifact.abi, tcArtifact.bytecode, destSigner);
+	const tcArtifact = loadArtifact(
+		"TokenCompliance",
+		"compliance/TokenCompliance.sol"
+	);
+	const TCFactory = new ethersLib.ContractFactory(
+		tcArtifact.abi,
+		tcArtifact.bytecode,
+		destSigner
+	);
 	console.log("  Deploying TokenCompliance...");
-	const tc = await TCFactory.deploy(destIRAddress, destSigner.address, { nonce: destNonce++ });
+	const tc = await TCFactory.deploy(destIRAddress, destSigner.address, {
+		nonce: destNonce++,
+	});
 	await tc.waitForDeployment();
 	destTCAddress = await tc.getAddress();
 	console.log(`  TokenCompliance: ${chalk.green(destTCAddress)}`);
@@ -372,8 +461,15 @@ console.log(chalk.bold.cyan("Phase 9: Deploy PropertyTokenOFT (Base Sepolia)"));
 let oftAddress: string;
 
 if (!destContracts.PropertyTokenOFT) {
-	const oftArtifact = loadArtifact("PropertyTokenOFT", "tokenization/PropertyTokenOFT.sol");
-	const OFTFactory = new ethersLib.ContractFactory(oftArtifact.abi, oftArtifact.bytecode, destSigner);
+	const oftArtifact = loadArtifact(
+		"PropertyTokenOFT",
+		"tokenization/PropertyTokenOFT.sol"
+	);
+	const OFTFactory = new ethersLib.ContractFactory(
+		oftArtifact.abi,
+		oftArtifact.bytecode,
+		destSigner
+	);
 	console.log(`  Deploying PropertyTokenOFT ("${PROPERTY_NAME}")...`);
 	const oft = await OFTFactory.deploy(
 		PROPERTY_NAME,
@@ -406,7 +502,11 @@ const adapterBytes32 = ethersLib.zeroPadValue(adapterAddress, 32);
 const oftBytes32 = ethersLib.zeroPadValue(oftAddress, 32);
 
 // Check & set adapter.setPeer(destEid, OFT)
-const adapter = await ethers.getContractAt("PropertyTokenAdapter", adapterAddress, deployer);
+const adapter = await ethers.getContractAt(
+	"PropertyTokenAdapter",
+	adapterAddress,
+	deployer
+);
 const currentAdapterPeer = await adapter.peers(destMeta.lzEid);
 
 if (currentAdapterPeer === ethersLib.ZeroHash) {
@@ -419,13 +519,22 @@ if (currentAdapterPeer === ethersLib.ZeroHash) {
 }
 
 // Check & set OFT.setPeer(homeEid, adapter)
-const oftArtifact2 = loadArtifact("PropertyTokenOFT", "tokenization/PropertyTokenOFT.sol");
-const oftContract = new ethersLib.Contract(oftAddress, oftArtifact2.abi, destSigner);
+const oftArtifact2 = loadArtifact(
+	"PropertyTokenOFT",
+	"tokenization/PropertyTokenOFT.sol"
+);
+const oftContract = new ethersLib.Contract(
+	oftAddress,
+	oftArtifact2.abi,
+	destSigner
+);
 const currentOFTPeer = await oftContract.peers(homeMeta.lzEid);
 
 if (currentOFTPeer === ethersLib.ZeroHash) {
 	console.log(`  Setting OFT peer → Adapter (EID ${homeMeta.lzEid})...`);
-	const tx = await oftContract.setPeer(homeMeta.lzEid, adapterBytes32, { nonce: destNonce++ });
+	const tx = await oftContract.setPeer(homeMeta.lzEid, adapterBytes32, {
+		nonce: destNonce++,
+	});
 	await tx.wait();
 	console.log(chalk.green("  ✓ OFT peer set"));
 } else {
@@ -444,14 +553,22 @@ const optionsHex = encodeEnforcedOptions(gasLimit);
 
 // Adapter enforced options (for messages going to dest)
 try {
-	console.log(`  Setting enforced options on Adapter (→ EID ${destMeta.lzEid}, ${MIN_DST_GAS} gas)...`);
-	const enforcedOpts = [{ eid: destMeta.lzEid, msgType: 1, options: optionsHex }];
+	console.log(
+		`  Setting enforced options on Adapter (→ EID ${destMeta.lzEid}, ${MIN_DST_GAS} gas)...`
+	);
+	const enforcedOpts = [
+		{ eid: destMeta.lzEid, msgType: 1, options: optionsHex },
+	];
 	const tx = await adapter.setEnforcedOptions(enforcedOpts);
 	await tx.wait();
 	console.log(chalk.green("  ✓ Adapter enforced options set"));
 } catch (err: any) {
 	if (err.message.includes("already set") || err.message.includes("revert")) {
-		console.log(chalk.yellow(`  ⚠ Adapter enforced options may already be set: ${err.message.slice(0, 100)}`));
+		console.log(
+			chalk.yellow(
+				`  ⚠ Adapter enforced options may already be set: ${err.message.slice(0, 100)}`
+			)
+		);
 	} else {
 		throw err;
 	}
@@ -459,14 +576,24 @@ try {
 
 // OFT enforced options (for messages going to home)
 try {
-	console.log(`  Setting enforced options on OFT (→ EID ${homeMeta.lzEid}, ${MIN_DST_GAS} gas)...`);
-	const enforcedOpts = [{ eid: homeMeta.lzEid, msgType: 1, options: optionsHex }];
-	const tx = await oftContract.setEnforcedOptions(enforcedOpts, { nonce: destNonce++ });
+	console.log(
+		`  Setting enforced options on OFT (→ EID ${homeMeta.lzEid}, ${MIN_DST_GAS} gas)...`
+	);
+	const enforcedOpts = [
+		{ eid: homeMeta.lzEid, msgType: 1, options: optionsHex },
+	];
+	const tx = await oftContract.setEnforcedOptions(enforcedOpts, {
+		nonce: destNonce++,
+	});
 	await tx.wait();
 	console.log(chalk.green("  ✓ OFT enforced options set"));
 } catch (err: any) {
 	if (err.message.includes("already set") || err.message.includes("revert")) {
-		console.log(chalk.yellow(`  ⚠ OFT enforced options may already be set: ${err.message.slice(0, 100)}`));
+		console.log(
+			chalk.yellow(
+				`  ⚠ OFT enforced options may already be set: ${err.message.slice(0, 100)}`
+			)
+		);
 	} else {
 		throw err;
 	}
@@ -485,7 +612,10 @@ if (!destDeployment.bridgeContracts[propertyTokenAddress]) {
 }
 destDeployment.bridgeContracts[propertyTokenAddress].oft = oftAddress;
 destDeployment.contracts = destContracts;
-destDeployment.layerZero = { endpoint: destMeta.lzEndpoint!, eid: destMeta.lzEid! };
+destDeployment.layerZero = {
+	endpoint: destMeta.lzEndpoint!,
+	eid: destMeta.lzEid!,
+};
 destDeployment.network = {
 	name: destMeta.name,
 	chainId: destMeta.chainId,
@@ -504,13 +634,17 @@ console.log(chalk.bold("Home Chain (Hedera Testnet):"));
 console.log(`  PropertyToken:       ${propertyTokenAddress}`);
 console.log(`  PropertyTokenAdapter:${adapterAddress}`);
 console.log(`  TokenCompliance:     ${homeContracts.TokenCompliance}`);
-console.log(`  LZ Endpoint:         ${homeMeta.lzEndpoint} (EID ${homeMeta.lzEid})`);
+console.log(
+	`  LZ Endpoint:         ${homeMeta.lzEndpoint} (EID ${homeMeta.lzEid})`
+);
 console.log();
 console.log(chalk.bold("Destination Chain (Base Sepolia):"));
 console.log(`  IdentityRegistry:    ${destContracts.IdentityRegistry}`);
 console.log(`  TokenCompliance:     ${destContracts.TokenCompliance}`);
 console.log(`  PropertyTokenOFT:    ${oftAddress}`);
-console.log(`  LZ Endpoint:         ${destMeta.lzEndpoint} (EID ${destMeta.lzEid})`);
+console.log(
+	`  LZ Endpoint:         ${destMeta.lzEndpoint} (EID ${destMeta.lzEid})`
+);
 console.log();
 console.log(chalk.bold("Bridge Wiring:"));
 console.log(`  Adapter peer → OFT (EID ${destMeta.lzEid})`);
@@ -525,5 +659,7 @@ console.log(`  3. Test cross-chain transfer:`);
 console.log(`     - Approve adapter to spend PropertyTokens`);
 console.log(`     - adapter.quoteSend() to get fee`);
 console.log(`     - adapter.send() to bridge tokens`);
-console.log(`     - Track on LayerZero Scan: https://testnet.layerzeroscan.com`);
+console.log(
+	`     - Track on LayerZero Scan: https://testnet.layerzeroscan.com`
+);
 console.log();

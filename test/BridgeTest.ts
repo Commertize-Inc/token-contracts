@@ -67,7 +67,9 @@ describe("LayerZero Bridge Integration", function () {
 			tokenCompliance = await TC.deploy(identityRegistry.target, admin.address);
 			await tokenCompliance.waitForDeployment();
 
-			expect(await tokenCompliance.identityRegistry()).to.equal(identityRegistry.target);
+			expect(await tokenCompliance.identityRegistry()).to.equal(
+				identityRegistry.target
+			);
 		});
 
 		it("Should deploy PropertyToken with initial supply to admin", async function () {
@@ -81,7 +83,9 @@ describe("LayerZero Bridge Integration", function () {
 			);
 			await propertyToken.waitForDeployment();
 
-			expect(await propertyToken.balanceOf(admin.address)).to.equal(ethers.parseEther("1000000"));
+			expect(await propertyToken.balanceOf(admin.address)).to.equal(
+				ethers.parseEther("1000000")
+			);
 		});
 
 		it("Should deploy PropertyTokenAdapter", async function () {
@@ -114,14 +118,29 @@ describe("LayerZero Bridge Integration", function () {
 			const adminHash = ethers.keccak256(ethers.toUtf8Bytes("ADMIN"));
 			const user1Hash = ethers.keccak256(ethers.toUtf8Bytes("USER1"));
 			const user2Hash = ethers.keccak256(ethers.toUtf8Bytes("USER2"));
-			await destIdentityRegistry.registerIdentity(admin.address, 840, adminHash);
-			await destIdentityRegistry.registerIdentity(user1.address, 840, user1Hash);
-			await destIdentityRegistry.registerIdentity(user2.address, 840, user2Hash);
+			await destIdentityRegistry.registerIdentity(
+				admin.address,
+				840,
+				adminHash
+			);
+			await destIdentityRegistry.registerIdentity(
+				user1.address,
+				840,
+				user1Hash
+			);
+			await destIdentityRegistry.registerIdentity(
+				user2.address,
+				840,
+				user2Hash
+			);
 		});
 
 		it("Should deploy destination TokenCompliance", async function () {
 			const TC = await ethers.getContractFactory("TokenCompliance");
-			destTokenCompliance = await TC.deploy(destIdentityRegistry.target, admin.address);
+			destTokenCompliance = await TC.deploy(
+				destIdentityRegistry.target,
+				admin.address
+			);
 			await destTokenCompliance.waitForDeployment();
 		});
 
@@ -155,9 +174,15 @@ describe("LayerZero Bridge Integration", function () {
 
 		it("Should wire mock endpoints for cross-chain delivery", async function () {
 			// Tell home endpoint: packets to OFT should use dest endpoint
-			await mockEndpointHome.setDestLzEndpoint(propertyTokenOFT.target, mockEndpointDest.target);
+			await mockEndpointHome.setDestLzEndpoint(
+				propertyTokenOFT.target,
+				mockEndpointDest.target
+			);
 			// Tell dest endpoint: packets to adapter should use home endpoint
-			await mockEndpointDest.setDestLzEndpoint(adapter.target, mockEndpointHome.target);
+			await mockEndpointDest.setDestLzEndpoint(
+				adapter.target,
+				mockEndpointHome.target
+			);
 		});
 	});
 
@@ -185,7 +210,9 @@ describe("LayerZero Bridge Integration", function () {
 			expect(await identityRegistry.isVerified(user1.address)).to.be.false;
 
 			await expect(
-				propertyToken.connect(user1).transfer(admin.address, ethers.parseEther("1"))
+				propertyToken
+					.connect(user1)
+					.transfer(admin.address, ethers.parseEther("1"))
 			).to.be.revertedWith("Compliance: Transfer not allowed");
 
 			// Re-register user1
@@ -199,7 +226,9 @@ describe("LayerZero Bridge Integration", function () {
 
 			const amount = ethers.parseEther("5");
 			await propertyToken.connect(admin).transfer(unverified.address, amount);
-			expect(await propertyToken.balanceOf(unverified.address)).to.equal(amount);
+			expect(await propertyToken.balanceOf(unverified.address)).to.equal(
+				amount
+			);
 
 			// Remove exemption and transfer back via admin
 			await tokenCompliance.setExempt(unverified.address, false);
@@ -212,11 +241,15 @@ describe("LayerZero Bridge Integration", function () {
 		it("Should reject send from unverified user", async function () {
 			// Give unverified some tokens first (via exempt)
 			await tokenCompliance.setExempt(unverified.address, true);
-			await propertyToken.connect(admin).transfer(unverified.address, ethers.parseEther("10"));
+			await propertyToken
+				.connect(admin)
+				.transfer(unverified.address, ethers.parseEther("10"));
 			await tokenCompliance.setExempt(unverified.address, false);
 
 			// Approve adapter
-			await propertyToken.connect(unverified).approve(adapter.target, ethers.parseEther("10"));
+			await propertyToken
+				.connect(unverified)
+				.approve(adapter.target, ethers.parseEther("10"));
 
 			const sendParam = {
 				dstEid: EID_DEST,
@@ -229,7 +262,14 @@ describe("LayerZero Bridge Integration", function () {
 			};
 
 			await expect(
-				adapter.connect(unverified).send(sendParam, { nativeFee: 1, lzTokenFee: 0 }, unverified.address, { value: 1 })
+				adapter
+					.connect(unverified)
+					.send(
+						sendParam,
+						{ nativeFee: 1, lzTokenFee: 0 },
+						unverified.address,
+						{ value: 1 }
+					)
 			).to.be.revertedWith("Compliance: Sender not verified");
 		});
 
@@ -251,7 +291,11 @@ describe("LayerZero Bridge Integration", function () {
 
 			const balanceBefore = await propertyToken.balanceOf(user1.address);
 
-			await adapter.connect(user1).send(sendParam, { nativeFee: 1, lzTokenFee: 0 }, user1.address, { value: 1 });
+			await adapter
+				.connect(user1)
+				.send(sendParam, { nativeFee: 1, lzTokenFee: 0 }, user1.address, {
+					value: 1,
+				});
 
 			// Tokens should be locked in adapter
 			const balanceAfter = await propertyToken.balanceOf(user1.address);
@@ -272,10 +316,16 @@ describe("LayerZero Bridge Integration", function () {
 				oftCmd: "0x",
 			};
 
-			await propertyToken.connect(admin).approve(adapter.target, ethers.parseEther("1"));
+			await propertyToken
+				.connect(admin)
+				.approve(adapter.target, ethers.parseEther("1"));
 
 			await expect(
-				adapter.connect(admin).send(sendParam, { nativeFee: 1, lzTokenFee: 0 }, admin.address, { value: 1 })
+				adapter
+					.connect(admin)
+					.send(sendParam, { nativeFee: 1, lzTokenFee: 0 }, admin.address, {
+						value: 1,
+					})
 			).to.be.revertedWithCustomError(adapter, "EnforcedPause");
 
 			await adapter.connect(admin).unpause();
@@ -296,7 +346,9 @@ describe("LayerZero Bridge Integration", function () {
 			await mockEndpointHome.deliverAllPackets();
 
 			// user1 should now have 100 OFT tokens on destination
-			expect(await propertyTokenOFT.balanceOf(user1.address)).to.equal(ethers.parseEther("100"));
+			expect(await propertyTokenOFT.balanceOf(user1.address)).to.equal(
+				ethers.parseEther("100")
+			);
 		});
 
 		it("Should allow transfer between verified users on OFT", async function () {
@@ -307,15 +359,21 @@ describe("LayerZero Bridge Integration", function () {
 
 		it("Should reject transfer to unverified user on OFT", async function () {
 			await expect(
-				propertyTokenOFT.connect(user1).transfer(unverified.address, ethers.parseEther("1"))
+				propertyTokenOFT
+					.connect(user1)
+					.transfer(unverified.address, ethers.parseEther("1"))
 			).to.be.revertedWith("Compliance: Transfer not allowed");
 		});
 
 		it("Should allow transfer when compliance is disabled", async function () {
 			await propertyTokenOFT.connect(admin).setComplianceEnabled(false);
 
-			await propertyTokenOFT.connect(user1).transfer(unverified.address, ethers.parseEther("1"));
-			expect(await propertyTokenOFT.balanceOf(unverified.address)).to.equal(ethers.parseEther("1"));
+			await propertyTokenOFT
+				.connect(user1)
+				.transfer(unverified.address, ethers.parseEther("1"));
+			expect(await propertyTokenOFT.balanceOf(unverified.address)).to.equal(
+				ethers.parseEther("1")
+			);
 
 			// Re-enable compliance
 			await propertyTokenOFT.connect(admin).setComplianceEnabled(true);
@@ -325,7 +383,9 @@ describe("LayerZero Bridge Integration", function () {
 			await propertyTokenOFT.connect(admin).pause();
 
 			await expect(
-				propertyTokenOFT.connect(user1).transfer(user2.address, ethers.parseEther("1"))
+				propertyTokenOFT
+					.connect(user1)
+					.transfer(user2.address, ethers.parseEther("1"))
 			).to.be.revertedWithCustomError(propertyTokenOFT, "EnforcedPause");
 
 			await propertyTokenOFT.connect(admin).unpause();
@@ -355,13 +415,17 @@ describe("LayerZero Bridge Integration", function () {
 				oftCmd: "0x",
 			};
 
-			await adapter.connect(admin).send(sendParam, { nativeFee: 1, lzTokenFee: 0 }, admin.address, { value: 1 });
+			await adapter
+				.connect(admin)
+				.send(sendParam, { nativeFee: 1, lzTokenFee: 0 }, admin.address, {
+					value: 1,
+				});
 
 			// Delivering should fail because it exceeds the daily cap
 			// (Previous delivery already bridged 100, plus this 60 would be 160 > 50 cap)
-			await expect(
-				mockEndpointHome.deliverAllPackets()
-			).to.be.revertedWith("OFT: Daily bridge cap exceeded");
+			await expect(mockEndpointHome.deliverAllPackets()).to.be.revertedWith(
+				"OFT: Daily bridge cap exceeded"
+			);
 
 			// Remove cap for further tests
 			await propertyTokenOFT.connect(admin).setDailyBridgeCap(0);
@@ -370,7 +434,9 @@ describe("LayerZero Bridge Integration", function () {
 		it("Should allow bridging when cap is zero (unlimited)", async function () {
 			// The pending packet from previous test should now deliver
 			await mockEndpointHome.deliverAllPackets();
-			expect(await propertyTokenOFT.balanceOf(user2.address)).to.be.gte(ethers.parseEther("10"));
+			expect(await propertyTokenOFT.balanceOf(user2.address)).to.be.gte(
+				ethers.parseEther("10")
+			);
 		});
 	});
 
@@ -387,11 +453,15 @@ describe("LayerZero Bridge Integration", function () {
 			const snap1 = await propertyTokenOFT.getCurrentSnapshotId();
 
 			// Step 2: Record balance and transfer (creates snap entry for period 1)
-			const user1BalanceAtSnap1 = await propertyTokenOFT.balanceOf(user1.address);
+			const user1BalanceAtSnap1 = await propertyTokenOFT.balanceOf(
+				user1.address
+			);
 			expect(user1BalanceAtSnap1).to.be.gt(0n);
 
 			const transferAmt = ethers.parseEther("5");
-			await propertyTokenOFT.connect(user1).transfer(user2.address, transferAmt);
+			await propertyTokenOFT
+				.connect(user1)
+				.transfer(user2.address, transferAmt);
 
 			// Step 3: Take snapshot #2 (seals snapshot #1)
 			await propertyTokenOFT.connect(admin).snapshot();
@@ -399,15 +469,23 @@ describe("LayerZero Bridge Integration", function () {
 			expect(snap2).to.equal(snap1 + 1n);
 
 			// Step 4: Make another transfer to seal snapshot #2
-			await propertyTokenOFT.connect(user1).transfer(user2.address, ethers.parseEther("1"));
+			await propertyTokenOFT
+				.connect(user1)
+				.transfer(user2.address, ethers.parseEther("1"));
 
 			// Now balanceOfAt(snap1) should return the value BEFORE the first change in period 1
 			// The snap entry {id: snap2, value: user1BalanceAtSnap1 - transferAmt} was created by the step 4 transfer
 			// For snap1: binary search finds first entry with id > snap1, which is snap entry created in period 1
 			// whose value is user1BalanceAtSnap1 (pre-transfer in period 1)
-			const balanceAtSnap1 = await propertyTokenOFT.balanceOfAt(user1.address, snap1 - 1n > 0n ? snap1 - 1n : 0n);
+			const balanceAtSnap1 = await propertyTokenOFT.balanceOfAt(
+				user1.address,
+				snap1 - 1n > 0n ? snap1 - 1n : 0n
+			);
 			// Actually let's verify the snap1 query directly
-			const actualBalAtSnap1 = await propertyTokenOFT.balanceOfAt(user1.address, snap1);
+			const actualBalAtSnap1 = await propertyTokenOFT.balanceOfAt(
+				user1.address,
+				snap1
+			);
 
 			// After transfer of 5 in period 1, balance should be user1BalanceAtSnap1 - 5
 			// The snap entry for period 1 stores user1BalanceAtSnap1 (pre-change)
@@ -429,7 +507,10 @@ describe("LayerZero Bridge Integration", function () {
 		it("Should only allow owner to take snapshots", async function () {
 			await expect(
 				propertyTokenOFT.connect(user1).snapshot()
-			).to.be.revertedWithCustomError(propertyTokenOFT, "OwnableUnauthorizedAccount");
+			).to.be.revertedWithCustomError(
+				propertyTokenOFT,
+				"OwnableUnauthorizedAccount"
+			);
 		});
 	});
 
@@ -452,11 +533,16 @@ describe("LayerZero Bridge Integration", function () {
 			await propertyToken.connect(admin).snapshot();
 
 			// Make another transfer to create snap entry for period 2
-			await propertyToken.connect(admin).transfer(user1.address, ethers.parseEther("1"));
+			await propertyToken
+				.connect(admin)
+				.transfer(user1.address, ethers.parseEther("1"));
 
 			// balanceOfAt(snapId) returns the value AFTER all changes in snapshot period
 			// (the snap entry at id=snapId+1 stores the pre-change value for the next period)
-			const balanceAtSnap = await propertyToken.balanceOfAt(admin.address, snapId);
+			const balanceAtSnap = await propertyToken.balanceOfAt(
+				admin.address,
+				snapId
+			);
 			expect(balanceAtSnap).to.equal(adminBalance - transferAmt);
 		});
 	});
@@ -479,32 +565,49 @@ describe("LayerZero Bridge Integration", function () {
 		it("Should only allow owner to set OFT compliance", async function () {
 			await expect(
 				propertyTokenOFT.connect(user1).setCompliance(ethers.ZeroAddress)
-			).to.be.revertedWithCustomError(propertyTokenOFT, "OwnableUnauthorizedAccount");
+			).to.be.revertedWithCustomError(
+				propertyTokenOFT,
+				"OwnableUnauthorizedAccount"
+			);
 		});
 
 		it("Should only allow owner to set OFT compliance enabled", async function () {
 			await expect(
 				propertyTokenOFT.connect(user1).setComplianceEnabled(false)
-			).to.be.revertedWithCustomError(propertyTokenOFT, "OwnableUnauthorizedAccount");
+			).to.be.revertedWithCustomError(
+				propertyTokenOFT,
+				"OwnableUnauthorizedAccount"
+			);
 		});
 
 		it("Should only allow owner to set daily bridge cap", async function () {
 			await expect(
 				propertyTokenOFT.connect(user1).setDailyBridgeCap(100)
-			).to.be.revertedWithCustomError(propertyTokenOFT, "OwnableUnauthorizedAccount");
+			).to.be.revertedWithCustomError(
+				propertyTokenOFT,
+				"OwnableUnauthorizedAccount"
+			);
 		});
 
 		it("Should only allow admin to register identities", async function () {
 			const hash = ethers.keccak256(ethers.toUtf8Bytes("test"));
 			await expect(
-				identityRegistry.connect(user1).registerIdentity(unverified.address, 840, hash)
-			).to.be.revertedWithCustomError(identityRegistry, "AccessControlUnauthorizedAccount");
+				identityRegistry
+					.connect(user1)
+					.registerIdentity(unverified.address, 840, hash)
+			).to.be.revertedWithCustomError(
+				identityRegistry,
+				"AccessControlUnauthorizedAccount"
+			);
 		});
 
 		it("Should only allow owner to set exemptions", async function () {
 			await expect(
 				tokenCompliance.connect(user1).setExempt(user1.address, true)
-			).to.be.revertedWithCustomError(tokenCompliance, "OwnableUnauthorizedAccount");
+			).to.be.revertedWithCustomError(
+				tokenCompliance,
+				"OwnableUnauthorizedAccount"
+			);
 		});
 	});
 });

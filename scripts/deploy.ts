@@ -25,9 +25,7 @@ interface DeployContext {
 
 const { ethers, networkName } = await hre.network.connect();
 
-console.log(
-	chalk.bold.blue("\nCommertize Interactive Deployment CLI (MVP)\n")
-);
+console.log(chalk.bold.blue("\nCommertize Interactive Deployment CLI (MVP)\n"));
 
 const [deployer] = await ethers.getSigners();
 console.log(`Deploying from account: ${chalk.yellow(deployer.address)}`);
@@ -35,9 +33,7 @@ console.log(`Deploying from account: ${chalk.yellow(deployer.address)}`);
 const balance = await deployer.provider.getBalance(deployer.address);
 console.log(`Balance: ${chalk.yellow(ethers.formatEther(balance))} ETH\n`);
 
-const chainId = Number(
-	(await deployer.provider.getNetwork()).chainId
-);
+const chainId = Number((await deployer.provider.getNetwork()).chainId);
 
 const meta = getNetworkMeta(networkName);
 
@@ -45,7 +41,10 @@ console.log(`Network: ${chalk.magenta(networkName)} (ChainID: ${chainId})`);
 
 // Convert network name to filename (replace hyphens with underscores)
 const deploymentFile = `deployment.${networkName.replace(/-/g, "_")}.json`;
-const mainDeploymentPath = path.join(import.meta.dirname, `../${deploymentFile}`);
+const mainDeploymentPath = path.join(
+	import.meta.dirname,
+	`../${deploymentFile}`
+);
 
 let deploymentConfig: DeploymentConfig = { contracts: {} };
 
@@ -79,7 +78,9 @@ if (usdcAddress) {
 	context.deploymentConfig.contracts.USDC = usdcAddress;
 	console.log(`USDC Address (from config): ${chalk.green(usdcAddress)}`);
 } else {
-	console.error(chalk.red(`Warning: No USDC_ADDRESS configured for network: ${networkName}`));
+	console.error(
+		chalk.red(`Warning: No USDC_ADDRESS configured for network: ${networkName}`)
+	);
 }
 
 const contracts = [
@@ -250,7 +251,12 @@ fs.writeFileSync(
 console.log(chalk.bold.green("\nDeployment Config Updated!"));
 console.log(`Updated:  ${chalk.underline(deploymentFile)}`);
 
-async function deployContract(infoName: string, args: any[], ctx: DeployContext, aliasKey?: string) {
+async function deployContract(
+	infoName: string,
+	args: any[],
+	ctx: DeployContext,
+	aliasKey?: string
+) {
 	const key = aliasKey || infoName;
 	console.log(`Deploying ${chalk.cyan(key)}...`);
 

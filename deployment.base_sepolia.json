@@ -1,18 +1,18 @@
 {
-  "contracts": {
-    "IdentityRegistry": "0xB72A80c65c6EAbF3179Eb5bD9DA27cE1f5E10050",
-    "TokenCompliance": "0xFC8E59bd4E6Ee8016dBC516A7Cc2a61D04596FB5"
-  },
-  "network": {
-    "name": "base-sepolia",
-    "chainId": 84532,
-    "rpc": "https://sepolia.base.org",
-    "currency": "ETH",
-    "blockExplorerUrl": "https://sepolia.basescan.org"
-  },
-  "layerZero": {
-    "endpoint": "0x6EDCE65403992e310A62460808c4b910D972f10f",
-    "eid": 40245
-  },
-  "timestamp": "2026-02-13T22:21:46.349Z"
+	"contracts": {
+		"IdentityRegistry": "0xB72A80c65c6EAbF3179Eb5bD9DA27cE1f5E10050",
+		"TokenCompliance": "0xFC8E59bd4E6Ee8016dBC516A7Cc2a61D04596FB5"
+	},
+	"network": {
+		"name": "base-sepolia",
+		"chainId": 84532,
+		"rpc": "https://sepolia.base.org",
+		"currency": "ETH",
+		"blockExplorerUrl": "https://sepolia.basescan.org"
+	},
+	"layerZero": {
+		"endpoint": "0x6EDCE65403992e310A62460808c4b910D972f10f",
+		"eid": 40245
+	},
+	"timestamp": "2026-02-13T22:21:46.349Z"
 }

@@ -25,7 +25,8 @@ describe("Commertize Contracts Suite", function () {
 		await identityRegistry.waitForDeployment();
 
 		const DEFAULT_ADMIN_ROLE = await identityRegistry.DEFAULT_ADMIN_ROLE();
-		expect(await identityRegistry.hasRole(DEFAULT_ADMIN_ROLE, admin.address)).to.be.true;
+		expect(await identityRegistry.hasRole(DEFAULT_ADMIN_ROLE, admin.address)).to
+			.be.true;
 	});
 
 	it("Should deploy Token Compliance", async function () {
@@ -72,8 +73,8 @@ describe("Commertize Contracts Suite", function () {
 				return false;
 			}
 		});
-		const propertyTokenAddress =
-			propertyFactory.interface.parseLog(event!)!.args.property;
+		const propertyTokenAddress = propertyFactory.interface.parseLog(event!)!
+			.args.property;
 		const PropertyToken = await ethers.getContractFactory("PropertyToken");
 		propertyToken = PropertyToken.attach(propertyTokenAddress);
 
@@ -100,8 +101,8 @@ describe("Commertize Contracts Suite", function () {
 				return false;
 			}
 		});
-		const escrowAddress =
-			propertyFactory.interface.parseLog(event2!)!.args.escrow;
+		const escrowAddress = propertyFactory.interface.parseLog(event2!)!.args
+			.escrow;
 
 		expect(escrowAddress).to.not.equal(ethers.ZeroAddress);
 	});
