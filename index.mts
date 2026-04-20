@@ -2,14 +2,12 @@ import { ethers } from "ethers";
 
 // Artifact imports
 import IdentityRegistryArtifact from "./artifacts/src/compliance/IdentityRegistry.sol/IdentityRegistry.json";
-import TokenComplianceArtifact from "./artifacts/src/compliance/TokenCompliance.sol/TokenCompliance.json";
+import CredentialRegistryArtifact from "./artifacts/src/compliance/CredentialRegistry.sol/CredentialRegistry.json";
+import CredentialCheckPolicyArtifact from "./artifacts/src/compliance/policies/CredentialCheckPolicy.sol/CredentialCheckPolicy.json";
 import DividendVaultArtifact from "./artifacts/src/finance/DividendVault.sol/DividendVault.json";
 import ListingEscrowArtifact from "./artifacts/src/finance/ListingEscrow.sol/ListingEscrow.json";
 import PropertyFactoryArtifact from "./artifacts/src/tokenization/PropertyFactory.sol/PropertyFactory.json";
 import PropertyTokenArtifact from "./artifacts/src/tokenization/PropertyToken.sol/PropertyToken.json";
-
-// Network config
-import { NETWORKS, DEFAULT_NETWORK } from "./networks";
 
 // Utils imports
 import {
@@ -17,6 +15,9 @@ import {
 	getNetworkName,
 	getDeploymentJsonEnv,
 } from "@commertize/utils/onchain";
+
+// Network config — single source of truth for defaults
+import { NETWORKS, DEFAULT_NETWORK } from "./networks";
 
 export type { DeploymentConfig };
 
@@ -62,7 +63,6 @@ async function loadDeployment(
 }
 
 const deploymentNetwork = getNetworkName() ?? DEFAULT_NETWORK;
-
 const fallbackNetwork = NETWORKS[deploymentNetwork] ?? NETWORKS[DEFAULT_NETWORK];
 
 // USE TOP-LEVEL AWAIT
@@ -235,7 +235,8 @@ const ERC20_PERMIT_ABI = [
 /** Contract ABIs (ethers/viem compatible). */
 export const ABIS = {
 	IdentityRegistry: IdentityRegistryArtifact.abi,
-	Compliance: TokenComplianceArtifact.abi,
+	CredentialRegistry: CredentialRegistryArtifact.abi,
+	CredentialCheckPolicy: CredentialCheckPolicyArtifact.abi,
 	USDC: [...ERC20_PERMIT_ABI],
 	DividendVault: DividendVaultArtifact.abi,
 	PropertyFactory: PropertyFactoryArtifact.abi,
@@ -248,7 +249,8 @@ export const ListingEscrowAbi = ListingEscrowArtifact.abi;
 
 /** Full artifacts (ABI + bytecode) for backend deployment via ContractFactory. */
 export { default as IdentityRegistryArtifact } from "./artifacts/src/compliance/IdentityRegistry.sol/IdentityRegistry.json";
-export { default as TokenComplianceArtifact } from "./artifacts/src/compliance/TokenCompliance.sol/TokenCompliance.json";
+export { default as CredentialRegistryArtifact } from "./artifacts/src/compliance/CredentialRegistry.sol/CredentialRegistry.json";
+export { default as CredentialCheckPolicyArtifact } from "./artifacts/src/compliance/policies/CredentialCheckPolicy.sol/CredentialCheckPolicy.json";
 
 /** Standard Solidity Error(string) ABI for decoding require()/revert() messages. */
 export const ErrorStringAbi = [
@@ -259,15 +261,35 @@ export const ErrorStringAbi = [
 	},
 ] as const;
 
-// MARK: Contract Helpers
+// MARK: Credential Type Constants
+
+export const CREDENTIAL_TYPES = {
+	KYC: ethers.keccak256(ethers.toUtf8Bytes("KYC")),
+	AML: ethers.keccak256(ethers.toUtf8Bytes("AML")),
+	ACCREDITED: ethers.keccak256(ethers.toUtf8Bytes("ACCREDITED")),
+	RESIDENCY: ethers.keccak256(ethers.toUtf8Bytes("RESIDENCY")),
+} as const;
+
+// MARK: Contract Instances
+
 export const getIdentityRegistryContract = (runner: ethers.ContractRunner) =>
 	new ethers.Contract(
 		CONTRACTS.IdentityRegistry,
 		ABIS.IdentityRegistry,
 		runner
 	);
-export const getComplianceContract = (runner: ethers.ContractRunner) =>
-	new ethers.Contract(CONTRACTS.TokenCompliance, ABIS.Compliance, runner);
+export const getCredentialRegistryContract = (runner: ethers.ContractRunner) =>
+	new ethers.Contract(
+		CONTRACTS.CredentialRegistry,
+		ABIS.CredentialRegistry,
+		runner
+	);
+export const getCredentialCheckPolicyContract = (runner: ethers.ContractRunner) =>
+	new ethers.Contract(
+		CONTRACTS.CredentialCheckPolicy,
+		ABIS.CredentialCheckPolicy,
+		runner
+	);
 export const getUSDCContract = (runner: ethers.ContractRunner) =>
 	new ethers.Contract(CONTRACTS.USDC || USDC_ADDRESS, ABIS.USDC, runner);
 export const getDividendVaultContract = (runner: ethers.ContractRunner) =>

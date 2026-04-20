@@ -7,8 +7,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 import "../tokenization/PropertyToken.sol";
-import "../compliance/TokenCompliance.sol";
-import "../compliance/IdentityRegistry.sol";
+import "../compliance/interfaces/IIdentityRegistry.sol";
+import "../compliance/interfaces/ICredentialRegistry.sol";
 
 /**
  * @title ListingEscrow
@@ -21,6 +21,8 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 	// Minimum deposit to prevent dust spam
 	uint256 public constant MIN_DEPOSIT = 1000;
 
+	bytes32 public constant KYC_TYPE = keccak256("KYC");
+
 	// Configuration
 	IERC20 public propertyToken;
 	IERC20 public paymentToken; // If address(0), uses Native Token
@@ -28,6 +30,8 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 	uint256 public targetRaise;
 	uint256 public deadline;
 	address public admin; // Admin address (separate from owner)
+	IIdentityRegistry public identityRegistry;
+	ICredentialRegistry public credentialRegistry;
 
 	// Improved investor tracking to prevent unbounded array issues
 	mapping(address => uint256) public deposits; // How much each user deposited
@@ -62,13 +66,17 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 		address _sponsor,
 		uint256 _targetRaise,
 		uint256 _deadline,
-		address _admin
+		address _admin,
+		address _identityRegistry,
+		address _credentialRegistry
 	) Ownable(_admin) {
 		require(_propertyToken != address(0), "Invalid property token");
 		require(_sponsor != address(0), "Invalid sponsor");
 		require(_targetRaise > 0, "Invalid target raise");
 		require(_deadline > block.timestamp, "Invalid deadline");
 		require(_admin != address(0), "Invalid admin");
+		require(_identityRegistry != address(0), "Invalid identity registry");
+		require(_credentialRegistry != address(0), "Invalid credential registry");
 		// Note: _paymentToken can be address(0) for native token
 
 		propertyToken = IERC20(_propertyToken);
@@ -76,7 +84,9 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 		sponsor = _sponsor;
 		targetRaise = _targetRaise;
 		deadline = _deadline;
-		admin = _admin; // Set admin (can be same as owner or different)
+		admin = _admin;
+		identityRegistry = IIdentityRegistry(_identityRegistry);
+		credentialRegistry = ICredentialRegistry(_credentialRegistry);
 	}
 
 	/**
@@ -98,16 +108,14 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 		}
 	}
 
-	/**
-	 * @dev Verify investor is allowed to hold tokens.
-	 */
+	/// @dev Verify investor has a registered identity with valid KYC credential.
 	function _checkCompliance(address investor) internal view {
-		TokenCompliance compliance = PropertyToken(payable(address(propertyToken))).compliance();
-		if (compliance.isExempt(investor)) {
-			return;
-		}
-		IdentityRegistry registry = compliance.identityRegistry();
-		require(registry.isVerified(investor), "Investor not verified");
+		bytes32 ccid = identityRegistry.getIdentity(investor);
+		require(ccid != bytes32(0), "Investor not registered");
+		require(
+			credentialRegistry.hasValidCredential(ccid, KYC_TYPE),
+			"KYC invalid or expired"
+		);
 	}
 
 	/**

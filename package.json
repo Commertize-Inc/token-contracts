@@ -12,6 +12,8 @@
 		"deploy:arc-testnet": "hardhat run --network arc-testnet scripts/deploy.ts",
 		"deploy:mainnet": "hardhat run --network mainnet scripts/deploy.ts",
 		"test:arc-testnet": "CI=true hardhat test test/TestnetValidation.ts --network arc-testnet",
+		"test:arc-integration": "CI=true hardhat test test/IntegrationFlows.ts --network arc-testnet",
+		"test:arc-crosschain": "CI=true hardhat test test/CrossChainCCIP.ts --network arc-testnet",
 		"release": "npx tsx scripts/release.ts"
 	},
 	"keywords": [
