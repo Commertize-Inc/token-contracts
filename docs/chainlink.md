@@ -1,153 +1,318 @@
-# Chainlink Integration Debrief
+# Chainlink Integration — Technical Design
 
-## Summary
+## Network Topology
 
-We evaluated Chainlink's Automated Compliance Engine (ACE) for the Commertize tokenized real estate platform. After investigation, we adopted ACE's identity and credential architecture patterns but implemented them from scratch — Chainlink has zero infrastructure on Arc (our home chain), and ACE's composable PolicyEngine is over-engineered for a single-chain RWA deployment.
+Arbitrum is the home chain for all core contract deployments. Arc and Base are destination chains where PropertyTokens can be bridged via Chainlink CCIP.
 
-This document records what was evaluated, what was adopted, what was rejected, and why.
+```mermaid
+flowchart LR
+    subgraph "Home Chain: Arbitrum"
+        IR[IdentityRegistry]
+        CR[CredentialRegistry]
+        CCP[CredentialCheckPolicy]
+        PT[PropertyToken]
+        PF[PropertyFactory]
+        LE[ListingEscrow]
+        DV[DividendVault]
+        LR_POOL[LockReleasePool]
+    end
 
-## Timeline
+    subgraph "Destination: Arc"
+        PT_ARC[PropertyToken<br/>BurnMint]
+        IR_ARC[IdentityRegistry]
+        CR_ARC[CredentialRegistry]
+        CCP_ARC[CredentialCheckPolicy]
+        BM_ARC[BurnMintPool]
+    end
 
-1. **Initial evaluation** — Chainlink rep proposed ACE (IdentityRegistry, CredentialRegistry, PolicyEngine, ComplianceTokenERC3643) + CCIP to replace our custom compliance stack and LayerZero bridge.
-2. **TDD written** — Full migration spec at `docs/tdd/ace_migration.md` covering contract-by-contract replacement, backend changes, dashboard changes.
-3. **Arc blocker discovered** — Chainlink has no LINK token, no oracle network, no CCIP lanes, no Automation, no Data Feeds on Arc. ACE contracts are BUSL-1.1 licensed (production deployment requires Chainlink's grant).
-4. **Pattern adoption** — Implemented ACE's identity/credential patterns from scratch. Initially built a full PolicyEngine with 4 policy contracts.
-5. **Consolidation audit** — Audited the 18-contract stack against ERC-3643 production standards. Found 3 policy contracts duplicated state already on PropertyToken. Removed PolicyEngine indirection, inlined exempt/freeze/pause checks, kept only CredentialCheckPolicy as an external call.
+    subgraph "Destination: Base"
+        PT_BASE[PropertyToken<br/>BurnMint]
+        IR_BASE[IdentityRegistry]
+        CR_BASE[CredentialRegistry]
+        CCP_BASE[CredentialCheckPolicy]
+        BM_BASE[BurnMintPool]
+    end
 
-## What We Evaluated
+    LR_POOL <-->|CCIP| BM_ARC
+    LR_POOL <-->|CCIP| BM_BASE
+```
 
-### ACE Core Components
+### Chain Roles
 
-| Component | Purpose | Verdict |
+| Chain | Role | Deploy | CCIP |
+|---|---|---|---|
+| **Arbitrum** (mainnet: 42161, testnet: 421614) | Home — canonical PropertyTokens, compliance, escrow, dividends | Full stack | LockReleasePool per property |
+| **Arc** (testnet: 5042002) | Destination — USDC-native gas, Circle ecosystem | Compliance + BurnMintPropertyToken | BurnMintPool per property |
+| **Base** (mainnet: 8453, testnet: 84532) | Destination — high liquidity, Coinbase ecosystem | Compliance + BurnMintPropertyToken | BurnMintPool per property |
+
+### Why Arbitrum as Home
+
+- Full Chainlink infrastructure: CCIP, Data Feeds, Automation, Data Streams
+- Active CCIP lanes to both Arc and Base
+- EVM-compatible with low gas costs
+- ACE planned (already live on Base)
+- Institutional adoption in RWA/DeFi
+
+### Why Arc and Base as Destinations
+
+**Arc:** Circle's L1 with USDC-native gas. Aligns with USDC payment flows. CCIP lane to Arbitrum confirmed. Strategic for stablecoin-centric RWA.
+
+**Base:** Largest Coinbase-ecosystem chain. Full Chainlink stack including ACE. High DeFi liquidity for secondary markets. CCIP lane to Arbitrum confirmed.
+
+---
+
+## Chainlink Products Used
+
+### 1. CCIP — Cross-Chain Token Bridging
+
+**Purpose:** Move PropertyTokens between Arbitrum (home), Arc, and Base. Replaces the previous LayerZero integration.
+
+**Pattern:** Lock-and-mint via CCIP Token Pools.
+
+```
+Arbitrum → Arc:    LockReleasePool locks tokens → CCIP → BurnMintPool mints on Arc
+Arc → Arbitrum:    BurnMintPool burns tokens → CCIP → LockReleasePool releases on Arbitrum
+```
+
+**Contracts per property (per destination chain):**
+
+| Chain | Contract | Role |
 |---|---|---|
-| **IdentityRegistry** | CCID-anchored identity, multi-wallet | **Adopted** — pattern implemented from scratch |
-| **CredentialRegistry** | Typed credentials (KYC/AML/accreditation) with on-chain expiry | **Adopted** — pattern implemented from scratch |
-| **PolicyEngine** | Composable N-policy orchestrator per function selector | **Rejected** — over-engineered for single-chain; 53% gas overhead vs inline checks |
-| **ComplianceTokenERC3643** | Freeze, partial freeze, forced transfer, pause, batch ops | **Adopted** — features added directly to PropertyToken |
-| **BypassPolicy** | Exempt address bypass via external contract | **Rejected** — a simple mapping belongs on the token, not in a separate contract |
-| **PausePolicy** | Per-token global pause via external contract | **Rejected** — duplicates OpenZeppelin Pausable already inherited by PropertyToken |
-| **FreezePolicy** | Reads freeze state back from token via external calls | **Rejected** — the token owns the freeze state; reading it back externally is wasteful |
-| **CredentialCheckPolicy** | Validates KYC/AML credentials for transfer participants | **Adopted** — legitimate external complexity across IdentityRegistry + CredentialRegistry |
+| Arbitrum | `LockReleaseTokenPool` | Locks PropertyTokens when bridging out, releases when bridging back |
+| Arc | `BurnMintTokenPool` | Mints mirrored PropertyTokens on receive, burns on send-back |
+| Base | `BurnMintTokenPool` | Same as Arc |
 
-### Other Chainlink Products
+**Self-serve registration:** Token admins register their PropertyToken + pool pair in the on-chain `TokenAdminRegistry` without Chainlink intervention.
 
-| Product | Relevance to Commertize | Verdict |
+**Compliance integration:** All pools are set as `exempt` on PropertyToken (`setExempt(poolAddress, true)`). This bypasses credential checks for pool mechanics while preserving compliance for user-to-user transfers.
+
+**CCIP addresses (testnet):**
+
+| Chain | Router | Chain Selector | LINK |
+|---|---|---|---|
+| Arbitrum Sepolia | `0x2a9C5afB0d0e4BAb2BCdaE109EC4b0c4Be15a165` | `3478487238524512106` | `0xb1D4538B4571d411F07960EF2838Ce337FE1E80E` |
+| Arc Testnet | `0xdE4E7FED43FAC37EB21aA0643d9852f75332eab8` | `3034092155422581607` | `0x3F1f176e347235858DD6Db905DDBA09Eaf25478a` |
+| Base Sepolia | `0xD3b06cEbF099CE7DA4AcCf578aaebFDBd6e88a93` | `10344971235874465080` | `0xE4aB69C077896252FAFBD49EFD26B5D171A32410` |
+
+### 2. Data Feeds — Property Valuation & Gas Estimation
+
+**Purpose:** On-chain price reference for ETH/USD (gas cost display), potential property NAV feeds.
+
+**Availability:**
+
+| Chain | Status | Use Case |
 |---|---|---|
-| **CCIP** | Cross-chain token bridging | **Not viable** — no CCIP lanes on Arc; single-chain deployment |
-| **Proof of Reserve** | On-chain attestation that property backing exists | **Interesting but unavailable** — no oracle network on Arc |
-| **Automation (Keepers)** | Decentralized cron for credential expiry, escrow deadlines | **Not viable** — no Automation on Arc |
-| **Data Feeds** | Price oracles for property NAV | **Not viable** — no feeds on Arc |
-| **Functions** | Serverless compute for on-chain Plaid verification | **Not viable** — no CRE runtime on Arc |
+| Arbitrum | Live (extensive feed catalog) | ETH/USD for gas display, USDC/USD peg monitoring |
+| Base | Live | Same |
+| Arc | Data Streams only (pull-based) | Crypto price feeds via pull model |
 
-## What We Adopted
+**Integration point:** Dashboard gas cost estimation reads the ETH/USD feed on Arbitrum. No contract-level dependency — read via `AggregatorV3Interface` in the backend or dashboard.
 
-### CCID Identity Model
+### 3. Automation — Credential Expiry & Escrow Deadlines
 
-From ACE's Cross-Chain Identity framework. Each investor gets a deterministic `bytes32` anchor derived from their Privy ID: `keccak256(abi.encodePacked("commertize", privyId))`. One CCID maps to up to 10 wallet addresses.
+**Purpose:** Decentralized cron for time-sensitive compliance operations.
 
-**Why:** Decouples identity from wallet address. Enables wallet recovery and multi-wallet portfolios without re-verification.
+**Availability:** Live on Arbitrum and Base. Not available on Arc.
 
-**Contract:** `src/compliance/IdentityRegistry.sol`
+**Use cases:**
 
-### Typed Credentials with Expiry
+| Trigger | Action | Chain |
+|---|---|---|
+| KYC credential nearing expiry | Notify backend to request re-verification | Arbitrum |
+| Escrow deadline passed + target not met | Auto-trigger `refund()` on ListingEscrow | Arbitrum |
+| Scheduled dividend distribution | Trigger `DividendVault.depositDividend()` | Arbitrum |
 
-From ACE's CredentialRegistry. Four credential types (KYC, AML, accreditation, residency) with on-chain `expiresAt` timestamps. Backend registers credentials after off-chain verification via Plaid IDV.
+**Integration:** Register Chainlink Automation upkeeps on Arbitrum. Custom logic upkeeps check credential expiry timestamps and escrow deadlines via `checkUpkeep()` / `performUpkeep()`.
 
-**Why:** The old `isVerified(address) → bool` had no granularity — no credential types, no expiry, no revocation. Real estate compliance requires time-bounded KYC that can lapse independently of identity registration.
+### 4. Data Streams — Real-Time Pricing (Future)
 
-**Contract:** `src/compliance/CredentialRegistry.sol`
+**Purpose:** Low-latency, pull-based price feeds for real-time property token pricing on secondary markets.
 
-### ERC-3643 Token Controls
+**Availability:** Arbitrum, Base, and Arc testnet.
 
-From ACE's ComplianceTokenERC3643. Freeze (full and partial), forced transfer, pause, batch operations — all standard regulatory controls for securities tokens.
+**Use case:** If PropertyTokens trade on DEXs, Data Streams provide sub-second pricing for NAV calculations, liquidation triggers, and oracle-gated DeFi composability.
 
-**Why:** Required for regulatory compliance. Freeze enables sanctions enforcement. Forced transfer enables court-ordered asset recovery. Pause provides an emergency circuit breaker.
+**Phase:** Future. Requires secondary market infrastructure first.
 
-**Contract:** `src/tokenization/PropertyToken.sol`
+### 5. ACE — Native Compliance (Future)
 
-## What We Rejected
+**Purpose:** Replace our custom compliance stack with Chainlink's audited, standards-based compliance engine.
 
-### Composable PolicyEngine
+**Availability:** Live on Base. Planned for Arbitrum.
 
-ACE's PolicyEngine attaches up to 8 policies per (token, function selector) pair, each invoked via external `STATICCALL`. We initially implemented this pattern, then removed it after an audit revealed:
+**Current status:** We implemented ACE's identity/credential patterns from scratch (CCID IdentityRegistry, CredentialRegistry, CredentialCheckPolicy). If ACE becomes available on Arbitrum, migration is a deployment-level swap — our interfaces mirror ACE's.
 
-1. **BypassPolicy** stored a `mapping(address => mapping(address => bool))` that PropertyToken could hold as a simple `_exempt` mapping. External call cost: ~5,200 gas/transfer. Inline cost: ~100 gas.
-2. **PausePolicy** stored a `mapping(address => bool)` that duplicated OZ Pausable already on PropertyToken. Pure redundancy.
-3. **FreezePolicy** was stateless — it read `isFrozen()` and `getFrozenTokens()` back from PropertyToken via external calls, then checked the values. The token already owns this state; the external round-trip added ~5,200 gas for zero value.
-4. After removing 3 of 4 policies, the PolicyEngine was orchestrating a single CredentialCheckPolicy — an unnecessary hop.
+**What migration gains:** Audited contracts, GLEIF vLEI credential integration, cross-chain credential verification via CCIP, Chainlink-managed policy engine.
 
-**Result:** Removed 6 contracts (PolicyEngine, BypassPolicy, PausePolicy, FreezePolicy, IPolicy, IPolicyEngine). PropertyToken calls CredentialCheckPolicy directly. Gas overhead reduced 53%.
+**Blocker:** ACE availability on Arbitrum mainnet. BUSL-1.1 license requires Chainlink's production-use grant.
 
-### Chainlink Infrastructure on Arc (UPDATED 2026-04-14)
+---
 
-Arc is a Circle L1 with USDC-native gas. **Chainlink has since deployed infrastructure on Arc testnet:**
+## Cross-Chain Compliance Architecture
 
-| Service | Status |
+### Identity Sync
+
+Investor identity (CCID) and credentials must be registered on every chain where they hold tokens. The CCID is deterministic (`keccak256("commertize", privyId)`), so the same value is used on all chains.
+
+```mermaid
+sequenceDiagram
+    participant Backend
+    participant IR_Arb as IdentityRegistry (Arbitrum)
+    participant CR_Arb as CredentialRegistry (Arbitrum)
+    participant IR_Arc as IdentityRegistry (Arc)
+    participant CR_Arc as CredentialRegistry (Arc)
+
+    Note over Backend: User completes KYC via Plaid
+    Backend->>IR_Arb: registerIdentity(ccid, wallet)
+    Backend->>CR_Arb: registerCredential(ccid, KYC, expiry, data)
+    Backend->>CR_Arb: registerCredential(ccid, AML, expiry, data)
+
+    Note over Backend: Sync to destination chains
+    Backend->>IR_Arc: registerIdentity(ccid, wallet)
+    Backend->>CR_Arc: registerCredential(ccid, KYC, expiry, data)
+    Backend->>CR_Arc: registerCredential(ccid, AML, expiry, data)
+```
+
+**Sync strategy:** Backend mirrors identity + credential registrations to all active destination chains. Credential renewal and revocation are also synced.
+
+**Future optimization:** When ACE is available, CCIP can carry credential proofs cross-chain, eliminating the need for per-chain credential mirroring.
+
+### Transfer Compliance per Chain
+
+| Operation | Compliance Check |
 |---|---|
-| **CCIP** | Live — Arc ↔ Ethereum Sepolia lane. Router: `0xdE4E7FED43FAC37EB21aA0643d9852f75332eab8` |
-| **LINK Token** | Deployed at `0x3F1f176e347235858DD6Db905DDBA09Eaf25478a`. Faucet: `faucets.chain.link/arc-testnet` |
-| **WUSDC** | `0xbf4B839A7939a52acbF8fC52D5Bd5BFE69a064EA` (wrapped USDC for CCIP fees) |
-| **Data Streams** | Available (added April 12, 2026). Pull-based crypto price feeds. |
-| **CRE** | Available (CLI v1.0.7+, Go SDK v1.1.4+, TS SDK v1.3.1+) |
-| Data Feeds (push) | Not available |
-| Automation | Not available |
-| Functions | Not available |
-| VRF | Not available |
+| Transfer on Arbitrum | Inline exempt → freeze → CredentialCheckPolicy (home chain stack) |
+| Bridge: Arbitrum → Arc | Pool exempt on Arbitrum (lock). Pool exempt on Arc (mint). User must be registered on Arc. |
+| Transfer on Arc | Inline exempt → freeze → CredentialCheckPolicy (Arc's compliance stack) |
+| Bridge: Arc → Arbitrum | Pool exempt on Arc (burn). Pool exempt on Arbitrum (release). |
 
-This reopens the CCIP cross-chain path and potentially native ACE deployment (CRE is the runtime prerequisite). See `docs/ccip-bridge.md` for the PropertyToken bridging design.
+---
 
-### BUSL-1.1 License
+## Deployment Topology
 
-ACE contracts are licensed under Business Source License 1.1. The CCIP and Registry modules convert to MIT on May 23, 2027; Workflows and Registry modules on April 25, 2029. Production deployment during the restriction period requires Chainlink's explicit grant.
-
-## Current Architecture
+### Home Chain (Arbitrum) — Full Stack
 
 ```
-PropertyToken._update(from, to, value)
-  │
-  ├─ Burns: skip all checks
-  │
-  ├─ Exempt? (inline SLOAD, ~100 gas)
-  │   └─ yes → skip remaining checks
-  │
-  ├─ Frozen? (inline SLOAD, ~200 gas)
-  │   ├─ full freeze → revert
-  │   └─ partial freeze → check transferable balance
-  │
-  └─ Credentials valid? (single external call, ~10,400 gas)
-      └─ CredentialCheckPolicy.check()
-          ├─ IdentityRegistry.getIdentity() → CCID
-          └─ CredentialRegistry.hasValidCredential(CCID, KYC/AML)
+1.  IdentityRegistry
+2.  CredentialRegistry (requires #1)
+3.  CredentialCheckPolicy (requires #1 + #2)
+4.  PropertyFactory
+5.  DividendVault
+    ─── per property ───
+6.  PropertyToken (via PropertyFactory, with CredentialCheckPolicy)
+7.  ListingEscrow (via PropertyFactory, with IdentityRegistry + CredentialRegistry)
+8.  LockReleaseTokenPool (per destination chain)
 ```
 
-### Contract Inventory
+### Destination Chain (Arc / Base) — Compliance + Mirrored Token
 
-| Contract | LOC | Purpose |
+```
+1.  IdentityRegistry
+2.  CredentialRegistry (requires #1)
+3.  CredentialCheckPolicy (requires #1 + #2)
+    ─── per property ───
+4.  BurnMintPropertyToken (PropertyToken with burn/mint restricted to pool)
+5.  BurnMintTokenPool
+```
+
+### Contract Summary
+
+| Contract | Arbitrum | Arc | Base | Notes |
+|---|---|---|---|---|
+| IdentityRegistry | 1 | 1 | 1 | Same CCID format, backend-synced |
+| CredentialRegistry | 1 | 1 | 1 | Same credential types, backend-synced |
+| CredentialCheckPolicy | 1 | 1 | 1 | Same KYC+AML requirements |
+| PropertyToken | N (per property) | N (mirrored) | N (mirrored) | Home: canonical. Dest: BurnMint variant |
+| PropertyFactory | 1 | 0 | 0 | Only on home chain |
+| ListingEscrow | N (per property) | 0 | 0 | Only on home chain |
+| DividendVault | 1 | 0 | 0 | Only on home chain |
+| LockReleaseTokenPool | N (per property) | 0 | 0 | One per property on home chain |
+| BurnMintTokenPool | 0 | N (per property) | N (per property) | One per property per dest chain |
+
+---
+
+## Implementation Phases
+
+### Phase 1: Arbitrum Home Chain (Current)
+
+Deploy the full compliance + tokenization stack on Arbitrum Sepolia:
+- IdentityRegistry, CredentialRegistry, CredentialCheckPolicy
+- PropertyFactory, PropertyToken, ListingEscrow, DividendVault
+- Validate with existing SmokeTest suite (16 tests)
+- Update backend `web3.ts` to point to Arbitrum Sepolia
+
+### Phase 2: CCIP Bridge to Arc
+
+1. Implement `BurnMintPropertyToken` extending PropertyToken with pool-restricted `burn()`/`mint()`
+2. Deploy compliance stack on Arc testnet (IdentityRegistry, CredentialRegistry, CredentialCheckPolicy)
+3. Deploy `LockReleaseTokenPool` on Arbitrum Sepolia
+4. Deploy `BurnMintTokenPool` + `BurnMintPropertyToken` on Arc testnet
+5. Register pools in CCIP Token Admin Registry on both chains
+6. Backend: add multi-chain identity sync, bridge transaction builder
+7. Dashboard: bridge UI with chain selector, fee estimation, CCIP Explorer tracking
+
+### Phase 3: CCIP Bridge to Base
+
+Repeat Phase 2 pattern for Base Sepolia:
+1. Deploy compliance stack on Base Sepolia
+2. Deploy `BurnMintTokenPool` + `BurnMintPropertyToken` on Base Sepolia
+3. Add `LockReleaseTokenPool` lane on Arbitrum Sepolia for Base direction
+4. Register pools in CCIP Token Admin Registry
+5. Backend: extend identity sync to include Base
+6. Dashboard: add Base to chain selector
+
+### Phase 4: Chainlink Automation
+
+Register Automation upkeeps on Arbitrum:
+1. Credential expiry checker — scans CredentialRegistry for approaching expiry
+2. Escrow deadline enforcer — triggers refund when deadline passes
+3. Dividend scheduler — quarterly `depositDividend()` trigger
+
+### Phase 5: Production
+
+1. Deploy full stack on Arbitrum mainnet
+2. Deploy destination stacks on Arc mainnet (when available) and Base mainnet
+3. Configure mainnet CCIP lanes and token pools
+4. Mainnet Automation upkeeps
+
+---
+
+## What We Build vs What Chainlink Provides
+
+| Concern | Our Code | Chainlink |
 |---|---|---|
-| `IdentityRegistry` | 124 | CCID → wallet mapping, multi-wallet, REGISTRAR_ROLE |
-| `CredentialRegistry` | 147 | Typed credentials with expiry, ISSUER_ROLE |
-| `CredentialCheckPolicy` | 78 | Validates KYC + AML for transfer participants |
-| `PropertyToken` | 293 | ERC20 + Permit + Snapshot + Vault + inline compliance + ERC-3643 controls |
-| `PropertyFactory` | 83 | Deploys PropertyToken + ListingEscrow pairs |
-| `ListingEscrow` | 416 | Escrow with KYC pre-check, proportional token distribution |
-| `DividendVault` | 290 | Snapshot-based dividend distribution |
-| `StakingPool` | 20 | Placeholder |
-| `CommertizeToken` | 40 | Governance token (ERC20 + Votes) |
+| Identity (CCID) | `IdentityRegistry.sol` | ACE IdentityRegistry (future swap) |
+| Credentials | `CredentialRegistry.sol` | ACE CredentialRegistry (future swap) |
+| Transfer compliance | `CredentialCheckPolicy.sol` + inline checks on PropertyToken | ACE PolicyEngine (future swap) |
+| Cross-chain messaging | — | CCIP Router + Token Pools |
+| Token pool contracts | Deploy + configure | `LockReleaseTokenPool`, `BurnMintTokenPool` (Chainlink contracts) |
+| Pool registration | Call `TokenAdminRegistry` | Self-serve on-chain registry |
+| Price feeds | Read via backend | `AggregatorV3Interface` on Arbitrum/Base |
+| Cron/automation | — | Automation upkeeps on Arbitrum |
+| Real-time pricing | — | Data Streams (future) |
 
-## Future: If Chainlink Adds Arc Support
+---
 
-Migration to native ACE would be a deployment-level change, not architectural:
+## Risk Assessment
 
-1. Deploy ACE's IdentityRegistry — migrate CCIDs (same `bytes32` format)
-2. Deploy ACE's CredentialRegistry — migrate credentials (same type IDs)
-3. Optionally deploy ACE's PolicyEngine for composable rules
-4. Swap PropertyToken base class to ComplianceTokenERC3643 (retain snapshot + vault extensions)
+| Risk | Severity | Mitigation |
+|---|---|---|
+| CCIP lane unavailability (Arc testnet) | Medium | Arc ↔ Sepolia lane confirmed. Verify Arbitrum ↔ Arc lane directly or route via Ethereum Sepolia. |
+| Identity sync lag between chains | Medium | Backend syncs on KYC approval. Async — user cannot bridge until destination identity is confirmed. |
+| BurnMintPropertyToken supply divergence | High | CCIP Token Pools handle supply accounting. Rate limits prevent runaway minting. Audit pool math. |
+| Credential expiry on destination chain | Medium | Backend syncs renewals. Automation monitors expiry on home chain. Destination credentials mirror home. |
+| ACE license (BUSL-1.1) | Low | Not importing ACE code. Our contracts are MIT-licensed re-implementations of ACE patterns. |
+| Gas cost for multi-chain compliance | Low | Compliance checks are 1 external call + inline SLOADs (~10,900 gas). Acceptable for security tokens. |
 
-Our `IIdentityRegistry` and `ICredentialRegistry` interfaces mirror ACE's closely enough that the CredentialCheckPolicy would work with either backend.
+---
 
 ## References
 
-- [Chainlink ACE](https://github.com/smartcontractkit/chainlink-ace) — source repo
-- [ACE Technical Overview](https://blog.chain.link/automated-compliance-engine-technical-overview/)
-- [ERC-3643 Standard](https://www.erc3643.org/) — T-REX permissioned token framework
-- `docs/tdd/ace_migration.md` — full migration TDD (DEFERRED status)
+- [CCIP Architecture](https://docs.chain.link/ccip/architecture)
+- [CCIP Self-Serve Token Registration](https://docs.chain.link/ccip/concepts/cross-chain-tokens/evm/registration-administration)
+- [Chainlink ACE](https://github.com/smartcontractkit/chainlink-ace)
+- [Arbitrum CCIP Directory](https://docs.chain.link/ccip/directory/mainnet/chain/ethereum-mainnet-arbitrum-1)
+- [Base CCIP Directory](https://docs.chain.link/ccip/directory/mainnet/chain/ethereum-mainnet-base-1)
+- [Chainlink Automation](https://docs.chain.link/chainlink-automation)
+- [Data Streams](https://docs.chain.link/data-streams)
+- `docs/tdd/ace_migration.md` — original ACE migration spec (historical reference)

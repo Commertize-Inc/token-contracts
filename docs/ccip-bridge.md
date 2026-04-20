@@ -2,119 +2,115 @@
 
 ## Status: Design Phase
 
-PropertyToken cross-chain bridging via Chainlink CCIP. CCIP is live on Arc testnet with an Arc ↔ Ethereum Sepolia lane. This document covers the architecture for bridging compliance-gated PropertyTokens across chains.
+PropertyToken cross-chain bridging via Chainlink CCIP. Tokens are canonical on Arbitrum (home chain) and bridged to Arc and Base via lock-and-mint pools.
 
-## Available Infrastructure (Arc Testnet)
+## Available Infrastructure
 
-| Contract | Address |
-|---|---|
-| CCIP Router | `0xdE4E7FED43FAC37EB21aA0643d9852f75332eab8` |
-| LINK Token | `0x3F1f176e347235858DD6Db905DDBA09Eaf25478a` |
-| WUSDC | `0xbf4B839A7939a52acbF8fC52D5Bd5BFE69a064EA` |
-| Token Admin Registry | `0xd3e461C55676B10634a5F81b747c324B85686Dd1` |
-| Arc Chain Selector | `3034092155422581607` |
-| Sepolia Chain Selector | `16015286601757825753` |
+### Testnet
+
+| Chain | Router | Chain Selector | LINK |
+|---|---|---|---|
+| Arbitrum Sepolia | `0x2a9C5afB0d0e4BAb2BCdaE109EC4b0c4Be15a165` | `3478487238524512106` | `0xb1D4538B4571d411F07960EF2838Ce337FE1E80E` |
+| Arc Testnet | `0xdE4E7FED43FAC37EB21aA0643d9852f75332eab8` | `3034092155422581607` | `0x3F1f176e347235858DD6Db905DDBA09Eaf25478a` |
+| Base Sepolia | `0xD3b06cEbF099CE7DA4AcCf578aaebFDBd6e88a93` | `10344971235874465080` | `0xE4aB69C077896252FAFBD49EFD26B5D171A32410` |
+
+### Mainnet
+
+| Chain | Router | Chain Selector | LINK |
+|---|---|---|---|
+| Arbitrum | `0x141fa059441E0ca23ce184B6A78bafD2A517DdE8` | `4949039107694359620` | `0xf97f4df75117a78c1A5a0DBb814Af92458539FB4` |
+| Base | `0x881e3A65B4d4a04dD529061dd0071cf975F58bCD` | `15971525489660198786` | `0x88Fb150BDc53A65fe94Dea0c9BA0a6dAf8C6e196` |
 
 ## Architecture: Lock-and-Release via CCIP Token Pools
 
 ```mermaid
 sequenceDiagram
     participant User
-    participant PT_Arc as PropertyToken (Arc)
-    participant Lock as LockReleasePool (Arc)
+    participant PT as PropertyToken (Arbitrum)
+    participant Lock as LockReleasePool (Arbitrum)
     participant CCIP as CCIP Router
-    participant Mint as BurnMintPool (Sepolia)
-    participant PT_Sep as PropertyToken (Sepolia)
+    participant Mint as BurnMintPool (Arc/Base)
+    participant PT_D as PropertyToken (Arc/Base)
 
-    User->>PT_Arc: approve(lockPool, amount)
-    User->>CCIP: ccipSend(sepolia, tokenAmounts=[PT, amount])
+    User->>PT: approve(lockPool, amount)
+    User->>CCIP: ccipSend(destChain, tokenAmounts=[PT, amount])
     CCIP->>Lock: lockTokens(amount)
-    Lock->>PT_Arc: transferFrom(user, pool, amount)
+    Lock->>PT: transferFrom(user, pool, amount)
     Note over CCIP: Cross-chain message + attestation
     CCIP->>Mint: releaseOrMint(amount, recipient)
-    Mint->>PT_Sep: mint(recipient, amount)
+    Mint->>PT_D: mint(recipient, amount)
 ```
 
-## Source Chain (Arc): LockReleaseTokenPool
+## Home Chain (Arbitrum): LockReleaseTokenPool
 
-The pool locks PropertyTokens on Arc when bridging out and releases them when bridging back.
+Locks PropertyTokens on Arbitrum when bridging out. Releases when bridging back.
 
-**Key requirements:**
-- Must be set as **exempt** on PropertyToken (compliance bypass for pool mechanics)
-- Must be registered in the Token Admin Registry
-- Pool admin = PropertyToken owner (for operational control)
+**Requirements:**
+- Must be `exempt` on PropertyToken (`setExempt(poolAddress, true)`)
+- Registered in Token Admin Registry
+- Pool admin = PropertyToken owner
 
-**Registration flow:**
-1. Deploy `LockReleaseTokenPool` pointing to the PropertyToken
-2. Call `PropertyToken.setExempt(poolAddress, true)`
-3. Register pool in `TokenAdminRegistry.setPool(propertyToken, poolAddress)`
-4. Configure rate limits per Chainlink recommendations
+**Per-property:** Each PropertyToken gets its own LockReleaseTokenPool.
 
-## Destination Chain (Sepolia): Mirrored Deployment
+## Destination Chains (Arc, Base): BurnMintTokenPool
 
-A full compliance stack must be deployed on Sepolia:
+Mints mirrored PropertyTokens on receive. Burns on send-back.
 
-1. **IdentityRegistry** — fresh instance, same REGISTRAR_ROLE
-2. **CredentialRegistry** — fresh instance, same ISSUER_ROLE
-3. **CredentialCheckPolicy** — requires KYC + AML
-4. **PropertyToken** — identical name/symbol, `BurnMintERC20` capability
-5. **BurnMintTokenPool** — mints on receive, burns on send-back
+**Requirements:**
+- Deploy compliance stack on destination (IdentityRegistry, CredentialRegistry, CredentialCheckPolicy)
+- Deploy `BurnMintPropertyToken` — PropertyToken variant with pool-restricted `mint()`/`burn()`
+- Pool set as `exempt` on destination PropertyToken
+- Registered in destination Token Admin Registry
 
-**CCID portability:** The CCID (`bytes32`) is deterministic (`keccak256("commertize", privyId)`) and chain-agnostic. The same CCID can be registered on both chains. The backend must mirror identity registrations to the destination chain.
+**CCID portability:** Same `keccak256("commertize", privyId)` on all chains. Backend mirrors identity registrations.
 
-## Compliance Challenge
-
-PropertyToken transfers enforce compliance via `CredentialCheckPolicy.check()`. Cross-chain bridging adds complexity:
+## Compliance
 
 | Scenario | Handling |
 |---|---|
-| Lock on Arc (user → pool) | Pool is exempt — no compliance check |
-| Mint on Sepolia (pool → user) | Pool is exempt on Sepolia — but user must be registered on Sepolia's IdentityRegistry |
-| Transfer on Sepolia | Full compliance check on Sepolia's stack |
-| Burn on Sepolia (user → pool) | Pool is exempt |
-| Release on Arc (pool → user) | Pool is exempt — user already registered on Arc |
+| Lock on Arbitrum (user → pool) | Pool is exempt — no compliance check |
+| Mint on destination (pool → user) | Pool is exempt — but user must be registered on destination IdentityRegistry |
+| Transfer on destination | Full compliance check on destination's stack |
+| Burn on destination (user → pool) | Pool is exempt |
+| Release on Arbitrum (pool → user) | Pool is exempt — user already registered on Arbitrum |
 
-**Critical:** A user must have a registered identity + valid KYC on **both** chains to hold and transfer tokens. The backend must sync registrations across chains.
-
-## Implementation Steps
-
-### Phase 1: Contracts
-1. Implement `BurnMintPropertyToken` extending PropertyToken with `burn(amount)` and `mint(to, amount)` restricted to the pool
-2. Deploy compliance stack on Sepolia (IdentityRegistry, CredentialRegistry, CredentialCheckPolicy)
-3. Deploy `BurnMintPropertyToken` on Sepolia
-4. Deploy `LockReleaseTokenPool` on Arc
-5. Deploy `BurnMintTokenPool` on Sepolia
-6. Register both pools in respective Token Admin Registries
-
-### Phase 2: Backend
-1. Add Sepolia provider + signer to `config/web3.ts`
-2. Extend `TokenService.registerIdentity()` to mirror registrations to Sepolia
-3. Add `TokenService.bridgeTokens()` — builds CCIP message, estimates fee, sends via router
-4. Add bridge status tracking (poll CCIP Explorer API for message delivery)
-
-### Phase 3: Dashboard
-1. Bridge UI — source/destination chain selector, amount input, fee display
-2. Bridge status tracker — pending/inflight/delivered states
-3. Cross-chain holdings aggregation — sum balances across chains
-
-## Fee Structure
-
-CCIP fees are paid in LINK or native token (USDC on Arc). Typical testnet fees:
-- Data-only message: ~0.1-0.5 LINK
-- Token transfer: ~0.5-2 LINK (includes attestation + execution)
-
-The backend can sponsor fees (gasless bridging) or the user can pay directly.
+**Critical:** User must have registered identity + valid KYC on **every chain** where they hold tokens. Backend syncs registrations.
 
 ## Rate Limits
 
 CCIP token pools enforce configurable rate limits:
-- `capacity`: maximum tokens that can be bridged in a burst
-- `rate`: tokens per second refill rate
+- `capacity`: max tokens bridgeable in a burst
+- `rate`: tokens per second refill
 - Set conservatively at launch, increase with audit confidence
+
+## Fee Structure
+
+CCIP fees paid in LINK or native token. Typical:
+- Token transfer: ~0.5-2 LINK
+- Backend can sponsor fees (gasless bridging) or user pays directly
+
+## Implementation Steps
+
+### Phase 1: Arbitrum → Arc Bridge
+1. Implement `BurnMintPropertyToken` extending PropertyToken
+2. Deploy compliance stack on Arc testnet
+3. Deploy `LockReleaseTokenPool` on Arbitrum Sepolia
+4. Deploy `BurnMintTokenPool` + `BurnMintPropertyToken` on Arc testnet
+5. Register pools in Token Admin Registry on both chains
+6. Test end-to-end: lock on Arbitrum, mint on Arc, transfer on Arc, burn on Arc, release on Arbitrum
+
+### Phase 2: Arbitrum → Base Bridge
+Repeat Phase 1 for Base Sepolia.
+
+### Phase 3: Dashboard + Backend
+1. Bridge UI — source/dest chain selector, amount, fee display
+2. CCIP Explorer tracking for bridge status
+3. Multi-chain identity sync in backend
+4. Cross-chain holdings aggregation
 
 ## References
 
 - [CCIP Architecture](https://docs.chain.link/ccip/architecture)
 - [CCIP Token Transfer Tutorial](https://docs.chain.link/ccip/tutorials/cross-chain-tokens)
 - [Token Admin Registry](https://docs.chain.link/ccip/concepts/cross-chain-tokens)
-- [Arc Testnet CCIP Directory](https://docs.chain.link/ccip/directory/testnet/chain/arc-testnet)
+- [CCIP Testnet Directory](https://docs.chain.link/ccip/directory/testnet)

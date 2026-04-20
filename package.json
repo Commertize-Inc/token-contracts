@@ -9,11 +9,11 @@
 		"node": "hardhat node",
 		"clean": "hardhat clean",
 		"deploy:localhost": "hardhat run --network localhost scripts/deploy.ts",
+		"deploy:arbitrum-sepolia": "hardhat run --network arbitrum-sepolia scripts/deploy.ts",
+		"deploy:arbitrum": "hardhat run --network arbitrum scripts/deploy.ts",
 		"deploy:arc-testnet": "hardhat run --network arc-testnet scripts/deploy.ts",
-		"deploy:mainnet": "hardhat run --network mainnet scripts/deploy.ts",
-		"test:arc-testnet": "CI=true hardhat test test/TestnetValidation.ts --network arc-testnet",
-		"test:arc-integration": "CI=true hardhat test test/IntegrationFlows.ts --network arc-testnet",
-		"test:arc-crosschain": "CI=true hardhat test test/CrossChainCCIP.ts --network arc-testnet",
+		"deploy:base-sepolia": "hardhat run --network base-sepolia scripts/deploy.ts",
+		"test:arbitrum-sepolia": "CI=true hardhat test test/TestnetValidation.ts --network arbitrum-sepolia",
 		"release": "npx tsx scripts/release.ts"
 	},
 	"keywords": [
@@ -41,8 +41,8 @@
 			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js"
 		},
-		"./deployment.json": "./deployment.arc_testnet.json",
-		"./deployment.arc_testnet.json": "./deployment.arc_testnet.json",
+		"./deployment.json": "./deployment.arbitrum_sepolia.json",
+		"./deployment.arbitrum_sepolia.json": "./deployment.arbitrum_sepolia.json",
 		"./deployment.mainnet.json": "./deployment.mainnet.json",
 		"./deployment.localhost.json": "./deployment.localhost.json",
 		"./artifacts/*": "./artifacts/src/*"
