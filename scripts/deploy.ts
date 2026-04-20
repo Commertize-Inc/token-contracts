@@ -90,28 +90,18 @@ const contracts = [
 		value: "IdentityRegistry",
 	},
 	{
-		name: "CommertizeToken",
-		title: "2. Commertize Token (Platform/Governance)",
-		value: "CommertizeToken",
-	},
-	{
 		name: "TokenCompliance",
-		title: "3. Token Compliance (Requires IdentityRegistry)",
+		title: "2. Token Compliance (Requires IdentityRegistry)",
 		value: "TokenCompliance",
 	},
 	{
 		name: "PropertyFactory",
-		title: "4. Property Factory (Requires Compliance)",
+		title: "3. Property Factory (Requires Compliance)",
 		value: "PropertyFactory",
 	},
 	{
-		name: "StakingPool",
-		title: "5. Staking Pool (Requires CTZ & USDC from fork)",
-		value: "StakingPool",
-	},
-	{
 		name: "DividendVault",
-		title: "6. Dividend Vault (Requires USDC from fork)",
+		title: "4. Dividend Vault (Requires USDC from fork)",
 		value: "DividendVault",
 	},
 ];
@@ -175,12 +165,7 @@ if (selectedContracts.has("IdentityRegistry")) {
 
 // USDC: not deployed; use address from Anvil fork in deployment.*.json (e.g. deployment.localhost.json).
 
-// 2. Commertize Token
-if (selectedContracts.has("CommertizeToken")) {
-	await deployContract("CommertizeToken", [deployer.address], context);
-}
-
-// 3. Token Compliance
+// 2. Token Compliance
 if (selectedContracts.has("TokenCompliance")) {
 	const idRegistry = context.deployedAddresses.IdentityRegistry;
 	if (!idRegistry) {
@@ -196,29 +181,12 @@ if (selectedContracts.has("TokenCompliance")) {
 	}
 }
 
-// 4. Property Factory
+// 3. Property Factory
 if (selectedContracts.has("PropertyFactory")) {
 	await deployContract("PropertyFactory", [deployer.address], context);
 }
 
-// 5. Staking Pool
-if (selectedContracts.has("StakingPool")) {
-	const comm = context.deployedAddresses.CommertizeToken;
-	const usdc = context.deployedAddresses.USDC;
-	if (!comm || !usdc) {
-		console.error(
-			chalk.red("Error: StakingPool requires CommertizeToken and USDC.")
-		);
-	} else {
-		await deployContract(
-			"StakingPool",
-			[comm, usdc, deployer.address],
-			context
-		);
-	}
-}
-
-// 6. Dividend Vault
+// 4. Dividend Vault
 if (selectedContracts.has("DividendVault")) {
 	const usdc = context.deployedAddresses.USDC;
 	if (!usdc) {

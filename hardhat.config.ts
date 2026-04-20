@@ -4,12 +4,11 @@ import hardhatToolboxMochaEthers from "@nomicfoundation/hardhat-toolbox-mocha-et
 import { loadEnv } from "@commertize/utils/server";
 loadEnv();
 
-import { NETWORKS, getNetwork } from "./networks";
+import { NETWORKS, DEFAULT_NETWORK, getNetwork } from "./networks";
 import type { NetworkConfig } from "./networks";
 
-// ─── Re-exports ──────────────────────────────────────────────
-// Deploy scripts import from "../hardhat.config.js"
-export { NETWORKS, getNetwork };
+// MARK: Re-exports
+export { NETWORKS, DEFAULT_NETWORK, getNetwork };
 export type { NetworkConfig };
 
 // Backward-compat aliases
@@ -41,22 +40,16 @@ export default defineConfig({
 			url: NETWORKS.localhost.rpcUrl,
 			chainId: NETWORKS.localhost.chainId,
 		},
-		testnet: {
-			type: "http",
-			url: NETWORKS.testnet.rpcUrl,
-			chainId: NETWORKS.testnet.chainId,
-			accounts: [configVariable("EVM_PRIVATE_KEY")],
-		},
 		"arc-testnet": {
 			type: "http",
 			url: NETWORKS["arc-testnet"].rpcUrl,
 			chainId: NETWORKS["arc-testnet"].chainId,
 			accounts: [configVariable("EVM_PRIVATE_KEY")],
 		},
-		"base-sepolia": {
+		"ethereum-sepolia": {
 			type: "http",
-			url: NETWORKS["base-sepolia"].rpcUrl,
-			chainId: NETWORKS["base-sepolia"].chainId,
+			url: NETWORKS["ethereum-sepolia"].rpcUrl,
+			chainId: NETWORKS["ethereum-sepolia"].chainId,
 			accounts: [configVariable("EVM_PRIVATE_KEY")],
 		},
 		mainnet: {

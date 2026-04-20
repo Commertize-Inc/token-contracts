@@ -9,13 +9,9 @@
 		"node": "hardhat node",
 		"clean": "hardhat clean",
 		"deploy:localhost": "hardhat run --network localhost scripts/deploy.ts",
-		"deploy:testnet": "hardhat run --network testnet scripts/deploy.ts",
+		"deploy:arc-testnet": "hardhat run --network arc-testnet scripts/deploy.ts",
 		"deploy:mainnet": "hardhat run --network mainnet scripts/deploy.ts",
-		"deploy:bridge:testnet": "hardhat run --network testnet scripts/deploy-bridge.ts",
-		"deploy:bridge:base-sepolia": "hardhat run --network base-sepolia scripts/deploy-bridge.ts",
-		"deploy:bridge:full": "hardhat run --network testnet scripts/deploy-full-bridge.ts",
-		"test:testnet": "CI=true hardhat test test/TestnetValidation.ts --network testnet",
-		"test:base-sepolia": "CI=true hardhat test test/TestnetValidation.ts --network base-sepolia",
+		"test:arc-testnet": "CI=true hardhat test test/TestnetValidation.ts --network arc-testnet",
 		"release": "npx tsx scripts/release.ts"
 	},
 	"keywords": [
@@ -43,11 +39,10 @@
 			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js"
 		},
-		"./deployment.json": "./deployment.testnet.json",
-		"./deployment.testnet.json": "./deployment.testnet.json",
+		"./deployment.json": "./deployment.arc_testnet.json",
+		"./deployment.arc_testnet.json": "./deployment.arc_testnet.json",
 		"./deployment.mainnet.json": "./deployment.mainnet.json",
 		"./deployment.localhost.json": "./deployment.localhost.json",
-		"./deployment.base_sepolia.json": "./deployment.base_sepolia.json",
 		"./artifacts/*": "./artifacts/src/*"
 	},
 	"type": "module",
@@ -73,8 +68,6 @@
 	},
 	"dependencies": {
 		"@commertize/utils": "workspace:*",
-		"@layerzerolabs/lz-evm-oapp-v2": "^3.0.167",
-		"@layerzerolabs/lz-evm-protocol-v2": "^3.0.167",
 		"@openzeppelin/contracts-upgradeable": "^5.6.1",
 		"dotenv": "^17.3.1",
 		"ethers": "^6.16.0"

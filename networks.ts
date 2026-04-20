@@ -10,28 +10,18 @@ export interface NetworkConfig {
 	currency: string;
 	blockExplorerUrl: string;
 	usdcAddress: string;
-	lzEndpoint?: string;
-	lzEid?: number;
 }
+
+export const DEFAULT_NETWORK = "arc-testnet";
 
 export const NETWORKS: Record<string, NetworkConfig> = {
 	localhost: {
 		name: "localhost",
 		chainId: 5042002,
 		rpcUrl: "http://127.0.0.1:8545",
-		currency: "GO",
+		currency: "USDC",
 		blockExplorerUrl: "",
 		usdcAddress: "0x3600000000000000000000000000000000000000",
-	},
-	testnet: {
-		name: "testnet",
-		chainId: 296,
-		rpcUrl: "https://testnet.hashio.io/api",
-		currency: "HBAR",
-		blockExplorerUrl: "https://hashscan.io/testnet",
-		usdcAddress: "0x24133B19078F362038f3a6fc6631A8286A4eB5f6",
-		lzEndpoint: "0xbD672D1562Dd32C23B563C989d8140122483631d",
-		lzEid: 40285,
 	},
 	"arc-testnet": {
 		name: "arc-testnet",
@@ -41,15 +31,13 @@ export const NETWORKS: Record<string, NetworkConfig> = {
 		blockExplorerUrl: "https://testnet.arcscan.app/",
 		usdcAddress: "0x3600000000000000000000000000000000000000",
 	},
-	"base-sepolia": {
-		name: "base-sepolia",
-		chainId: 84532,
-		rpcUrl: "https://sepolia.base.org",
+	"ethereum-sepolia": {
+		name: "ethereum-sepolia",
+		chainId: 11155111,
+		rpcUrl: "https://rpc.sepolia.org",
 		currency: "ETH",
-		blockExplorerUrl: "https://sepolia.basescan.org",
-		usdcAddress: "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
-		lzEndpoint: "0x6EDCE65403992e310A62460808c4b910D972f10f",
-		lzEid: 40245,
+		blockExplorerUrl: "https://sepolia.etherscan.io/",
+		usdcAddress: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
 	},
 	mainnet: {
 		name: "mainnet",
