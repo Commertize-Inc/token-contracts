@@ -27,7 +27,7 @@ abstract contract ComplianceEnabled {
      * @param from Sender address
      * @param to Receiver address
      */
-    function _checkCompliance(address from, address to) internal view {
+    function _checkCompliance(address from, address to) internal view virtual {
         IdentityRegistry registry = compliance.identityRegistry();
 
         // Minting (from 0x0)

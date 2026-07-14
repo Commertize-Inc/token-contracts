@@ -49,9 +49,25 @@ contract PropertyToken is ERC20, ERC20Permit, Ownable, ComplianceEnabled {
         _setCompliance(_compliance);
     }
 
+    /**
+     * @notice CCIP token-admin hook (CCT standard). Enables self-serve
+     * registration in Chainlink's TokenAdminRegistry via registerAdminViaGetCCIPAdmin.
+     */
+    function getCCIPAdmin() external view returns (address) {
+        return owner();
+    }
+
     // Overrides
 
-    function _update(address from, address to, uint256 value) internal override canTransfer(from, to) {
+    function _update(address from, address to, uint256 value) internal virtual override {
+        // Compliance gates every balance-moving update, including zero-value
+        // transfers (so unverified parties cannot emit Transfer events on a
+        // regulated token). The sole exception is the constructor's zero-token
+        // mint for zero-supply (bridged) variants, whose owner may not yet be
+        // verified.
+        if (!(from == address(0) && value == 0)) {
+            _checkCompliance(from, to);
+        }
         // Capture old values for snapshot if needed
         uint256 currentId = _currentSnapshotId;
 
