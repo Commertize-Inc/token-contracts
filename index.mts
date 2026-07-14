@@ -2,12 +2,14 @@ import { ethers } from "ethers";
 
 // Artifact imports
 import IdentityRegistryArtifact from "./artifacts/src/compliance/IdentityRegistry.sol/IdentityRegistry.json";
-import CredentialRegistryArtifact from "./artifacts/src/compliance/CredentialRegistry.sol/CredentialRegistry.json";
-import CredentialCheckPolicyArtifact from "./artifacts/src/compliance/policies/CredentialCheckPolicy.sol/CredentialCheckPolicy.json";
+import TokenComplianceArtifact from "./artifacts/src/compliance/TokenCompliance.sol/TokenCompliance.json";
 import DividendVaultArtifact from "./artifacts/src/finance/DividendVault.sol/DividendVault.json";
 import ListingEscrowArtifact from "./artifacts/src/finance/ListingEscrow.sol/ListingEscrow.json";
 import PropertyFactoryArtifact from "./artifacts/src/tokenization/PropertyFactory.sol/PropertyFactory.json";
 import PropertyTokenArtifact from "./artifacts/src/tokenization/PropertyToken.sol/PropertyToken.json";
+
+// Network config
+import { NETWORKS, DEFAULT_NETWORK } from "./networks";
 
 // Utils imports
 import {
@@ -15,9 +17,6 @@ import {
 	getNetworkName,
 	getDeploymentJsonEnv,
 } from "@commertize/utils/onchain";
-
-// Network config — single source of truth for defaults
-import { NETWORKS, DEFAULT_NETWORK } from "./networks";
 
 export type { DeploymentConfig };
 
@@ -53,8 +52,10 @@ async function loadDeployment(
 	// 2. Load bundled deployment JSON based on network
 	// Template literal prevents TypeScript from statically resolving the path,
 	// so the DTS build won't fail when a file (e.g. deployment.localhost.json) is absent.
+	// Filenames use underscores (deploy.ts writes deployment.arc_testnet.json).
+	const file = network.replace(/-/g, "_");
 	try {
-		const mod = await import(`./deployment.${network}.json`);
+		const mod = await import(`./deployment.${file}.json`);
 		return (mod as any).default ?? (mod as any);
 	} catch (err) {
 		console.warn(`⚠️  Failed to load deployment for network: ${network}`, err);
@@ -63,7 +64,9 @@ async function loadDeployment(
 }
 
 const deploymentNetwork = getNetworkName() ?? DEFAULT_NETWORK;
-const fallbackNetwork = NETWORKS[deploymentNetwork] ?? NETWORKS[DEFAULT_NETWORK];
+
+const fallbackNetwork =
+	NETWORKS[deploymentNetwork] ?? NETWORKS[DEFAULT_NETWORK];
 
 // USE TOP-LEVEL AWAIT
 let deploymentConfig: DeploymentConfig | null =
@@ -75,10 +78,12 @@ export const NETWORK = deploymentConfig?.network?.name ?? fallbackNetwork.name;
 export const CHAIN_ID = Number(
 	deploymentConfig?.network?.chainId ?? fallbackNetwork.chainId
 );
-export const CURRENCY = deploymentConfig?.network?.currency ?? fallbackNetwork.currency;
+export const CURRENCY =
+	deploymentConfig?.network?.currency ?? fallbackNetwork.currency;
 export const RPC_URL = deploymentConfig?.network?.rpc ?? fallbackNetwork.rpcUrl;
 export const BLOCK_EXPLORER_URL =
-	deploymentConfig?.network?.blockExplorerUrl ?? fallbackNetwork.blockExplorerUrl;
+	deploymentConfig?.network?.blockExplorerUrl ??
+	fallbackNetwork.blockExplorerUrl;
 
 export const CONTRACTS: any = deploymentConfig?.contracts || {};
 export const Deployment = deploymentConfig;
@@ -235,8 +240,7 @@ const ERC20_PERMIT_ABI = [
 /** Contract ABIs (ethers/viem compatible). */
 export const ABIS = {
 	IdentityRegistry: IdentityRegistryArtifact.abi,
-	CredentialRegistry: CredentialRegistryArtifact.abi,
-	CredentialCheckPolicy: CredentialCheckPolicyArtifact.abi,
+	Compliance: TokenComplianceArtifact.abi,
 	USDC: [...ERC20_PERMIT_ABI],
 	DividendVault: DividendVaultArtifact.abi,
 	PropertyFactory: PropertyFactoryArtifact.abi,
@@ -249,8 +253,7 @@ export const ListingEscrowAbi = ListingEscrowArtifact.abi;
 
 /** Full artifacts (ABI + bytecode) for backend deployment via ContractFactory. */
 export { default as IdentityRegistryArtifact } from "./artifacts/src/compliance/IdentityRegistry.sol/IdentityRegistry.json";
-export { default as CredentialRegistryArtifact } from "./artifacts/src/compliance/CredentialRegistry.sol/CredentialRegistry.json";
-export { default as CredentialCheckPolicyArtifact } from "./artifacts/src/compliance/policies/CredentialCheckPolicy.sol/CredentialCheckPolicy.json";
+export { default as TokenComplianceArtifact } from "./artifacts/src/compliance/TokenCompliance.sol/TokenCompliance.json";
 
 /** Standard Solidity Error(string) ABI for decoding require()/revert() messages. */
 export const ErrorStringAbi = [
@@ -261,35 +264,15 @@ export const ErrorStringAbi = [
 	},
 ] as const;
 
-// MARK: Credential Type Constants
-
-export const CREDENTIAL_TYPES = {
-	KYC: ethers.keccak256(ethers.toUtf8Bytes("KYC")),
-	AML: ethers.keccak256(ethers.toUtf8Bytes("AML")),
-	ACCREDITED: ethers.keccak256(ethers.toUtf8Bytes("ACCREDITED")),
-	RESIDENCY: ethers.keccak256(ethers.toUtf8Bytes("RESIDENCY")),
-} as const;
-
-// MARK: Contract Instances
-
+// MARK: Contract Helpers
 export const getIdentityRegistryContract = (runner: ethers.ContractRunner) =>
 	new ethers.Contract(
 		CONTRACTS.IdentityRegistry,
 		ABIS.IdentityRegistry,
 		runner
 	);
-export const getCredentialRegistryContract = (runner: ethers.ContractRunner) =>
-	new ethers.Contract(
-		CONTRACTS.CredentialRegistry,
-		ABIS.CredentialRegistry,
-		runner
-	);
-export const getCredentialCheckPolicyContract = (runner: ethers.ContractRunner) =>
-	new ethers.Contract(
-		CONTRACTS.CredentialCheckPolicy,
-		ABIS.CredentialCheckPolicy,
-		runner
-	);
+export const getComplianceContract = (runner: ethers.ContractRunner) =>
+	new ethers.Contract(CONTRACTS.TokenCompliance, ABIS.Compliance, runner);
 export const getUSDCContract = (runner: ethers.ContractRunner) =>
 	new ethers.Contract(CONTRACTS.USDC || USDC_ADDRESS, ABIS.USDC, runner);
 export const getDividendVaultContract = (runner: ethers.ContractRunner) =>
@@ -305,4 +288,3 @@ export const getEscrowContract = (
 	address: string,
 	runner: ethers.ContractRunner
 ) => new ethers.Contract(address, ABIS.ListingEscrow, runner);
-

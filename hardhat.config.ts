@@ -40,34 +40,22 @@ export default defineConfig({
 			url: NETWORKS.localhost.rpcUrl,
 			chainId: NETWORKS.localhost.chainId,
 		},
-		"arbitrum-sepolia": {
-			type: "http",
-			url: NETWORKS["arbitrum-sepolia"].rpcUrl,
-			chainId: NETWORKS["arbitrum-sepolia"].chainId,
-			accounts: [configVariable("EVM_PRIVATE_KEY")],
-		},
-		arbitrum: {
-			type: "http",
-			url: NETWORKS.arbitrum.rpcUrl,
-			chainId: NETWORKS.arbitrum.chainId,
-			accounts: [configVariable("EVM_PRIVATE_KEY")],
-		},
 		"arc-testnet": {
 			type: "http",
 			url: NETWORKS["arc-testnet"].rpcUrl,
 			chainId: NETWORKS["arc-testnet"].chainId,
 			accounts: [configVariable("EVM_PRIVATE_KEY")],
 		},
-		"base-sepolia": {
+		"ethereum-sepolia": {
 			type: "http",
-			url: NETWORKS["base-sepolia"].rpcUrl,
-			chainId: NETWORKS["base-sepolia"].chainId,
+			url: NETWORKS["ethereum-sepolia"].rpcUrl,
+			chainId: NETWORKS["ethereum-sepolia"].chainId,
 			accounts: [configVariable("EVM_PRIVATE_KEY")],
 		},
-		base: {
+		mainnet: {
 			type: "http",
-			url: NETWORKS.base.rpcUrl,
-			chainId: NETWORKS.base.chainId,
+			url: NETWORKS.mainnet.rpcUrl,
+			chainId: NETWORKS.mainnet.chainId,
 			accounts: [configVariable("EVM_PRIVATE_KEY")],
 		},
 	},

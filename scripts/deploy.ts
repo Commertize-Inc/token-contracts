@@ -25,7 +25,7 @@ interface DeployContext {
 
 const { ethers, networkName } = await hre.network.connect();
 
-console.log(chalk.bold.blue("\nCommertize Interactive Deployment CLI\n"));
+console.log(chalk.bold.blue("\nCommertize Interactive Deployment CLI (MVP)\n"));
 
 const [deployer] = await ethers.getSigners();
 console.log(`Deploying from account: ${chalk.yellow(deployer.address)}`);
@@ -86,27 +86,22 @@ if (usdcAddress) {
 const contracts = [
 	{
 		name: "IdentityRegistry",
-		title: "1. Identity Registry (CCID-anchored)",
+		title: "1. Identity Registry (Compliance)",
 		value: "IdentityRegistry",
 	},
 	{
-		name: "CredentialRegistry",
-		title: "2. Credential Registry (KYC/AML/Accreditation with expiry)",
-		value: "CredentialRegistry",
-	},
-	{
-		name: "CredentialCheckPolicy",
-		title: "3. Credential Check Policy (Requires IdentityRegistry + CredentialRegistry)",
-		value: "CredentialCheckPolicy",
+		name: "TokenCompliance",
+		title: "2. Token Compliance (Requires IdentityRegistry)",
+		value: "TokenCompliance",
 	},
 	{
 		name: "PropertyFactory",
-		title: "4. Property Factory",
+		title: "3. Property Factory (Requires Compliance)",
 		value: "PropertyFactory",
 	},
 	{
 		name: "DividendVault",
-		title: "5. Dividend Vault (Requires USDC)",
+		title: "4. Dividend Vault (Requires USDC from fork)",
 		value: "DividendVault",
 	},
 ];
@@ -138,127 +133,66 @@ if (args.includes("--all") || process.env.CI) {
 
 console.log(chalk.bold("\n⚡ Starting Deployment...\n"));
 
-// Credential type constants
-const KYC_TYPE = ethers.keccak256(ethers.toUtf8Bytes("KYC"));
-const AML_TYPE = ethers.keccak256(ethers.toUtf8Bytes("AML"));
-
-// MARK: 1. Identity Registry
-
+// 1. Identity Registry
 if (selectedContracts.has("IdentityRegistry")) {
 	await deployContract("IdentityRegistry", [deployer.address], context);
 
-	// Register deployer identity (CCID-anchored)
+	// Register Deployer/Admin as Verified Identity (Required for receiving initial mints)
 	try {
-		console.log("  Registering deployer identity...");
+		console.log("  Authenticating Deployer...");
 		const identityRegistry = await ethers.getContractAt(
 			"IdentityRegistry",
 			context.deployedAddresses.IdentityRegistry,
 			deployer
 		);
-		const adminCcid = ethers.keccak256(
-			ethers.solidityPacked(["string", "string"], ["commertize", "ADMIN"])
-		);
+		// Hash "ADMIN" for the deployer identity
+		const adminHash = ethers.keccak256(ethers.toUtf8Bytes("ADMIN"));
 		const tx = await identityRegistry.registerIdentity(
-			adminCcid,
-			deployer.address
-		);
+			deployer.address,
+			840,
+			adminHash
+		); // 840 = US
 		await tx.wait();
 		console.log(
-			`  [OK] Deployer ${chalk.green(deployer.address)} registered (CCID: ADMIN)`
+			`  [OK] Deployer ${chalk.green(deployer.address)} authenticated (Country: 840, Hash: ADMIN)`
 		);
 	} catch (err: any) {
 		console.warn(
-			chalk.yellow(`  Warning: Failed to register deployer: ${err.message}`)
+			chalk.yellow(`  Warning: Failed to authenticate deployer: ${err.message}`)
 		);
 	}
 }
 
-// MARK: 2. Credential Registry
+// USDC: not deployed; use address from Anvil fork in deployment.*.json (e.g. deployment.localhost.json).
 
-if (selectedContracts.has("CredentialRegistry")) {
+// 2. Token Compliance
+if (selectedContracts.has("TokenCompliance")) {
 	const idRegistry = context.deployedAddresses.IdentityRegistry;
 	if (!idRegistry) {
 		console.error(
-			chalk.red("Error: CredentialRegistry requires IdentityRegistry.")
+			chalk.red("Error: TokenCompliance requires IdentityRegistry.")
 		);
 	} else {
 		await deployContract(
-			"CredentialRegistry",
+			"TokenCompliance",
 			[idRegistry, deployer.address],
 			context
 		);
-
-		// Register deployer credentials (KYC + AML, no expiry)
-		try {
-			console.log("  Registering deployer credentials...");
-			const cr = await ethers.getContractAt(
-				"CredentialRegistry",
-				context.deployedAddresses.CredentialRegistry,
-				deployer
-			);
-			const adminCcid = ethers.keccak256(
-				ethers.solidityPacked(["string", "string"], ["commertize", "ADMIN"])
-			);
-			const maxExpiry = (1n << 40n) - 1n; // type(uint40).max
-			const kycTx = await cr.registerCredential(
-				adminCcid,
-				KYC_TYPE,
-				maxExpiry,
-				"0x"
-			);
-			await kycTx.wait();
-			const amlTx = await cr.registerCredential(
-				adminCcid,
-				AML_TYPE,
-				maxExpiry,
-				"0x"
-			);
-			await amlTx.wait();
-			console.log(
-				`  [OK] Deployer credentials registered (KYC + AML, no expiry)`
-			);
-		} catch (err: any) {
-			console.warn(
-				chalk.yellow(`  Warning: Failed to register deployer credentials: ${err.message}`)
-			);
-		}
 	}
 }
 
-// MARK: 3. Credential Check Policy
-
-if (selectedContracts.has("CredentialCheckPolicy")) {
-	const idRegistry = context.deployedAddresses.IdentityRegistry;
-	const credRegistry = context.deployedAddresses.CredentialRegistry;
-
-	if (!idRegistry || !credRegistry) {
-		console.error(
-			chalk.red(
-				"Error: CredentialCheckPolicy requires IdentityRegistry and CredentialRegistry."
-			)
-		);
-	} else {
-		await deployContract(
-			"CredentialCheckPolicy",
-			[idRegistry, credRegistry, [KYC_TYPE, AML_TYPE]],
-			context
-		);
-	}
-}
-
-// MARK: 4. Property Factory
-
+// 3. Property Factory
 if (selectedContracts.has("PropertyFactory")) {
 	await deployContract("PropertyFactory", [deployer.address], context);
 }
 
-// MARK: 5. Dividend Vault
-
+// 4. Dividend Vault
 if (selectedContracts.has("DividendVault")) {
 	const usdc = context.deployedAddresses.USDC;
 	if (!usdc) {
 		console.error(chalk.red("Error: DividendVault requires USDC."));
 	} else {
+		// Protocol Wallet = Deployer for now
 		await deployContract(
 			"DividendVault",
 			[usdc, deployer.address, deployer.address],
@@ -267,8 +201,7 @@ if (selectedContracts.has("DividendVault")) {
 	}
 }
 
-// MARK: Save deployment config
-
+// Save to deployment.json (Single Source of Truth)
 context.deploymentConfig.timestamp = new Date().toISOString();
 context.deploymentConfig.network = {
 	name: networkName,

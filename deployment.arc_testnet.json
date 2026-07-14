@@ -1,0 +1,17 @@
+{
+  "contracts": {
+    "USDC": "0x3600000000000000000000000000000000000000",
+    "IdentityRegistry": "0xc1F0F860fA1Ff4dd8925f6A4E5A96F3D160614F2",
+    "TokenCompliance": "0x025a1ed585ae528fa03AeB5Fc41b6f7b0C46d012",
+    "PropertyFactory": "0x413Bd149281870C2A034da937066147B3400133b",
+    "DividendVault": "0x6f80EAEA67D197c08C2c0C9385eC25f679bB8752"
+  },
+  "timestamp": "2026-07-09T01:00:40.624Z",
+  "network": {
+    "name": "arc-testnet",
+    "chainId": 5042002,
+    "rpc": "https://rpc.testnet.arc.network",
+    "currency": "USDC",
+    "blockExplorerUrl": "https://testnet.arcscan.app/"
+  }
+}
