@@ -30,27 +30,4 @@ contract TokenCompliance is Ownable {
         isExempt[target] = status;
         emit ExemptionUpdated(target, status);
     }
-
-    /**
-     * @dev Modifier to enforce compliance checks on transfers.
-     * @param from Sender address
-     * @param to Receiver address
-     */
-    modifier canTransfer(address from, address to) {
-        // Minting (from 0x0)
-        if (from == address(0)) {
-            require(identityRegistry.isVerified(to) || isExempt[to], "Compliance: Transfer not allowed");
-        }
-        // Burning (to 0x0) - always allowed
-        else if (to == address(0)) {
-            // No check needed for burning
-        }
-        // Standard Transfer - both must be Verified OR Exempt
-        else {
-            bool fromOk = identityRegistry.isVerified(from) || isExempt[from];
-            bool toOk = identityRegistry.isVerified(to) || isExempt[to];
-            require(fromOk && toOk, "Compliance: Transfer not allowed");
-        }
-        _;
-    }
 }

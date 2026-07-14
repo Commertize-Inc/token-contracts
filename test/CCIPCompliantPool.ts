@@ -173,10 +173,14 @@ describe("CCIP Bridged Token Suite", function () {
 		});
 	});
 
-	describe("PropertyTokenPool (stock CCIP burn/mint pool)", function () {
-		it("constructs against the bridged token (decimals + wiring)", async function () {
-			const Pool = await ethers.getContractFactory("PropertyTokenPool");
-			const pool = await Pool.deploy(
+	describe("CompliantPropertyTokenPool (source-side gating)", function () {
+		let pool: any;
+
+		before(async function () {
+			const Pool = await ethers.getContractFactory(
+				"CompliantPropertyTokenPool"
+			);
+			pool = await Pool.deploy(
 				bridgedToken.target,
 				18,
 				[],
@@ -184,7 +188,57 @@ describe("CCIP Bridged Token Suite", function () {
 				router.address
 			);
 			await pool.waitForDeployment();
+		});
+
+		it("constructs against the bridged token (decimals + wiring)", async function () {
 			expect(await pool.getToken()).to.equal(bridgedToken.target);
+		});
+
+		function lockOrBurnIn(receiverAddr: string) {
+			return {
+				receiver: ethers.AbiCoder.defaultAbiCoder().encode(
+					["address"],
+					[receiverAddr]
+				),
+				remoteChainSelector: 1n,
+				originalSender: verifiedUser.address,
+				amount: 100n,
+				localToken: bridgedToken.target,
+			};
+		}
+
+		it("rejects bridging to an UNVERIFIED destination receiver (before burn)", async function () {
+			await expect(
+				pool.lockOrBurn.staticCall(lockOrBurnIn(unverifiedUser.address))
+			)
+				.to.be.revertedWithCustomError(pool, "ReceiverNotVerified")
+				.withArgs(unverifiedUser.address);
+		});
+
+		it("rejects a non-EVM (non-32-byte) receiver", async function () {
+			const badIn = {
+				...lockOrBurnIn(verifiedUser.address),
+				receiver: "0x1234", // 2 bytes
+			};
+			await expect(
+				pool.lockOrBurn.staticCall(badIn)
+			).to.be.revertedWithCustomError(pool, "NonEvmReceiver");
+		});
+
+		it("lets a VERIFIED receiver past the gate (then hits CCIP onRamp auth, not our gate)", async function () {
+			// Our compliance gate passes for a verified receiver; the call then
+			// reverts inside the base's _validateLockOrBurn because this test
+			// signer is not a registered CCIP onRamp — proving the gate let it
+			// through rather than rejecting on compliance.
+			await expect(
+				pool.lockOrBurn.staticCall(lockOrBurnIn(verifiedUser.address))
+			).to.not.be.revertedWithCustomError(pool, "ReceiverNotVerified");
+		});
+
+		it("lets an EXEMPT receiver past the gate", async function () {
+			await expect(
+				pool.lockOrBurn.staticCall(lockOrBurnIn(exemptPool.address))
+			).to.not.be.revertedWithCustomError(pool, "ReceiverNotVerified");
 		});
 	});
 });

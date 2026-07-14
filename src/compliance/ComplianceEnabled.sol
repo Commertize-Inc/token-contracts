@@ -6,24 +6,15 @@ import "./IdentityRegistry.sol";
 
 /**
  * @title ComplianceEnabled
- * @dev Abstract contract that provides compliance checking via the canTransfer modifier.
- * @dev Token contracts should inherit from this to enforce compliance on transfers.
+ * @dev Abstract contract that provides compliance checking via _checkCompliance.
+ * @dev Token contracts should inherit from this and call _checkCompliance in
+ * their transfer hook (see PropertyToken._update) to enforce compliance.
  */
 abstract contract ComplianceEnabled {
     TokenCompliance public compliance;
 
     /**
-     * @dev Modifier to enforce compliance checks on transfers.
-     * @param from Sender address
-     * @param to Receiver address
-     */
-    modifier canTransfer(address from, address to) {
-        _checkCompliance(from, to);
-        _;
-    }
-
-    /**
-     * @dev Internal function to check compliance. Can be called directly or via modifier.
+     * @dev Internal function to check compliance on a balance-moving update.
      * @param from Sender address
      * @param to Receiver address
      */

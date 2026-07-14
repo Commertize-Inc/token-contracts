@@ -7,6 +7,7 @@ import DividendVaultArtifact from "./artifacts/src/finance/DividendVault.sol/Div
 import ListingEscrowArtifact from "./artifacts/src/finance/ListingEscrow.sol/ListingEscrow.json";
 import PropertyFactoryArtifact from "./artifacts/src/tokenization/PropertyFactory.sol/PropertyFactory.json";
 import PropertyTokenArtifact from "./artifacts/src/tokenization/PropertyToken.sol/PropertyToken.json";
+import IdentitySyncSenderArtifact from "./artifacts/src/ccip/IdentitySyncSender.sol/IdentitySyncSender.json";
 
 // Network config
 import { NETWORKS, DEFAULT_NETWORK } from "./networks";
@@ -246,6 +247,7 @@ export const ABIS = {
 	PropertyFactory: PropertyFactoryArtifact.abi,
 	PropertyToken: PropertyTokenArtifact.abi,
 	ListingEscrow: ListingEscrowArtifact.abi,
+	IdentitySyncSender: IdentitySyncSenderArtifact.abi,
 };
 
 /** ListingEscrow ABI for deposit/decode (includes SafeERC20FailedOperation and other errors). */
@@ -254,6 +256,7 @@ export const ListingEscrowAbi = ListingEscrowArtifact.abi;
 /** Full artifacts (ABI + bytecode) for backend deployment via ContractFactory. */
 export { default as IdentityRegistryArtifact } from "./artifacts/src/compliance/IdentityRegistry.sol/IdentityRegistry.json";
 export { default as TokenComplianceArtifact } from "./artifacts/src/compliance/TokenCompliance.sol/TokenCompliance.json";
+export { default as IdentitySyncSenderArtifact } from "./artifacts/src/ccip/IdentitySyncSender.sol/IdentitySyncSender.json";
 
 /** Standard Solidity Error(string) ABI for decoding require()/revert() messages. */
 export const ErrorStringAbi = [
@@ -271,6 +274,15 @@ export const getIdentityRegistryContract = (runner: ethers.ContractRunner) =>
 		ABIS.IdentityRegistry,
 		runner
 	);
+/**
+ * IdentitySyncSender lives on the home chain and its address is optional
+ * (absent until deployed), so it is passed explicitly rather than read from
+ * CONTRACTS.
+ */
+export const getIdentitySyncSenderContract = (
+	address: string,
+	runner: ethers.ContractRunner
+) => new ethers.Contract(address, ABIS.IdentitySyncSender, runner);
 export const getComplianceContract = (runner: ethers.ContractRunner) =>
 	new ethers.Contract(CONTRACTS.TokenCompliance, ABIS.Compliance, runner);
 export const getUSDCContract = (runner: ethers.ContractRunner) =>

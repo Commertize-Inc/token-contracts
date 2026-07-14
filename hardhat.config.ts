@@ -29,7 +29,9 @@ export default defineConfig({
 		},
 	},
 	paths: {
-		sources: "./src",
+		// test/contracts holds test-only mocks; their artifacts land under
+		// artifacts/test/** which the package `files` glob never publishes.
+		sources: ["./src", "./test/contracts"],
 		tests: "./test",
 		cache: "./cache",
 		artifacts: "./artifacts",
