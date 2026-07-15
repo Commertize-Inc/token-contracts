@@ -1,0 +1,13 @@
+{
+	"schedule": "0 0 */6 * * *",
+	"url": "https://api.commertize.com/v1/nav/property",
+	"propertyId": "0x0000000000000000000000000000000000000000000000000000000000001234",
+	"evms": [
+		{
+			"consumerAddress": "0x0000000000000000000000000000000000000000",
+			"chainName": "ethereum-mainnet",
+			"gasLimit": "1000000",
+			"isTestnet": false
+		}
+	]
+}

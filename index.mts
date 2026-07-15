@@ -8,6 +8,7 @@ import ListingEscrowArtifact from "./artifacts/src/finance/ListingEscrow.sol/Lis
 import PropertyFactoryArtifact from "./artifacts/src/tokenization/PropertyFactory.sol/PropertyFactory.json";
 import PropertyTokenArtifact from "./artifacts/src/tokenization/PropertyToken.sol/PropertyToken.json";
 import IdentitySyncSenderArtifact from "./artifacts/src/ccip/IdentitySyncSender.sol/IdentitySyncSender.json";
+import PropertyNavConsumerArtifact from "./artifacts/src/oracle/PropertyNavConsumer.sol/PropertyNavConsumer.json";
 
 // Network config
 import { NETWORKS, DEFAULT_NETWORK } from "./networks";
@@ -248,6 +249,7 @@ export const ABIS = {
 	PropertyToken: PropertyTokenArtifact.abi,
 	ListingEscrow: ListingEscrowArtifact.abi,
 	IdentitySyncSender: IdentitySyncSenderArtifact.abi,
+	PropertyNavConsumer: PropertyNavConsumerArtifact.abi,
 };
 
 /** ListingEscrow ABI for deposit/decode (includes SafeERC20FailedOperation and other errors). */
@@ -257,6 +259,7 @@ export const ListingEscrowAbi = ListingEscrowArtifact.abi;
 export { default as IdentityRegistryArtifact } from "./artifacts/src/compliance/IdentityRegistry.sol/IdentityRegistry.json";
 export { default as TokenComplianceArtifact } from "./artifacts/src/compliance/TokenCompliance.sol/TokenCompliance.json";
 export { default as IdentitySyncSenderArtifact } from "./artifacts/src/ccip/IdentitySyncSender.sol/IdentitySyncSender.json";
+export { default as PropertyNavConsumerArtifact } from "./artifacts/src/oracle/PropertyNavConsumer.sol/PropertyNavConsumer.json";
 
 /** Standard Solidity Error(string) ABI for decoding require()/revert() messages. */
 export const ErrorStringAbi = [
@@ -283,6 +286,14 @@ export const getIdentitySyncSenderContract = (
 	address: string,
 	runner: ethers.ContractRunner
 ) => new ethers.Contract(address, ABIS.IdentitySyncSender, runner);
+/**
+ * PropertyNavConsumer is the CRE oracle sink (see cre/). Its address is
+ * per-chain and absent until deployed, so it is passed explicitly.
+ */
+export const getPropertyNavConsumerContract = (
+	address: string,
+	runner: ethers.ContractRunner
+) => new ethers.Contract(address, ABIS.PropertyNavConsumer, runner);
 export const getComplianceContract = (runner: ethers.ContractRunner) =>
 	new ethers.Contract(CONTRACTS.TokenCompliance, ABIS.Compliance, runner);
 export const getUSDCContract = (runner: ethers.ContractRunner) =>

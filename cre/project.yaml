@@ -1,0 +1,22 @@
+# Chainlink CRE project settings — one target per environment.
+# `${VAR}` values are interpolated from cre/.env (CLI >= v1.5.0).
+
+staging-settings:
+  cre-cli:
+    don-family: "zone-a"
+  rpcs:
+    - chain-name: ethereum-testnet-sepolia
+      url: "${ETH_SEPOLIA_RPC_URL}"
+    - chain-name: ethereum-testnet-sepolia-base-1
+      url: "${BASE_SEPOLIA_RPC_URL}"
+
+production-settings:
+  cre-cli:
+    don-family: "zone-a"
+  account:
+    # Workflow-owner wallet or multisig. Pin this as expectedAuthor on the
+    # consumer after deploy (setExpectedAuthor).
+    workflow-owner-address: "0xYOUR_WORKFLOW_OWNER_MSIG"
+  rpcs:
+    - chain-name: ethereum-mainnet
+      url: "${ETH_MAINNET_RPC_URL}"

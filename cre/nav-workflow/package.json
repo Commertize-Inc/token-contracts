@@ -1,0 +1,12 @@
+{
+	"name": "commertize-nav-workflow",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"description": "Chainlink CRE workflow: property NAV oracle for Commertize PropertyTokens",
+	"dependencies": {
+		"@chainlink/cre-sdk": "^1.16.0",
+		"viem": "2.34.0",
+		"zod": "3.25.76"
+	}
+}

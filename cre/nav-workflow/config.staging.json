@@ -1,0 +1,19 @@
+{
+	"schedule": "0 */5 * * * *",
+	"url": "https://api.commertize.internal/v1/nav/property",
+	"propertyId": "0x0000000000000000000000000000000000000000000000000000000000001234",
+	"evms": [
+		{
+			"consumerAddress": "0x0000000000000000000000000000000000000000",
+			"chainName": "ethereum-testnet-sepolia",
+			"gasLimit": "1000000",
+			"isTestnet": true
+		},
+		{
+			"consumerAddress": "0x0000000000000000000000000000000000000000",
+			"chainName": "ethereum-testnet-sepolia-base-1",
+			"gasLimit": "1000000",
+			"isTestnet": true
+		}
+	]
+}
