@@ -99,14 +99,23 @@ contract PropertyToken is ERC20, ERC20Permit, Ownable, ComplianceEnabled {
     }
 
     function _valueAt(Snap[] storage snaps, uint256 snapshotId, uint256 currentValue) private view returns (uint256) {
-        // Finds the first checkpoint where `checkpoint.id > snapshotId`.
-        // The value stored there is the value that was preserved just before the first change AFTER snapshotId.
-        // If no such checkpoint exists, it means no changes happened after snapshotId, so current value is valid.
+        // Each checkpoint stores the balance as it stood at the START of the
+        // period whose id it carries (the pre-change value written on the first
+        // modification in that period). balanceOfAt(snapshotId) must therefore
+        // return the checkpoint keyed EXACTLY snapshotId if one exists (the value
+        // captured the moment that snapshot was taken), otherwise the next
+        // checkpoint after it, otherwise the live value. This mirrors
+        // OpenZeppelin Arrays.findUpperBound: take the strict upper bound, then
+        // step back one if that predecessor is an exact id match. The earlier
+        // implementation used only the strict upper bound, so a change made
+        // during the latest snapshot's own period (id == snapshotId) was skipped
+        // and the query fell through to the live balance — the DividendVault
+        // double-claim/drain root cause.
 
         uint256 low = 0;
         uint256 high = snaps.length;
 
-        // Binary search for first element > snapshotId
+        // Strict upper bound: first index with snaps[i].id > snapshotId.
         while(low < high) {
             uint256 mid = (low + high) / 2;
             if (snaps[mid].id > snapshotId) {
@@ -114,6 +123,11 @@ contract PropertyToken is ERC20, ERC20Permit, Ownable, ComplianceEnabled {
             } else {
                 low = mid + 1;
             }
+        }
+
+        // Exact match sits at high - 1 (ids are strictly increasing).
+        if (high > 0 && snaps[high - 1].id == snapshotId) {
+            return snaps[high - 1].value;
         }
 
         if (high == snaps.length) {
