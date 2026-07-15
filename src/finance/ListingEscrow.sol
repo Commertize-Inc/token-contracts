@@ -55,6 +55,7 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 	);
 	event TokensBurned(uint256 amount);
 	event AdminUpdated(address indexed oldAdmin, address indexed newAdmin);
+	event RefundsEnabled(address indexed by);
 
 	constructor(
 		address _propertyToken,
@@ -283,13 +284,33 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 	}
 
 	/**
-	 * @notice Claim refund if raise failed/expired.
+	 * @notice Admin/owner opens refund mode deliberately (e.g. a regulatory
+	 * halt) before the deadline or on a met target. This is the ONLY way to
+	 * refund a raise that reached its target; the permissionless refund() path
+	 * is restricted to genuinely failed raises so a single investor cannot brick
+	 * finalize() on a successful raise.
+	 */
+	function enableRefunds() external onlyAdminOrOwner {
+		require(!finalized, "Already finalized");
+		refunded = true;
+		emit RefundsEnabled(msg.sender);
+	}
+
+	/**
+	 * @notice Claim refund if the raise failed (deadline passed without meeting
+	 * the target) or an admin has opened refunds via enableRefunds().
+	 * @dev Must NOT be callable on a successful raise: refunded flips a global
+	 * flag that finalize()/adminFinalize() block on, so allowing it after a met
+	 * target lets any investor permanently brick the sponsor's finalize.
 	 */
 	function refund() external nonReentrant {
 		require(!finalized, "Raise successful");
-		require(block.timestamp >= deadline || refunded, "Deadline not passed");
+		require(
+			refunded || (block.timestamp >= deadline && totalRaised < targetRaise),
+			"Refunds not open"
+		);
 
-		// Mark as refunded state if not already (first refund call triggers it effectively)
+		// Lock in refund mode for the rest of the escrow's life.
 		refunded = true;
 
 		uint256 userDeposit = deposits[msg.sender];
@@ -317,7 +338,10 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 		address[] calldata investorList
 	) external onlyAdminOrOwner nonReentrant {
 		require(!finalized, "Raise successful");
-		require(block.timestamp >= deadline || refunded, "Deadline not passed");
+		require(
+			refunded || (block.timestamp >= deadline && totalRaised < targetRaise),
+			"Refunds not open"
+		);
 
 		// Mark as refunded state
 		refunded = true;
