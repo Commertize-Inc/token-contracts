@@ -2,10 +2,12 @@
 pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 import "../tokenization/PropertyToken.sol";
+import "../compliance/TokenCompliance.sol";
 
 /**
  * @title DividendVault
@@ -13,6 +15,8 @@ import "../tokenization/PropertyToken.sol";
  * @dev Uses snapshot mechanism to prevent front-running and ensures fair distribution
  */
 contract DividendVault is Ownable, ReentrancyGuard, Pausable {
+    using SafeERC20 for IERC20;
+
     IERC20 public paymentToken; // USDC or payment token
     address public protocolWallet;
     uint256 public protocolFeeBps; // Changed to mutable
@@ -31,6 +35,7 @@ contract DividendVault is Ownable, ReentrancyGuard, Pausable {
         uint256 totalSupplyAtSnapshot;
         uint256 timestamp; // Track when distribution was created
         uint256 totalClaimed; // Track how much has been claimed
+        bool recovered; // Set by recoverUnclaimed; permanently closes claims
         mapping(address => bool) claimed;
     }
 
@@ -94,8 +99,16 @@ contract DividendVault is Ownable, ReentrancyGuard, Pausable {
     function depositDividend(address property, uint256 amount) external nonReentrant whenNotPaused {
         require(amount >= MIN_DISTRIBUTION, "Amount too small");
         require(property != address(0), "Invalid property");
+        // Only vetted deployments: an arbitrary token contract must not be able
+        // to host distributions inside the canonical vault (phishing surface),
+        // and unvetted callers must not spam snapshots/storage on real tokens.
+        require(isValidProperty[property], "Property not validated");
 
         PropertyToken token = PropertyToken(payable(property));
+        require(
+            msg.sender == owner() || msg.sender == token.owner(),
+            "Not authorized to deposit"
+        );
 
         // Validate it's a legitimate property token
         require(token.totalSupply() > 0, "Invalid property token");
@@ -107,7 +120,7 @@ contract DividendVault is Ownable, ReentrancyGuard, Pausable {
         require(supply > 0, "No tokens to distribute to");
 
         // Now transfer funds from sponsor to this contract
-        require(paymentToken.transferFrom(msg.sender, address(this), amount), "Transfer failed");
+        paymentToken.safeTransferFrom(msg.sender, address(this), amount);
 
         // Calculate and take protocol fee
         uint256 fee = (amount * protocolFeeBps) / 10000;
@@ -116,7 +129,7 @@ contract DividendVault is Ownable, ReentrancyGuard, Pausable {
 
         // Transfer fee to protocol wallet
         if (fee > 0) {
-            require(paymentToken.transfer(protocolWallet, fee), "Fee transfer failed");
+            paymentToken.safeTransfer(protocolWallet, fee);
         }
 
         // Record distribution
@@ -142,6 +155,8 @@ contract DividendVault is Ownable, ReentrancyGuard, Pausable {
         Distribution storage d = distributions[property][distributionId];
         require(!d.claimed[msg.sender], "Already claimed");
         require(d.totalAmount > 0, "Invalid distribution");
+        require(!d.recovered, "Distribution recovered");
+        require(_isCompliant(property, msg.sender), "Claimant not verified");
 
         PropertyToken token = PropertyToken(payable(property));
         uint256 balance = token.balanceOfAt(msg.sender, d.snapshotId);
@@ -155,7 +170,7 @@ contract DividendVault is Ownable, ReentrancyGuard, Pausable {
         d.claimed[msg.sender] = true;
         d.totalClaimed += share;
 
-        require(paymentToken.transfer(msg.sender, share), "Transfer failed");
+        paymentToken.safeTransfer(msg.sender, share);
 
         emit DividendClaimed(property, distributionId, msg.sender, share);
     }
@@ -166,12 +181,14 @@ contract DividendVault is Ownable, ReentrancyGuard, Pausable {
      * @param distributionIds Array of distribution IDs to claim
      */
     function batchClaim(address property, uint256[] calldata distributionIds) external nonReentrant whenNotPaused {
+        require(_isCompliant(property, msg.sender), "Claimant not verified");
+
         for (uint256 i = 0; i < distributionIds.length; i++) {
             uint256 distributionId = distributionIds[i];
             Distribution storage d = distributions[property][distributionId];
 
-            if (d.claimed[msg.sender] || d.totalAmount == 0) {
-                continue; // Skip if already claimed or invalid
+            if (d.claimed[msg.sender] || d.totalAmount == 0 || d.recovered) {
+                continue; // Skip if already claimed, invalid, or recovered
             }
 
             PropertyToken token = PropertyToken(payable(property));
@@ -190,9 +207,17 @@ contract DividendVault is Ownable, ReentrancyGuard, Pausable {
             d.claimed[msg.sender] = true;
             d.totalClaimed += share;
 
-            require(paymentToken.transfer(msg.sender, share), "Transfer failed");
+            paymentToken.safeTransfer(msg.sender, share);
             emit DividendClaimed(property, distributionId, msg.sender, share);
         }
+    }
+
+    /// @dev Dividends are a benefit of compliant holding: frozen/unverified
+    /// holders accrue a share (snapshot math is untouched) but cannot pull
+    /// funds until they are verified or exempt again.
+    function _isCompliant(address property, address user) internal view returns (bool) {
+        TokenCompliance c = PropertyToken(payable(property)).compliance();
+        return c.identityRegistry().isVerified(user) || c.isExempt(user);
     }
 
     /**
@@ -203,15 +228,19 @@ contract DividendVault is Ownable, ReentrancyGuard, Pausable {
     function recoverUnclaimed(address property, uint256 distributionId) external onlyOwner nonReentrant {
         Distribution storage d = distributions[property][distributionId];
         require(d.totalAmount > 0, "Invalid distribution");
+        require(!d.recovered, "Already recovered");
         require(block.timestamp >= d.timestamp + CLAIM_TIMEOUT, "Timeout not reached");
 
         uint256 unclaimed = d.totalAmount - d.totalClaimed;
         require(unclaimed > 0, "Nothing to recover");
 
-        // Mark as fully claimed to prevent further claims
+        // Close the distribution: the per-user `claimed` map alone does not
+        // stop future claimants, so claims must gate on `recovered` or the
+        // pool goes insolvent across distributions.
+        d.recovered = true;
         d.totalClaimed = d.totalAmount;
 
-        require(paymentToken.transfer(owner(), unclaimed), "Transfer failed");
+        paymentToken.safeTransfer(owner(), unclaimed);
         emit UnclaimedRecovered(property, distributionId, unclaimed);
     }
 
@@ -228,7 +257,8 @@ contract DividendVault is Ownable, ReentrancyGuard, Pausable {
             uint256 totalAmount,
             uint256 totalSupplyAtSnapshot,
             uint256 timestamp,
-            uint256 totalClaimed
+            uint256 totalClaimed,
+            bool recovered
         )
     {
         Distribution storage d = distributions[property][distributionId];
@@ -237,7 +267,8 @@ contract DividendVault is Ownable, ReentrancyGuard, Pausable {
             d.totalAmount,
             d.totalSupplyAtSnapshot,
             d.timestamp,
-            d.totalClaimed
+            d.totalClaimed,
+            d.recovered
         );
     }
 
@@ -260,7 +291,7 @@ contract DividendVault is Ownable, ReentrancyGuard, Pausable {
     function getClaimableAmount(address property, uint256 distributionId, address user) external view returns (uint256) {
         Distribution storage d = distributions[property][distributionId];
 
-        if (d.claimed[user] || d.totalAmount == 0) {
+        if (d.claimed[user] || d.totalAmount == 0 || d.recovered) {
             return 0;
         }
 

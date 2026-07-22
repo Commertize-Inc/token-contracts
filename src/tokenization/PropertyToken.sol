@@ -2,12 +2,14 @@
 pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "../compliance/ComplianceEnabled.sol";
 
 contract PropertyToken is ERC20, ERC20Permit, Ownable, ComplianceEnabled {
+    using SafeERC20 for IERC20;
 
     struct Snap {
         uint256 id;
@@ -21,7 +23,11 @@ contract PropertyToken is ERC20, ERC20Permit, Ownable, ComplianceEnabled {
     Snap[] private _totalSupplySnaps;
     mapping(address => Snap[]) private _balanceSnaps;
 
+    // Contracts allowed to take snapshots besides the owner (e.g. DividendVault).
+    mapping(address => bool) public isSnapshotter;
+
     event Snapshot(uint256 id);
+    event SnapshotterSet(address indexed account, bool allowed);
 
     constructor(
         string memory _name,
@@ -34,11 +40,20 @@ contract PropertyToken is ERC20, ERC20Permit, Ownable, ComplianceEnabled {
         _mint(_owner, _supply);
     }
 
-    function snapshot() external onlyOwner returns (uint256) {
+    function snapshot() external returns (uint256) {
+        require(
+            msg.sender == owner() || isSnapshotter[msg.sender],
+            "Not authorized to snapshot"
+        );
         _currentSnapshotId += 1;
         uint256 currentId = _currentSnapshotId;
         emit Snapshot(currentId);
         return currentId;
+    }
+
+    function setSnapshotter(address account, bool allowed) external onlyOwner {
+        isSnapshotter[account] = allowed;
+        emit SnapshotterSet(account, allowed);
     }
 
     function getCurrentSnapshotId() external view returns (uint256) {
@@ -171,7 +186,7 @@ contract PropertyToken is ERC20, ERC20Permit, Ownable, ComplianceEnabled {
             require(success, "Transfer failed");
         } else {
             // ERC20
-            IERC20(token).transfer(to, amount);
+            IERC20(token).safeTransfer(to, amount);
         }
     }
 }
