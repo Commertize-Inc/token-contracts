@@ -5,7 +5,7 @@
 	"evms": [
 		{
 			"consumerAddress": "0x0000000000000000000000000000000000000000",
-			"chainName": "ethereum-mainnet",
+			"chainName": "ethereum-mainnet-arbitrum-1",
 			"gasLimit": "1000000",
 			"isTestnet": false
 		}

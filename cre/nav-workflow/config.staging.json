@@ -5,6 +5,12 @@
 	"evms": [
 		{
 			"consumerAddress": "0x0000000000000000000000000000000000000000",
+			"chainName": "ethereum-testnet-sepolia-arbitrum-1",
+			"gasLimit": "1000000",
+			"isTestnet": true
+		},
+		{
+			"consumerAddress": "0x0000000000000000000000000000000000000000",
 			"chainName": "ethereum-testnet-sepolia",
 			"gasLimit": "1000000",
 			"isTestnet": true

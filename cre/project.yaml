@@ -5,6 +5,8 @@ staging-settings:
   cre-cli:
     don-family: "zone-a"
   rpcs:
+    - chain-name: ethereum-testnet-sepolia-arbitrum-1
+      url: "${ARBITRUM_SEPOLIA_RPC_URL}"
     - chain-name: ethereum-testnet-sepolia
       url: "${ETH_SEPOLIA_RPC_URL}"
     - chain-name: ethereum-testnet-sepolia-base-1
@@ -18,5 +20,6 @@ production-settings:
     # consumer after deploy (setExpectedAuthor).
     workflow-owner-address: "0xYOUR_WORKFLOW_OWNER_MSIG"
   rpcs:
-    - chain-name: ethereum-mainnet
-      url: "${ETH_MAINNET_RPC_URL}"
+    # Arbitrum One is the production home chain (Arbitrum-first rollout).
+    - chain-name: ethereum-mainnet-arbitrum-1
+      url: "${ARBITRUM_ONE_RPC_URL}"

@@ -76,11 +76,26 @@ cp cre/.env.example cre/.env      # fill CRE_ETH_PRIVATE_KEY, RPC URLs, NAV_API_
 cd cre/nav-workflow && bun install
 ```
 
-1. **Deploy the consumer** (one per target chain) with that chain's forwarder.
-   Sepolia and Base Sepolia both use
-   `0xF8344CFd5c43616a4366C34E3EEE75af79a74482`; confirm with
-   `cre workflow supported-chains`. Put the deployed addresses in
-   `config.*.json` (`consumerAddress`) and set `propertyId`.
+`project.yaml` interpolates these RPC vars from `cre/.env`:
+`ARBITRUM_SEPOLIA_RPC_URL`, `ETH_SEPOLIA_RPC_URL`, `BASE_SEPOLIA_RPC_URL`
+(staging) and `ARBITRUM_ONE_RPC_URL` (production).
+
+1. **Deploy the consumer** (one per target chain) with that chain's
+   `KeystoneForwarder` (Forwarder Directory values, verified 2026-07-21 —
+   re-confirm with `cre workflow supported-chains` before deploying):
+
+   | Chain | CRE chain-name | Forwarder |
+   |---|---|---|
+   | Arbitrum Sepolia | `ethereum-testnet-sepolia-arbitrum-1` | `0x76c9cf548b4179F8901cda1f8623568b58215E62` |
+   | Ethereum Sepolia | `ethereum-testnet-sepolia` | `0xF8344CFd5c43616a4366C34E3EEE75af79a74482` |
+   | Base Sepolia | `ethereum-testnet-sepolia-base-1` | `0xF8344CFd5c43616a4366C34E3EEE75af79a74482` |
+   | Arbitrum One | `ethereum-mainnet-arbitrum-1` | `0xF8344CFd5c43616a4366C34E3EEE75af79a74482` † |
+
+   † The directory lists the same forwarder for Arbitrum One as for the two
+   Sepolias, which is unusual — verify on-chain before any mainnet deploy.
+
+   Put the deployed addresses in `config.*.json` (`consumerAddress`) and set
+   `propertyId`.
 2. **Generate contract bindings** into `nav-workflow/contracts/generated/` from
    the compiled `PropertyNavConsumer` ABI (`pnpm build` in the package emits it
    under `artifacts/`), using the CRE CLI's binding generator. The generated
@@ -125,7 +140,11 @@ config ≤ 50 KB · cron min 30 s · per-exec 5 HTTP / 15 EVM reads / 5 secrets 
   when bumping.
 - **LINK/billing model for workflow execution is not documented** — confirm cost
   with Chainlink before production.
-- **Arc testnet is not in any CRE supported-chain list** as of 2026-07-14.
-  This template targets Ethereum + Base (Sepolia/mainnet). If NAV must reach Arc
-  (where the PropertyTokens live), bridge/relay the value from a supported chain,
-  or re-check CRE Arc support before relying on it.
+- **Arbitrum One and Arbitrum Sepolia are CRE-supported targets** (verified
+  2026-07-21 against the CRE supported-networks page; CLI/SDK v1.0+ required).
+  Staging fans out to Arbitrum Sepolia + Ethereum Sepolia + Base Sepolia;
+  production targets Arbitrum One, the platform's home chain
+  (Arbitrum-first rollout — see the package README's deployment strategy).
+- **Arc testnet is not in any CRE supported-chain list** (as of 2026-07-14).
+  If NAV must reach Arc, bridge/relay the value from a supported chain, or
+  re-check CRE Arc support before relying on it.

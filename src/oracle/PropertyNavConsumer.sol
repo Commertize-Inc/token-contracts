@@ -38,9 +38,9 @@ contract PropertyNavConsumer is ReceiverTemplate {
 
     error EmptyPropertyId();
 
-    /// @param forwarder KeystoneForwarder for the target chain. Sepolia and
-    /// Base Sepolia both use 0xF8344CFd5c43616a4366C34E3EEE75af79a74482; confirm
-    /// with `cre workflow supported-chains` before deploying.
+    /// @param forwarder KeystoneForwarder for the target chain — see the CRE
+    /// Forwarder Directory and cre/README.md; confirm with
+    /// `cre workflow supported-chains` before deploying.
     constructor(address forwarder) ReceiverTemplate(forwarder) {}
 
     /// @dev Report layout must match the workflow's encodeAbiParameters call:
