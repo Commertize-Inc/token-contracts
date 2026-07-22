@@ -4,6 +4,7 @@ pragma solidity ^0.8.24;
 import {IRouterClient} from "@chainlink/contracts-ccip/contracts/interfaces/IRouterClient.sol";
 import {Client} from "@chainlink/contracts-ccip/contracts/libraries/Client.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
@@ -19,8 +20,14 @@ import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol
  * sends msg.value covering the sum of per-destination fees (exact amounts are
  * forwarded; any surplus is refunded). For an ERC20 fee token, the caller must
  * approve this contract for the total first.
+ *
+ * Every broadcast carries a per-user monotonic sequence number, and messages
+ * are sent with allowOutOfOrderExecution: CCIP does not guarantee cross-message
+ * ordering, so the receiver applies only the highest-seq state per user. This
+ * makes a stalled `remove` that is manually executed after a later `register`
+ * a no-op instead of a de-authorization bypass.
  */
-contract IdentitySyncSender is Ownable {
+contract IdentitySyncSender is Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     IRouterClient public immutable router;
@@ -29,6 +36,9 @@ contract IdentitySyncSender is Ownable {
     // destinationChainSelector => IdentitySyncReceiver address
     mapping(uint64 => address) public destReceiver;
     uint64[] public destChains;
+
+    // Per-user monotonic sequence number, embedded in every sync payload.
+    mapping(address => uint64) public userSeq;
 
     uint256 public gasLimit = 200_000;
 
@@ -67,6 +77,19 @@ contract IdentitySyncSender is Ownable {
     ) external onlyOwner {
         if (destReceiver[chainSelector] == address(0) && receiver != address(0)) {
             destChains.push(chainSelector);
+        } else if (
+            destReceiver[chainSelector] != address(0) && receiver == address(0)
+        ) {
+            // Swap-remove so a clear-then-reset cycle cannot leave a duplicate
+            // selector in destChains (which would double-send and double-pay).
+            uint256 len = destChains.length;
+            for (uint256 i = 0; i < len; i++) {
+                if (destChains[i] == chainSelector) {
+                    destChains[i] = destChains[len - 1];
+                    destChains.pop();
+                    break;
+                }
+            }
         }
         destReceiver[chainSelector] = receiver;
         emit DestinationSet(chainSelector, receiver);
@@ -90,12 +113,18 @@ contract IdentitySyncSender is Ownable {
         address user,
         uint16 country,
         bytes32 identityHash
-    ) external payable onlyOwner {
-        _broadcast(abi.encode(false, user, country, identityHash), user, false);
+    ) external payable onlyOwner nonReentrant {
+        uint64 seq = ++userSeq[user];
+        _broadcast(
+            abi.encode(false, user, country, identityHash, seq),
+            user,
+            false
+        );
     }
 
-    function broadcastRemove(address user) external payable onlyOwner {
-        _broadcast(abi.encode(true, user, uint16(0), bytes32(0)), user, true);
+    function broadcastRemove(address user) external payable onlyOwner nonReentrant {
+        uint64 seq = ++userSeq[user];
+        _broadcast(abi.encode(true, user, uint16(0), bytes32(0), seq), user, true);
     }
 
     function _broadcast(
@@ -117,8 +146,14 @@ contract IdentitySyncSender is Ownable {
                 data: data,
                 tokenAmounts: new Client.EVMTokenAmount[](0),
                 feeToken: feeToken,
+                // Out-of-order execution: ordering is enforced by the per-user
+                // seq in the payload, so a stuck message must not head-of-line
+                // block later (possibly more urgent) removes.
                 extraArgs: Client._argsToBytes(
-                    Client.EVMExtraArgsV1({gasLimit: gasLimit})
+                    Client.GenericExtraArgsV2({
+                        gasLimit: gasLimit,
+                        allowOutOfOrderExecution: true
+                    })
                 )
             });
 

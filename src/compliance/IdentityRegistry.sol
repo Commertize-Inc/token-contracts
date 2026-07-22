@@ -74,6 +74,24 @@ contract IdentityRegistry is AccessControl {
         return hasRole(VERIFIED_ROLE, user);
     }
 
+    /// @dev VERIFIED_ROLE must only move through _register/_remove: a direct
+    /// grant would skip country validation and leave `identities` empty, and a
+    /// direct revoke/renounce would leave it populated for an unverified user.
+    function grantRole(bytes32 role, address account) public override {
+        require(role != VERIFIED_ROLE, "Use registerIdentity");
+        super.grantRole(role, account);
+    }
+
+    function revokeRole(bytes32 role, address account) public override {
+        require(role != VERIFIED_ROLE, "Use removeIdentity");
+        super.revokeRole(role, account);
+    }
+
+    function renounceRole(bytes32 role, address callerConfirmation) public override {
+        require(role != VERIFIED_ROLE, "Use removeIdentity");
+        super.renounceRole(role, callerConfirmation);
+    }
+
     function _register(
         address user,
         uint16 country,
