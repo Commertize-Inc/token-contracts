@@ -6,6 +6,7 @@
 		"build": "hardhat build --no-typechain && tsup index.mts --format esm --dts --clean",
 		"compile": "hardhat build",
 		"test": "hardhat test",
+		"test:e2e": "bash scripts/e2e-local.sh",
 		"node": "hardhat node",
 		"clean": "hardhat clean",
 		"deploy:localhost": "hardhat run --network localhost scripts/deploy.ts",

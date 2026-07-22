@@ -256,10 +256,18 @@ Deployment loading precedence:
 pnpm install
 pnpm compile           # hardhat build
 pnpm test              # hardhat test
-pnpm node              # local hardhat node
-pnpm deploy:localhost  # deploy to the local node
+pnpm test:e2e          # full local deployment validation (needs Foundry's anvil)
+pnpm deploy:localhost  # deploy to a running local node
 pnpm deploy:arc-testnet
 ```
+
+`pnpm test:e2e` boots an Anvil chain (`--chain-id 5042002`, matching the
+`localhost` network — Hardhat's own node can't serve a custom chain id), runs
+`scripts/deploy.ts` in CI mode, then `scripts/local-e2e.ts` validates the full
+lifecycle on it: KYC, factory-deployed token + escrow, compliance/vault wiring,
+a native raise through `finalize()`, and CRE-consumer + identity-sync
+deployment. CI runs the same thing on every push/PR
+([.github/workflows/e2e.yaml](./.github/workflows/e2e.yaml)).
 
 Mainnet is deployed via a tagged release (`scripts/release.ts` / CI), not by
 hand.
