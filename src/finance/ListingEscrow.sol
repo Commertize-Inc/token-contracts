@@ -6,6 +6,8 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
+import {Address} from "@openzeppelin/contracts/utils/Address.sol";
+import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "../tokenization/PropertyToken.sol";
 import "../compliance/TokenCompliance.sol";
 import "../compliance/IdentityRegistry.sol";
@@ -17,6 +19,7 @@ import "../compliance/IdentityRegistry.sol";
  */
 contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 	using SafeERC20 for IERC20;
+	using EnumerableSet for EnumerableSet.AddressSet;
 
 	// Minimum deposit to prevent dust spam
 	uint256 public constant MIN_DEPOSIT = 1000;
@@ -29,10 +32,8 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 	uint256 public deadline;
 	address public admin; // Admin address (separate from owner)
 
-	// Improved investor tracking to prevent unbounded array issues
 	mapping(address => uint256) public deposits; // How much each user deposited
-	mapping(address => bool) private isInvestor; // Quick lookup for investor status
-	address[] public investors; // List of all investors (bounded by adding deduplication)
+	EnumerableSet.AddressSet private _investors; // Deduplicated investor set
 	uint256 public totalRaised;
 
 	// Token shares whose direct transfer failed during finalize (e.g. the
@@ -99,17 +100,6 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 	}
 
 	/**
-	 * @dev Internal function to track investors efficiently
-	 * @param investor Address to add to investor list
-	 */
-	function _addInvestor(address investor) private {
-		if (!isInvestor[investor]) {
-			isInvestor[investor] = true;
-			investors.push(investor);
-		}
-	}
-
-	/**
 	 * @dev Verify investor is allowed to hold tokens.
 	 */
 	function _checkCompliance(address investor) internal view {
@@ -148,9 +138,7 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 
 		require(totalRaised + depositAmount <= targetRaise, "Exceeds target raise");
 
-		// Track investor efficiently (CRITICAL FIX: prevents unbounded growth)
-		_addInvestor(msg.sender);
-
+		_investors.add(msg.sender);
 		deposits[msg.sender] += depositAmount;
 		totalRaised += depositAmount;
 
@@ -184,9 +172,7 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 		// Pull funds from Investor (Investor must have approved Escrow)
 		paymentToken.safeTransferFrom(investor, address(this), amount);
 
-		// CRITICAL FIX: Track investor properly (was missing in original)
-		_addInvestor(investor);
-
+		_investors.add(investor);
 		deposits[investor] += amount;
 		totalRaised += amount;
 
@@ -207,8 +193,7 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 		// Send Funds to PropertyToken (Vault)
 		// Funds are now held by the Property entity, and Sponsor/Admin can withdraw.
 		if (address(paymentToken) == address(0)) {
-			(bool success, ) = address(propertyToken).call{ value: totalRaised }("");
-			require(success, "Transfer failed");
+			Address.sendValue(payable(address(propertyToken)), totalRaised);
 		} else {
 			paymentToken.safeTransfer(address(propertyToken), totalRaised);
 		}
@@ -219,8 +204,9 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 		// later claimTokens() pull instead.
 		uint256 totalTokenSupply = propertyToken.balanceOf(address(this));
 
-		for (uint256 i = 0; i < investors.length; i++) {
-			address investor = investors[i];
+		uint256 investorCount = _investors.length();
+		for (uint256 i = 0; i < investorCount; i++) {
+			address investor = _investors.at(i);
 			uint256 investorDeposit = deposits[investor];
 
 			if (investorDeposit > 0) {
@@ -297,8 +283,7 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 
 		// Transfer payment to PropertyToken (Vault)
 		if (address(paymentToken) == address(0)) {
-			(bool success, ) = address(propertyToken).call{ value: totalRaised }("");
-			require(success, "Transfer failed");
+			Address.sendValue(payable(address(propertyToken)), totalRaised);
 		} else {
 			paymentToken.safeTransfer(address(propertyToken), totalRaised);
 		}
@@ -371,8 +356,7 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 		deposits[msg.sender] = 0; // Prevent re-entrancy
 
 		if (address(paymentToken) == address(0)) {
-			(bool success, ) = msg.sender.call{ value: userDeposit }("");
-			require(success, "Transfer failed");
+			Address.sendValue(payable(msg.sender), userDeposit);
 		} else {
 			paymentToken.safeTransfer(msg.sender, userDeposit);
 		}
@@ -409,8 +393,7 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 			deposits[investor] = 0; // Clear deposit to prevent re-entrancy
 
 			if (address(paymentToken) == address(0)) {
-				(bool success, ) = investor.call{ value: userDeposit }("");
-				require(success, "Transfer failed");
+				Address.sendValue(payable(investor), userDeposit);
 			} else {
 				paymentToken.safeTransfer(investor, userDeposit);
 			}
@@ -449,23 +432,23 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 	 * @notice Get total number of investors
 	 */
 	function getInvestorCount() external view returns (uint256) {
-		return investors.length;
+		return _investors.length();
 	}
 
 	/**
 	 * @notice Get investor address by index
-	 * @param index Index in the investors array
+	 * @param index Index in the investor set
 	 */
 	function getInvestor(uint256 index) external view returns (address) {
-		require(index < investors.length, "Index out of bounds");
-		return investors[index];
+		require(index < _investors.length(), "Index out of bounds");
+		return _investors.at(index);
 	}
 
 	/**
-	 * @notice Get all investors (use with caution for large arrays)
+	 * @notice Get all investors (use with caution for large sets)
 	 */
 	function getAllInvestors() external view returns (address[] memory) {
-		return investors;
+		return _investors.values();
 	}
 
 	/**

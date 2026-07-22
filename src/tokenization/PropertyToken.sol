@@ -6,22 +6,22 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import {Checkpoints} from "@openzeppelin/contracts/utils/structs/Checkpoints.sol";
+import {SafeCast} from "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 import "../compliance/ComplianceEnabled.sol";
 
 contract PropertyToken is ERC20, ERC20Permit, Ownable, ComplianceEnabled {
     using SafeERC20 for IERC20;
-
-    struct Snap {
-        uint256 id;
-        uint256 value;
-    }
+    using Checkpoints for Checkpoints.Trace208;
 
     // Snapshot ID counter
     uint256 private _currentSnapshotId;
 
-    // Snapshot storage
-    Snap[] private _totalSupplySnaps;
-    mapping(address => Snap[]) private _balanceSnaps;
+    // Post-change values checkpointed per snapshot period (OZ Trace208
+    // collapses same-key pushes, keeping one checkpoint per period).
+    Checkpoints.Trace208 private _totalSupplySnaps;
+    mapping(address => Checkpoints.Trace208) private _balanceSnaps;
 
     // Contracts allowed to take snapshots besides the owner (e.g. DividendVault).
     mapping(address => bool) public isSnapshotter;
@@ -83,73 +83,39 @@ contract PropertyToken is ERC20, ERC20Permit, Ownable, ComplianceEnabled {
         if (!(from == address(0) && value == 0)) {
             _checkCompliance(from, to);
         }
-        // Capture old values for snapshot if needed
-        uint256 currentId = _currentSnapshotId;
-
-        if (from != address(0)) {
-            _updateSnap(_balanceSnaps[from], currentId, balanceOf(from));
-        }
-        if (to != address(0)) {
-             _updateSnap(_balanceSnaps[to], currentId, balanceOf(to));
-        }
-
-        if (from == address(0) || to == address(0)) {
-            _updateSnap(_totalSupplySnaps, currentId, totalSupply());
-        }
 
         super._update(from, to, value);
-    }
 
-    // Snapshot Logic: Store (id, oldValue) when a change happens in a NEW id period.
-    function _updateSnap(Snap[] storage snaps, uint256 currentId, uint256 currentValue) private {
-        // If currentId > 0 check if storage of the *pre-change* value is required
-        if (currentId > 0) {
-            uint256 lastId = snaps.length > 0 ? snaps[snaps.length - 1].id : 0;
-            // If the last stored snapshot ID is older than the current ID,
-            // Records the value that existed *before* this transaction.
-            if (lastId < currentId) {
-                snaps.push(Snap(currentId, currentValue));
-            }
+        // Checkpoint the post-change values keyed by the current snapshot
+        // period. balanceOfAt(id) then reads upperLookup(id - 1): the last
+        // value written before snapshot id was taken — i.e. the balance frozen
+        // at snapshot time, immune to later same-period transfers (the
+        // DividendVault double-claim/drain root cause in the hand-rolled
+        // predecessor of this code).
+        uint48 key = SafeCast.toUint48(_currentSnapshotId);
+        if (from != address(0)) {
+            _balanceSnaps[from].push(key, SafeCast.toUint208(balanceOf(from)));
+        }
+        if (to != address(0)) {
+            _balanceSnaps[to].push(key, SafeCast.toUint208(balanceOf(to)));
+        }
+        if (from == address(0) || to == address(0)) {
+            _totalSupplySnaps.push(key, SafeCast.toUint208(totalSupply()));
         }
     }
 
-    function _valueAt(Snap[] storage snaps, uint256 snapshotId, uint256 currentValue) private view returns (uint256) {
-        // Each checkpoint stores the balance as it stood at the START of the
-        // period whose id it carries (the pre-change value written on the first
-        // modification in that period). balanceOfAt(snapshotId) must therefore
-        // return the checkpoint keyed EXACTLY snapshotId if one exists (the value
-        // captured the moment that snapshot was taken), otherwise the next
-        // checkpoint after it, otherwise the live value. This mirrors
-        // OpenZeppelin Arrays.findUpperBound: take the strict upper bound, then
-        // step back one if that predecessor is an exact id match. The earlier
-        // implementation used only the strict upper bound, so a change made
-        // during the latest snapshot's own period (id == snapshotId) was skipped
-        // and the query fell through to the live balance — the DividendVault
-        // double-claim/drain root cause.
-
-        uint256 low = 0;
-        uint256 high = snaps.length;
-
-        // Strict upper bound: first index with snaps[i].id > snapshotId.
-        while(low < high) {
-            uint256 mid = (low + high) / 2;
-            if (snaps[mid].id > snapshotId) {
-                high = mid;
-            } else {
-                low = mid + 1;
-            }
-        }
-
-        // Exact match sits at high - 1 (ids are strictly increasing).
-        if (high > 0 && snaps[high - 1].id == snapshotId) {
-            return snaps[high - 1].value;
-        }
-
-        if (high == snaps.length) {
+    function _valueAt(
+        Checkpoints.Trace208 storage snaps,
+        uint256 snapshotId,
+        uint256 currentValue
+    ) private view returns (uint256) {
+        require(snapshotId > 0, "Invalid snapshot id");
+        // Beyond the latest snapshot there is nothing frozen yet — the live
+        // value is the answer (and skips an out-of-range uint48 cast).
+        if (snapshotId > _currentSnapshotId) {
             return currentValue;
         }
-
-        return snaps[high].value;
+        return snaps.upperLookup(SafeCast.toUint48(snapshotId - 1));
     }
 
     function balanceOfAt(address account, uint256 snapshotId) public view returns (uint256) {
@@ -180,10 +146,7 @@ contract PropertyToken is ERC20, ERC20Permit, Ownable, ComplianceEnabled {
         require(to != address(0), "Invalid recipient");
 
         if (token == address(0)) {
-            // Native
-            require(address(this).balance >= amount, "Insufficient balance");
-            (bool success, ) = to.call{value: amount}("");
-            require(success, "Transfer failed");
+            Address.sendValue(payable(to), amount);
         } else {
             // ERC20
             IERC20(token).safeTransfer(to, amount);

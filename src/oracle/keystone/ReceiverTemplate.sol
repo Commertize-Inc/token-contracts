@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {IERC165} from "./IERC165.sol";
-import {IReceiver} from "./IReceiver.sol";
+import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import {IReceiver} from "@chainlink/contracts/src/v0.8/keystone/interfaces/IReceiver.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 /// @title ReceiverTemplate - Abstract receiver with optional permission controls
@@ -228,7 +228,7 @@ abstract contract ReceiverTemplate is IReceiver, Ownable {
     /// @dev Implement this function with your contract's business logic
     function _processReport(bytes calldata report) internal virtual;
 
-    /// @inheritdoc IERC165
+    /// @notice ERC-165 detection for IReceiver + IERC165.
     function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
         return interfaceId == type(IReceiver).interfaceId || interfaceId == type(IERC165).interfaceId;
     }

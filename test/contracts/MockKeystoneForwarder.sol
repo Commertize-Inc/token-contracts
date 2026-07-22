@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.25;
 
-import {IReceiver} from "../../src/oracle/keystone/IReceiver.sol";
+import {IReceiver} from "@chainlink/contracts/src/v0.8/keystone/interfaces/IReceiver.sol";
 
 /**
  * @dev Test-only stand-in for Chainlink's KeystoneForwarder. Relays a report to

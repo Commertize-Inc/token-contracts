@@ -7,6 +7,8 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {Address} from "@openzeppelin/contracts/utils/Address.sol";
+import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 /**
  * @title IdentitySyncSender
@@ -29,13 +31,14 @@ import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol
  */
 contract IdentitySyncSender is Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
+    using EnumerableSet for EnumerableSet.UintSet;
 
     IRouterClient public immutable router;
     address public immutable feeToken; // address(0) => native
 
     // destinationChainSelector => IdentitySyncReceiver address
     mapping(uint64 => address) public destReceiver;
-    uint64[] public destChains;
+    EnumerableSet.UintSet private _destChains;
 
     // Per-user monotonic sequence number, embedded in every sync payload.
     mapping(address => uint64) public userSeq;
@@ -60,7 +63,6 @@ contract IdentitySyncSender is Ownable, ReentrancyGuard {
     error NoDestinations();
     error InsufficientNativeFee(uint256 required, uint256 provided);
     error FeeExceedsMax(uint64 chainSelector, uint256 fee, uint256 maxFee);
-    error RefundFailed();
 
     constructor(
         address _router,
@@ -75,21 +77,10 @@ contract IdentitySyncSender is Ownable, ReentrancyGuard {
         uint64 chainSelector,
         address receiver
     ) external onlyOwner {
-        if (destReceiver[chainSelector] == address(0) && receiver != address(0)) {
-            destChains.push(chainSelector);
-        } else if (
-            destReceiver[chainSelector] != address(0) && receiver == address(0)
-        ) {
-            // Swap-remove so a clear-then-reset cycle cannot leave a duplicate
-            // selector in destChains (which would double-send and double-pay).
-            uint256 len = destChains.length;
-            for (uint256 i = 0; i < len; i++) {
-                if (destChains[i] == chainSelector) {
-                    destChains[i] = destChains[len - 1];
-                    destChains.pop();
-                    break;
-                }
-            }
+        if (receiver != address(0)) {
+            _destChains.add(chainSelector);
+        } else {
+            _destChains.remove(chainSelector);
         }
         destReceiver[chainSelector] = receiver;
         emit DestinationSet(chainSelector, receiver);
@@ -106,7 +97,11 @@ contract IdentitySyncSender is Ownable, ReentrancyGuard {
     }
 
     function destinationCount() external view returns (uint256) {
-        return destChains.length;
+        return _destChains.length();
+    }
+
+    function destChainAt(uint256 index) external view returns (uint64) {
+        return uint64(_destChains.at(index));
     }
 
     function broadcastRegister(
@@ -132,14 +127,13 @@ contract IdentitySyncSender is Ownable, ReentrancyGuard {
         address user,
         bool removal
     ) internal {
-        uint256 len = destChains.length;
+        uint256 len = _destChains.length();
         if (len == 0) revert NoDestinations();
 
         uint256 nativeSpent = 0;
         for (uint256 i = 0; i < len; i++) {
-            uint64 sel = destChains[i];
+            uint64 sel = uint64(_destChains.at(i));
             address receiver = destReceiver[sel];
-            if (receiver == address(0)) continue; // destination was cleared
 
             Client.EVM2AnyMessage memory message = Client.EVM2AnyMessage({
                 receiver: abi.encode(receiver),
@@ -178,8 +172,7 @@ contract IdentitySyncSender is Ownable, ReentrancyGuard {
 
         // Refund any native surplus.
         if (feeToken == address(0) && msg.value > nativeSpent) {
-            (bool ok, ) = msg.sender.call{value: msg.value - nativeSpent}("");
-            if (!ok) revert RefundFailed();
+            Address.sendValue(payable(msg.sender), msg.value - nativeSpent);
         }
     }
 }
