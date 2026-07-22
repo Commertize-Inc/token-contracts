@@ -54,6 +54,18 @@ export default defineConfig({
 			chainId: NETWORKS["ethereum-sepolia"].chainId,
 			accounts: [configVariable("EVM_PRIVATE_KEY")],
 		},
+		"arbitrum-sepolia": {
+			type: "http",
+			url: NETWORKS["arbitrum-sepolia"].rpcUrl,
+			chainId: NETWORKS["arbitrum-sepolia"].chainId,
+			accounts: [configVariable("EVM_PRIVATE_KEY")],
+		},
+		"arbitrum-one": {
+			type: "http",
+			url: NETWORKS["arbitrum-one"].rpcUrl,
+			chainId: NETWORKS["arbitrum-one"].chainId,
+			accounts: [configVariable("EVM_PRIVATE_KEY")],
+		},
 		mainnet: {
 			type: "http",
 			url: NETWORKS.mainnet.rpcUrl,
