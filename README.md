@@ -235,8 +235,7 @@ defaulting to `arc-testnet`.
 | `arbitrum-sepolia` | 421614 | ETH | Staging for the Arbitrum rollout; CCIP-configured |
 | `arc-testnet` | 5042002 | USDC | Current default; CCIP-configured |
 | `ethereum-sepolia` | 11155111 | ETH | CCIP destination / oracle target |
-| `localhost` | 5042002 | USDC | Local Hardhat node |
-| `mainnet` | 295 | — | Placeholder; confirm before production |
+| `localhost` | 5042002 | USDC | Local Anvil node (see `pnpm test:e2e`) |
 
 `EVM_NETWORK` still defaults to `arc-testnet`; the default flips to Arbitrum
 with the deployment cutover, not before.
@@ -269,8 +268,8 @@ a native raise through `finalize()`, and CRE-consumer + identity-sync
 deployment. CI runs the same thing on every push/PR
 ([.github/workflows/e2e.yaml](./.github/workflows/e2e.yaml)).
 
-Mainnet is deployed via a tagged release (`scripts/release.ts` / CI), not by
-hand.
+Production deploys target Arbitrum One (`pnpm deploy:arbitrum-one`) per the
+[deployment strategy](#deployment-strategy--arbitrum-first-cre-before-ccip).
 
 > Note: `test/TestnetValidation.ts` self-skips (via `process.exit(0)`) when no
 > `deployment.default.json` is present, which ends the whole `hardhat test` run

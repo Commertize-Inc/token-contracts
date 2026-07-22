@@ -74,12 +74,6 @@ export default defineConfig({
 			chainId: NETWORKS["arbitrum-one"].chainId,
 			accounts: [configVariable("EVM_PRIVATE_KEY")],
 		},
-		mainnet: {
-			type: "http",
-			url: NETWORKS.mainnet.rpcUrl,
-			chainId: NETWORKS.mainnet.chainId,
-			accounts: [configVariable("EVM_PRIVATE_KEY")],
-		},
 	},
 	test: {
 		mocha: {

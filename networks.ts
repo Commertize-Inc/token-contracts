@@ -97,14 +97,6 @@ export const NETWORKS: Record<string, NetworkConfig> = {
 			tokenPoolFactory: "0x8A76fe7fA6da27f85a626c5C53730B38D13603d7",
 		},
 	},
-	mainnet: {
-		name: "mainnet",
-		chainId: 295,
-		rpcUrl: "https://mainnet.hashio.io/api",
-		currency: "HBAR",
-		blockExplorerUrl: "https://hashscan.io/mainnet",
-		usdcAddress: "0x000000000000000000000000000000000006f89a",
-	},
 };
 
 export function getNetwork(name: string): NetworkConfig {
