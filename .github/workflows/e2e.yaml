@@ -6,16 +6,32 @@ on:
   pull_request:
   workflow_dispatch:
 
+# The org's Actions policy is local_only (no marketplace actions), so
+# checkout and toolchain setup are plain run: steps.
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      NODE_VERSION: 22.17.0
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - uses: foundry-rs/foundry-toolchain@v1
+      - name: Checkout
+        run: |
+          git init -q .
+          git fetch -q --depth 1 "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" "$GITHUB_SHA"
+          git checkout -q FETCH_HEAD
+
+      - name: Install Node ${{ env.NODE_VERSION }} + pnpm
+        run: |
+          curl -fsSL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz" \
+            | sudo tar -xJ -C /usr/local --strip-components=1
+          sudo corepack enable
+          node --version && pnpm --version
+
+      - name: Install Foundry (anvil)
+        run: |
+          curl -fsSL https://foundry.paradigm.xyz | bash
+          "$HOME/.foundry/bin/foundryup"
+          echo "$HOME/.foundry/bin" >> "$GITHUB_PATH"
 
       # @commertize/utils is a monorepo workspace dep used only by the runtime
       # export bundle (index.mts); contracts compile/test/deploy don't need it
