@@ -101,10 +101,19 @@ flowchart TD
 - **ListingEscrow** — holds property tokens and investor funds during a
   time-bound raise; finalizes to the sponsor when the target is met and
   distributes tokens, or refunds on a failed raise. `ReentrancyGuard`, `Pausable`,
-  minimum-deposit and hard-cap protection, bounded investor tracking.
+  minimum-deposit and hard-cap protection, bounded investor tracking. Shares
+  whose direct transfer fails at finalize park in a `pendingTokens` reserve
+  that admin distribution/recovery paths cannot spend. For raises with very
+  large investor counts, `finalize()`'s distribution loop can exceed block gas —
+  `adminFinalize()` + chunked `adminDistributeTokens()` is the escape hatch.
 - **DividendVault** — distributes property income (USDC) to holders pro-rata by
   snapshot balance, with a configurable protocol fee, batch claims, and recovery
-  of unclaimed funds after a timeout. `ReentrancyGuard`, `Pausable`.
+  of unclaimed funds after a timeout. `ReentrancyGuard`, `Pausable`. Deposits
+  are restricted to vetted properties (`setPropertyValid`) and to the property
+  or vault owner. **Deposit only after the raise is finalized**: a dividend
+  deposited while the escrow still holds unsold supply allocates that share to
+  the escrow, which can never claim it (recoverable only via the one-year
+  `recoverUnclaimed` sweep).
 
 ### Cross-chain (Chainlink CCIP / CCT) (`src/ccip/`)
 
@@ -115,7 +124,11 @@ flowchart TD
 - **IdentitySyncSender** / **IdentitySyncReceiver** — broadcast KYC
   register/remove events from the home chain to every configured destination
   over CCIP, applied under `SYNC_ROLE`, so "verified anywhere ⇒ verified
-  everywhere." This is what makes source-side gating sound.
+  everywhere." This is what makes source-side gating sound. Every message
+  carries a per-user monotonic sequence number; receivers discard anything at
+  or below the last applied sequence, so CCIP's lack of cross-message ordering
+  (or a manually re-executed stale message) can never resurrect a removed
+  identity.
 
 ### Oracle (Chainlink CRE) (`src/oracle/`, `cre/`)
 
@@ -139,6 +152,37 @@ flowchart TD
 CCIP addresses (router, chain selector, RMN proxy, LINK, TokenAdminRegistry) are
 configured per network in [`networks.ts`](./networks.ts).
 
+## Deployment strategy — Arbitrum first, CRE before CCIP
+
+Arbitrum One is the target home chain for production; Arbitrum Sepolia is its
+staging mirror. Both Chainlink integrations are code-complete and tested, but
+they activate in phases:
+
+1. **Core protocol on Arbitrum** — compliance (`IdentityRegistry`,
+   `TokenCompliance`), tokenization (`PropertyFactory` → `PropertyToken`), and
+   finance (`ListingEscrow`, `DividendVault`) via `pnpm deploy:arbitrum-sepolia`
+   / `deploy:arbitrum-one`. USDC is Circle-native on both networks.
+2. **Pricing oracles via CRE (current focus).** The platform has no on-chain
+   pricing oracles today; the first Chainlink integration to go live is the
+   property-NAV oracle: deploy `PropertyNavConsumer` with the chain's
+   `KeystoneForwarder`, then run the [`cre/nav-workflow`](./cre/README.md)
+   against the Arbitrum target. Downstream pricing (dividends, escrow,
+   dashboards) reads `latestNav`.
+3. **CCIP / CCT cross-chain (next phase).** Identity sync
+   (`IdentitySyncSender/Receiver`) and the compliant token pool are wired per
+   lane with `scripts/setup-identity-sync.ts` and `scripts/ccip-register.ts`
+   once a second chain is in play. Not part of the initial Arbitrum rollout.
+
+**Topology invariant (bridged lanes).** Source-side gating is only sound if
+every chain a token bridges to is mint-and-freeze. Satellite chains deploy
+`BridgedPropertyToken`; if a lane will bridge *into* the home chain, the home
+token must also be the role-based `BridgedPropertyToken` variant (deploy with
+zero supply, then mint the initial supply under a temporary `MINTER_ROLE`) —
+a plain `PropertyToken` cannot mint inbound deliveries and would strand
+burned tokens whenever the receiver is unverified. `scripts/ccip-register.ts`
+verifies the role/pool linkage per lane and warns when a token is not
+bridge-capable.
+
 ## Security model
 
 - **Single compliance chokepoint.** Every balance change flows through
@@ -151,9 +195,30 @@ configured per network in [`networks.ts`](./networks.ts).
   burning, backed by cross-chain identity mirroring.
 - **Least privilege.** KYC mirroring runs under a dedicated `SYNC_ROLE` that can
   only register/remove identities — not grant roles or move tokens.
+- **Single verification path.** `VERIFIED_ROLE` cannot be granted, revoked, or
+  renounced directly; it only moves through `registerIdentity`/`removeIdentity`
+  (or their `SYNC_ROLE` mirrors), so country validation and the identity map
+  can never be skipped or left inconsistent.
+- **Ordered identity sync.** Register/remove broadcasts embed a per-user
+  monotonic sequence number enforced by every receiver; sync messages are sent
+  with out-of-order execution allowed, so a stuck message can't head-of-line
+  block later removals and a stale replay is a no-op. Each receiver accepts
+  exactly one active source chain (sequence spaces must not mix); registry
+  updates and broadcasts are separate admin calls — pair them operationally so
+  chains don't drift.
+- **Fault-tolerant distribution.** `ListingEscrow.finalize()` cannot be bricked
+  by a single non-compliant investor: failed transfers park in `pendingTokens`
+  for a later `claimTokens()` pull once the investor is verified again.
+- **Closed dividend recovery.** `recoverUnclaimed` permanently closes a
+  distribution, so late claimants cannot draw the recovered amount out of other
+  distributions' funds. Claims themselves are compliance-gated: an unverified
+  holder's share waits until they re-verify.
 - **Reentrancy & pausability.** `ListingEscrow` and `DividendVault` use
-  OpenZeppelin `ReentrancyGuard` and `Pausable`.
+  OpenZeppelin `ReentrancyGuard` and `Pausable`; all token movements use
+  `SafeERC20`.
 - **Snapshot-based dividends** capture holder balances at distribution time.
+  Snapshots are taken by the owner or an explicitly authorized snapshotter
+  (`setSnapshotter`) — the vault no longer needs to own the token.
 
 The compliance and cross-chain contracts have undergone an internal security
 review.
@@ -166,10 +231,15 @@ defaulting to `arc-testnet`.
 
 | Network | Chain ID | Native | Notes |
 |---|---|---|---|
-| `arc-testnet` | 5042002 | USDC | Default; CCIP-configured |
+| `arbitrum-one` | 42161 | ETH | Production home chain (target); CCIP-configured |
+| `arbitrum-sepolia` | 421614 | ETH | Staging for the Arbitrum rollout; CCIP-configured |
+| `arc-testnet` | 5042002 | USDC | Current default; CCIP-configured |
 | `ethereum-sepolia` | 11155111 | ETH | CCIP destination / oracle target |
 | `localhost` | 5042002 | USDC | Local Hardhat node |
 | `mainnet` | 295 | — | Placeholder; confirm before production |
+
+`EVM_NETWORK` still defaults to `arc-testnet`; the default flips to Arbitrum
+with the deployment cutover, not before.
 
 USDC is **not** deployed by this package — it is assumed to already exist on the
 target chain and is read from the deployment config or `USDC_ADDRESS`.
@@ -197,7 +267,7 @@ hand.
 > Note: `test/TestnetValidation.ts` self-skips (via `process.exit(0)`) when no
 > `deployment.default.json` is present, which ends the whole `hardhat test` run
 > early. Run the unit suites explicitly, e.g.
-> `hardhat test test/SmokeTest.ts test/CCIPCompliantPool.ts test/IdentitySync.ts test/PropertyNavOracle.ts test/PropertyTokenSnapshot.ts test/ListingEscrowRefund.ts`.
+> `hardhat test test/SmokeTest.ts test/CCIPCompliantPool.ts test/IdentitySync.ts test/PropertyNavOracle.ts test/PropertyTokenSnapshot.ts test/ListingEscrowRefund.ts test/ListingEscrowDistribution.ts test/DividendVault.ts`.
 
 ## Exports
 
