@@ -28,10 +28,12 @@ jobs:
           node --version && pnpm --version
 
       - name: Install Foundry (anvil)
+        env:
+          FOUNDRY_DIR: /home/runner/.foundry
         run: |
           curl -fsSL https://foundry.paradigm.xyz | bash
-          "$HOME/.foundry/bin/foundryup"
-          echo "$HOME/.foundry/bin" >> "$GITHUB_PATH"
+          "$FOUNDRY_DIR/bin/foundryup"
+          echo "$FOUNDRY_DIR/bin" >> "$GITHUB_PATH"
 
       # @commertize/utils is a monorepo workspace dep used only by the runtime
       # export bundle (index.mts); contracts compile/test/deploy don't need it
