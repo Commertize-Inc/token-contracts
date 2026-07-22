@@ -35,6 +35,14 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 	address[] public investors; // List of all investors (bounded by adding deduplication)
 	uint256 public totalRaised;
 
+	// Token shares whose direct transfer failed during finalize (e.g. the
+	// investor's KYC lapsed between deposit and finalize). Claimable via
+	// claimTokens() once the investor is compliant again.
+	mapping(address => uint256) public pendingTokens;
+	// Sum of all pendingTokens: balance reserved for claimants that admin
+	// distribution/recovery paths must never spend.
+	uint256 public totalPendingTokens;
+
 	// State
 	bool public finalized;
 	bool public refunded;
@@ -56,6 +64,8 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 	event TokensBurned(uint256 amount);
 	event AdminUpdated(address indexed oldAdmin, address indexed newAdmin);
 	event RefundsEnabled(address indexed by);
+	event TokensPending(address indexed investor, uint256 amount);
+	event TokensClaimed(address indexed investor, uint256 amount);
 
 	constructor(
 		address _propertyToken,
@@ -203,7 +213,10 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 			paymentToken.safeTransfer(address(propertyToken), totalRaised);
 		}
 
-		// Distribute tokens to investors automatically
+		// Distribute tokens to investors automatically. A failing transfer
+		// (e.g. an investor whose KYC lapsed since depositing) must not revert
+		// the whole distribution, so failed shares park in pendingTokens for a
+		// later claimTokens() pull instead.
 		uint256 totalTokenSupply = propertyToken.balanceOf(address(this));
 
 		for (uint256 i = 0; i < investors.length; i++) {
@@ -216,13 +229,45 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 				uint256 tokenShare = (investorDeposit * totalTokenSupply) / totalRaised;
 
 				if (tokenShare > 0) {
-					propertyToken.safeTransfer(investor, tokenShare);
-					emit AdminTokensDistributed(investor, tokenShare, address(this));
+					try propertyToken.transfer(investor, tokenShare) returns (
+						bool ok
+					) {
+						if (ok) {
+							emit AdminTokensDistributed(
+								investor,
+								tokenShare,
+								address(this)
+							);
+						} else {
+							pendingTokens[investor] += tokenShare;
+							totalPendingTokens += tokenShare;
+							emit TokensPending(investor, tokenShare);
+						}
+					} catch {
+						pendingTokens[investor] += tokenShare;
+						totalPendingTokens += tokenShare;
+						emit TokensPending(investor, tokenShare);
+					}
 				}
 			}
 		}
 
 		emit Finalized(totalRaised, block.timestamp);
+	}
+
+	/**
+	 * @notice Pull tokens whose direct transfer failed during finalize().
+	 * Succeeds once the caller passes the token's compliance check again.
+	 */
+	function claimTokens() external nonReentrant {
+		require(finalized, "Not finalized");
+		uint256 amount = pendingTokens[msg.sender];
+		require(amount > 0, "Nothing to claim");
+
+		pendingTokens[msg.sender] = 0;
+		totalPendingTokens -= amount;
+		propertyToken.safeTransfer(msg.sender, amount);
+		emit TokensClaimed(msg.sender, amount);
 	}
 
 	/**
@@ -277,6 +322,13 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 		for (uint256 i = 0; i < investorList.length; i++) {
 			require(investorList[i] != address(0), "Invalid investor address");
 			require(amounts[i] > 0, "Invalid amount");
+
+			// Never spend the balance reserved for pending claimants.
+			require(
+				propertyToken.balanceOf(address(this)) >=
+					totalPendingTokens + amounts[i],
+				"Exceeds unreserved balance"
+			);
 
 			propertyToken.safeTransfer(investorList[i], amounts[i]);
 			emit AdminTokensDistributed(investorList[i], amounts[i], msg.sender);
@@ -375,7 +427,10 @@ contract ListingEscrow is Ownable, ReentrancyGuard, Pausable {
 			refunded || (block.timestamp >= deadline && totalRaised < targetRaise),
 			"Cannot recover yet"
 		);
-		uint256 bal = propertyToken.balanceOf(address(this));
+		// totalPendingTokens is zero in every state this is callable from
+		// (pre-finalize failed/refunded raises); subtracting anyway costs
+		// nothing and keeps the reserve invariant unconditional.
+		uint256 bal = propertyToken.balanceOf(address(this)) - totalPendingTokens;
 		propertyToken.safeTransfer(owner(), bal);
 	}
 
