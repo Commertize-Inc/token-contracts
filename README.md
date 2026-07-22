@@ -1,19 +1,8 @@
 # @commertize/token-contracts
 
-Commertize smart contracts for real estate tokenization, debt instruments, and mortgage lending.
-
-## Table of Contents
-
-- [Installation](#installation)
-- [Quick Start](#quick-start)
-- [Onchain Architecture](#onchain-architecture)
-  - [System Overview](#system-overview)
-  - [Contract Categories](#contract-categories)
-  - [Data Flow](#data-flow)
-  - [Security Model](#security-model)
-- [Usage](#usage)
-- [Development](#development)
-- [API Reference](#api-reference)
+Smart contracts for Commertize — compliance-gated tokenization of commercial
+real estate, with Chainlink CCIP cross-chain bridging and a Chainlink CRE oracle
+for on-chain property valuation.
 
 ## Installation
 
@@ -21,466 +10,218 @@ Commertize smart contracts for real estate tokenization, debt instruments, and m
 pnpm add @commertize/token-contracts
 ```
 
-## Quick Start
+## Quick start
 
-### Default: Shared Hedera Testnet
-
-By default, all developers use the shared Hedera testnet deployment. No setup required!
+Addresses, ABIs, and network metadata are resolved at import time from the
+active deployment (see [Networks](#networks)):
 
 ```typescript
-import {
-	getContractAddress,
-	getContracts,
-	ABIS,
-} from "@commertize/token-contracts";
-
-// Get a specific contract address
-const identityRegistry = getContractAddress("IdentityRegistry");
-
-// Get all contract addresses
-const contracts = getContracts();
-
-// Use with ethers.js
 import { ethers } from "ethers";
-const contract = new ethers.Contract(
-	contracts.IdentityRegistry,
-	ABIS.IdentityRegistry,
-	provider
-);
-```
-
-### Local Development (Optional)
-
-Want to test against your own local deployment? Easy!
-
-1. **Start a local Hardhat node:**
-
-   ```bash
-   pnpm node
-   ```
-
-2. **Deploy contracts locally:**
-
-   ```bash
-   pnpm deploy:localhost
-   ```
-
-3. **Use local deployment:**
-   This creates `deployment.localhost.json` which automatically takes precedence over the shared testnet.
-
-4. **Revert to testnet:**
-   ```bash
-   rm deployment.localhost.json
-   ```
-
-### Production: Hedera Mainnet
-
-For production applications:
-
-```typescript
-import { getContractAddress } from "@commertize/token-contracts";
-
-const identityRegistry = getContractAddress("IdentityRegistry", "mainnet");
-```
-
-### Available Networks
-
-- **`testnet`** (default) - Shared Hedera testnet for all developers
-- **`mainnet`** - Hedera mainnet for production
-- **`localhost`** - Local development network
-
-## Onchain Architecture
-
-### System Overview
-
-The Commertize onchain system is built on Hedera EVM and consists of three main layers:
-
-1. **Compliance Layer** - Identity verification and transfer controls
-2. **Tokenization Layer** - Property token creation and management
-3. **Finance Layer** - Escrow, dividends, and staking
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                    COMPLIANCE LAYER                       │
-│  IdentityRegistry → TokenCompliance → PropertyToken     │
-└─────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────┐
-│                  TOKENIZATION LAYER                      │
-│  PropertyFactory → PropertyToken → ListingEscrow        │
-└─────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────┐
-│                     FINANCE LAYER                         │
-│  DividendVault → StakingPool → USDC                      │
-└─────────────────────────────────────────────────────────┘
-```
-
-### Contract Categories
-
-#### 1. Compliance Contracts
-
-**IdentityRegistry** (`src/compliance/IdentityRegistry.sol`)
-
-- **Purpose**: Maintains a whitelist of verified investor addresses
-- **Key Features**:
-  - Stores identity data (country code, verification status, identity hash)
-  - Owner-controlled registration/removal
-  - ISO 3166-1 country code support
-- **Usage**: All token transfers require both sender and receiver to be verified
-
-**TokenCompliance** (`src/compliance/TokenCompliance.sol`)
-
-- **Purpose**: Enforces transfer restrictions based on identity verification
-- **Key Features**:
-  - Checks `IdentityRegistry` before allowing transfers
-  - Supports exemption list for special addresses (contracts, etc.)
-  - Integrated with `PropertyToken` via `_update` hook
-- **Usage**: Prevents unverified users from receiving tokens
-
-#### 2. Core Token Contracts
-
-**PropertyToken** (`src/tokenization/PropertyToken.sol`)
-
-- **Purpose**: ERC-20 token representing fractional ownership of a property
-- **Key Features**:
-  - ERC-20 with Permit (gasless approvals)
-  - Snapshot mechanism for dividend distribution
-  - Compliance integration (transfers blocked if not verified)
-  - Owner-controlled snapshots
-- **Standards**: ERC-20, ERC-2612 (Permit)
-
-**CommertizeToken (CTZ)** (`src/core/CommertizeToken.sol`)
-
-- **Purpose**: Platform governance and utility token
-- **Key Features**:
-  - ERC-20Votes for governance
-  - ERC-2612 Permit support
-  - 100M initial supply
-- **Standards**: ERC-20, ERC-2612, ERC-5805 (Votes)
-
-**USDC** (payment token)
-
-- **Purpose**: Payment token for investments and dividends. The token is **not** implemented or deployed by this repo; it is assumed to **already exist** on Arc (localnet, testnet, mainnet).
-- **Key Features**:
-  - Address is read from deployment config or `USDC_ADDRESS` env (use Arc’s USDC or compatible token address for each network).
-  - Backend and frontend use an ERC-20 + EIP-2612 Permit ABI only to **interact** with the existing token.
-- **Standards**: ERC-20, ERC-2612 (Permit)
-
-#### 3. Tokenization Contracts
-
-**PropertyFactory** (`src/tokenization/PropertyFactory.sol`)
-
-- **Purpose**: Factory for deploying new property tokens and escrows
-- **Key Features**:
-  - Deploys `PropertyToken` instances
-  - Deploys `ListingEscrow` for fundraising
-  - Registry of all deployed properties
-- **Usage**: Single entry point for creating new property listings
-
-**ListingEscrow** (`src/finance/ListingEscrow.sol`)
-
-- **Purpose**: Holds property tokens and investor funds until funding goal is met
-- **Key Features**:
-  - Time-bound fundraising (deadline)
-  - Target raise amount
-  - Automatic finalization when goal met
-  - Refund mechanism if goal not met
-  - Admin-controlled token distribution
-- **Security**: ReentrancyGuard, Pausable, minimum deposit protection
-
-#### 4. Finance Contracts
-
-**DividendVault** (`src/finance/DividendVault.sol`)
-
-- **Purpose**: Distributes property income to token holders based on snapshots
-- **Key Features**:
-  - Snapshot-based distribution (prevents front-running)
-  - Protocol fee (default 1%, configurable)
-  - Batch claiming support
-  - Unclaimed dividend recovery after 1 year
-  - Pausable for emergencies
-- **Security**: ReentrancyGuard, snapshot-first design
-
-**StakingPool** (`src/finance/StakingPool.sol`)
-
-- **Purpose**: Staking mechanism for CTZ tokens (MVP placeholder)
-- **Status**: Simplified implementation, ready for expansion
-
-### Data Flow
-
-#### Property Listing Flow
-
-```
-1. Sponsor creates listing (off-chain)
-   ↓
-2. PropertyFactory.deployProperty()
-   → Creates PropertyToken
-   → Links to TokenCompliance
-   ↓
-3. PropertyFactory.deployEscrow()
-   → Creates ListingEscrow
-   → Holds PropertyToken
-   → Sets target raise & deadline
-   ↓
-4. Investors deposit funds
-   → ListingEscrow.deposit()
-   → Funds locked until goal met
-   ↓
-5. Goal reached or deadline passed
-   → ListingEscrow.finalize()
-   → PropertyTokens distributed to investors
-   → Funds sent to sponsor
-```
-
-#### Dividend Distribution Flow
-
-```
-1. Property generates income (off-chain)
-   ↓
-2. Sponsor deposits USDC
-   → DividendVault.depositDividend(property, amount)
-   ↓
-3. Snapshot taken FIRST (prevents front-running)
-   → PropertyToken.snapshot()
-   → Records balances at this moment
-   ↓
-4. Protocol fee deducted
-   → Fee sent to protocol wallet
-   ↓
-5. Distribution recorded
-   → Linked to snapshot ID
-   → Available for claiming
-   ↓
-6. Token holders claim dividends
-   → DividendVault.claim(property, distributionId)
-   → Pro-rata share based on snapshot balance
-```
-
-#### Identity Verification Flow
-
-```
-1. User completes KYC (off-chain)
-   ↓
-2. Backend verifies identity
-   ↓
-3. Backend calls IdentityRegistry
-   → IdentityRegistry.registerIdentity(user, country, hash)
-   ↓
-4. User can now receive PropertyTokens
-   → TokenCompliance checks IdentityRegistry
-   → Transfer allowed if verified
-```
-
-### Security Model
-
-#### Access Control
-
-- **Owner Pattern**: Most contracts use OpenZeppelin's `Ownable`
-- **Admin Pattern**: `ListingEscrow` has separate admin role for operations
-- **Exemptions**: `TokenCompliance` supports exemption list for contracts
-
-#### Transfer Restrictions
-
-1. **Identity Verification**: Both sender and receiver must be verified
-2. **Compliance Check**: `TokenCompliance.canTransfer()` called on every transfer
-3. **Exemptions**: Special addresses (contracts, vaults) can be exempted
-
-#### Reentrancy Protection
-
-- `ListingEscrow`: Uses `ReentrancyGuard` on deposit/finalize
-- `DividendVault`: Uses `ReentrancyGuard` on claim operations
-
-#### Front-Running Prevention
-
-- **DividendVault**: Takes snapshot BEFORE accepting funds
-- **ListingEscrow**: Uses deadline-based finalization
-
-#### Pausability
-
-- `ListingEscrow`: Can be paused by owner
-- `DividendVault`: Can be paused by owner
-- Emergency stop mechanism for critical issues
-
-## Usage
-
-### Environment Variables
-
-#### Network Selection
-
-Control which blockchain network your app connects to:
-
-```bash
-# For backend (apps/backend/.env)
-EVM_NETWORK=testnet
-
-# For dashboard (apps/dashboard/.env)
-VITE_EVM_NETWORK=testnet
-```
-
-**Available Networks:**
-
-- `localhost` - Local Hardhat node (for development)
-- `testnet` - Hedera testnet (default, shared across all developers)
-- `mainnet` - Hedera mainnet (production)
-
-The network setting automatically determines:
-
-- Which contract addresses to use
-- Which RPC endpoint to connect to
-- Which deployed version of the smart contracts
-
-#### Optional Configuration
-
-```bash
-# Override default network
-DEPLOYMENT_NETWORK=mainnet
-
-# Override RPC URL
-RPC_URL=https://mainnet.hashio.io/api
-
-# Provide deployment as JSON (for CI/CD)
-DEPLOYMENT_JSON='{"contracts":{"IdentityRegistry":"0x..."},...}'
-```
-
-## Development
-
-### Prerequisites
-
-- Node.js >= 20
-- pnpm >= 10
-
-### Setup
-
-```bash
-pnpm install
-pnpm hardhat compile
-```
-
-### Deploy to Testnet
-
-```bash
-pnpm deploy:testnet
-```
-
-This creates `deployment.testnet.json` with the deployed contract addresses.
-
-### Deploy to Mainnet
-
-Only deploy to mainnet via tagged releases:
-
-```bash
-git tag v1.0.0
-git push origin v1.0.0
-```
-
-The GitHub Actions workflow will automatically:
-
-1. Deploy contracts to Hedera mainnet
-2. Create `deployment.mainnet.json`
-3. Commit the deployment file to the repository
-4. Create a GitHub release with attached artifacts
-
-## Contract ABIs
-
-All contract ABIs are available via the `ABIS` export:
-
-```typescript
-import { ABIS } from "@commertize/token-contracts";
-
-// Available ABIs:
-// - ABIS.IdentityRegistry
-// - ABIS.Compliance (TokenCompliance)
-// - ABIS.USDC
-// - ABIS.CommertizeToken
-// - ABIS.DividendVault
-// - ABIS.StakingPool
-// - ABIS.PropertyFactory
-// - ABIS.PropertyToken
-// - ABIS.ListingEscrow
-```
-
-## API Reference
-
-### `getDeployment(network?: string): DeploymentData | null`
-
-Load deployment configuration for a specific network.
-
-```typescript
-const deployment = getDeployment("testnet");
-console.log(deployment.network.chainId); // 296
-```
-
-### `getContractAddress(contractName: string, network?: string): string | null`
-
-Get a specific contract address.
-
-```typescript
-const address = getContractAddress("IdentityRegistry", "mainnet");
-```
-
-### `getContracts(network?: string): Record<string, string>`
-
-Get all contract addresses.
-
-```typescript
-const contracts = getContracts("testnet");
-```
-
-### `getNetwork(network?: string)`
-
-Get network information.
-
-```typescript
-const network = getNetwork("testnet");
-// { name: 'testnet', chainId: 296, rpc: '...', currency: 'HBAR' }
-```
-
-### Helper Functions
-
-The package also exports helper functions for creating contract instances:
-
-```typescript
 import {
+	CONTRACTS,
+	ABIS,
+	RPC_URL,
 	getIdentityRegistryContract,
-	getComplianceContract,
-	getUSDCContract,
-	getCommertizeTokenContract,
-	getDividendVaultContract,
-	getPropertyFactoryContract,
-	getPropertyTokenContract,
-	getEscrowContract,
 } from "@commertize/token-contracts";
 
 const provider = new ethers.JsonRpcProvider(RPC_URL);
-const identityRegistry = getIdentityRegistryContract(provider);
+
+// Option A: build from the exported address map + ABI
+const registry = new ethers.Contract(
+	CONTRACTS.IdentityRegistry,
+	ABIS.IdentityRegistry,
+	provider,
+);
+
+// Option B: use a typed helper (reads the address from the active deployment)
+const registry2 = getIdentityRegistryContract(provider);
 ```
 
-## How It Works
+## Architecture
 
-The package uses a priority-based deployment loading system:
+The system is four layers on an EVM chain (Arc by default), tied together by the
+compliance check that every token transfer routes through.
 
-1. **Environment variable** (`DEPLOYMENT_JSON`) - for CI/CD
-2. **`deployment.localhost.json`** - for local development
-3. **`deployment.{network}.json`** - for specified network
-4. **`deployment.testnet.json`** - default fallback
+```mermaid
+flowchart TD
+    subgraph Compliance
+      IR[IdentityRegistry] --> TC[TokenCompliance]
+      CE[ComplianceEnabled] -.-|_checkCompliance in _update| TC
+    end
+    subgraph Tokenization
+      PF[PropertyFactory] --> PT[PropertyToken]
+      PT --> BPT[BridgedPropertyToken]
+    end
+    subgraph Finance
+      LE[ListingEscrow]
+      DV[DividendVault]
+    end
+    subgraph CrossChain["Cross-chain / Oracle"]
+      POOL[CompliantPropertyTokenPool]
+      SS[IdentitySyncSender] --> SR[IdentitySyncReceiver]
+      NAV[PropertyNavConsumer]
+    end
+    TC --> PT
+    PF --> LE
+    PT --> DV
+    PT --> POOL
+    SR --> IR
+    NAV -.NAV feed.-> DV
+```
 
-This means:
+### Compliance (`src/compliance/`)
 
-- New developers get shared testnet contracts immediately
-- Optional local deployments don't interfere with others
-- Production builds use committed mainnet addresses
-- No configuration required for most use cases
+- **IdentityRegistry** — role-based registry of KYC-verified investors
+  (`VERIFIED_ROLE`), with per-address country code and identity hash. Admin
+  registers/removes; a separate least-privilege `SYNC_ROLE` lets a cross-chain
+  receiver mirror KYC state (see [Cross-chain](#cross-chain-chainlink-ccip--cct)).
+- **TokenCompliance** — points at an `IdentityRegistry` and holds an exemption
+  list for infrastructure addresses (pools, escrows, vaults).
+- **ComplianceEnabled** — abstract base whose `_checkCompliance(from, to)` is
+  called from the token's `_update` hook. Standard transfers require **both**
+  ends verified-or-exempt; mints require the receiver verified-or-exempt; burns
+  are unrestricted.
 
-## Contract Addresses
+### Tokenization (`src/tokenization/`)
 
-Current deployments are stored in:
+- **PropertyToken** — ERC-20 (+ ERC-2612 Permit) representing fractional
+  ownership of a property. Compliance-gated on every balance change, with a
+  snapshot mechanism used for dividend distribution and a `getCCIPAdmin()` hook
+  for Chainlink CCT registration.
+- **BridgedPropertyToken** — destination-chain variant deployed with zero
+  supply. Implements the `IBurnMintERC20` surface for CCIP pools and uses
+  **mint-and-freeze**: a bridge mint always delivers (so CCIP's OffRamp sees the
+  exact receiver balance delta), but the tokens are non-transferable until the
+  holder is KYC-verified.
+- **PropertyFactory** — deploys `PropertyToken` + `ListingEscrow` pairs and
+  tracks them.
 
-- `deployment.testnet.json` - Hedera testnet (shared)
-- `deployment.mainnet.json` - Hedera mainnet (production)
+### Finance (`src/finance/`)
 
-See these files for the latest contract addresses on each network.
+- **ListingEscrow** — holds property tokens and investor funds during a
+  time-bound raise; finalizes to the sponsor when the target is met and
+  distributes tokens, or refunds on a failed raise. `ReentrancyGuard`, `Pausable`,
+  minimum-deposit and hard-cap protection, bounded investor tracking.
+- **DividendVault** — distributes property income (USDC) to holders pro-rata by
+  snapshot balance, with a configurable protocol fee, batch claims, and recovery
+  of unclaimed funds after a timeout. `ReentrancyGuard`, `Pausable`.
+
+### Cross-chain (Chainlink CCIP / CCT) (`src/ccip/`)
+
+- **CompliantPropertyTokenPool** — a CCIP `BurnMintTokenPool` that gates the
+  **destination receiver** against the local `IdentityRegistry` in `lockOrBurn`,
+  *before* burning. Because identity is mirrored to every chain, an
+  unverified receiver can never be the target of a cross-chain transfer.
+- **IdentitySyncSender** / **IdentitySyncReceiver** — broadcast KYC
+  register/remove events from the home chain to every configured destination
+  over CCIP, applied under `SYNC_ROLE`, so "verified anywhere ⇒ verified
+  everywhere." This is what makes source-side gating sound.
+
+### Oracle (Chainlink CRE) (`src/oracle/`, `cre/`)
+
+- **PropertyNavConsumer** — a Chainlink CRE report sink (built on the keystone
+  `ReceiverTemplate`). A `KeystoneForwarder` calls `onReport` with a signed
+  property-NAV report; the consumer accepts strictly-newer reports and exposes
+  `latestNav(propertyId)` for the rest of the ecosystem to read.
+- **`cre/nav-workflow/`** — the CRE workflow scaffold that produces those
+  reports: cron trigger → per-node NAV/appraisal fetch → median consensus →
+  on-chain write. See [`cre/README.md`](./cre/README.md). This is a scaffold —
+  no production real-estate oracle is wired to a live data source yet.
+
+## Chainlink integration
+
+| Product | Where | What it does |
+|---|---|---|
+| **CCT** (Cross-Chain Token) | `BridgedPropertyToken`, `PropertyToken.getCCIPAdmin()` | Self-serve `TokenAdminRegistry` registration; `IBurnMintERC20` surface |
+| **CCIP** | `CompliantPropertyTokenPool`, `IdentitySync{Sender,Receiver}` | Burn/mint bridging with source-side compliance gating + cross-chain KYC identity sync |
+| **CRE** | `src/oracle/`, `cre/` | Property-NAV oracle: consensus-aggregated valuation written on-chain |
+
+CCIP addresses (router, chain selector, RMN proxy, LINK, TokenAdminRegistry) are
+configured per network in [`networks.ts`](./networks.ts).
+
+## Security model
+
+- **Single compliance chokepoint.** Every balance change flows through
+  `PropertyToken._update → _checkCompliance`. There is no separate transfer path;
+  approvals/permit set allowance only and never move balances.
+- **Mint-and-freeze on bridged tokens.** Delivery can't be blocked without
+  stranding burned tokens, so an unverified bridge recipient holds frozen tokens
+  until KYC completes rather than being rejected.
+- **Source-side bridge gating.** The pool checks the destination receiver before
+  burning, backed by cross-chain identity mirroring.
+- **Least privilege.** KYC mirroring runs under a dedicated `SYNC_ROLE` that can
+  only register/remove identities — not grant roles or move tokens.
+- **Reentrancy & pausability.** `ListingEscrow` and `DividendVault` use
+  OpenZeppelin `ReentrancyGuard` and `Pausable`.
+- **Snapshot-based dividends** capture holder balances at distribution time.
+
+The compliance and cross-chain contracts have undergone an internal security
+review.
+
+## Networks
+
+Configured in [`networks.ts`](./networks.ts). The active network is selected by
+the `EVM_NETWORK` env var (also `VITE_EVM_NETWORK` / `NEXT_PUBLIC_EVM_NETWORK`),
+defaulting to `arc-testnet`.
+
+| Network | Chain ID | Native | Notes |
+|---|---|---|---|
+| `arc-testnet` | 5042002 | USDC | Default; CCIP-configured |
+| `ethereum-sepolia` | 11155111 | ETH | CCIP destination / oracle target |
+| `localhost` | 5042002 | USDC | Local Hardhat node |
+| `mainnet` | 295 | — | Placeholder; confirm before production |
+
+USDC is **not** deployed by this package — it is assumed to already exist on the
+target chain and is read from the deployment config or `USDC_ADDRESS`.
+
+Deployment loading precedence:
+
+1. `DEPLOYMENT_JSON` env var (raw JSON or object) — for CI/CD.
+2. Bundled `deployment.<network>.json` (underscored, e.g. `deployment.arc_testnet.json`).
+3. Fallback to the `networks.ts` entry for the selected network.
+
+## Development
+
+```bash
+pnpm install
+pnpm compile           # hardhat build
+pnpm test              # hardhat test
+pnpm node              # local hardhat node
+pnpm deploy:localhost  # deploy to the local node
+pnpm deploy:arc-testnet
+```
+
+Mainnet is deployed via a tagged release (`scripts/release.ts` / CI), not by
+hand.
+
+> Note: `test/TestnetValidation.ts` self-skips (via `process.exit(0)`) when no
+> `deployment.default.json` is present, which ends the whole `hardhat test` run
+> early. Run the unit suites explicitly, e.g.
+> `hardhat test test/SmokeTest.ts test/CCIPCompliantPool.ts test/IdentitySync.ts test/PropertyNavOracle.ts test/PropertyTokenSnapshot.ts test/ListingEscrowRefund.ts`.
+
+## Exports
+
+**Config (resolved at import):** `NETWORK`, `CHAIN_ID`, `CURRENCY`, `RPC_URL`,
+`BLOCK_EXPLORER_URL`, `CONTRACTS`, `Deployment`, `USDC_ADDRESS`.
+
+**ABIs:** `ABIS` (`IdentityRegistry`, `Compliance`, `USDC`, `DividendVault`,
+`PropertyFactory`, `PropertyToken`, `ListingEscrow`, `IdentitySyncSender`,
+`PropertyNavConsumer`), plus `ListingEscrowAbi` and `ErrorStringAbi`.
+
+**Contract helpers.** Singletons read their address from the active deployment
+and take just a runner: `getIdentityRegistryContract`, `getComplianceContract`,
+`getUSDCContract`, `getDividendVaultContract`, `getPropertyFactoryContract`.
+Per-listing / per-chain contracts take an explicit address:
+`getPropertyTokenContract(address, runner)` (alias `getTokenContract`),
+`getEscrowContract(address, runner)`,
+`getIdentitySyncSenderContract(address, runner)`,
+`getPropertyNavConsumerContract(address, runner)`.
+
+Full artifacts (ABI + bytecode) for backend deployment are exported as
+`IdentityRegistryArtifact`, `TokenComplianceArtifact`, `IdentitySyncSenderArtifact`,
+and `PropertyNavConsumerArtifact`.
 
 ## License
 
-MIT
+MIT, except `src/ccip/CompliantPropertyTokenPool.sol` (BUSL-1.1). Vendored
+Chainlink keystone interfaces under `src/oracle/keystone/` are MIT.
